@@ -1,0 +1,20 @@
+	
+testrun	build/test/unit/testrun_lib_tests.test
+	ALL TESTS RUN (0 tests)
+	Clock ticks function: ( main ) | 0.000044 | 0.000000 ms 
+	
+	
+testrun	build/test/unit/tr_string_tests.test
+	[OK] 	test_tr_string_free
+	[OK] 	test_tr_string_prepare
+	[OK] 	test_tr_string_append
+	[OK] 	test_tr_string_write_embeded
+	[OK] 	test_tr_string_embed
+	[OK] 	test_tr_string_unset_end
+	[OK] 	test_tr_string_replace_first
+	[OK] 	test_tr_string_replace_all
+	ALL TESTS RUN (8 tests)
+	Clock ticks function: ( main ) | 0.000102 | 0.000000 ms 
+	
+START 	 2017.11.14-16.02.57.327486722
+END   	 2017.11.14-16.02.57.331129156
