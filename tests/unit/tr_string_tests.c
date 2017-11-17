@@ -72,18 +72,18 @@ int test_tr_string_prepare(){
         size_t open = 0;
         size_t used = 0;
 
-        assert(-1 == tr_string_prepare(NULL, NULL,  NULL,  NULL));
-        assert(-1 == tr_string_prepare(NULL, &size, &open, &used));
-        assert(-1 == tr_string_prepare(&ptr, NULL,  &open, &used));
-        assert(-1 == tr_string_prepare(&ptr, &size, NULL,  &used));
-        assert(-1 == tr_string_prepare(&ptr, &size, &open, NULL));
+        assert(false == tr_string_prepare(NULL, NULL,  NULL,  NULL));
+        assert(false == tr_string_prepare(NULL, &size, &open, &used));
+        assert(false == tr_string_prepare(&ptr, NULL,  &open, &used));
+        assert(false == tr_string_prepare(&ptr, &size, NULL,  &used));
+        assert(false == tr_string_prepare(&ptr, &size, &open, NULL));
 
         // -------------------------------------------------------------
         // Positive test - new allocation
         // -------------------------------------------------------------
 
         assert(NULL == ptr);
-        assert(0 == tr_string_prepare(&ptr, &size, &open, &used));
+        assert(true == tr_string_prepare(&ptr, &size, &open, &used));
         assert(NULL != ptr);
         assert(size == TR_STRING_DEFAULT_SIZE);
         assert(open == TR_STRING_DEFAULT_SIZE);
@@ -109,7 +109,7 @@ int test_tr_string_prepare(){
         assert(open == 0);
         assert(used == 0);
 
-        assert(0 == tr_string_prepare(&ptr, &size, &open, &used));
+        assert(true == tr_string_prepare(&ptr, &size, &open, &used));
 
         // check
         assert(ptr  != NULL);
@@ -137,7 +137,7 @@ int test_tr_string_prepare(){
         assert(open == 0);
         assert(used == 0);
 
-        assert(0 == tr_string_prepare(&ptr, &size, &open, &used));
+        assert(true == tr_string_prepare(&ptr, &size, &open, &used));
 
         // check
         assert(ptr  != NULL);
@@ -155,7 +155,7 @@ int test_tr_string_prepare(){
         open = 0;
         used = 0;
 
-        assert(-1 == tr_string_prepare(&ptr, &size, &open, &used));
+        assert(false == tr_string_prepare(&ptr, &size, &open, &used));
 
         // check
         assert(ptr  != NULL);
@@ -184,11 +184,11 @@ int test_tr_string_append(){
         size_t  s_size  = 0;
 
 
-        assert(-1 == tr_string_append(NULL,  NULL,    NULL, 0));
-        assert(-1 == tr_string_append(NULL,  &d_size, src,  s_size));
-        assert(-1 == tr_string_append(&dest, NULL,    src,  s_size));
-        assert(-1 == tr_string_append(&dest, &d_size, NULL,  s_size));
-        assert(-1 == tr_string_append(&dest, &d_size, src,  0));
+        assert(false == tr_string_append(NULL,  NULL,    NULL, 0));
+        assert(false == tr_string_append(NULL,  &d_size, src,  s_size));
+        assert(false == tr_string_append(&dest, NULL,    src,  s_size));
+        assert(false == tr_string_append(&dest, &d_size, NULL,  s_size));
+        assert(false == tr_string_append(&dest, &d_size, src,  0));
 
         // -------------------------------------------------------------
         // Positive test, no realloc
@@ -201,7 +201,7 @@ int test_tr_string_append(){
         expect = "test1";
 
 
-        assert(0 == tr_string_append(&dest, &d_size, src,  strlen(src)));
+        assert(true == tr_string_append(&dest, &d_size, src,  strlen(src)));
         assert(strncmp(expect, dest, strlen(expect)) == 0);
         assert(d_size == 10);
 
@@ -219,7 +219,7 @@ int test_tr_string_append(){
         src    = "1";
         expect = "test1";
 
-        assert(0 == tr_string_append(&dest, &d_size, src,  strlen(src)));
+        assert(true == tr_string_append(&dest, &d_size, src,  strlen(src)));
         assert(strncmp(expect, dest, strlen(expect)) == 0);
         assert(d_size == 6);
 
@@ -237,7 +237,7 @@ int test_tr_string_append(){
         expect = "test1";
 
 
-        assert(0 == tr_string_append(&dest, &d_size, src,  strlen(src)));
+        assert(true == tr_string_append(&dest, &d_size, src,  strlen(src)));
         assert(strncmp(expect, dest, strlen(expect)) == 0);
         assert(d_size == 6);
 
@@ -254,7 +254,7 @@ int test_tr_string_append(){
         src    = "1";
         expect = "1";
 
-        assert(0 == tr_string_append(&dest, &d_size, src,  strlen(src)));
+        assert(true == tr_string_append(&dest, &d_size, src,  strlen(src)));
         assert(strncmp(expect, dest, strlen(expect)) == 0);
         assert(d_size == 2);
 
@@ -273,15 +273,15 @@ int test_tr_string_append(){
 
         // dest length shorter dest string
         d_size = 9;
-        assert(-1 == tr_string_append(&dest, &d_size, src,  strlen(src)));
+        assert(false == tr_string_append(&dest, &d_size, src,  strlen(src)));
 
         // dest length == strlen(dest);
         d_size = 10;
-        assert(-1 == tr_string_append(&dest, &d_size, src,  strlen(src)));
+        assert(false == tr_string_append(&dest, &d_size, src,  strlen(src)));
 
         // dest length == strlen(dest) + 1;
         d_size = 11;
-        assert(0 == tr_string_append(&dest, &d_size, src,  strlen(src)));
+        assert(true == tr_string_append(&dest, &d_size, src,  strlen(src)));
         assert(strncmp(expect, dest, strlen(expect)) == 0);
         assert(d_size == strlen(expect) + 1);
 
@@ -299,10 +299,10 @@ int test_tr_string_append(){
         expect = "0123456789xxx";
 
         // source len > strlen(source)
-        assert(-1 == tr_string_append(&dest, &d_size, src,  4));
+        assert(false == tr_string_append(&dest, &d_size, src,  4));
 
         // source len  == strlen(source)
-        assert(0 == tr_string_append(&dest, &d_size, src,  3));
+        assert(true == tr_string_append(&dest, &d_size, src,  3));
         assert(strncmp(expect, dest, strlen(expect)) == 0);
         assert(d_size == 15);
 
@@ -320,7 +320,7 @@ int test_tr_string_append(){
         expect = "0123456789xx";
 
         // source len  < strlen(source)
-        assert(0 == tr_string_append(&dest, &d_size, src,  2));
+        assert(true == tr_string_append(&dest, &d_size, src,  2));
         assert(strncmp(expect, dest, strlen(expect)) == 0);
         assert(d_size == 15);
 
@@ -882,35 +882,35 @@ int test_tr_string_embed(){
 
         char expect[1000];
 
-        assert(-1 == tr_string_embed(   NULL,   NULL,
+        assert(false == tr_string_embed(NULL,   NULL,
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0));
 
-        assert(-1 == tr_string_embed(   NULL,   &size,
+        assert(false == tr_string_embed(NULL,   &size,
                                         source, strlen(source),
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0));
 
-        assert(-1 == tr_string_embed(   &ptr,   NULL,
+        assert(false == tr_string_embed(&ptr,   NULL,
                                         source, strlen(source),
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0));
 
-        assert(-1 == tr_string_embed(   &ptr,   &size,
+        assert(false == tr_string_embed(&ptr,   &size,
                                         NULL,   strlen(source),
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0));
 
-        assert(-1 == tr_string_embed(   &ptr,   &size,
+        assert(false == tr_string_embed(&ptr,   &size,
                                         source, 0,
                                         NULL,   0,
                                         NULL,   0,
@@ -926,7 +926,7 @@ int test_tr_string_embed(){
         assert(NULL == ptr);
         assert(0 == size);
 
-        assert(0 == tr_string_embed(    &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, 1,
                                         NULL,   0,
                                         NULL,   0,
@@ -946,7 +946,7 @@ int test_tr_string_embed(){
         assert(0    == size);
         sprintf(expect, "%s", source);
 
-        assert(0 == tr_string_embed(    &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         NULL,   0,
                                         NULL,   0,
@@ -971,7 +971,7 @@ int test_tr_string_embed(){
         assert(0    == size);
         sprintf(expect, "%s%s", prefix, source);
 
-        assert(0 == tr_string_embed(    &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         NULL,   0,
@@ -991,7 +991,7 @@ int test_tr_string_embed(){
         assert(0    == size);
         sprintf(expect, "%s%s", source, suffix);
 
-        assert(0 == tr_string_embed(    &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         NULL,   0,
                                         suffix, strlen(suffix),
@@ -1011,7 +1011,7 @@ int test_tr_string_embed(){
         assert(0    == size);
         sprintf(expect, "%s", source);
 
-        assert(0 == tr_string_embed(    &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         NULL,   0,
                                         NULL,   0,
@@ -1031,7 +1031,7 @@ int test_tr_string_embed(){
         assert(0    == size);
         sprintf(expect, "%s%s", source, delim2);
 
-        assert(0 == tr_string_embed(    &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         NULL,   0,
                                         NULL,   0,
@@ -1055,7 +1055,7 @@ int test_tr_string_embed(){
         assert(0    == size);
         sprintf(expect, "%s%s%s%s", prefix, source, suffix, delim2);
 
-        assert(0 == tr_string_embed(    &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1085,7 +1085,7 @@ int test_tr_string_embed(){
         assert(0    == size);
         sprintf(expect, "(a):(b):(c):(d):");
 
-        assert(0 == tr_string_embed(    &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1116,7 +1116,7 @@ int test_tr_string_embed(){
 
         sprintf(expect, "test(a):(b):(c):(d):");
 
-        assert(0 == tr_string_embed(    &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1151,7 +1151,7 @@ int test_tr_string_embed(){
         assert(size == 100);
 
         size = 2;
-        assert(-1 == tr_string_embed(   &ptr,   &size,
+        assert(false == tr_string_embed(&ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1163,7 +1163,7 @@ int test_tr_string_embed(){
         assert(size == 2);
 
         size = 3;
-        assert(-1 == tr_string_embed(   &ptr,   &size,
+        assert(false == tr_string_embed(&ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1175,7 +1175,7 @@ int test_tr_string_embed(){
 
 
         size = 4;
-        assert(-1 == tr_string_embed(   &ptr,   &size,
+        assert(false == tr_string_embed(&ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1190,7 +1190,7 @@ int test_tr_string_embed(){
         // -------------------------------------------------------------
 
         size = 5;
-        assert(0 == tr_string_embed(   &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1204,7 +1204,7 @@ int test_tr_string_embed(){
         strcat(ptr, "test");
 
         size = 6;
-        assert(0 == tr_string_embed(   &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1218,7 +1218,7 @@ int test_tr_string_embed(){
         strcat(ptr, "test");
 
         size = 10;
-        assert(0 == tr_string_embed(   &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1250,7 +1250,7 @@ int test_tr_string_embed(){
 
         sprintf(expect, "test(a,b,c,d)");
 
-        assert(0 == tr_string_embed(   &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1277,7 +1277,7 @@ int test_tr_string_embed(){
 
         sprintf(expect, "(a,b,c,d)");
 
-        assert(0 == tr_string_embed(   &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1304,7 +1304,7 @@ int test_tr_string_embed(){
 
         sprintf(expect, "(a,b,c,d)");
 
-        assert(0 == tr_string_embed(   &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1336,7 +1336,7 @@ int test_tr_string_embed(){
 
         sprintf(expect, "test(a) (b) (c) (d) ");
 
-        assert(0 == tr_string_embed(   &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1365,7 +1365,7 @@ int test_tr_string_embed(){
 
         sprintf(expect, "(a) (b) (c) (d) ");
 
-        assert(0 == tr_string_embed(   &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1392,7 +1392,7 @@ int test_tr_string_embed(){
 
         sprintf(expect, "(a) (b) (c) (d) ");
 
-        assert(0 == tr_string_embed(   &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1423,7 +1423,7 @@ int test_tr_string_embed(){
 
         sprintf(expect, "(a) (.b) (c..d) ");
 
-        assert(0 == tr_string_embed(   &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1454,7 +1454,7 @@ int test_tr_string_embed(){
 
         sprintf(expect, "(a)\n(b)\n(c)\n(d)\n");
 
-        assert(0 == tr_string_embed(   &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1485,7 +1485,7 @@ int test_tr_string_embed(){
 
         sprintf(expect, "(a)\n()\n()\n");
 
-        assert(0 == tr_string_embed(   &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1516,7 +1516,7 @@ int test_tr_string_embed(){
 
         sprintf(expect, "(a)()()");
 
-        assert(0 == tr_string_embed(   &ptr,   &size,
+        assert(true == tr_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1553,13 +1553,13 @@ int test_tr_string_unset_end(){
         size = strlen(source);
         len  = strlen(string);
 
-        assert(-1 == tr_string_unset_end( NULL,    0,      NULL,   0));
-        assert(-1 == tr_string_unset_end( NULL,    size,   string, len));
-        assert(-1 == tr_string_unset_end( source,  0,      string, len));
-        assert(-1 == tr_string_unset_end( source,  size,   NULL,   len));
-        assert(-1 == tr_string_unset_end( source,  size,   string, 0));
+        assert(false == tr_string_unset_end( NULL,    0,      NULL,   0));
+        assert(false == tr_string_unset_end( NULL,    size,   string, len));
+        assert(false == tr_string_unset_end( source,  0,      string, len));
+        assert(false == tr_string_unset_end( source,  size,   NULL,   len));
+        assert(false == tr_string_unset_end( source,  size,   string, 0));
 
-        assert(0  == tr_string_unset_end( source,  size,   string, len));
+        assert(true  == tr_string_unset_end( source,  size,   string, len));
         assert(strncmp(source, expect, strlen(source)) == 0);
 
         // -------------------------------------------------------------
@@ -1577,12 +1577,12 @@ int test_tr_string_unset_end(){
         size = strlen(source);
         len  = strlen(string) + 1;
 
-        assert(-1 == tr_string_unset_end( source, size,  string, len));
+        assert(false == tr_string_unset_end( source, size,  string, len));
         assert(strncmp(source, expect, strlen(source)) == 0);
 
         len  = strlen(string);
 
-        assert(0 == tr_string_unset_end( source, size,  string, len));
+        assert(true == tr_string_unset_end( source, size,  string, len));
         assert(strncmp(source, expect, strlen(source)) == 0);
 
         // -------------------------------------------------------------
@@ -1600,7 +1600,7 @@ int test_tr_string_unset_end(){
         size = strlen(source);
         len  = strlen(string);
 
-        assert(-1 == tr_string_unset_end( source, size,  string, len));
+        assert(false == tr_string_unset_end( source, size,  string, len));
         assert(strncmp(source, expect, strlen(source)) == 0);
 
         // -------------------------------------------------------------
@@ -1615,7 +1615,7 @@ int test_tr_string_unset_end(){
         size = strlen(source);
         len  = strlen(string);
 
-        assert(0 == tr_string_unset_end( source, size,  string, len));
+        assert(true == tr_string_unset_end( source, size,  string, len));
         assert(strlen(source) == 0);
         assert(strncmp(source, expect, strlen(source)) == 0);
 
@@ -1634,7 +1634,7 @@ int test_tr_string_unset_end(){
         size = strlen(source);
         len  = strlen(string) + 1;
 
-        assert(-1 == tr_string_unset_end( source, size,  string, len));
+        assert(false == tr_string_unset_end( source, size,  string, len));
         assert(strncmp(source, expect, strlen(source)) == 0);
 
         // -------------------------------------------------------------
@@ -1652,13 +1652,13 @@ int test_tr_string_unset_end(){
         size = strlen(source);
         len  = strlen(string) + 1;
 
-        assert(-1 == tr_string_unset_end( source, size,  string, len));
+        assert(false == tr_string_unset_end( source, size,  string, len));
         assert(strncmp(source, expect, strlen(source)) == 0);
         bzero(source, 100);
         expect = "source_enx";
         strcat(source, expect);
 
-        assert(-1 == tr_string_unset_end( source, size,  string, len));
+        assert(false == tr_string_unset_end( source, size,  string, len));
         assert(strncmp(source, expect, strlen(source)) == 0);
 
         free(source);
@@ -1683,39 +1683,39 @@ int test_tr_string_replace_first(){
         char *new    = ":";
         char *expect = "1:2\n3\n4";
 
-        assert(-1 == tr_string_replace_first(   NULL, NULL,
+        assert(false == tr_string_replace_first(NULL, NULL,
                                                 NULL, 0,
                                                 NULL, 0,
                                                 NULL, 0));
 
-        assert(-1 == tr_string_replace_first(   NULL,   &size,
+        assert(false == tr_string_replace_first(NULL,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 new,    strlen(new)));
 
-        assert(-1 == tr_string_replace_first(   &ptr,   NULL,
+        assert(false == tr_string_replace_first(&ptr,   NULL,
                                                 NULL,   strlen(source),
                                                 old,    strlen(old),
                                                 new,    strlen(new)));
 
-        assert(-1 == tr_string_replace_first(   &ptr,   &size,
+        assert(false == tr_string_replace_first(&ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 new,    0));
 
-        assert(-1 == tr_string_replace_first(   &ptr,   &size,
+        assert(false == tr_string_replace_first(&ptr,   &size,
                                                 source, strlen(source),
                                                 NULL,   strlen(old),
                                                 new,    strlen(new)));
 
         // new length not correct
-        assert(-1 == tr_string_replace_first(   &ptr,   &size,
+        assert(false == tr_string_replace_first(&ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 new,    strlen(new) - 1));
 
         // old length not correct
-        assert(-1 == tr_string_replace_first(   &ptr,   &size,
+        assert(false == tr_string_replace_first(&ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old) - 1,
                                                 new,    strlen(new)));
@@ -1732,7 +1732,7 @@ int test_tr_string_replace_first(){
         new    = ":";
         expect = "1:2 3 4";
 
-        assert(0 == tr_string_replace_first(    &ptr,   &size,
+        assert(true == tr_string_replace_first( &ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 new,    strlen(new)));
@@ -1756,7 +1756,7 @@ int test_tr_string_replace_first(){
         new    = ":";
         expect = "12 3 4";
 
-        assert(0 == tr_string_replace_first(    &ptr,   &size,
+        assert(true == tr_string_replace_first( &ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 NULL,   0));
@@ -1780,7 +1780,7 @@ int test_tr_string_replace_first(){
         new    = ":";
         expect = "1 2 3 4";
 
-        assert(0 == tr_string_replace_first(    &ptr,   &size,
+        assert(true == tr_string_replace_first( &ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 new,    strlen(new)));
@@ -1805,7 +1805,7 @@ int test_tr_string_replace_first(){
         new    = ":";
         expect = "test1 2 3 4";
 
-        assert(0 == tr_string_replace_first(    &ptr,   &size,
+        assert(true == tr_string_replace_first( &ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 new,    strlen(new)));
@@ -1822,7 +1822,7 @@ int test_tr_string_replace_first(){
         new    = ":";
         expect = "test1 2 3 41:2 3 4";
 
-        assert(0 == tr_string_replace_first(    &ptr,   &size,
+        assert(true == tr_string_replace_first( &ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 new,    strlen(new)));
@@ -1839,7 +1839,7 @@ int test_tr_string_replace_first(){
         new    = ":";
         expect = "test1 2 3 41:2 3 412 3 4";
 
-        assert(0 == tr_string_replace_first(    &ptr,   &size,
+        assert(true == tr_string_replace_first( &ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 NULL,   0));
@@ -1865,7 +1865,7 @@ int test_tr_string_replace_first(){
         new    = "_at_";
         expect = "testwh_at_ever_whenever";
 
-        assert(0 == tr_string_replace_first(    &ptr,   &size,
+        assert(true == tr_string_replace_first( &ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 new,    strlen(new)));
@@ -1893,68 +1893,68 @@ int test_tr_string_replace_all(){
         char *delim2 = ":";
         char *expect = "1:2:3:4";
 
-        assert(-1 == tr_string_replace_all(      NULL, NULL,
-                                                        NULL, 0,
-                                                        NULL, 0,
-                                                        NULL, 0,
-                                                        false));
+        assert(false == tr_string_replace_all(  NULL, NULL,
+                                                NULL, 0,
+                                                NULL, 0,
+                                                NULL, 0,
+                                                false));
 
-        assert(-1 == tr_string_replace_all(      NULL, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        NULL, 0,
-                                                        false));
+        assert(false == tr_string_replace_all(  NULL, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                NULL, 0,
+                                                false));
 
-        assert(-1 == tr_string_replace_all(      &ptr, NULL,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        NULL, 0,
-                                                        false));
+        assert(false == tr_string_replace_all(  &ptr, NULL,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                NULL, 0,
+                                                false));
 
-        assert(-1 == tr_string_replace_all(      &ptr, &size,
-                                                        NULL, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        NULL, 0,
-                                                        false));
+        assert(false == tr_string_replace_all(  &ptr, &size,
+                                                NULL, strlen(source),
+                                                delim1, strlen(delim1),
+                                                NULL, 0,
+                                                false));
 
-        assert(-1 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        NULL, strlen(delim1),
-                                                        NULL, 0,
-                                                        false));
+        assert(false == tr_string_replace_all(  &ptr, &size,
+                                                source, strlen(source),
+                                                NULL, strlen(delim1),
+                                                NULL, 0,
+                                                false));
 
-        assert(-1 == tr_string_replace_all(      &ptr, &size,
-                                                        source, 0,
-                                                        delim1, strlen(delim1),
-                                                        NULL, 0,
-                                                        false));
+        assert(false == tr_string_replace_all(  &ptr, &size,
+                                                source, 0,
+                                                delim1, strlen(delim1),
+                                                NULL, 0,
+                                                false));
 
-        assert(-1 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, 0,
-                                                        NULL, 0,
-                                                        false));
+        assert(false == tr_string_replace_all(  &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, 0,
+                                                NULL, 0,
+                                                false));
 
         // -------------------------------------------------------------
         // exchange will NULL (unset all delimiters)
         // -------------------------------------------------------------
 
         expect = "1234";
-        assert(-1 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        NULL, 0,
-                                                        false));
+        assert(false == tr_string_replace_all(  &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                NULL, 0,
+                                                false));
 
         size = 0;
         free(ptr);
         ptr = NULL;
 
-        assert(0 == tr_string_replace_all(       &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        NULL, 0,
-                                                        true));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                NULL, 0,
+                                                true));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -1973,7 +1973,7 @@ int test_tr_string_replace_all(){
         delim2 = ":";
         expect = "1:2:3:4";
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
+        assert(true == tr_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
@@ -1988,7 +1988,7 @@ int test_tr_string_replace_all(){
 
         expect = "1:2:3:4:";
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
+        assert(true == tr_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
@@ -2010,11 +2010,11 @@ int test_tr_string_replace_all(){
         delim2 = ":::";
         expect = "1:::2:::3:::4";
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        false));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                false));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2025,11 +2025,11 @@ int test_tr_string_replace_all(){
 
         expect = "1:::2:::3:::4:::";
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        true));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                true));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2047,11 +2047,11 @@ int test_tr_string_replace_all(){
         delim2 = " ";
         expect = "1 2 3 4";
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        false));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                false));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2062,11 +2062,11 @@ int test_tr_string_replace_all(){
 
         expect = "1 2 3 4 ";
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        true));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                true));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2084,11 +2084,11 @@ int test_tr_string_replace_all(){
         delim2 = "\r\n";
         expect = source;
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        false));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                false));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2097,11 +2097,11 @@ int test_tr_string_replace_all(){
         free(ptr);
         ptr = NULL;
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        true));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                true));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2119,11 +2119,11 @@ int test_tr_string_replace_all(){
         delim2 = " ";
         expect = source;
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        false));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                false));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2132,11 +2132,11 @@ int test_tr_string_replace_all(){
         free(ptr);
         ptr = NULL;
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        true));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                true));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2154,11 +2154,11 @@ int test_tr_string_replace_all(){
         delim2 = "x";
         expect = "x1x2x3x4";
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        false));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                false));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2169,11 +2169,11 @@ int test_tr_string_replace_all(){
 
         expect = "x1x2x3x4x";
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        true));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                true));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2191,11 +2191,11 @@ int test_tr_string_replace_all(){
         delim2 = "x";
         expect = "1x2x3x4";
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        false));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                false));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2206,11 +2206,11 @@ int test_tr_string_replace_all(){
 
         expect = "1x2x3x4x";
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        true));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                 source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                true));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2228,11 +2228,11 @@ int test_tr_string_replace_all(){
         delim2 = "en";
         expect = "Whenever";
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        false));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                false));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2241,11 +2241,11 @@ int test_tr_string_replace_all(){
         free(ptr);
         ptr = NULL;
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        true));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                true));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2259,11 +2259,11 @@ int test_tr_string_replace_all(){
         delim2 = "xx";
         expect = "CaxxCaxx";
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        false));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                false));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2274,11 +2274,11 @@ int test_tr_string_replace_all(){
 
         expect = "CaxxCa";
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        true));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                true));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2296,11 +2296,11 @@ int test_tr_string_replace_all(){
         delim2 = "0123456789";
         expect = "abc0123456789def";
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        false));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                false));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2309,11 +2309,11 @@ int test_tr_string_replace_all(){
         free(ptr);
         ptr = NULL;
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        true));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                true));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2331,11 +2331,11 @@ int test_tr_string_replace_all(){
         delim2 = "xx";
         expect = "abcxxdef";
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        false));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                false));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2344,11 +2344,11 @@ int test_tr_string_replace_all(){
         free(ptr);
         ptr = NULL;
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        true));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                true));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2370,11 +2370,11 @@ int test_tr_string_replace_all(){
         delim2 = "_at_";
         expect = "wh_at_ever_wh_at_ever";
 
-        assert(0 == tr_string_replace_all(              &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        false));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                false));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2385,11 +2385,11 @@ int test_tr_string_replace_all(){
 
         expect = "wh_at_ever_wh_at_ever_at_";
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        true));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                true));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == TR_STRING_DEFAULT_SIZE);
@@ -2415,11 +2415,11 @@ int test_tr_string_replace_all(){
         delim2 = "_at_";
         expect = "testwh_at_ever_wh_at_ever_at_";
 
-        assert(0 == tr_string_replace_all(              &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        true));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                true));
 
         assert(strncmp(expect, ptr, strlen(ptr)) == 0);
         assert(size == 10 + TR_STRING_DEFAULT_SIZE);
@@ -2437,11 +2437,11 @@ int test_tr_string_replace_all(){
         delim2 = "_at_";
         expect = "testwh_at_ever_wh_at_ever";
 
-        assert(0 == tr_string_replace_all(      &ptr, &size,
-                                                        source, strlen(source),
-                                                        delim1, strlen(delim1),
-                                                        delim2, strlen(delim2),
-                                                        false));
+        assert(true == tr_string_replace_all(   &ptr, &size,
+                                                source, strlen(source),
+                                                delim1, strlen(delim1),
+                                                delim2, strlen(delim2),
+                                                false));
 
         assert(strncmp(expect, ptr, strlen(expect)) == 0);
         assert(size == 10 + TR_STRING_DEFAULT_SIZE);

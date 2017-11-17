@@ -1,0 +1,64 @@
+# language specific
+
+## C template
+*.o
+*.so
+*.ko
+*.obj
+*.elf
+
+
+# local files
+
+## local creates
+/local
+
+## local temps
+*.log
+*.Trash-*
+*.swp
+.~
+thumbs.db
+
+
+# tools
+
+## vagrant (if used)
+.vagrant
+
+## subprojects
+*.git
+
+## generated files
+**/bin/
+**/gen/
+**/build/
+**/docs/doxygen/
+
+## generated packages
+*.pc
+
+## ctags
+.tags
+tags
+functions
+
+
+# ide
+
+## IntelliJ
+.idea
+
+## Sublime
+*.sublime-workspace
+*.sublime-project
+
+## VIM
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
+

@@ -46,17 +46,17 @@ char *tr_string_free(char *string){
 
 /*----------------------------------------------------------------------------*/
 
-int tr_string_prepare(
+bool tr_string_prepare(
         char **result,
         size_t * const size,
         size_t * const open,
         size_t * const used){
 
         if ((NULL == result) || (NULL == size))
-                return -1;
+                return false;
 
         if ((NULL == open) || (NULL == used))
-                return -1;
+                return false;
 
         if (*result != NULL){
 
@@ -65,7 +65,7 @@ int tr_string_prepare(
 
                 // contained string not \0 terminated
                 if (*used == *size)
-                        return -1;
+                        return false;
 
                 *open = *size - *used;
 
@@ -74,24 +74,24 @@ int tr_string_prepare(
                 // new data
                 *result = calloc(TR_STRING_DEFAULT_SIZE, sizeof(char));
                 if (!*result)
-                        return -1;
+                        return false;
 
                 *size  = TR_STRING_DEFAULT_SIZE;
                 *open  = TR_STRING_DEFAULT_SIZE;
                 *used  = 0;
         }
 
-        return 0;
+        return true;
 }
 
 /*----------------------------------------------------------------------------*/
 
-int tr_string_append(
+bool tr_string_append(
         char **dest, size_t * const size,
         char const * const source, size_t len){
 
         if ((NULL == dest) || (NULL == size) || (NULL == source) || (len < 1))
-                return -1;
+                return false;
 
 
         int64_t done = 0;
@@ -104,18 +104,18 @@ int tr_string_append(
         if (*dest){
                 used = strnlen(*dest, *size);
                 if (used == *size)
-                        return -1;
+                        return false;
         }
         open = *size - used;
 
         if (len > strlen(source))
-                return -1;
+                return false;
 
         if (open > (len) ){
 
                 // standard append
                 if (strncat(*dest, source, open))
-                        return 0;
+                        return true;
                 return -1;
 
         }
@@ -131,12 +131,12 @@ int tr_string_append(
                 0,0,0,0);
 
         if (done < 0)
-                return -1;
+                return false;
 
         free(*dest);
         *dest = ptr;
         *size = open + nuse;
-        return 0;
+        return true;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -186,7 +186,7 @@ int64_t tr_string_write_embeded(
 
 /*----------------------------------------------------------------------------*/
 
-int tr_string_embed(
+bool tr_string_embed(
         char **result, size_t * const size,
         char const * const source, size_t sc_len,
         char const * const prefix, size_t px_len,
@@ -195,14 +195,14 @@ int tr_string_embed(
         char const * const delim2, size_t d2_len){
 
         if ((NULL == result) || (NULL == size))
-                return -1;
+                return false;
 
         if ((NULL == source) || (sc_len < 1))
-                return -1;
+                return false;
 
         if (delim1)
                 if (strlen(delim1) > d1_len)
-                        return -1;
+                        return false;
 
         size_t open = 0;
         size_t used = 0;
@@ -211,8 +211,8 @@ int tr_string_embed(
         char *start = NULL;
         char *end   = NULL;
 
-        if (tr_string_prepare(result, size, &open, &used) < 0)
-                return -1;
+        if (!tr_string_prepare(result, size, &open, &used))
+                return false;
 
         start = (char*) source;
 
@@ -267,7 +267,7 @@ int tr_string_embed(
 
         *size   = used + open;
 
-        return 0;
+        return true;
 
 error:
 
@@ -282,33 +282,33 @@ error:
                         *size = 0;
         }
 
-        return -1;
+        return false;
 }
 
 /*----------------------------------------------------------------------------*/
 
-int tr_string_unset_end(
+bool tr_string_unset_end(
         char  * const result, size_t size,
         char const * const string, size_t len){
 
         if ((NULL == result) || (size < 1))
-                return -1;
+                return false;
 
         if ((NULL == string) || (len < 1))
-                return -1;
+                return false;
 
         if (size < len)
-                return -1;
+                return false;
 
         size_t used = strnlen(result, size);
 
         char *end = result + used;
         if (!end)
-                return -1;
+                return false;
 
         /* end points to last character of the string at result */
         if (len > (size_t) (end  - result + 1))
-                return -1;
+                return false;
 
         end-= len;
 
@@ -317,39 +317,39 @@ int tr_string_unset_end(
         for(size_t i = 0; i < len; i++){
 
                 if (end[i] != string[i])
-                        return -1;
+                        return false;
         }
 
         /* Actual unset last string */
 
         bzero(end, len);
-        return 0;
+        return true;
 
 }
 
 /*----------------------------------------------------------------------------*/
 
-int tr_string_replace_first(
+bool tr_string_replace_first(
         char **result, size_t * const size,
         char const * const source, size_t sc_len,
         char const * const old,    size_t old_len,
         char const * const new,    size_t new_len){
 
         if ((NULL == result) || (NULL == size))
-                return -1;
+                return false;
 
         if ((NULL == source) || (sc_len < 1))
-                return -1;
+                return false;
 
         if ((NULL == old) || (old_len < 1))
-                return -1;
+                return false;
 
         if (old_len < strlen(old))
-                return -1;
+                return false;
 
         if (new)
                if (new_len < strlen(new))
-                        return -1;
+                        return false;
 
 
         size_t open = 0;
@@ -359,8 +359,8 @@ int tr_string_replace_first(
         char *end   = NULL;
         char *part  = NULL;
 
-        if (tr_string_prepare(result, size, &open, &used) < 0)
-                return -1;
+        if (!tr_string_prepare(result, size, &open, &used))
+                return false;
 
         end   = strstr(source, old);
         part  = end + old_len;
@@ -368,44 +368,44 @@ int tr_string_replace_first(
 
         if (end) {
 
-                if(tr_string_write_embeded(
+                if(!tr_string_write_embeded(
                         result, &open, &used,
                         TR_STRING_DEFAULT_SIZE,
                         NULL, 0,
                         source, end - source,
                         NULL, 0,
-                        new, new_len) < 0)
+                        new, new_len))
                         goto error;
 
                 // append second part
 
-                if(tr_string_write_embeded(
+                if(!tr_string_write_embeded(
                         result, &open, &used,
                         TR_STRING_DEFAULT_SIZE,
                         NULL, 0,
                         part, plen,
                         NULL, 0,
-                        NULL, 0) < 0)
+                        NULL, 0))
                         goto error;
 
         } else {
 
                 // append an unchanged copy
 
-                if(tr_string_write_embeded(
+                if(!tr_string_write_embeded(
                         result, &open, &used,
                         TR_STRING_DEFAULT_SIZE,
                         NULL, 0,
                         source, sc_len,
                         NULL, 0,
-                        NULL, 0) < 0)
+                        NULL, 0))
                         goto error;
 
         }
 
         *size   = used + open;
 
-        return 0;
+        return true;
 
 error:
 
@@ -420,12 +420,12 @@ error:
                         *size = 0;
         }
 
-        return -1;
+        return false;
 }
 
 /*----------------------------------------------------------------------------*/
 
-int tr_string_replace_all(
+bool tr_string_replace_all(
         char **result, size_t *size,
         char const * const source, size_t sc_len,
         char const * const delim1, size_t d1_len,
@@ -433,21 +433,21 @@ int tr_string_replace_all(
         bool set_last){
 
         if (NULL == result || NULL == size )
-                return -1;
+                return false;
 
         if (NULL == source || 0 == sc_len )
-                return -1;
+                return false;
 
         if (NULL == delim1 || 0 == d1_len )
-                return -1;
+                return false;
 
-        if (tr_string_embed(result, size,
+        if (!tr_string_embed(result, size,
                 source, sc_len, 0,0, 0,0,
-                delim1, d1_len, delim2, d2_len) < 0 )
-                return -1;
+                delim1, d1_len, delim2, d2_len))
+                return false;
 
         if (set_last)
-                return 0;
+                return true;
 
         return tr_string_unset_end(*result, *size, delim2, d2_len);
 }

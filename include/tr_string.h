@@ -79,9 +79,9 @@ char *tr_string_free(char *string);
  *      @param  open    (mandatory) pointer to open counter (will be set)
  *      @param  used    (mandatory) pointer to used counter (will be set)
  *
- *      @return         returns 0 on success,  -1 on error
+ *      @return         returns true on success,  failure on error
  */
-int tr_string_prepare(
+bool tr_string_prepare(
         char **string,
         size_t * const size,
         size_t * const open,
@@ -107,9 +107,9 @@ int tr_string_prepare(
  *      @param source   pointer to buffer to be appended to dest
  *      @param len      length of the source to be added to dest (at most)
  *
- *      @return         returns 0 on success,  -1 on error
+ *      @return         returns true on success,  false on error
  */
-int tr_string_append(
+bool tr_string_append(
         char **dest, size_t * const size,
         char const * const source, size_t len);
 
@@ -274,9 +274,9 @@ int64_t tr_string_write_embeded(
  *      @param  delim2  (mandatory) new delimiter for source tokens
  *      @param  d2_len  (mandatory) length of delim2 (at most)
  *
- *      @return         -1 on error, 0 on success
+ *      @return         true on success, false on errror
  */
-int tr_string_embed(
+bool tr_string_embed(
         char **result, size_t * const size,
         char const * const source, size_t sc_len,
         char const * const prefix, size_t px_len,
@@ -294,9 +294,9 @@ int tr_string_embed(
  *      @param  string  (mandatory) string to be unset
  *      @param  len     (mandatory) length of string to be unset (incl \0)
  *
- *      @return         -1 on error, 0 on success
+ *      @return         true on success, false on error
  */
-int tr_string_unset_end(
+bool tr_string_unset_end(
         char * const result, size_t size,
         char const * const string, size_t len);
 
@@ -335,9 +335,9 @@ int tr_string_unset_end(
  *      @param  new_item (optional)  new_item to be written at position of old
  *      @param  new_len  (optional)  length of new_item (incl \0)
  *
- *      @return         -1 on error, 0 on success
+ *      @return         true in success, false on error
  */
-int tr_string_replace_first(
+bool tr_string_replace_first(
         char **result, size_t * const size,
         char const * const source,   size_t sc_len,
         char const * const old_item, size_t old_len,
@@ -383,9 +383,9 @@ int tr_string_replace_first(
  *      @param  new_len  (optional) length of new_item
  *      @param  set_last (mandatory) if false a possible last item will be unset
  *
- *      @return         -1 on error, 0 on success
+ *      @return         true on success, false on error
  */
-int tr_string_replace_all(
+bool tr_string_replace_all(
         char **result, size_t * const size,
         char const * const source,   size_t sc_len,
         char const * const old_item, size_t old_len,
