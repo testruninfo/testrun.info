@@ -20,13 +20,13 @@
  *      ------------------------------------------------------------------------
  ***//**
  *
- *      @file           tr_string_tests.c
+ *      @file           testrun_log_tests.c
  *      @author         Markus Toepfer
  *      @date           2017-11-13
  *
- *      @ingroup                testrun_lib
+ *      @ingroup        testrun_lib
  *
- *      @brief                  Unit testing for tr_strings
+ *      @brief          Unit testing for testrun_log
  *
  *
  *      ------------------------------------------------------------------------
@@ -39,7 +39,7 @@
  ******************************************************************************/
 
 #include "../tools/testrun.h"
-#include "../../include/tr_log.h"
+#include "../../include/testrun_log.h"
 
 static int testing = 1;
 
@@ -67,18 +67,54 @@ int check_log_dev(){
 
 /*----------------------------------------------------------------------------*/
 
-int check_tr_log_forward(){
+int check_testrun_log_forward(){
 
-        assert(tr_log_forward(10,"tr_log_forward"));
+        assert(testrun_log_forward(10,"testrun_log_forward"));
 
         return testrun_log_OK();
 }
 
 /*----------------------------------------------------------------------------*/
 
-int check_tr_log_file(){
+int check_testrun_log_file(){
 
-        assert(tr_log_file(10, stdout, "tr_log_file"));
+        assert(testrun_log_file(10, stdout, "testrun_log_file"));
+
+        return testrun_log_OK();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int check_testrun_log_timestamp(){
+
+        char *result = testrun_log_timestamp(false);
+
+        //01234567890123456789
+        //2017-11-20T14:57:01Z
+
+        // structure check only
+        testrun_assert(result != NULL);
+        testrun_assert(strlen(result) == 20);
+        testrun_assert(result[19] == 'Z');
+        testrun_assert(result[16] == ':');
+        testrun_assert(result[13] == ':');
+        testrun_assert(result[10] == 'T');
+        testrun_assert(result[7]  == '-');
+        testrun_assert(result[4]  == '-');
+
+        //01234567890123456789012345678
+        //2017-11-20T14:57:01.123456Z
+
+        result = testrun_log_timestamp(true);
+        testrun_assert(result != NULL);
+        testrun_assert(strlen(result) == 27);
+        testrun_assert(result[26] == 'Z');
+        testrun_assert(result[19] == '.');
+        testrun_assert(result[16] == ':');
+        testrun_assert(result[13] == ':');
+        testrun_assert(result[10] == 'T');
+        testrun_assert(result[7]  == '-');
+        testrun_assert(result[4]  == '-');
 
         return testrun_log_OK();
 }
@@ -97,8 +133,10 @@ int all_tests() {
        testrun_init();
 
        testrun_test(check_log_dev);
-       testrun_test(check_tr_log_forward);
-       testrun_test(check_tr_log_file);
+       testrun_test(check_testrun_log_forward);
+       testrun_test(check_testrun_log_file);
+
+       testrun_test(check_testrun_log_timestamp);
 
 
        return 1;
