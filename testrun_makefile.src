@@ -18,15 +18,15 @@
 #
 #	-----------------------------------------------------------------------
 #
-#	Content		Generic makefile for a project using 
+#	Content		Generic makefile for a project using
 #			the testrun framework.
 #
-#	Description	Target of this makefile is an independent library or 
-#			executable to be installed under the directory 
-#			PREFIX/lib or PREFIX/bin 
-#	
+#	Description	Target of this makefile is an independent library or
+#			executable to be installed under the directory
+#			PREFIX/lib or PREFIX/bin
+#
 #	Authors		Markus Toepfer
-#	
+#
 #	Usage		An EXAMPLE makefile using this makefile may look like:
 #			------------------------------------------------------
 #			PROJECT		:= <name>
@@ -123,7 +123,7 @@ $(SHARED): $(STATIC) $(OBJECTS)
 
 $(EXECUTABLE): $(OBJECTS)
 	@echo " (CC)    $@ $(OBJECTS)"
-	$(CC) -o $@ $(STATIC) $(LIBS) 
+	$(CC) -o $@ $(STATIC) $(LIBS)
 
 # ----- BUILD & CLEANUP -----------------------------------------------------
 
@@ -131,6 +131,9 @@ build:
 	@mkdir -p bin
 	@mkdir -p build
 	@mkdir -p build/test
+	@mkdir -p build/test/omp
+	@mkdir -p build/test/omp/unit
+	@mkdir -p build/test/omp/acceptance
 	@mkdir -p build/test/unit
 	@mkdir -p build/test/acceptance
 	@mkdir -p build/test/log
@@ -224,34 +227,36 @@ done:
 	@echo " (HINT)  generate documentation ==> 'make documentation\n"
 
 # ----- TESTRUN SPECIFIC ------------------------------------------------------
-# 
-# 	The following part contains as required functionality to use the 
+#
+# 	The following part contains as required functionality to use the
 # 	testrun tools via a makefile. This part may be seen as a makefile
-# 	integrated testrunner framework. 
-# 	
+# 	integrated testrunner framework.
+#
 # 	in particular:
-# 	
-# 		"make clean && make tested" 
-# 		
+#
+# 		"make clean && make tested"
+#
 # 	may be used to build sources as well as tests from scratch and perform
 # 	an integrated testrun over the sources after compilation.
-# 	
-# 	THIS PART MAY BE USED TO INTEGRATE THE TESTRUN TOOLS IN OTHER PROJECTS. 
-# 	
-# 	All scripts as well as testrun.h may be used in parts or as whole in 
-# 	other projects. 
-# 	
-# 	This kind of makefile based testrun functionality may be used in 
-# 	projects, which like the idea of an integrated testrun environment, 
-# 	but try to reduce external build, tool, library or whatever 
-# 	kind of dependencies. 
-# 	
+#
+# 	THIS PART MAY BE USED TO INTEGRATE THE TESTRUN TOOLS IN OTHER PROJECTS.
+#
+# 	All scripts as well as testrun.h may be used in parts or as whole in
+# 	other projects.
+#
+# 	This kind of makefile based testrun functionality may be used in
+# 	projects, which like the idea of an integrated testrun environment,
+# 	but try to reduce external build, tool, library or whatever
+# 	kind of dependencies.
+#
 # 	(NOTE: ALL TEST SCRIPTS MAY BE EXCHANGED WITH CUSTOM TEST RUNNERS)
-# 	
+#
 # -----------------------------------------------------------------------------
 
 # (1) TESTRUN SOURCE DEFINITION --------------------------------------------
 
+TESTS_OMP_SRC	= $(wildcard tests/**/*_tests_omp.c tests/*_tests_omp.c)
+TESTS_OMP_TARGET= $(patsubst %.c,%.test,$(TESTS_OMP_SRC))
 TESTS_SOURCES	= $(wildcard tests/**/*_tests.c tests/*_tests.c)
 TESTS_TARGET	= $(patsubst %.c,%.test,$(TESTS_SOURCES))
 TESTS_TMP_FILES	= $(wildcard /tmp/test_*)
@@ -264,6 +269,9 @@ tested:	all testrun done
 # compile tests only
 tests:	tests-resources $(TESTS_TARGET)
 
+# compile omp_tests only
+tests_omp:	tests-resources $(TESTS_OMP_TARGET)
+
 # copy test resources to build
 tests-resources:
 	@echo " (CP)    tests/resources"
@@ -275,6 +283,13 @@ $(TESTS_TARGET): $(TESTS_SOURCES)
 	@$(CC) $(MODCFLAGS) $(patsubst %.test,%.c,$(@)) \
 		-ldl $(STATIC) -Wl,-rpath=$(RPATH) \
 		-g -o $(subst tests/,build/test/,$(@)) $(LIBS)
+
+# build all executable tests under build/tests
+$(TESTS_OMP_TARGET): $(TESTS_OMP_SRC)
+	@echo " (CC)    $(@)"
+	@$(CC) $(MODCFLAGS) -fopenmp $(patsubst %.test,%.c,$(@)) \
+		-ldl $(STATIC) -Wl,-rpath=$(RPATH) \
+		-g -o $(subst tests/,build/test/omp/,$(@)) $(LIBS)
 
 # build a specific executable test (testname) under build/tests
 # NOTE: May be usefull for module development in large projects
