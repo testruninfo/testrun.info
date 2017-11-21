@@ -1728,6 +1728,83 @@ int test_testrun_vector_dump(){
         return testrun_log_OK();
 }
 
+/*----------------------------------------------------------------------------*/
+
+int check_testrun_header_example(){
+
+        /*
+         *      This is not prefixed with test_ as it is not a
+         *      unit test.
+         *
+         */
+
+        testrun_vector *vector = NULL;
+
+        void *pointer1 = calloc(1, sizeof(void*));
+        void *pointer2 = calloc(1, sizeof(void*));
+        void *pointer3 = calloc(1, sizeof(void*));
+        void *pointer4 = calloc(1, sizeof(void*));
+        void *pointer5 = calloc(1, sizeof(void*));
+        void *pointer6 = calloc(1, sizeof(void*));
+        void *pointer7 = calloc(1, sizeof(void*));
+
+        vector = testrun_vector_create(10, free, NULL);
+        testrun_assert(testrun_vector_push(vector, pointer1));
+        testrun_assert(testrun_vector_push(vector, pointer2));
+        testrun_assert(testrun_vector_set(vector, 4, pointer6));
+        testrun_assert(testrun_vector_push(vector, pointer7));
+        testrun_assert(pointer1 == testrun_vector_get(vector, 0));
+        testrun_assert(pointer2 == testrun_vector_get(vector, 1));
+        testrun_assert(NULL     == testrun_vector_get(vector, 2));
+        testrun_assert(NULL     == testrun_vector_get(vector, 3));
+        testrun_assert(pointer6 == testrun_vector_get(vector, 4));
+        testrun_assert(pointer7 == testrun_vector_get(vector, 5));
+        testrun_assert(NULL     == testrun_vector_get(vector, 6));
+        testrun_assert(NULL     == testrun_vector_get(vector, 7));
+        testrun_assert(NULL     == testrun_vector_get(vector, 8));
+        testrun_assert(NULL     == testrun_vector_get(vector, 9));
+
+        testrun_assert(testrun_vector_add(vector, pointer3));
+        testrun_assert(pointer1 == testrun_vector_get(vector, 0));
+        testrun_assert(pointer2 == testrun_vector_get(vector, 1));
+        testrun_assert(pointer3 == testrun_vector_get(vector, 2));
+        testrun_assert(NULL     == testrun_vector_get(vector, 3));
+        testrun_assert(pointer6 == testrun_vector_get(vector, 4));
+        testrun_assert(pointer7 == testrun_vector_get(vector, 5));
+        testrun_assert(NULL     == testrun_vector_get(vector, 6));
+        testrun_assert(NULL     == testrun_vector_get(vector, 7));
+        testrun_assert(NULL     == testrun_vector_get(vector, 8));
+        testrun_assert(NULL     == testrun_vector_get(vector, 9));
+
+        testrun_assert(testrun_vector_insert(vector, 3, pointer4));
+        testrun_assert(pointer1 == testrun_vector_get(vector, 0));
+        testrun_assert(pointer2 == testrun_vector_get(vector, 1));
+        testrun_assert(pointer3 == testrun_vector_get(vector, 2));
+        testrun_assert(pointer4 == testrun_vector_get(vector, 3));
+        testrun_assert(pointer6 == testrun_vector_get(vector, 4));
+        testrun_assert(pointer7 == testrun_vector_get(vector, 5));
+        testrun_assert(NULL     == testrun_vector_get(vector, 6));
+        testrun_assert(NULL     == testrun_vector_get(vector, 7));
+        testrun_assert(NULL     == testrun_vector_get(vector, 8));
+        testrun_assert(NULL     == testrun_vector_get(vector, 9));
+
+        testrun_assert(testrun_vector_insert(vector, 4, pointer5));
+        testrun_assert(pointer1 == testrun_vector_get(vector, 0));
+        testrun_assert(pointer2 == testrun_vector_get(vector, 1));
+        testrun_assert(pointer3 == testrun_vector_get(vector, 2));
+        testrun_assert(pointer4 == testrun_vector_get(vector, 3));
+        testrun_assert(pointer5 == testrun_vector_get(vector, 4));
+        testrun_assert(pointer6 == testrun_vector_get(vector, 5));
+        testrun_assert(pointer7 == testrun_vector_get(vector, 6));
+        testrun_assert(NULL     == testrun_vector_get(vector, 7));
+        testrun_assert(NULL     == testrun_vector_get(vector, 8));
+        testrun_assert(NULL     == testrun_vector_get(vector, 9));
+
+        vector = testrun_vector_terminate(vector);
+
+        return testrun_log_OK();
+}
+
 /*******************************************************************************
  *
  *      TEST CLUSTER
@@ -1765,6 +1842,8 @@ int all_tests() {
 
         testrun_test(test_testrun_vector_dump_function_backtrace);
         testrun_test(test_testrun_vector_dump);
+
+        testrun_test(check_testrun_header_example);
 
         return 1;
 }

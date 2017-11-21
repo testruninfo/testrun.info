@@ -20,14 +20,13 @@
  *      ------------------------------------------------------------------------
  ***//**
  *
- *      @file           testrun_log_tests.c
+ *      @file           testrun2_tests.c
  *      @author         Markus Toepfer
- *      @date           2017-11-13
+ *      @date           2017-11-21
  *
  *      @ingroup        testrun_lib
  *
- *      @brief          Unit testing for testrun_log
- *
+ *      @brief          Testing of the testrun2.h header
  *
  *      ------------------------------------------------------------------------
  **/
@@ -38,7 +37,7 @@
  *
  ******************************************************************************/
 
-#include "../tools/testrun.h"
+#include "../../include/testrun2.h"
 #include "../../include/testrun_log.h"
 
 static int testing = 1;
@@ -49,97 +48,74 @@ static int testing = 1;
  *
  ******************************************************************************/
 
+int test_test1() {
 
-int check_log_dev(){
-
-        assert(log_dev("log_dev"));
-        assert(log_debug("log_debug"));
-        assert(log_info("log_info"));
-        assert(log_notice("log_notice"));
-        assert(log_warning("log_warning"));
-        assert(log_error("log_error"));
-        assert(log_critical("log_critical"));
-        assert(log_alert("log_alert"));
-        assert(log_emergency("log_emergency"));
+        testrun_check(true, "test %s %d", "msg", 1);
 
         return testrun_log_OK();
 }
 
 /*----------------------------------------------------------------------------*/
 
-int check_testrun_log_forward(){
+int test_test2() {
 
-        assert(testrun_log_forward(10,"testrun_log_forward"));
-
-        return testrun_log_OK();
-}
-
-/*----------------------------------------------------------------------------*/
-
-int check_testrun_log_file(){
-
-        assert(testrun_log_file(10, stdout, "testrun_log_file"));
+        testrun_check(true, "test %s %d", "msg", 2);
 
         return testrun_log_OK();
 }
 
 /*----------------------------------------------------------------------------*/
 
-int check_testrun_log_timestamp(){
+int test_test3() {
 
-        char *result = testrun_log_timestamp(false);
-
-        //01234567890123456789
-        //2017-11-20T14:57:01Z
-
-        // structure check only
-        testrun_assert(result != NULL);
-        testrun_assert(strlen(result) == 20);
-        testrun_assert(result[19] == 'Z');
-        testrun_assert(result[16] == ':');
-        testrun_assert(result[13] == ':');
-        testrun_assert(result[10] == 'T');
-        testrun_assert(result[7]  == '-');
-        testrun_assert(result[4]  == '-');
-
-        //01234567890123456789012345678
-        //2017-11-20T14:57:01.123456Z
-
-        result = testrun_log_timestamp(true);
-        testrun_assert(result != NULL);
-        testrun_assert(strlen(result) == 27);
-        testrun_assert(result[26] == 'Z');
-        testrun_assert(result[19] == '.');
-        testrun_assert(result[16] == ':');
-        testrun_assert(result[13] == ':');
-        testrun_assert(result[10] == 'T');
-        testrun_assert(result[7]  == '-');
-        testrun_assert(result[4]  == '-');
+        testrun_check(true, "test %s %d", "msg", 3);
 
         return testrun_log_OK();
 }
 
 /*----------------------------------------------------------------------------*/
 
+int test_test4() {
+
+        testrun_check(true, "test %s %d", "msg", 4);
+
+        return testrun_log_OK();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_test5() {
+
+        testrun_check(true, "test %s %d", "msg", 5);
+
+        return testrun_log_OK();
+}
+
+/*----------------------------------------------------------------------------*/
 
 /*******************************************************************************
  *
- *      TEST CLUSTER
+ *      TEST CLUSTER SETUP
  *
  ******************************************************************************/
 
-int all_tests() {
+int64_t module_add_tests(int(*tests[])(), size_t slot, size_t max) {
 
-       testrun_init();
+        int64_t module_test_counter = 0;
 
-       testrun_test(check_log_dev);
-       testrun_test(check_testrun_log_forward);
-       testrun_test(check_testrun_log_file);
+        testrun_add(test_test1);
+        testrun_add(test_test2);
+        testrun_add(test_test3);
+        testrun_add(test_test4);
+        testrun_add(test_test5);
 
-       testrun_test(check_testrun_log_timestamp);
+        log_dev("test counter %jd", module_test_counter);
 
+        for (size_t i = 0; i < max; i++){
+                printf("%jd %p \n", i, tests[i]);
+        }
 
-       return 1;
+        return module_test_counter;
 }
 
 /*******************************************************************************
@@ -148,5 +124,35 @@ int all_tests() {
  *
  ******************************************************************************/
 
+int64_t run_tests() {
 
-testrun_run(all_tests);
+        size_t  max     = 10;
+        size_t  counter = 0;
+        int64_t r = 0;
+
+        int (*testcases[max])();
+
+        // initialize all function pointer slots of the array to NULL
+        testrun_init_testcases(testcases, 0, max);
+
+        r = testrun_add_testcases(testcases, &counter, &max, module_add_tests);
+        if (r < 0)
+                return -1;
+
+        // example to dump all enabled testcases (usefull for testdevelopment)
+        testrun_dump_testcases(testcases, max);
+
+        // run all tests again, but this time in parallel
+        r = testrun_parallel(testcases, counter);
+        if (r < 0)
+                log_debug("Failure parallel run");
+
+        // run all tests serial, one after the other and dont break on failure
+        r = testrun_serial(testcases, counter, false);
+        if (r < 0)
+                log_debug("Failure serial run");
+
+        return counter;
+}
+
+testrun_exec(run_tests);

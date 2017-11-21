@@ -111,8 +111,8 @@
         @param test     an actual test case e.g. (1 == 0)
         @param message  additional message to log e.g. "Failure: 1 is not one"
 **/
-#define testrun_assert(test, message)\
-        if (!(test)) { testrun_log_NOK(message); assert(test); }
+#define testrun_assert(test, ... )\
+        if (!(test)) { testrun_log_NOK(__VA_ARGS__); assert(test); }
 
 /**
         @brief          run a single test (function pointer)
