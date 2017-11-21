@@ -22,7 +22,11 @@
  *      
  *      @file           testrun_lib.c
  *      @author         Markus Toepfer
+<<<<<<< HEAD
+ *      @date           2017-11-12
+=======
  *      @date           2017-11-13
+>>>>>>> cfb9cbc399c44b6270e315a584cfff12afc095f0
  *      
  *      @ingroup
  *      

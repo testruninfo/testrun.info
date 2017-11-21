@@ -22,7 +22,11 @@
  *
  *      @file           testrun_lib_tests.c
  *      @author         Markus Toepfer
+<<<<<<< HEAD
+ *      @date           2017-11-12
+=======
  *      @date           2017-11-13
+>>>>>>> cfb9cbc399c44b6270e315a584cfff12afc095f0
  *
  *      @ingroup
  *
@@ -49,13 +53,21 @@ static int testing = 1;
  *      TEST CASES
  *
  ******************************************************************************/
+<<<<<<< HEAD
+
+=======
 /*
+>>>>>>> cfb9cbc399c44b6270e315a584cfff12afc095f0
 int test_test1() {
 
         testrun_assert(1 == 1, "Failure: 1 == 1");
         return testrun_log_OK();
 }
+<<<<<<< HEAD
+
+=======
 */
+>>>>>>> cfb9cbc399c44b6270e315a584cfff12afc095f0
 /*----------------------------------------------------------------------------*/
 
 /*******************************************************************************
@@ -73,7 +85,11 @@ int all_tests() {
                 return 1;
         }
 
+<<<<<<< HEAD
+        testrun_test(test_test1);
+=======
         //testrun_test(test_test1);
+>>>>>>> cfb9cbc399c44b6270e315a584cfff12afc095f0
         return 1;
 
 }

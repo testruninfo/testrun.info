@@ -52,7 +52,15 @@
 
 
 #define testrun_init()  \
-        int result = 0;
+        int result = 0; \
+        size_t testsrun_tests_max       = 1000; \
+        size_t testrun_counter_all      = 0; \
+        size_t testrun_counter_success  = 0; \
+        size_t testrun_counter_failure  = 0; \
+        void (*tests[testsrun_tests_max])(); \
+        bzero(tests, sizeof(tests));         \
+
+
 #define testrun_errno() \
 (       errno == 0 ? "NONE" :  strerror(errno))
 
@@ -123,6 +131,7 @@
 **/
 #define testrun_test(test)\
         result = test(); testrun_counter++; if (result < 0) return result;
+
 
 /**
         @brief          run a cluster of tests (function pointers)
@@ -244,5 +253,27 @@ int testrun_counter; /** counter for successful tests **/
         @endcode
 
 **/
+
+/**
+        @brief          Add a new test to the test sequence.
+        @param test     function pointer to a new test to be added.
+*/
+#define testrun_add(test)  \
+        tests[testrun_counter_all] = test; testrun_counter_all++;
+
+/**
+        @brief          Run a single atomar test, log the result and
+                        Increse the success or failure counter.
+        @param input    Boolean input to decide the logging output.
+*/
+#define testrun(boolean, ...)\
+        if (boolean)  { \
+                testrun_counter_success++; testrun_log_OK(__VA_ARGS__); \
+        } else { \
+                testrun_counter_failure++; testrun_log_NOK(__VA_ARGS__);} \
+
+
+#define testrun_para() \
+        testrun_parallel(tests, testrun_counter_all, &testrun_counter_success, &testrun_counter_failure);
 
 #endif /* testrun_h */

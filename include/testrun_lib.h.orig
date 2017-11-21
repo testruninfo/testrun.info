@@ -22,11 +22,19 @@
  *
  *      @file           testrun_lib.h
  *      @author         Markus Toepfer
+<<<<<<< HEAD
+ *      @date           2017-11-12
+ *
+ *      @ingroup
+ *
+ *      @brief
+=======
  *      @date           2017-11-13
  *
  *      @ingroup		testrun_lib
  *
  *      @brief			Main interface for the testrun_lib.
+>>>>>>> cfb9cbc399c44b6270e315a584cfff12afc095f0
  *
  *
  *      -------------------------------------------------------------------------
@@ -35,9 +43,30 @@
 #ifndef testrun_lib_h
 #define testrun_lib_h
 
+<<<<<<< HEAD
+/*----------------------------------------------------------------------------
+ *
+ *      FOLDER AND FILENAME DEFINITIONS
+ *
+ *      These definitions are used to identify the folder structure and
+ *      main files of the system.
+ *
+ *----------------------------------------------------------------------------*/
+
+#define TESTRUN_DIR_INCLUDE             "include"
+#define TESTRUN_DIR_SOURCE              "src"
+#define TESTRUN_DIR_TESTS               "tests"
+#define TESTRUN_DIR_TESTS_UNIT          "unit"
+
+/*----------------------------------------------------------------------------*/
+
+#endif /* testrun_lib_h */
+
+=======
 /*----------------------------------------------------------------------------*/
 
 #include "tr_string.h"
 
 
 #endif /* testrun_lib_h */
+>>>>>>> cfb9cbc399c44b6270e315a584cfff12afc095f0
