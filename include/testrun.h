@@ -468,8 +468,21 @@ static inline int64_t testrun_parallel(
 
         int nthreads = 0, tid = 0;
 
+        /*
+         *      Use this if you want to reduce or set the number of threads
+         *
+         *      omp_set_dynamic(0);
+         *      omp_set_num_threads(1);
+         */
+
         #pragma omp parallel for
         for (size_t i = 0; i < items; i++){
+
+                if (nthreads == 0){
+                        tid = omp_get_thread_num();
+                        if (tid == 0)
+                                nthreads = omp_get_num_threads();
+                }
 
                 if (functions[i] != 0) {
 
@@ -484,12 +497,12 @@ static inline int64_t testrun_parallel(
         }
 
         testrun_log("---------------------------------------------------------");
-        testrun_log("NOTE Parallel testing");
+        testrun_log("NOTE PARALLEL TESTING");
         testrun_log("");
-        testrun_log("This version is using OpenMP, which implementation in ");
-        testrun_log("libgomp MAY show open or still reachable, as well as ");
-        testrun_log("possibly lost data, when running with valgrind.");
-        testrun_log("");
+        testrun_log("This version is using OpenMP.");
+        testrun_log("Using GCC for compilation may produce unreliable valgrind");
+        testrun_log("output due to custom synchronization primitives(non POSIX).");
+        testrun_log("More information is included in docs/valgrind/openMP.");
         testrun_log("---------------------------------------------------------");
 
 
