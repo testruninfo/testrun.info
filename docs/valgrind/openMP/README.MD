@@ -1,6 +1,7 @@
 # Valgrind OpenMP
 
 Short background information about lipgomp based valgrind errors.
+This problem will occur with clang and gcc as long as glibc is used with pthreads implementation which uses user space futex instead of kernel space mutexes.
 
 ## Valgrind Manual Statement (see reference doc)
 

@@ -1,8 +1,0 @@
-All files in this folder will be copied to build/test/resources during
-test compilaton. This allows predefined file access for tests using:
-
-EXAMPLE:
-char *config = "./build/test/resources/config.txt";
-
-Pathes are relative and automatically deployed to build. In addition the
-resources under test/resources are included in GIT by default.  

@@ -432,6 +432,8 @@ static inline bool testrun_dump_testcases(
                         fprintf(stdout, "slot %jd | %p \n", i, pointer);
                 #endif
         }
+
+        return true;
 }
 
 /*----------------------------------------------------------------------------*/

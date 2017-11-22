@@ -69,10 +69,10 @@
  */
 int testrun_copyright_create_header(
         char **result, size_t *size,
-        const char * const source, const size_t const s_length,
-        const char * const prefix, const size_t const p_length,
-        const char * const intro,  const size_t const i_length,
-        const char * const outro,  const size_t const o_length);
+        const char * const source, const size_t s_length,
+        const char * const prefix, const size_t p_length,
+        const char * const intro,  const size_t i_length,
+        const char * const outro,  const size_t o_length);
 
 /*----------------------------------------------------------------------------*/
 /**
