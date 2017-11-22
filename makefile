@@ -18,7 +18,7 @@
 #
 #       --------------------------------------------------------------------------
 
-CC = clang
+CC = gcc
 
 PROJECT         := testrun_lib
 VERSION         := 0.0.1
@@ -37,7 +37,9 @@ PREFIX          := /usr/local
 # EXTRA CFLAGS
 MODCFLAGS       += -std=gnu11
 MODCFLAGS 		+= -fopenmp
-#MODCFLAGS 		+= -rdynamic # GCC only flag
+
+#GCC only flags
+MODCFLAGS 		+= -rdynamic
 
 # INCLUDE BASE MAKEFILE
 include testrun_makefile.src
