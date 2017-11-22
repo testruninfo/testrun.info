@@ -20,7 +20,7 @@
  *      ------------------------------------------------------------------------
  ***//**
  *
- *      @file           tr_string.c
+ *      @file           testrun_string.c
  *      @author         Markus Toepfer
  *      @date           2017-11-13
  *
@@ -32,11 +32,11 @@
  *      ------------------------------------------------------------------------
  **/
 
-#include "../include/tr_string.h"
+#include "../include/testrun_string.h"
 
 /*----------------------------------------------------------------------------*/
 
-char *tr_string_free(char *string){
+char *testrun_string_free(char *string){
 
         if (string)
                 free(string);
@@ -46,7 +46,7 @@ char *tr_string_free(char *string){
 
 /*----------------------------------------------------------------------------*/
 
-bool tr_string_prepare(
+bool testrun_string_prepare(
         char **result,
         size_t * const size,
         size_t * const open,
@@ -72,12 +72,12 @@ bool tr_string_prepare(
         } else {
 
                 // new data
-                *result = calloc(TR_STRING_DEFAULT_SIZE, sizeof(char));
+                *result = calloc(testrun_STRING_DEFAULT_SIZE, sizeof(char));
                 if (!*result)
                         return false;
 
-                *size  = TR_STRING_DEFAULT_SIZE;
-                *open  = TR_STRING_DEFAULT_SIZE;
+                *size  = testrun_STRING_DEFAULT_SIZE;
+                *open  = testrun_STRING_DEFAULT_SIZE;
                 *used  = 0;
         }
 
@@ -86,7 +86,7 @@ bool tr_string_prepare(
 
 /*----------------------------------------------------------------------------*/
 
-bool tr_string_append(
+bool testrun_string_append(
         char **dest, size_t * const size,
         char const * const source, size_t len){
 
@@ -125,7 +125,7 @@ bool tr_string_append(
         open = 0;
         ptr  = NULL;
 
-        done = tr_string_write_embeded(&ptr, &open, &nuse, 1,
+        done = testrun_string_write_embeded(&ptr, &open, &nuse, 1,
                 *dest, used,
                 source, len,
                 0,0,0,0);
@@ -141,7 +141,7 @@ bool tr_string_append(
 
 /*----------------------------------------------------------------------------*/
 
-int64_t tr_string_write_embeded(
+int64_t testrun_string_write_embeded(
         char  **buffer,
         size_t * const open,
         size_t * const used,
@@ -186,7 +186,7 @@ int64_t tr_string_write_embeded(
 
 /*----------------------------------------------------------------------------*/
 
-bool tr_string_embed(
+bool testrun_string_embed(
         char **result, size_t * const size,
         char const * const source, size_t sc_len,
         char const * const prefix, size_t px_len,
@@ -211,7 +211,7 @@ bool tr_string_embed(
         char *start = NULL;
         char *end   = NULL;
 
-        if (!tr_string_prepare(result, size, &open, &used))
+        if (!testrun_string_prepare(result, size, &open, &used))
                 return false;
 
         start = (char*) source;
@@ -226,9 +226,9 @@ bool tr_string_embed(
                         break;
 
                 line = end - start;
-                if (tr_string_write_embeded(
+                if (testrun_string_write_embeded(
                         result, &open, &used,
-                        TR_STRING_DEFAULT_SIZE,
+                        testrun_STRING_DEFAULT_SIZE,
                         prefix, px_len,
                         start, line,
                         suffix, sx_len,
@@ -254,9 +254,9 @@ bool tr_string_embed(
         if (end) {
 
                 line = end - start;
-                if(tr_string_write_embeded(
+                if(testrun_string_write_embeded(
                         result, &open, &used,
-                        TR_STRING_DEFAULT_SIZE,
+                        testrun_STRING_DEFAULT_SIZE,
                         prefix, px_len,
                         start, line,
                         suffix, sx_len,
@@ -287,7 +287,7 @@ error:
 
 /*----------------------------------------------------------------------------*/
 
-bool tr_string_unset_end(
+bool testrun_string_unset_end(
         char  * const result, size_t size,
         char const * const string, size_t len){
 
@@ -329,7 +329,7 @@ bool tr_string_unset_end(
 
 /*----------------------------------------------------------------------------*/
 
-bool tr_string_replace_first(
+bool testrun_string_replace_first(
         char **result, size_t * const size,
         char const * const source, size_t sc_len,
         char const * const old,    size_t old_len,
@@ -359,7 +359,7 @@ bool tr_string_replace_first(
         char *end   = NULL;
         char *part  = NULL;
 
-        if (!tr_string_prepare(result, size, &open, &used))
+        if (!testrun_string_prepare(result, size, &open, &used))
                 return false;
 
         end   = strstr(source, old);
@@ -368,9 +368,9 @@ bool tr_string_replace_first(
 
         if (end) {
 
-                if(!tr_string_write_embeded(
+                if(!testrun_string_write_embeded(
                         result, &open, &used,
-                        TR_STRING_DEFAULT_SIZE,
+                        testrun_STRING_DEFAULT_SIZE,
                         NULL, 0,
                         source, end - source,
                         NULL, 0,
@@ -379,9 +379,9 @@ bool tr_string_replace_first(
 
                 // append second part
 
-                if(!tr_string_write_embeded(
+                if(!testrun_string_write_embeded(
                         result, &open, &used,
-                        TR_STRING_DEFAULT_SIZE,
+                        testrun_STRING_DEFAULT_SIZE,
                         NULL, 0,
                         part, plen,
                         NULL, 0,
@@ -392,9 +392,9 @@ bool tr_string_replace_first(
 
                 // append an unchanged copy
 
-                if(!tr_string_write_embeded(
+                if(!testrun_string_write_embeded(
                         result, &open, &used,
-                        TR_STRING_DEFAULT_SIZE,
+                        testrun_STRING_DEFAULT_SIZE,
                         NULL, 0,
                         source, sc_len,
                         NULL, 0,
@@ -425,7 +425,7 @@ error:
 
 /*----------------------------------------------------------------------------*/
 
-bool tr_string_replace_all(
+bool testrun_string_replace_all(
         char **result, size_t *size,
         char const * const source, size_t sc_len,
         char const * const delim1, size_t d1_len,
@@ -441,7 +441,7 @@ bool tr_string_replace_all(
         if (NULL == delim1 || 0 == d1_len )
                 return false;
 
-        if (!tr_string_embed(result, size,
+        if (!testrun_string_embed(result, size,
                 source, sc_len, 0,0, 0,0,
                 delim1, d1_len, delim2, d2_len))
                 return false;
@@ -449,5 +449,5 @@ bool tr_string_replace_all(
         if (set_last)
                 return true;
 
-        return tr_string_unset_end(*result, *size, delim2, d2_len);
+        return testrun_string_unset_end(*result, *size, delim2, d2_len);
 }

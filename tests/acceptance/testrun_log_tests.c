@@ -43,7 +43,7 @@
  *
  ******************************************************************************/
 
-#include "../tools/testrun.h"
+#include "../../include/testrun.h"
 #include "../../include/testrun_log.h"
 
 static int testing = 1;

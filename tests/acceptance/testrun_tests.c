@@ -37,7 +37,7 @@
  *
  ******************************************************************************/
 
-#include "../../include/testrun2.h"
+#include "../../include/testrun.h"
 #include "../../include/testrun_log.h"
 
 static int testing = 1;
@@ -101,7 +101,7 @@ int test_test5() {
 
 int64_t module_add_tests(int(*tests[])(), size_t slot, size_t max) {
 
-        int64_t module_test_counter = 0;
+        int64_t testrun_counter = 0;
 
         testrun_add(test_test1);
         testrun_add(test_test2);
@@ -109,13 +109,13 @@ int64_t module_add_tests(int(*tests[])(), size_t slot, size_t max) {
         testrun_add(test_test4);
         testrun_add(test_test5);
 
-        log_dev("test counter %jd", module_test_counter);
+        log_dev("test counter %jd", testrun_counter);
 
         for (size_t i = 0; i < max; i++){
                 printf("%jd %p \n", i, tests[i]);
         }
 
-        return module_test_counter;
+        return testrun_counter;
 }
 
 /*******************************************************************************
@@ -148,11 +148,11 @@ int64_t run_tests() {
                 log_debug("Failure parallel run");
 
         // run all tests serial, one after the other and dont break on failure
-        r = testrun_serial(testcases, counter, false);
+        r = testrun_sequential(testcases, counter, false);
         if (r < 0)
                 log_debug("Failure serial run");
 
         return counter;
 }
 
-testrun_exec(run_tests);
+testrun_run(run_tests);

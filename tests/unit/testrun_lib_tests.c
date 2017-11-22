@@ -39,7 +39,7 @@
  *
  ******************************************************************************/
 
-#include "../tools/testrun.h"
+#include "../../include/testrun.h"
 #include "../../src/testrun_lib.c"
 
 static int testing = 1;
@@ -66,16 +66,10 @@ int test_test1() {
 
 int all_tests() {
 
-        testrun_init();
+       testrun_init();
 
-        if (testing < 1) {
-                testrun_log("TESTING SWITCHED OFF FOR testrun_lib");
-                return 1;
-        }
 
-        //testrun_test(test_test1);
-        return 1;
-
+       return testrun_counter;
 }
 
 /*******************************************************************************
@@ -83,4 +77,6 @@ int all_tests() {
  *      ACTIVATED TESTS
  *
  ******************************************************************************/
+
+
 testrun_run(all_tests);

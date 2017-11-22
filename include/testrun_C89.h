@@ -20,11 +20,13 @@
  *      ------------------------------------------------------------------------
  *//**
  *
- *      @file               testrun.h
+ *      @file               testrun_C89.h
  *      @author             Markus Toepfer
  *      @date               2017-10-31
  *
+ *
  *      @brief              Simple and minimalistic test runner framework.
+ *                          Intitial version of the testrun idea
  *
  *      This header only test framework runs a cluster of test cases one by one.
  *      Once one of the tests fail, the whole test cluster will fail.
@@ -53,6 +55,8 @@
 
 #define testrun_init()  \
         int result = 0;
+
+
 #define testrun_errno() \
 (       errno == 0 ? "NONE" :  strerror(errno))
 
@@ -123,6 +127,7 @@
 **/
 #define testrun_test(test)\
         result = test(); testrun_counter++; if (result < 0) return result;
+
 
 /**
         @brief          run a cluster of tests (function pointers)
@@ -244,5 +249,4 @@ int testrun_counter; /** counter for successful tests **/
         @endcode
 
 **/
-
 #endif /* testrun_h */

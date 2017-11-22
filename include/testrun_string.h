@@ -20,7 +20,7 @@
  *      ------------------------------------------------------------------------
  ***//**
  *
- *      @file           tr_string.h
+ *      @file           testrun_string.h
  *      @author         Markus Toepfer
  *      @date           2017-11-13
  *
@@ -32,15 +32,17 @@
  *      ------------------------------------------------------------------------
  **/
 
-#ifndef tr_string_h
-#define tr_string_h
+#ifndef testrun_string_h
+#define testrun_string_h
 
-#define TR_STRING_DEFAULT_SIZE  96
+#define testrun_STRING_DEFAULT_SIZE  96
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+
+#define LINEBREAK "\n"
 
 /*----------------------------------------------------------------------------*/
 
@@ -48,12 +50,12 @@
  *      Free a pointer and return NULL. Basically just a pointer unset.
  *      Intended use as replacement for free(string); string = NULL;
  *
- *      USE CASE:       string = tr_string_free(string);
+ *      USE CASE:       string = testrun_string_free(string);
  *
  *      @param string   pointer to be freed
  *      @return         returns always NULL
  */
-char *tr_string_free(char *string);
+char *testrun_string_free(char *string);
 
 /*----------------------------------------------------------------------------*/
 
@@ -66,7 +68,7 @@ char *tr_string_free(char *string);
  *      size, the function fails. (used > size)
  *
  *      If the pointer result points to NULL, new space if allocated using
- *      a default allocation size TR_STRING_DEFAULT_SIZE
+ *      a default allocation size testrun_STRING_DEFAULT_SIZE
  *
  *      After success, open will contain the number of open bytes including
  *      the terminating \0, so on success open will be positive (at least 1)
@@ -81,7 +83,7 @@ char *tr_string_free(char *string);
  *
  *      @return         returns true on success,  failure on error
  */
-bool tr_string_prepare(
+bool testrun_string_prepare(
         char **string,
         size_t * const size,
         size_t * const open,
@@ -109,7 +111,7 @@ bool tr_string_prepare(
  *
  *      @return         returns true on success,  false on error
  */
-bool tr_string_append(
+bool testrun_string_append(
         char **dest, size_t * const size,
         char const * const source, size_t len);
 
@@ -124,7 +126,7 @@ bool tr_string_append(
  *
  *      USE CASE 1
  *
- *      size = tr_write_embeded(
+ *      size = testrun_write_embeded(
  *              &buffer,&open,&used,1
  *              "* ",2                          prefix & length,
  *              "new comment line", 16          source & length,
@@ -141,7 +143,7 @@ bool tr_string_append(
  *
  *              write a string in brackets
  *
- *      size = tr_write_embeded(&b,&o,&u,1 "(",1, "string",5, ")",1, 0,0);
+ *      size = testrun_write_embeded(&b,&o,&u,1 "(",1, "string",5, ")",1, 0,0);
  *      will write "(string)" at *buffer.
  *
  *
@@ -160,7 +162,7 @@ bool tr_string_append(
  *
  *      @return         -1 on error, size written to *buffer
  */
-int64_t tr_string_write_embeded(
+int64_t testrun_string_write_embeded(
         char  **buffer,
         size_t * const open,
         size_t * const used,
@@ -189,7 +191,7 @@ int64_t tr_string_write_embeded(
  *      USE CASE COMMALIST TO HTML LIST
  *
  *              r = NULL; s=0;
- *              tr_string_embed(
+ *              testrun_string_embed(
  *                       &r,            // result pointer
  *                       &s,            // pointer to result size
  *                      "a,b,c", 5,     // source list
@@ -206,7 +208,7 @@ int64_t tr_string_write_embeded(
  *      USE CASE 1 embed a string between prefix and suffix
  *
  *              r = NULL; s = 0;
- *              tr_string_embed(&r, &s, "abcdef", 6, "_",1, "s",!, 0,0, 0,0);
+ *              testrun_string_embed(&r, &s, "abcdef", 6, "_",1, "s",!, 0,0, 0,0);
  *              r = "_abcdef!"; s = 8;
  *
  *      USE CASE 2 append an allocated string with an embeded string
@@ -276,7 +278,7 @@ int64_t tr_string_write_embeded(
  *
  *      @return         true on success, false on errror
  */
-bool tr_string_embed(
+bool testrun_string_embed(
         char **result, size_t * const size,
         char const * const source, size_t sc_len,
         char const * const prefix, size_t px_len,
@@ -296,7 +298,7 @@ bool tr_string_embed(
  *
  *      @return         true on success, false on error
  */
-bool tr_string_unset_end(
+bool testrun_string_unset_end(
         char * const result, size_t size,
         char const * const string, size_t len);
 
@@ -337,7 +339,7 @@ bool tr_string_unset_end(
  *
  *      @return         true in success, false on error
  */
-bool tr_string_replace_first(
+bool testrun_string_replace_first(
         char **result, size_t * const size,
         char const * const source,   size_t sc_len,
         char const * const old_item, size_t old_len,
@@ -351,7 +353,7 @@ bool tr_string_replace_first(
  *      USE CASE - exchange of all occurances of any string
  *
  *              e.g. linbreak exchange
- *              tr_...(&r, &s, "a\nb\nc\n", "\n", 1, "\r\n", 2, true);
+ *              testrun_...(&r, &s, "a\nb\nc\n", "\n", 1, "\r\n", 2, true);
  *              r = "a\r\nb\r\nc\r\n"
  *
  *
@@ -385,7 +387,7 @@ bool tr_string_replace_first(
  *
  *      @return         true on success, false on error
  */
-bool tr_string_replace_all(
+bool testrun_string_replace_all(
         char **result, size_t * const size,
         char const * const source,   size_t sc_len,
         char const * const old_item, size_t old_len,
@@ -395,4 +397,4 @@ bool tr_string_replace_all(
 
 
 
-#endif /* tr_string_h */
+#endif /* testrun_string_h */

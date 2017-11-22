@@ -43,7 +43,7 @@
 #include <unistd.h>
 
 #include "testrun_header.h"
-#include "testrun_strings.h"
+#include "testrun_string.h"
 
 /*----------------------------------------------------------------------------*/
 

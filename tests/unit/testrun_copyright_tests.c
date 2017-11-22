@@ -38,7 +38,7 @@
  *
  ******************************************************************************/
 
-#include "../tools/testrun.h"
+#include "../../include/testrun.h"
 #include "../../src/testrun_copyright.c"
 #include "../../include/testrun_lib.h"
 #include <sys/stat.h>
@@ -65,32 +65,32 @@ int test_testrun_copyright_create_header() {
         char *intro  = "i";
         char *outro  = "o";
 
-        assert(-1 == testrun_copyright_create_header(   NULL,   0,
+        testrun_assert(-1 == testrun_copyright_create_header(   NULL,   0,
                                                         NULL,   0,
                                                         NULL,   0,
                                                         NULL,   0,
                                                         NULL,   0));
 
-        assert(-1 == testrun_copyright_create_header(   &out,   0,
+        testrun_assert(-1 == testrun_copyright_create_header(   &out,   0,
                                                         NULL,   0,
                                                         NULL,   0,
                                                         NULL,   0,
                                                         NULL,   0));
 
-        assert(-1 == testrun_copyright_create_header(   NULL,   &size,
+        testrun_assert(-1 == testrun_copyright_create_header(   NULL,   &size,
                                                         NULL,   0,
                                                         NULL,   0,
                                                         NULL,   0,
                                                         NULL,   0));
 
-        assert(-1 == testrun_copyright_create_header(   &out,   &size,
+        testrun_assert(-1 == testrun_copyright_create_header(   &out,   &size,
                                                         NULL,   0,
                                                         NULL,   0,
                                                         NULL,   0,
                                                         NULL,   0));
 
 
-        assert(0 == testrun_copyright_create_header(    &out,   &size,
+        testrun_assert(0 == testrun_copyright_create_header(    &out,   &size,
                                                         source, strlen(source),
                                                         NULL,   0,
                                                         NULL,   0,
@@ -101,14 +101,14 @@ int test_testrun_copyright_create_header() {
         memset(&expect, 0, size);
         sprintf(expect, "s\n");
 
-        assert(out);
-        assert(size == strlen(expect));
-        assert(strncmp(expect, out, strlen(expect)) == 0);
+        testrun_assert(out);
+        testrun_assert(size == strlen(expect));
+        testrun_assert(strncmp(expect, out, strlen(expect)) == 0);
         free(out);
         out  = NULL;
         size = 0;
 
-        assert(0 == testrun_copyright_create_header(    &out,   &size,
+        testrun_assert(0 == testrun_copyright_create_header(    &out,   &size,
                                                         source, strlen(source),
                                                         prefix, strlen(prefix),
                                                         intro,  strlen(intro),
@@ -119,14 +119,14 @@ int test_testrun_copyright_create_header() {
         memset(&expect, 0, size);
         sprintf(expect, "i#s\no");
 
-        assert(out);
-        assert(size == strlen(expect));
-        assert(strncmp(expect, out, strlen(expect)) == 0);
+        testrun_assert(out);
+        testrun_assert(size == strlen(expect));
+        testrun_assert(strncmp(expect, out, strlen(expect)) == 0);
         free(out);
         out  = NULL;
         size = 0;
 
-        assert(0 == testrun_copyright_create_header(    &out,   &size,
+        testrun_assert(0 == testrun_copyright_create_header(    &out,   &size,
                                                         source, strlen(source),
                                                         0,      0,
                                                         intro,  strlen(intro),
@@ -137,14 +137,14 @@ int test_testrun_copyright_create_header() {
         memset(&expect, 0, size);
         sprintf(expect, "is\no");
 
-        assert(out);
-        assert(size == strlen(expect));
-        assert(strncmp(expect, out, strlen(expect)) == 0);
+        testrun_assert(out);
+        testrun_assert(size == strlen(expect));
+        testrun_assert(strncmp(expect, out, strlen(expect)) == 0);
         free(out);
         out  = NULL;
         size = 0;
 
-        assert(0 == testrun_copyright_create_header(    &out,   &size,
+        testrun_assert(0 == testrun_copyright_create_header(    &out,   &size,
                                                         source, strlen(source),
                                                         prefix, strlen(prefix),
                                                         0,      0,
@@ -155,14 +155,14 @@ int test_testrun_copyright_create_header() {
         memset(&expect, 0, size);
         sprintf(expect, "#s\no");
 
-        assert(out);
-        assert(size == strlen(expect));
-        assert(strncmp(expect, out, strlen(expect)) == 0);
+        testrun_assert(out);
+        testrun_assert(size == strlen(expect));
+        testrun_assert(strncmp(expect, out, strlen(expect)) == 0);
         free(out);
         out  = NULL;
         size = 0;
 
-        assert(0 == testrun_copyright_create_header(    &out,   &size,
+        testrun_assert(0 == testrun_copyright_create_header(    &out,   &size,
                                                         source, strlen(source),
                                                         prefix, strlen(prefix),
                                                         intro,  strlen(intro),
@@ -172,14 +172,14 @@ int test_testrun_copyright_create_header() {
         memset(&expect, 0, size);
         sprintf(expect, "i#s\n");
 
-        assert(out);
-        assert(size == strlen(expect));
-        assert(strncmp(expect, out, strlen(expect)) == 0);
+        testrun_assert(out);
+        testrun_assert(size == strlen(expect));
+        testrun_assert(strncmp(expect, out, strlen(expect)) == 0);
         free(out);
         out  = NULL;
         size = 0;
 
-        assert(0 == testrun_copyright_create_header(    &out,   &size,
+        testrun_assert(0 == testrun_copyright_create_header(    &out,   &size,
                                                         source, strlen(source),
                                                         0,      0,
                                                         intro,  strlen(intro),
@@ -188,9 +188,9 @@ int test_testrun_copyright_create_header() {
         memset(&expect, 0, size);
         sprintf(expect, "is\n");
 
-        assert(out);
-        assert(size == strlen(expect));
-        assert(strncmp(expect, out, strlen(expect)) == 0);
+        testrun_assert(out);
+        testrun_assert(size == strlen(expect));
+        testrun_assert(strncmp(expect, out, strlen(expect)) == 0);
         free(out);
         out  = NULL;
         size = 0;
@@ -200,7 +200,7 @@ int test_testrun_copyright_create_header() {
         intro  = "i";
         outro  = "o";
 
-        assert(0 == testrun_copyright_create_header(    &out,   &size,
+        testrun_assert(0 == testrun_copyright_create_header(    &out,   &size,
                                                         source, strlen(source),
                                                         prefix, strlen(prefix),
                                                         intro,  strlen(intro),
@@ -215,12 +215,12 @@ int test_testrun_copyright_create_header() {
                         "#line3\n"
                         "o");
 
-        printf("SIZE %d\n\n", size);
+        printf("SIZE %jd\n\n", size);
 
-        assert(out);
+        testrun_assert(out);
         printf("OUT %s", out);
-        assert(size == strlen(expect));
-        assert(strncmp(expect, out, strlen(expect)) == 0);
+        testrun_assert(size == strlen(expect));
+        testrun_assert(strncmp(expect, out, strlen(expect)) == 0);
         free(out);
         out  = NULL;
         size = 0;
@@ -245,17 +245,17 @@ int test_testrun_read_copyright_from() {
         char *expect = NULL;
         char *result = NULL;
 
-        assert(!testrun_read_copyright_from(NULL));
+        testrun_assert(!testrun_read_copyright_from(NULL));
 
         /* Copyright file not found */
-        assert(!testrun_read_copyright_from(path1));
-        assert(!testrun_read_copyright_from(path2));
+        testrun_assert(!testrun_read_copyright_from(path1));
+        testrun_assert(!testrun_read_copyright_from(path2));
 
         expect = "1\n22\n333\n4444";
 
         result = testrun_read_copyright_from(path3);
-        assert(result);
-        assert(strncmp(expect, result, strlen(expect)) == 0);
+        testrun_assert(result);
+        testrun_assert(strncmp(expect, result, strlen(expect)) == 0);
         free(result);
 
         expect = "Testline1\n"
@@ -265,8 +265,8 @@ int test_testrun_read_copyright_from() {
 
 
         result = testrun_read_copyright_from(path4);
-        assert(result);
-        assert(strncmp(expect, result, strlen(expect)) == 0);
+        testrun_assert(result);
+        testrun_assert(strncmp(expect, result, strlen(expect)) == 0);
         free(result);
 
         expect = "Copyright 2017 Markus Toepfer\n"
@@ -287,27 +287,27 @@ int test_testrun_read_copyright_from() {
 
 
         result = testrun_read_copyright_from(path5);
-        assert(result);
-        assert(strncmp(expect, result, strlen(expect)) == 0);
+        testrun_assert(result);
+        testrun_assert(strncmp(expect, result, strlen(expect)) == 0);
         free(result);
 
-        assert(0 < sprintf(path, "%s/%s", path5, TESTRUN_FILENAME_COPYRIGHT));
+        testrun_assert(0 < sprintf(path, "%s/%s", path5, TESTRUN_FILENAME_COPYRIGHT));
 
         /* No access to file path/copyright */
-        assert(0 == chmod(path, 000));
-        assert(!testrun_read_copyright_from(path5));
-        assert(0 == chmod(path, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH));
+        testrun_assert(0 == chmod(path, 000));
+        testrun_assert(!testrun_read_copyright_from(path5));
+        testrun_assert(0 == chmod(path, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH));
 
         /* Recheck access ok */
         result = testrun_read_copyright_from(path5);
-        assert(result);
-        assert(strncmp(expect, result, strlen(expect)) == 0);
+        testrun_assert(result);
+        testrun_assert(strncmp(expect, result, strlen(expect)) == 0);
         free(result);
 
         /* No access to folder path */
-        assert(0 == chmod(path5, 000));
-        assert(!testrun_read_copyright_from(path5));
-        assert(0 == chmod(path5,
+        testrun_assert(0 == chmod(path5, 000));
+        testrun_assert(!testrun_read_copyright_from(path5));
+        testrun_assert(0 == chmod(path5,
                 S_IRUSR | S_IWUSR | S_IXUSR |
                 S_IRGRP | S_IXGRP |
                 S_IROTH | S_IXOTH
@@ -315,12 +315,12 @@ int test_testrun_read_copyright_from() {
 
         /* Recheck access ok */
         result = testrun_read_copyright_from(path5);
-        assert(result);
-        assert(strncmp(expect, result, strlen(expect)) == 0);
+        testrun_assert(result);
+        testrun_assert(strncmp(expect, result, strlen(expect)) == 0);
         free(result);
 
         /* empty file */
-        assert(!testrun_read_copyright_from(path6));
+        testrun_assert(!testrun_read_copyright_from(path6));
 
         return testrun_log_OK();
 }
@@ -346,8 +346,8 @@ int test_testrun_copyright_default() {
                 TESTRUN_COPYRIGHT_OUTRO);
 
         result = testrun_copyright_default(NULL, NULL, true);
-        assert(result);
-        assert(strncmp(result, expect, strlen(expect)) == 0);
+        testrun_assert(result);
+        testrun_assert(strncmp(result, expect, strlen(expect)) == 0);
         memset(&expect, 0, size);
         free(result);
 
@@ -356,8 +356,8 @@ int test_testrun_copyright_default() {
                 "All rights reserved.\n");
 
         result = testrun_copyright_default(NULL, NULL, false);
-        assert(result);
-        assert(strncmp(result, expect, strlen(expect)) == 0);
+        testrun_assert(result);
+        testrun_assert(strncmp(result, expect, strlen(expect)) == 0);
         memset(&expect, 0, size);
         free(result);
 
@@ -376,8 +376,8 @@ int test_testrun_copyright_default() {
                 TESTRUN_COPYRIGHT_OUTRO);
 
         result = testrun_copyright_default(date, name, true);
-        assert(result);
-        assert(strncmp(result, expect, strlen(expect)) == 0);
+        testrun_assert(result);
+        testrun_assert(strncmp(result, expect, strlen(expect)) == 0);
         memset(&expect, 0, size);
         free(result);
 
@@ -387,8 +387,8 @@ int test_testrun_copyright_default() {
                 date, name);
 
         result = testrun_copyright_default(date, name, false);
-        assert(result);
-        assert(strncmp(result, expect, strlen(expect)) == 0);
+        testrun_assert(result);
+        testrun_assert(strncmp(result, expect, strlen(expect)) == 0);
         memset(&expect, 0, size);
         free(result);
 
@@ -411,7 +411,7 @@ int all_tests() {
        testrun_test(test_testrun_read_copyright_from);
        testrun_test(test_testrun_copyright_default);
 
-       return 1;
+       return testrun_counter;
 }
 
 /*******************************************************************************

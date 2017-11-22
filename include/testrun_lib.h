@@ -37,7 +37,10 @@
 
 /*----------------------------------------------------------------------------*/
 
-#include "tr_string.h"
-
+#include "testrun.h"
+#include "testrun_string.h"
+#include "testrun_vector.h"
+#include "testrun_copyright.h"
+#include "testrun_header.h"
 
 #endif /* testrun_lib_h */

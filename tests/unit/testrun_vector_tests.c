@@ -40,7 +40,7 @@
 
 #include <limits.h>
 
-#include "../tools/testrun.h"
+#include "../../include/testrun.h"
 #include "../../src/testrun_vector.c"
 
 static int testing = 1;
@@ -1845,7 +1845,7 @@ int all_tests() {
 
         testrun_test(check_testrun_header_example);
 
-        return 1;
+        return testrun_counter;
 }
 
 /*******************************************************************************

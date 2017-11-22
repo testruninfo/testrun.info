@@ -52,24 +52,24 @@ int testrun_copyright_create_header(
 
         /* add a line prefix */
 
-        if (testrun_embed_string(&step1, &length,
+        if (!testrun_string_embed(&step1, &length,
                 (char*) source, source_length,
                 prefix,         prefix_length,
                 0,0,
                 LINEBREAK,      strlen(LINEBREAK),
-                LINEBREAK,      strlen(LINEBREAK),
-                false) < 0 )
+                LINEBREAK,      strlen(LINEBREAK)))
                 goto error;
 
         /* add intro and outro */
 
-        printf("STEP1 |%s|%d\n", step1, length);
+        printf("STEP1 |%s|%jd\n", step1, length);
 
-        if (testrun_create_string(result, size,
+        if (!testrun_string_embed(result, size,
                 step1,          length,
                 intro,          intro_length,
                 outro,          outro_length,
-                0,0) < 0)
+                0,0,
+                0,0))
                 goto error;
 
         free(step1);
