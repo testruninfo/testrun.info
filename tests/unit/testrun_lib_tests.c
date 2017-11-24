@@ -53,7 +53,7 @@ static int testing = 1;
 int test_test1() {
 
         testrun_assert(1 == 1, "Failure: 1 == 1");
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 */
 /*----------------------------------------------------------------------------*/

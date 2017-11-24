@@ -63,7 +63,7 @@ int testcase_block1(){
         testrun(true);
         testrun(example_function(), "second run of function.");
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -76,7 +76,7 @@ int testcase_block2(){
         testrun(true);
         testrun(example_function(), "second run of function.");
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -89,7 +89,7 @@ int testcase_block3(){
         testrun(true);
         testrun(example_function(), "second run of function.");
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -102,7 +102,7 @@ int testcase_block4(){
         testrun(true);
         testrun(example_function(), "second run of function.");
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*******************************************************************************
@@ -212,30 +212,55 @@ testrun_run(run_tests);
 /*
  *      EXAMPLE RUN using combined test creation and valgrind execution
  *
- *      make test testname=tests/acceptance/testrun_assert_example_tests.c  &&
- *      valgrind ./build/test/acceptance/testrun_assert_example_tests.test
+ *      make test testname=tests/acceptance/testrun_example_tests.c  &&
+ *      valgrind ./build/test/acceptance/testrun_example_tests.test
  *
- *  (CC)    tests/acceptance/testrun_assert_example_tests.c
- * ==14634== Memcheck, a memory error detector
- * ==14634== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
- * ==14634== Using Valgrind-3.11.0 and LibVEX; rerun with -h for copyright info
- * ==14634== Command: ./build/test/acceptance/testrun_assert_example_tests.test
- * ==14634==
+ *      (CC)    tests/acceptance/testrun_example_tests.c
+ *      ==22343== Memcheck, a memory error detector
+ *      ==22343== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
+ *      ==22343== Using Valgrind-3.11.0 and LibVEX; rerun with -h for copyright info
+ *      ==22343== Command: ./build/test/acceptance/testrun_example_tests.test
+ *      ==22343==
  *
- * testrun ./build/test/acceptance/testrun_assert_example_tests.test
- *         [OK]    test_with_assert_function
- *         [OK]    test_whatever_OK
- *         [OK]    test_whatever_NOK
- *         ALL TESTS RUN (3 tests)
- *         Clock ticks function: ( main ) | 0.013501 | 0.000014 ms
+ *      testrun ./build/test/acceptance/testrun_example_tests.test
+ *              [INFO]  testrun_add_testcases line:486 message: added 2 tests to TESTS[](usage 2/1000)
+ *              [OK]    testcase_block2
+ *              [OK]    testcase_block1
+ *              ---------------------------------------------------------
+ *              NOTE PARALLEL TESTING
  *
- * ==14634==
- * ==14634== HEAP SUMMARY:
- * ==14634==     in use at exit: 0 bytes in 0 blocks
- * ==14634==   total heap usage: 1 allocs, 1 frees, 1,024 bytes allocated
- * ==14634==
- * ==14634== All heap blocks were freed -- no leaks are possible
- * ==14634==
- * ==14634== For counts of detected and suppressed errors, rerun with: -v
- * ==14634== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+ *              This version is using OpenMP. Using GCC for compilation
+ *              may produce false valgrind output due to use of libomp.
+ *              More information is included in docs/valgrind/openMP.
+ *              ---------------------------------------------------------
+ *              Parallel RUN (2) TESTS in 4 threads: success 2 error 0)
+ *              Clock ticks function: ( testrun_parallel ) | 0.035083 | 0.000035 ms
+ *
+ *              [INFO]  testrun_add_testcases line:486 message: added 2 tests to TESTS[](usage 2/1000)
+ *              [INFO]  testrun_add_testcases line:486 message: added 2 tests to TESTS[](usage 4/1000)
+ *              [OK]    testcase_block1
+ *              [OK]    testcase_block2
+ *              [OK]    testcase_block3
+ *              [OK]    testcase_block4
+ *              Serial RUN (4) TESTS: success 4 error 0)
+ *              Clock ticks function: ( testrun_sequential ) | 0.005768 | 0.000006 ms
+ *
+ *              ALL TESTS RUN (6 tests)
+ *              Clock ticks function: ( main ) | 0.073920 | 0.000074 ms
+ *
+ *      ==22343==
+ *      ==22343== HEAP SUMMARY:
+ *      ==22343==     in use at exit: 3,184 bytes in 7 blocks
+ *      ==22343==   total heap usage: 9 allocs, 2 frees, 37,024 bytes allocated
+ *      ==22343==
+ *      ==22343== LEAK SUMMARY:
+ *      ==22343==    definitely lost: 0 bytes in 0 blocks
+ *      ==22343==    indirectly lost: 0 bytes in 0 blocks
+ *      ==22343==      possibly lost: 864 bytes in 3 blocks
+ *      ==22343==    still reachable: 2,320 bytes in 4 blocks
+ *      ==22343==         suppressed: 0 bytes in 0 blocks
+ *      ==22343== Rerun with --leak-check=full to see details of leaked memory
+ *      ==22343==
+ *      ==22343== For counts of detected and suppressed errors, rerun with: -v
+ *      ==22343== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
  */

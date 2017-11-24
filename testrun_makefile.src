@@ -142,7 +142,7 @@ build:
 .PHONY: clean
 clean:
 	@echo " (CLEAN) $(LIBNAME)"
-	@rm -rf build bin $(OBJECTS) $(TESTS_OBJECTS) \
+	@rm -rf build bin doxygen/documentation $(OBJECTS) $(TESTS_OBJECTS) \
 		$(LIBNAMEPC) $(TESTS_TMP_FILES)
 
 # ----- DOCUMENATION -------------------------------------------------------

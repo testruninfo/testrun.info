@@ -76,7 +76,7 @@ int test_with_assert_function() {
                 return -1;
 
         // will not be reached in case of error
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -87,10 +87,10 @@ int test_whatever_OK() {
 
         // Positive result logging
         if (!failure)
-                return testrun_log_OK();
+                return testrun_log_success();
 
         // will be reached in case of error
-        return testrun_log_NOK();
+        return testrun_log_failure();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -102,10 +102,10 @@ int test_whatever_NOK() {
         // Failure logging (Don't fail the testrun, just log a failure)
 
         if (failure)
-                return testrun_log_NOK();
+                return testrun_log_failure();
 
         // will not be reached in case of error
-        return testrun_log_OK();
+        return testrun_log_success();
 
 }
 

@@ -25,14 +25,20 @@
  *      @date               2017-11-17
  *
  *      @brief              Serial and parallel test executing framework
- *                          with or without assert based testing.
+ *                          with or without assertion based testing.
+ *
+ *      This is an enhanced and compatible version of the initial idea of an
+ *      small and simple C89 compatible C unittest header (@see testrun_C89.h)
  *
  *      For parallel test runs, this framework makes use of OpenMP and the
- *      code MUST be compiled with -fopenmp (for GCC), otherwise the code
- *      will stay unparallel and execute sequential.
+ *      code MUST be compiled with -fopenmp (at least for GCC), otherwise
+ *      the code will stay unparallel and execution sequential.
  *
  *      @NOTE to use all provided functionality of the header, tests SHOULD be
- *      compiled using -fopenmp and -rdynamic
+ *      compiled using:
+ *
+ *              -fopenmp    (parallel execution) and
+ *              -rdynamic   (function name backtracing)
  *
  *      ------------------------------------------------------------------------
  */
@@ -54,7 +60,7 @@
 #include <assert.h>             /* C89/C90 */
 
 #if defined(__GLIBC__)
-#include <execinfo.h>           /* Gnulib backtrace functions pointer names */
+#include <execinfo.h>           /* Gnulib backtrace of function pointer names */
 #endif
 
 #define TESTRUN_DEFAULT_CLUSTER_MAX 1000
@@ -64,16 +70,12 @@
  *      Block for log function macros used within the framework.
  *
  *      All logging is based in simple STDOUT STDERR logging to
- *      simplify the framework, and to be able to provide all
- *      functionality using a small header only style.
- *
- *      Fprintf statements are used within testrun_log macros for
- *      readability and structural reasons of tests files only.
+ *      simplify the framework.
  *
  *----------------------------------------------------------------------------*/
 
 /**
-        @brief          Error initialization.
+        @brief          Error initialization of none error.
 */
 #define testrun_errno() \
         (errno == 0 ? "NONE" :  strerror(errno))
@@ -81,23 +83,37 @@
 /*----------------------------------------------------------------------------*/
 
 /**
-        @brief          Log a failure.
+        @brief          Log a failure. Used in the sense of:
+                        Inability to perform a function as expected.
+                        (e.g. out of memory, environmental factors, and so on)
         @param msg      message to be logged
         @param ...      VA_ARGS to be logged
 **/
-#define testrun_log_NOK(msg, ...) \
-        fprintf(stderr, "\t[ERROR]\t%s line:%d errno:%s message: " msg "\n",\
+#define testrun_log_failure(msg, ...) \
+        fprintf(stderr, "\t[FAIL]\t%s line:%d errno:%s message: " msg "\n",\
         __FUNCTION__, __LINE__, testrun_errno(), ##__VA_ARGS__)
 
 /*----------------------------------------------------------------------------*/
 
 /**
-        @brief          Log a success.
+        @brief          Log an error. Used in the sense of:
+                        Difference between expected and actual result.
         @param msg      message to be logged
         @param ...      VA_ARGS to be logged
 **/
-#define testrun_log_OK(msg, ...) \
-        fprintf(stdout, "\t[OK] \t%s " msg "\n", __FUNCTION__ ##__VA_ARGS__)
+#define testrun_log_error(msg, ...) \
+        fprintf(stderr, "\t[ERROR]\t%s line:%d errno:%s message: " msg "\n",\
+        __FUNCTION__, __LINE__, testrun_errno(), ##__VA_ARGS__)
+
+/*----------------------------------------------------------------------------*/
+/**
+        @brief          Log a success. Used in the sense of:
+                        Result is as defined.
+        @param msg      message to be logged
+        @param ...      VA_ARGS to be logged
+**/
+#define testrun_log_success(msg, ...) \
+        fprintf(stdout, "\t[OK] \t%s " msg "\n", __FUNCTION__, ##__VA_ARGS__)
 
 /*----------------------------------------------------------------------------*/
 
@@ -110,16 +126,25 @@
         fprintf(stdout, "\t" msg "\n", ##__VA_ARGS__)
 
 /*----------------------------------------------------------------------------*/
+
+/**
+        @brief          Log any message with function and line position info.
+        @param msg      message to be logged
+        @param ...      VA_ARGS to be logged
+**/
+#define testrun_log_function_info(msg, ...) \
+        fprintf(stdout, "\t[INFO] \t%s line:%d message: " msg "\n", \
+                __FUNCTION__, __LINE__, ##__VA_ARGS__)
+
+/*----------------------------------------------------------------------------*/
 /**
         @brief          log the start and end times of a test run.
         @param start    clock_t with at the start of a test run.
         @param end      clock_t at the end of a test run.
-        @param ...      VA_ARGS to log
 **/
-#define testrun_log_clock(start, end, ...) \
-        fprintf(stdout, "\tClock ticks function: ( %s %s) | %f | %f ms \n", \
+#define testrun_log_clock(start, end) \
+        fprintf(stdout, "\tClock ticks function: ( %s ) | %f | %f ms \n", \
         __func__, \
-        #__VA_ARGS__, \
         ((double)(end - start)) / CLOCKS_PER_SEC, \
         (((double)(end - start)) / CLOCKS_PER_SEC )/1000)
 
@@ -127,50 +152,47 @@
  *
  *      Block of supporting MACROS for assert based testing.
  *
- *      (A) Define testblocks (e.g. unit tests, which make use of assert)
+ *      Assert based testing is build around the principle to bundle and
+ *      define some testcases, which will be run in series.
+ *      Within the testcases testrun_assert(), or assert() may be used to
+ *      stop testing.
  *
- *              int test_block1(){      // e.g. block to unit test function1
+ *      -----------------------------------------------------------------
  *
- *                      assert(test1);
- *                      assert(test2);
- *                      assert(test3);
+ *      Example usage:
  *
- *                      return testrun_log_OK();
- *              }
+ *      int testcase1_function(){
+ *              assert(true);
+ *              return testrun_log_success();
+ *      }
  *
- *              int test_block2(){      // e.g. block to unit test function2
+ *      int testcase1_function(){
+ *              testrun_assert(true, "additional info an failure.");
+ *              return testrun_log_success();
+ *      }
  *
- *                      assert(test1);
- *                      assert(test2);
- *                      assert(test3);
+ *      int testseries() {
  *
- *                      return testrun_log_OK();
- *              }
+ *              testrun_init();
  *
- *      (B) Cluster tests to be run as series (create an executable test series)
+ *              testrun_test(testcase1_function);
+ *              testrun_test(testcase2_function);
  *
- *              int assert_based_test_series() {
+ *              return testrun_counter;
+ *      }
  *
- *                      testrun_init();            // create local variables
- *
- *                      testrun_test(test_block1); // execution of block1
- *                      testrun_test(test_block2); // execution of block2
- *
- *                      return testrun_counter;    // created in testrun_init()
- *              }
- *
- *      (C) Execute a testseries over a main() function
- *
- *              testrun_run(assert_based_test_series);
+ *      testrun_run(testseries);
  *
  *----------------------------------------------------------------------------*/
 
 /**
-        @brief          Default initialization.
+        @brief          Default initialization of used variables in macros.
 */
 #define testrun_init()  \
         int result = 0; \
         int testrun_counter = 0;
+
+/*----------------------------------------------------------------------------*/
 
 /**
         @brief          Wrapper around assert, which adds a message level
@@ -180,7 +202,9 @@
         @param message  additional message to log e.g. "Failure: 1 is not one"
 */
 #define testrun_assert(test, ... )\
-        if (!(test)) { testrun_log_NOK(__VA_ARGS__); assert(test); }
+        if (!(test)) { testrun_log_error(__VA_ARGS__); assert(test); }
+
+/*----------------------------------------------------------------------------*/
 
 /**
         @brief          Run a single test (execute function pointer)
@@ -193,14 +217,58 @@
 #define testrun_test(test)\
         result = test(); testrun_counter++; if (result < 0) return result;
 
+/*----------------------------------------------------------------------------*/
+
+/**
+        @brief          run a cluster of tests (function pointers)
+        @param cluster  function pointer to function containing the test
+                        function pointers.
+
+        Runs a function pointer, which shall contain the test function pointers
+        to run. The function pointer is wrapped in a main procedure,
+        which allows indepentent test runs of the test cluster.
+
+        A clock will be started, when the command is invoked and stopped before
+        it returns.
+
+        A run will fail, as soon as one of the tests in the testcluster fails.
+        (Fail early)
+
+        Note: Based on assert based test aborts, the test run will either abort
+        on failure or succed.
+**/
+#define testrun_run(cluster) int main(int argc, char *argv[]) {\
+        argc = argc;\
+        clock_t start1_t, end1_t; \
+        start1_t = clock(); \
+        testrun_log("\ntestrun\t%s", argv[0]);\
+        int64_t result = cluster();\
+        if (result > 0) \
+                testrun_log("ALL TESTS RUN (%jd tests)", result);\
+        end1_t = clock(); \
+        testrun_log_clock(start1_t, end1_t); \
+        testrun_log("");\
+        result > 0 ? exit(EXIT_SUCCESS) : exit(EXIT_FAILURE); \
+}
+
+/*----- END OF BLOCK OF REQUIRED FUNCTIONALITY FOR ASSERT BASED TESTING ----- */
+
 /*----------------------------------------------------------------------------
  *
- *      Block of supporting MACROS for series and parallel testing. This type
- *      of testing is highly customizable and may be adapted by each test module
- *      implementation.
+ *      Block of supporting MACROS an inline functions for sequntial and
+ *      parallel testing. Most of the functionality is realted to configure
+ *      testseries for parallel and/or sequential runs. Which functions may
+ *      be run as parallel tests or sequential tests, is up to the test
+ *      developer.
  *
- *      A given implementation MUST is the implementation of the configure
- *      functions:
+ *      This type of testing is highly customizable and may be adapted
+ *      and customized by each test module implementation.
+ *
+ *      -----------------------------------------------------------------
+ *
+ *      An implementation MUST to support the testrun_fun_tests() function
+ *      is the implementation of the configure functions. These functions
+ *      define, which testseries may be run in parallel and which sequential.
  *
  *              bool testrun_configure_parallel(
  *                      int (*testcases[])(),
@@ -214,91 +282,95 @@
  *                      size_t * const start,
  *                      size_t const * const max);
  *
- *      NOTE TBD It is foreseen to reuse these configuration functions
- *      to embed the whole testcase setup of the module within a library based
- *      import of the tests to a continuous integration server.
+ *      -----------------------------------------------------------------
  *
- *      (A)     Define testblocks (e.g. unit tests,
- *              which make use of testrun() MACRO)
+ *      Example usage:
  *
- *              int test_block1(){      // e.g. block to unit test function1
+ *      int testcase1_function(){
+ *              testrun(true);
+ *              return testrun_log_success();
+ *      }
  *
- *                      testrun(test1);
- *                      testrun(test2);
- *                      testrun(test3);
- *              }
+ *      int testcase1_function(){
+ *              testrun(true, "additional info an failure.");
+ *              return testrun_log_success();
+ *      }
  *
- *              int test_block2(){      // e.g. block to unit test function2
+ *      int64_t testseries(int(*tests[])(), size_t slot, size_t max) {
  *
- *                      testrun(test1);
- *                      testrun(test2);
- *                      testrun(test3);
- *              }
+ *              testrun_init();
  *
- *      (B) Cluster tests to be run (create a test array)
+ *              testrun_add(testcase1_function);
+ *              testrun_add(testcase2_function);
  *
- *              // parameter names MUST be used as stated,
- *              // otherwise testrun_add will fail.
+ *              return testrun_counter;
+ *      }
  *
- *              int64_t cluster_tests(
- *                      int(*tests[])(), size_t slot, size_t max) {
+ *      -----------------------------------------------------------------
  *
- *                      testrun_init();            // create local variables
- *                      testrun_add(test_block1);  // adds block1 to tests[]
- *                      testrun_add(test_block2);  // adds block2 to tests[]
+ *      NOTE: Here we configure a testseries to be run sequential and parallel
  *
- *                      return testrun_counter;
- *              }
- *
- *      (C) Configure testruns (functions MUST be implemented in testfile)
- *
- *              bool testrun_configure_parallel(
+ *      bool testrun_configure_parallel(
  *                      int (*testcases[])(),
  *                      size_t * const start,
  *                      size_t const * const max){
  *
- *                      int r = 0;
+ *              if (testrun_add_testcases(testcases,start,end,testseries) < 0)
+ *                      return false;
  *
- *                      r = testrun_add_testcases(testcases,
- *                                      start, end, cluster_tests);
+ *              return true;
  *
- *                      if (r < 0)
- *                              return false;
- *
- *                      return true;
- *              }
- *
- *              bool testrun_configure_sequential(
+ *      bool testrun_configure_sequential(
  *                      int (*testcases[])(),
  *                      size_t * const start,
  *                      size_t const * const max){
  *
- *                      int r = 0;
+ *              if (testrun_add_testcases(testcases,start,end,testseries) < 0)
+ *                      return false;
  *
- *                      r = testrun_add_testcases(testcases,
- *                                      start, end, cluster_tests);
+ *              return true;
  *
- *                      if (r < 0)
- *                              return false;
+ *      -----------------------------------------------------------------
  *
- *                      return true;
+ *      NOTE: This last function definition is needed to configure the
+ *      maximum amount of parallel and sequential tests as parameters
+ *      instead of a predefinition.
  *
- *              }
+ *      int64_t run_tests(){
+ *              return testrun_run_tests(1000,1000,false);
+ *      }
  *
- *      (D) Create an execution sequence
- *
- *              int64_t run_tests() {
- *
- *                      // MAY be done local or using the header function
- *                      return testrun_run_tests(1000,1000,false);
- *              }
- *
- *
- *      (E) Execute an execution sequence of testcases over a main() function
- *
- *              testrun_run(run_tests);
+ *      testrun_run(run_tests);
  *
  *----------------------------------------------------------------------------*/
+
+/**
+        MUST be implemented to configure parallel tests.
+        @param testcases        array of function pointers
+        @param start            first slot the be used in testcases
+        @param max              maximum slots of testcases (last slot to be set)
+        @returns                true on success, false on errror
+*/
+bool testrun_configure_parallel(
+        int (*testcases[])(),
+        size_t * const start,
+        size_t const * const max);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        MUST be implemented to configure sequential tests.
+        @param testcases        array of function pointers
+        @param start            first slot the be used in testcases
+        @param max              maximum slots of testcases (last slot to be set)
+        @returns                true on success, false on errror
+*/
+bool testrun_configure_sequential(
+        int (*testcases[])(),
+        size_t * const start,
+        size_t const * const max);
+
+/*----------------------------------------------------------------------------*/
 
 /**
         @brief          Run a single atomar test. This function is leaving the
@@ -310,15 +382,16 @@
         @param test     Boolean decision input.
 */
 #define testrun_check(test, ... )\
-        if (!test) { testrun_log_NOK(__VA_ARGS__);  return -1;}
+        if (!(test)) { testrun_log_error(__VA_ARGS__);  return -1;}
 
 /*----------------------------------------------------------------------------*/
 
 /**
         @brief          alias to @see testrun_check
 */
-#define testrun(boolean, ...)\
-        testrun_check(boolean, __VA_ARGS__)
+#define testrun(test, ...)\
+        testrun_check(test, __VA_ARGS__ )
+
 
 /*----------------------------------------------------------------------------*/
 /**
@@ -330,6 +403,10 @@
 */
 #define testrun_add(test)  \
         if (slot + testrun_counter == max) { \
+                testrun_log_failure("All test slots filled, " \
+                        "check config TESTS[MAX]."); \
+                if (testrun_counter == 0) \
+                        return -1; \
                 return -testrun_counter; \
         } else { \
                 tests[slot + testrun_counter] = test; \
@@ -372,29 +449,32 @@ static inline int64_t testrun_add_testcases(
         if (!tests || !function || !last || !max)
                 return -1;
 
-        if (*last >= *max)
+        if (*last > *max)
                 return -1;
 
         int64_t r = 0;
 
-        r =  function(tests, *last, *max);
+        r = function(tests, *last, *max);
+
         if (r < 0) {
 
                 // reinit all from last to end to NULL
                 testrun_init_testcases(tests, *last, *max);
 
-                testrun_log(    "... \tfailed to add %jd tests to array"
-                                "(allready in use %jd of %jd slots)",
-                                -r, *last, *max);
+                testrun_log_failure(
+                        "Failed to add tests to TESTS[] "
+                        "(usage %jd/%jd)",
+                        *last, *max);
 
                 return -1;
 
         } else {
 
                 *last += r;
-                testrun_log(    "... \tadded %jd tests to array"
-                                "(current used %jd of %jd slots)",
-                                r, *last, *max);
+                testrun_log_function_info(
+                        "added %jd tests to TESTS[]"
+                        "(usage %jd/%jd)",
+                        r, *last, *max);
         }
 
         return r;
@@ -410,27 +490,45 @@ static inline int64_t testrun_add_testcases(
  *
  *      @param function         pointer to function pointer array
  *      @param items            amount of items in functions
+ *      @param names            bool to try to backtrace names
  *      @returns                negative count of failed tests
  *                              positive count of run tests otherwise
  */
 static inline bool testrun_dump_testcases(
         int (*functions[])(),
-        size_t max) {
+        size_t max,
+        bool names) {
 
-        if (!functions)
+        if (!functions || max < 1)
                 return false;
 
         void *pointer = NULL;
+
+        // dump is formated to fit to standard header log and to dump 20 digits
+        fprintf(stdout, "\t[DUMP]\ttestcases tests[%jd]\n", max);
+        if (names){
+                #if defined(__GLIBC__)
+                        fprintf(stdout, "\t[DUMP]\t ... try to backtrace\n");
+                #else
+                        fprintf(stdout, "\t[DUMP]\t ... names not implemented\n");
+                #endif
+        }
 
         for (size_t i = 0; i < max; i++) {
 
                 pointer = (void*) functions[i];
 
-                #if defined(__GLIBC__)
-                        backtrace_symbols_fd(&pointer, 1, STDOUT_FILENO);
-                #else
-                        fprintf(stdout, "slot %jd | %p \n", i, pointer);
-                #endif
+                if (names) {
+                        #if defined(__GLIBC__)
+                                backtrace_symbols_fd(&pointer, 1, STDOUT_FILENO);
+                        #else
+                                // fallback to printf
+                                fprintf(stdout, "%20jd %p \n", i, pointer);
+                        #endif
+                } else {
+                        fprintf(stdout, " %20jd %p \n", i, pointer);
+                }
+
         }
 
         return true;
@@ -501,9 +599,8 @@ static inline int64_t testrun_parallel(
         testrun_log("---------------------------------------------------------");
         testrun_log("NOTE PARALLEL TESTING");
         testrun_log("");
-        testrun_log("This version is using OpenMP.");
-        testrun_log("Using GCC for compilation may produce unreliable valgrind");
-        testrun_log("output due to custom synchronization primitives(non POSIX).");
+        testrun_log("This version is using OpenMP. Using GCC for compilation ");
+        testrun_log("may produce false valgrind output due to use of libomp.");
         testrun_log("More information is included in docs/valgrind/openMP.");
         testrun_log("---------------------------------------------------------");
 
@@ -593,32 +690,6 @@ static inline int64_t testrun_sequential(
 /*----------------------------------------------------------------------------*/
 
 /**
-        MUST be implemented to configure parallel tests.
-        @param testcases        array of function pointers
-        @param start            first slot the be used in testcases
-        @param max              maximum slots of testcases (last slot to be set)
-        @returns                true on success, false on errror
-*/
-bool testrun_configure_parallel(
-        int (*testcases[])(),
-        size_t * const start,
-        size_t const * const max);
-
-/**
-        MUST be implemented to configure sequential tests.
-        @param testcases        array of function pointers
-        @param start            first slot the be used in testcases
-        @param max              maximum slots of testcases (last slot to be set)
-        @returns                true on success, false on errror
-*/
-bool testrun_configure_sequential(
-        int (*testcases[])(),
-        size_t * const start,
-        size_t const * const max);
-
-/*----------------------------------------------------------------------------*/
-
-/**
  *      Run a bunch of configurable parallel and sequential tests serial.
  *
  *      @param max_parallel     maximum test cases parallel
@@ -638,6 +709,9 @@ static inline int64_t testrun_run_tests(
         size_t counter_parallel   = 0;
         size_t counter_sequential = 0;
 
+        if ( (max_parallel == 0) && (max_sequential == 0))
+                return -1;
+
         // LOAD & RUN test cases
 
         if (max_parallel > 0) {
@@ -646,14 +720,15 @@ static inline int64_t testrun_run_tests(
                 testrun_init_testcases(testcases, 0, max_parallel);
 
                 if (!testrun_configure_parallel(
-                        testcases, &counter_parallel, &max_parallel))
+                        testcases, &counter_parallel, &max_parallel)){
+                        testrun_log_failure("Failure configure parallel.");
                         return -1;
+                }
 
                 result_parallel = testrun_parallel(testcases, counter_parallel);
 
                 if (result_parallel < 0)
                         testrun_log("Failure testrun parallel run");
-
         }
 
         if (max_sequential > 0) {
@@ -662,8 +737,10 @@ static inline int64_t testrun_run_tests(
                 testrun_init_testcases(testcases, 0, max_sequential);
 
                 if (!testrun_configure_sequential(
-                        testcases, &counter_sequential, &max_sequential))
+                        testcases, &counter_sequential, &max_sequential)){
+                        testrun_log_failure("Failure configure sequential.");
                         return -1;
+                }
 
                 result_sequential = testrun_sequential(
                         testcases, counter_sequential, break_on_error);
@@ -673,45 +750,15 @@ static inline int64_t testrun_run_tests(
 
         }
 
-        if ( (result_parallel < 0) || (result_sequential < 0))
+        if ( (result_parallel < 0) || (result_sequential < 0)) {
+                if ( (counter_parallel + counter_sequential) == 0)
+                        return -1;
                 return ( -1 * (counter_parallel + counter_sequential));
+        }
 
         return (counter_parallel + counter_sequential);
 }
 
-/*----------------------------------------------------------------------------*/
-
-/**
-        @brief          run a cluster of tests (function pointers)
-        @param cluster  function pointer to function containing the test
-                        function pointers.
-
-        Runs a function pointer, which shall contain the test function pointers
-        to run. The function pointer is wrapped in a main procedure,
-        which allows indepentent test runs of the test cluster.
-
-        A clock will be started, when the command is invoked and stopped before
-        it returns.
-
-        A run will fail, as soon as one of the tests in the testcluster fails.
-        (Fail early)
-
-        Note: Based on assert based test aborts, the test run will either abort
-        on failure or succed.
-**/
-#define testrun_run(cluster) int main(int argc, char *argv[]) {\
-        argc = argc;\
-        clock_t start1_t, end1_t; \
-        start1_t = clock(); \
-        testrun_log("\ntestrun\t%s", argv[0]);\
-        int64_t result = cluster();\
-        if (result > 0) \
-                testrun_log("ALL TESTS RUN (%jd tests)", result);\
-        end1_t = clock(); \
-        testrun_log_clock(start1_t, end1_t); \
-        testrun_log("");\
-        result > 0 ? exit(EXIT_SUCCESS) : exit(EXIT_FAILURE); \
-}
 
 /**     -----------------------------------------------------------------------
 
@@ -729,7 +776,6 @@ static inline int64_t testrun_run_tests(
 
         @code
         #include "../tools/testrun.h"
-        #include "../../src/example.c"
 
         bool example_function() {
                 return true;
@@ -757,7 +803,7 @@ static inline int64_t testrun_run_tests(
                         return -1;
 
                 // will not be reached in case of error
-                return testrun_log_OK();
+                return testrun_log_success();
         }
 
         -----------------------------------------------------------------------
@@ -769,10 +815,10 @@ static inline int64_t testrun_run_tests(
                 // Positive result logging
 
                 if (!failure)
-                        return testrun_log_OK();
+                        return testrun_log_success();
 
                 // will be reached in case of error
-                return testrun_log_NOK();
+                return testrun_log_error();
         }
 
         -----------------------------------------------------------------------
@@ -782,10 +828,10 @@ static inline int64_t testrun_run_tests(
                 // Failure logging (Don't fail the testrun, just log a failure)
 
                 if (failure)
-                        return testrun_log_NOK();
+                        return testrun_log_error();
 
                 // will not be reached in case of error
-                return testrun_log_OK();
+                return testrun_log_success();
 
         }
 
@@ -819,85 +865,117 @@ static inline int64_t testrun_run_tests(
         with testrun.h and is build around a MACRO set to execute tests in
         parallel or seqentuial run.
 
-        -----------------------------------------------------------------------
+        //---------------------------------------------------------------------
 
         @code
         #include "../tools/testrun.h"
-        #include "../../src/example.c"
 
         bool example_function() {
                 return true;
         }
-        -----------------------------------------------------------------------
 
-        int test_with_assert_function() {
+        //---------------------------------------------------------------------
 
-                //     Fail on first testing
-                //
-                //     Fail on first can be implemented using assert,
-                //     or by returning a negative result of the testrun_test
-                //     The following examples do all the same, the will stop
-                //     the whole testrun and report a failure.
+        int testcase_block1(){
 
-                testrun_assert(
-                        example_function() == true, \
-                        "Failure: NOK result is true."
-                );
+                testrun(example_function());
+                testrun(true);
+                testrun(example_function(), "second run of function.");
 
-                assert(true == example_function());
-                assert(example_function());
-
-                if (!example_function())
-                        return -1;
-
-                // will not be reached in case of error
-                return testrun_log_OK();
+                return testrun_log_success();
         }
 
-        -----------------------------------------------------------------------
+        //---------------------------------------------------------------------
 
-        int test_whatever_OK() {
+        int testcase_block2(){
 
-                bool failure = false;
-
-                // Positive result logging
-
-                if (!failure)
-                        return testrun_log_OK();
-
-                // will be reached in case of error
-                return testrun_log_NOK();
+                return testrun_log_success();
         }
 
-        -----------------------------------------------------------------------
+        //---------------------------------------------------------------------
 
-        int test_whatever_NOK() {
+        int testcase_block3(){
 
-                // Failure logging (Don't fail the testrun, just log a failure)
-
-                if (failure)
-                        return testrun_log_NOK();
-
-                // will not be reached in case of error
-                return testrun_log_OK();
-
+                return testrun_log_success();
         }
 
-        -----------------------------------------------------------------------
+        //---------------------------------------------------------------------
 
-        int assert_based_testing() {
+        Int testcase_block4(){
 
-                testrun_init();
+               return testrun_log_success();
+        }
 
-                testrun_test(test_with_assert_function);
-                testrun_test(test_whatever_OK);
-                testrun_test(test_whatever_NOK);
+        //---------------------------------------------------------------------
+
+        int64_t cluster_tests1(int(*tests[])(), size_t slot, size_t max) {
+
+                testrun_init();                 // create local variables
+                testrun_add(testcase_block1);   // adds block1 to tests[]
+                testrun_add(testcase_block2);   // adds block2 to tests[]
 
                 return testrun_counter;
+        }
+
+        //---------------------------------------------------------------------
+
+        int64_t cluster_tests2(int(*tests[])(), size_t slot, size_t max) {
+
+                testrun_init();                 // create local variables
+                testrun_add(testcase_block3);   // adds block3 to tests[]
+                testrun_add(testcase_block4);   // adds block4 to tests[]
+
+                return testrun_counter;
+        }
+
+        //---------------------------------------------------------------------
+
+        bool testrun_configure_parallel(
+                int (*testcases[])(),
+                size_t * const start,
+                size_t const * const max){
+
+                if (!testcases || !start || !max)
+                        return false;
+
+                if(testrun_add_testcases(
+                        testcases,start, max, cluster_tests1) < 0)
+                        return false;
+
+                return true;
+        }
+
+        //---------------------------------------------------------------------
+
+
+        bool testrun_configure_sequential(
+                int (*testcases[])(),
+                size_t *const start,
+                size_t const * const max){
+
+                if (!testcases || !start || !max)
+                        return false;
+
+                if(testrun_add_testcases(
+                        testcases,start, max, cluster_tests1) < 0)
+                        return false;
+
+                if(testrun_add_testcases(
+                        testcases,start, max, cluster_tests2) < 0)
+                        return false;
+
+                return true;
 
         }
 
-        testrun_run(assert_based_testing);
+        //---------------------------------------------------------------------
+
+        int64_t run_tests() {
+
+                return testrun_run_tests(1000,1000,false);
+        }
+
+        testrun_run(run_tests);
         @endcode
 
 **/

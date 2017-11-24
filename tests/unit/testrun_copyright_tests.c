@@ -226,7 +226,7 @@ int test_testrun_copyright_create_header() {
         size = 0;
 
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -322,7 +322,7 @@ int test_testrun_read_copyright_from() {
         /* empty file */
         testrun_assert(!testrun_read_copyright_from(path6));
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -392,7 +392,7 @@ int test_testrun_copyright_default() {
         memset(&expect, 0, size);
         free(result);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/

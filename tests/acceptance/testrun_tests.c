@@ -52,7 +52,7 @@ int test_test1() {
 
         testrun_check(true, "test %s %d", "msg", 1);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -61,7 +61,7 @@ int test_test2() {
 
         testrun_check(true, "test %s %d", "msg", 2);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -70,7 +70,7 @@ int test_test3() {
 
         testrun_check(true, "test %s %d", "msg", 3);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -79,7 +79,7 @@ int test_test4() {
 
         testrun_check(true, "test %s %d", "msg", 4);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -88,7 +88,7 @@ int test_test5() {
 
         testrun_check(true, "test %s %d", "msg", 5);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -140,7 +140,7 @@ int64_t run_tests() {
                 return -1;
 
         // example to dump all enabled testcases (usefull for testdevelopment)
-        testrun_dump_testcases(testcases, max);
+        testrun_dump_testcases(testcases, max, true);
 
         // run all tests again, but this time in parallel
         r = testrun_parallel(testcases, counter);

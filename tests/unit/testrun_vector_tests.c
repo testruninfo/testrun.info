@@ -139,7 +139,7 @@ int test_testrun_vector_create(){
         testrun_assert(vector->item_copy == testrun_vector_int64_example_copy);
         vector = testrun_vector_terminate(vector);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -185,7 +185,7 @@ int test_testrun_vector_free(){
         free(pointer);
 
         // check with valgrind run
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -292,7 +292,7 @@ int test_testrun_vector_clear(){
         vector = testrun_vector_terminate(vector);
 
         // items termination check with valgrind run
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -377,7 +377,7 @@ int test_testrun_vector_destroy(){
         free(pointer3);
 
         // items termination check with valgrind run
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -456,7 +456,7 @@ int test_testrun_vector_terminate(){
         testrun_assert(NULL  == testrun_vector_terminate(vector), "with free");
 
         // items termination check with valgrind run
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -586,7 +586,7 @@ int test_testrun_vector_copy(){
         testrun_assert(copy == NULL,     "... item copy failure");
         vector = testrun_vector_terminate(vector);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 
@@ -615,7 +615,7 @@ int test_testrun_vector_is_empty(){
         vector = testrun_vector_terminate(vector);
         free(pointer);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -636,7 +636,7 @@ int test_testrun_vector_int64_example_copy(){
         free(pointer1);
         free(pointer2);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -653,7 +653,7 @@ int test_testrun_vector_int64_example_free(){
         testrun_vector_int64_example_free(pointer2);
 
         // check with valgrind run
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -717,7 +717,7 @@ int test_testrun_vector_resize(){
         vector = testrun_vector_terminate(vector);
         free(pointer);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -974,7 +974,7 @@ int test_testrun_vector_auto_adjust(){
         testrun_assert(vector->rate      == 2);
         vector = testrun_vector_terminate(vector);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -1040,7 +1040,7 @@ int test_testrun_vector_set_new_end(){
         vector = testrun_vector_terminate(vector);
         free(pointer);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -1096,7 +1096,7 @@ int test_testrun_vector_get(){
         free(pointer1);
         free(pointer2);
         free(pointer3);
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -1189,7 +1189,7 @@ int test_testrun_vector_set(){
         vector = testrun_vector_terminate(vector);
 
         // check item free with valgrind run
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -1259,7 +1259,7 @@ int test_testrun_vector_delete(){
         vector = testrun_vector_terminate(vector);
 
         // check item free with valgrind run
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -1333,7 +1333,7 @@ int test_testrun_vector_remove(){
         free(pointer2);
         free(pointer3);
         free(pointer4);
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -1392,7 +1392,7 @@ int test_testrun_vector_add(){
         vector->item_free = free;
         vector = testrun_vector_terminate(vector);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -1484,7 +1484,7 @@ int test_testrun_vector_insert(){
         vector->item_free = free;
         vector = testrun_vector_terminate(vector);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -1576,7 +1576,7 @@ int test_testrun_vector_push(){
         vector->item_free = free;
         vector = testrun_vector_terminate(vector);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -1675,7 +1675,7 @@ int test_testrun_vector_pop(){
         free(pointer5);
         free(pointer6);
         free(pointer7);
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -1700,7 +1700,7 @@ int test_testrun_vector_dump_function_backtrace(){
 
         free(pointer);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -1725,7 +1725,7 @@ int test_testrun_vector_dump(){
         vector = testrun_vector_terminate(vector);
         free(pointer);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -1802,7 +1802,7 @@ int check_testrun_header_example(){
 
         vector = testrun_vector_terminate(vector);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*******************************************************************************

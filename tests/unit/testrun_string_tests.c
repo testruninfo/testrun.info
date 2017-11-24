@@ -60,7 +60,7 @@ int test_testrun_string_free(){
         string = testrun_string_free(string);
         assert(NULL == string);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -169,7 +169,7 @@ int test_testrun_string_prepare(){
         open = 0;
         used = 0;
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -327,7 +327,7 @@ int test_testrun_string_append(){
         free(dest);
         dest = NULL;
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -864,7 +864,7 @@ int test_testrun_string_write_embeded(){
 
         free(data);
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -1533,7 +1533,7 @@ int test_testrun_string_embed(){
 
 
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -1667,7 +1667,7 @@ int test_testrun_string_unset_end(){
         string = NULL;
 
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -1878,7 +1878,7 @@ int test_testrun_string_replace_first(){
 
 
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 /*----------------------------------------------------------------------------*/
 
@@ -2450,7 +2450,7 @@ int test_testrun_string_replace_all(){
         free(ptr);
         ptr = NULL;
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*******************************************************************************

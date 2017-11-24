@@ -86,7 +86,7 @@ int run_inline_testrun_log_create_timestamp(){
         testrun_assert(result[7]  == '-');
         testrun_assert(result[4]  == '-');
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -145,7 +145,7 @@ int run_inline_testrun_log_create_timestamp_save(){
         testrun_assert(result[7]  == '-');
         testrun_assert(result[4]  == '-');
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -165,7 +165,7 @@ int run_macro_testrun_log_file_print_plain(){
          *              (3) format specifiers replaced
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -186,7 +186,7 @@ int run_macro_testrun_log_file_print_level_plain(){
          *              (3) format specifiers replaced
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -209,7 +209,7 @@ int run_macro_testrun_log_file_print_time_plain(){
          *              (3) format specifiers replaced
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -232,7 +232,7 @@ int run_macro_testrun_log_file_print_all_plain(){
          *              (3) format specifiers replaced
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -255,7 +255,7 @@ int run_macro_testrun_log_file_print_time_json(){
          *              (3) format specifiers replaced
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -278,7 +278,7 @@ int run_macro_testrun_log_file_print_all_json_format1(){
          *              (3) format specifiers replaced
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -301,7 +301,7 @@ int run_macro_testrun_log_file_print_all_json_format2(){
          *              (3) format specifiers replaced
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -324,7 +324,7 @@ int run_macro_testrun_log_file_print_all_json_no_format(){
          *              (3) format specifiers replaced
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -346,7 +346,7 @@ int run_macro_testrun_log_file(){
          *      Message MUST be: "testrun_log_file message 1"
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -369,7 +369,7 @@ int run_macro_testrun_log_file_timestamp_shared(){
          *      Message MUST be: "testrun_log_file message 1"
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -391,7 +391,7 @@ int run_macro_testrun_log_forward(){
          *      Message MUST be: "testrun_log_forward message 1"
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -410,7 +410,7 @@ int run_macro_log_dev(){
          *              (3) format specifiers replaced
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -429,7 +429,7 @@ int run_macro_log_oom(){
          *              (3) format specifiers replaced
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -448,7 +448,7 @@ int run_macro_log_debug(){
          *              (3) format specifiers replaced
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -467,7 +467,7 @@ int run_macro_log_info(){
          *              (3) format specifiers replaced
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 
@@ -487,7 +487,7 @@ int run_macro_log_notice(){
          *              (3) format specifiers replaced
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 
@@ -507,7 +507,7 @@ int run_macro_log_warning(){
          *              (3) format specifiers replaced
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 
@@ -527,7 +527,7 @@ int run_macro_log_error(){
          *              (3) format specifiers replaced
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -546,7 +546,7 @@ int run_macro_log_critical(){
          *              (3) format specifiers replaced
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 
@@ -566,7 +566,7 @@ int run_macro_log_alert(){
          *              (3) format specifiers replaced
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -585,7 +585,7 @@ int run_macro_log_emergency(){
          *              (3) format specifiers replaced
          */
 
-        return testrun_log_OK();
+        return testrun_log_success();
 }
 
 
