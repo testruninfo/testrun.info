@@ -143,10 +143,10 @@
         @param end      clock_t at the end of a test run.
 **/
 #define testrun_log_clock(start, end) \
-        fprintf(stdout, "\tClock ticks function: ( %s ) | %f | %f ms \n", \
+        fprintf(stdout, "\tClock ticks function: ( %s ) | %f | %.0f ms \n", \
         __func__, \
         ((double)(end - start)) / CLOCKS_PER_SEC, \
-        (((double)(end - start)) / CLOCKS_PER_SEC )/1000)
+        (((double)(end - start)) / CLOCKS_PER_SEC ) * 1000)
 
 /*----------------------------------------------------------------------------
  *

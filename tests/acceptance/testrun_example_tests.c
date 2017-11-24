@@ -246,7 +246,7 @@ testrun_run(run_tests);
  *              Clock ticks function: ( testrun_sequential ) | 0.005768 | 0.000006 ms
  *
  *              ALL TESTS RUN (6 tests)
- *              Clock ticks function: ( main ) | 0.073920 | 0.000074 ms
+ *              Clock ticks function: ( main ) | 0.073920 | 74 ms
  *
  *      ==22343==
  *      ==22343== HEAP SUMMARY:

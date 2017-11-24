@@ -2617,13 +2617,13 @@ testrun_run(cluster_tests_non_configurable);
  *      sequential shows a slightly better runtime in sequential run.
  *
  *      testrun_run(cluster_tests_non_configurable);
- *      results around 0.000110 ms
+ *      results around 110 ms
  *
  *      testrun_run(run_tests); with sequential testrun_run_tests(0,25,true);
- *      results around 0.000125 ms
+ *      results around 125 ms
  *
  *      testrun_run(run_tests); with parallel testrun_run_tests(25,0,true);
- *      results around 0.000200 ms - 0.000300 ms
+ *      results around 200 ms - 300 ms
  *
  *      So the overhead for OpenMP is not worth to run the tests in parallel
  *      here. This may be different for other test scenarios. Check your
@@ -2636,17 +2636,17 @@ testrun_run(cluster_tests_non_configurable);
  *
  *      EXAMPLE RUN TIMES:
  *      ALL TESTS RUN (8 tests)
- *      Clock ticks function: ( main ) | 0.110468 | 0.000110 ms
+ *      Clock ticks function: ( main ) | 0.110468 | 110 ms
  *
  *      Serial RUN (8) TESTS: success 8 error 0)
- *      Clock ticks function: ( testrun_sequential ) | 0.096326 | 0.000096 ms
+ *      Clock ticks function: ( testrun_sequential ) | 0.096326 | 96 ms
  *      ALL TESTS RUN (8 tests)
- *      Clock ticks function: ( main ) | 0.123577 | 0.000124 ms
+ *      Clock ticks function: ( main ) | 0.123577 | 124 ms
  *
  *      Parallel RUN (8) TESTS in 0 threads: success 8 error 0)
- *      Clock ticks function: ( testrun_parallel ) | 0.264922 | 0.000265 ms
+ *      Clock ticks function: ( testrun_parallel ) | 0.264922 | 265 ms
  *      ALL TESTS RUN (8 tests)
- *      Clock ticks function: ( main ) | 0.292388 | 0.000292 ms
+ *      Clock ticks function: ( main ) | 0.292388 | 292 ms
  *
  *      TEST RUN with following machine data:
  *      markus@PC:~/projects/testrun.info/testrun_lib$ lscpu

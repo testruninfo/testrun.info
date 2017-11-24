@@ -98,11 +98,11 @@
         @param ...      VA_ARGS to log
 **/
 #define testrun_log_clock(start, end, ...) \
-        fprintf(stdout, "\tClock ticks function: ( %s %s) | %f | %f ms \n", \
+        fprintf(stdout, "\tClock ticks function: ( %s %s) | %f | %.0f ms \n", \
         __func__, \
         #__VA_ARGS__, \
         ((double)(end - start)) / CLOCKS_PER_SEC, \
-        (((double)(end - start)) / CLOCKS_PER_SEC )/1000)
+        (((double)(end - start)) / CLOCKS_PER_SEC ) * 1000)
 
 /**
         @brief          wrapper around assert.

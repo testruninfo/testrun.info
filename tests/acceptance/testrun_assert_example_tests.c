@@ -155,7 +155,7 @@ testrun_run(assert_based_testing);
  *         [OK]    test_whatever_OK
  *         [OK]    test_whatever_NOK
  *         ALL TESTS RUN (3 tests)
- *         Clock ticks function: ( main ) | 0.013501 | 0.000014 ms
+ *         Clock ticks function: ( main ) | 0.013501 | 14 ms
  *
  * ==14634==
  * ==14634== HEAP SUMMARY:
