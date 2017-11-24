@@ -122,7 +122,7 @@
         @param end      clock_t at the end of a test run.
 **/
 #define testrun_log_clock(start, end) \
-        fprintf(stdout, "\tClock ticks function: ( %s ) | %f | %.0f ms \n", \
+        fprintf(stdout, "\tClock ticks function: ( %s ) | %f s | %.0f ms \n", \
         __func__, \
         ((double)(end - start)) / CLOCKS_PER_SEC, \
         (((double)(end - start)) / CLOCKS_PER_SEC ) * 1000)
@@ -228,8 +228,8 @@
         @code
         #include "../tools/testrun.h"
 
-        bool example_function() {
-                return true;
+        int example_function() {
+                return 1;
         }
 
         //---------------------------------------------------------------------
@@ -237,15 +237,15 @@
         int test_function1() {
 
                 // use of testrun_check() for evaluation
-                testrun_check(true);
-                testrun_check(true, "some additional information");
+                testrun_check(1 == 1);
+                testrun_check(1 == 1, "some additional information");
 
                 // use of testrun() for evaluation
-                testrun(true);
-                testrun(true, "some additional information");
+                testrun(1 == 1);
+                testrun(1 == 1, "some additional information");
 
                 // use of manual evaluation and logging
-                if (!example_function()){
+                if (1 != example_function()){
                         testrun_log_error("some additional information.");
                         return -1;
                 }
@@ -258,7 +258,7 @@
 
         int test_function2() {
 
-                testrun_check(true);
+                testrun_check(1 == 1);
                 return testrun_log_success();
         }
 
@@ -266,10 +266,11 @@
 
         int test_function3() {
 
-                testrun_check(true);
+                testrun_check(1 == 1);
                 return testrun_log_success();
         }
-        -----------------------------------------------------------------------
+
+        //---------------------------------------------------------------------
 
         int testcase_cluster() {
 
