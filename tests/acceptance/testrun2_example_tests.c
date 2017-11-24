@@ -20,13 +20,13 @@
  *      ------------------------------------------------------------------------
  ***//**
  *
- *      @file           testrun_example_tests.c
+ *      @file           testrun2_example_tests.c
  *      @author         Markus Toepfer
  *      @date           2017-11-22
  *
  *      @ingroup        testrun_lib
  *
- *      @brief          Example test file using testrun.h
+ *      @brief          Example test file using testrun2.h
  *
  *      This example shows parallel and sequential style based testing
  *      with testrun.h and is build around a MACRO set to execute tests in
@@ -43,7 +43,7 @@
  *
  ******************************************************************************/
 
-#include "../../include/testrun.h"
+#include "../../include/testrun2.h"
 
 bool example_function() {
         return true;

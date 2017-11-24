@@ -37,7 +37,7 @@
  *
  ******************************************************************************/
 
-#include "../../include/testrun.h"
+#include "../../include/testrun2.h"
 #include "../../include/testrun_log.h"
 
 static int testing = 1;

@@ -40,7 +40,7 @@
 
 #include <limits.h>
 
-#include "../../include/testrun.h"
+#include "../../include/testrun2.h"
 #include "../../src/testrun_vector.c"
 
 static int testing = 1;

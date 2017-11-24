@@ -20,7 +20,7 @@
  *      ------------------------------------------------------------------------
  ***//**
  *
- *      @file           testrun_header_h.c
+ *      @file           testrun2_header_h.c
  *      @author         Markus Toepfer
  *      @date           2017-11-23
  *
@@ -38,7 +38,7 @@
  *
  ******************************************************************************/
 
-#include "../../include/testrun.h"
+#include "../../include/testrun2.h"
 
 static int testing = 1;
 

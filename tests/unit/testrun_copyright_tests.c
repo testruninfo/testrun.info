@@ -38,7 +38,7 @@
  *
  ******************************************************************************/
 
-#include "../../include/testrun.h"
+#include "../../include/testrun2.h"
 #include "../../src/testrun_copyright.c"
 #include "../../include/testrun_lib.h"
 #include <sys/stat.h>

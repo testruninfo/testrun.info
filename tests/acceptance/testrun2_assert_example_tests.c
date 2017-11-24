@@ -20,13 +20,13 @@
  *      ------------------------------------------------------------------------
  ***//**
  *
- *      @file           testrun2_tests.c
+ *      @file           testrun2_assert_example_tests.c
  *      @author         Markus Toepfer
  *      @date           2017-11-21
  *
  *      @ingroup        testrun_lib
  *
- *      @brief           Example test file using testrun.h
+ *      @brief          Example test file using testrun2.h
  *
  *      This example shows assert() style based testing with testrun.h and is
  *      build around the testrun_test() macro, which increases a counter which
@@ -43,7 +43,7 @@
  *
  ******************************************************************************/
 
-#include "../../include/testrun.h"
+#include "../../include/testrun2.h"
 
 bool example_function() {
         return true;

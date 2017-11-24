@@ -63,28 +63,28 @@ int run_inline_testrun_log_create_timestamp(){
         //2017-11-20T14:57:01Z
 
         // structure check only
-        testrun_assert(result != NULL);
-        testrun_assert(strlen(result) == 20);
-        testrun_assert(result[19] == 'Z');
-        testrun_assert(result[16] == ':');
-        testrun_assert(result[13] == ':');
-        testrun_assert(result[10] == 'T');
-        testrun_assert(result[7]  == '-');
-        testrun_assert(result[4]  == '-');
+        testrun(result != NULL);
+        testrun(strlen(result) == 20);
+        testrun(result[19] == 'Z');
+        testrun(result[16] == ':');
+        testrun(result[13] == ':');
+        testrun(result[10] == 'T');
+        testrun(result[7]  == '-');
+        testrun(result[4]  == '-');
 
         //01234567890123456789012345678
         //2017-11-20T14:57:01.123456Z
 
         result = testrun_log_create_timestamp(true);
-        testrun_assert(result != NULL);
-        testrun_assert(strlen(result) == 27);
-        testrun_assert(result[26] == 'Z');
-        testrun_assert(result[19] == '.');
-        testrun_assert(result[16] == ':');
-        testrun_assert(result[13] == ':');
-        testrun_assert(result[10] == 'T');
-        testrun_assert(result[7]  == '-');
-        testrun_assert(result[4]  == '-');
+        testrun(result != NULL);
+        testrun(strlen(result) == 27);
+        testrun(result[26] == 'Z');
+        testrun(result[19] == '.');
+        testrun(result[16] == ':');
+        testrun(result[13] == ':');
+        testrun(result[10] == 'T');
+        testrun(result[7]  == '-');
+        testrun(result[4]  == '-');
 
         return testrun_log_success();
 }
@@ -96,54 +96,54 @@ int run_inline_testrun_log_create_timestamp_save(){
 
         char result[30];
 
-        testrun_assert(!testrun_log_create_timestamp_save(true, NULL,   0));
-        testrun_assert(!testrun_log_create_timestamp_save(true, result, 0));
-        testrun_assert(!testrun_log_create_timestamp_save(true, result, 27));
-        testrun_assert(!testrun_log_create_timestamp_save(false,result, 20));
+        testrun(!testrun_log_create_timestamp_save(true, NULL,   0));
+        testrun(!testrun_log_create_timestamp_save(true, result, 0));
+        testrun(!testrun_log_create_timestamp_save(true, result, 27));
+        testrun(!testrun_log_create_timestamp_save(false,result, 20));
 
 
-        testrun_assert(testrun_log_create_timestamp_save(false, result, 21));
+        testrun(testrun_log_create_timestamp_save(false, result, 21));
 
         //01234567890123456789
         //2017-11-20T14:57:01Z
 
         // structure check only
-        testrun_assert(strlen(result) == 20);
-        testrun_assert(result[19] == 'Z');
-        testrun_assert(result[16] == ':');
-        testrun_assert(result[13] == ':');
-        testrun_assert(result[10] == 'T');
-        testrun_assert(result[7]  == '-');
-        testrun_assert(result[4]  == '-');
+        testrun(strlen(result) == 20);
+        testrun(result[19] == 'Z');
+        testrun(result[16] == ':');
+        testrun(result[13] == ':');
+        testrun(result[10] == 'T');
+        testrun(result[7]  == '-');
+        testrun(result[4]  == '-');
         bzero(result, 30);
-        testrun_assert(strlen(result) == 0);
+        testrun(strlen(result) == 0);
 
-        testrun_assert(!testrun_log_create_timestamp_save(true,result, 27));
-        testrun_assert(testrun_log_create_timestamp_save(false,result, 21));
+        testrun(!testrun_log_create_timestamp_save(true,result, 27));
+        testrun(testrun_log_create_timestamp_save(false,result, 21));
         // structure check only
-        testrun_assert(strlen(result) == 20);
-        testrun_assert(result[19] == 'Z');
-        testrun_assert(result[16] == ':');
-        testrun_assert(result[13] == ':');
-        testrun_assert(result[10] == 'T');
-        testrun_assert(result[7]  == '-');
-        testrun_assert(result[4]  == '-');
+        testrun(strlen(result) == 20);
+        testrun(result[19] == 'Z');
+        testrun(result[16] == ':');
+        testrun(result[13] == ':');
+        testrun(result[10] == 'T');
+        testrun(result[7]  == '-');
+        testrun(result[4]  == '-');
         bzero(result, 30);
-        testrun_assert(strlen(result) == 0);
+        testrun(strlen(result) == 0);
 
-        testrun_assert(testrun_log_create_timestamp_save(true,result, 28));
+        testrun(testrun_log_create_timestamp_save(true,result, 28));
 
         //01234567890123456789012345678
         //2017-11-20T14:57:01.123456Z
-        testrun_assert(result != NULL);
-        testrun_assert(strlen(result) == 27);
-        testrun_assert(result[26] == 'Z');
-        testrun_assert(result[19] == '.');
-        testrun_assert(result[16] == ':');
-        testrun_assert(result[13] == ':');
-        testrun_assert(result[10] == 'T');
-        testrun_assert(result[7]  == '-');
-        testrun_assert(result[4]  == '-');
+        testrun(result != NULL);
+        testrun(strlen(result) == 27);
+        testrun(result[26] == 'Z');
+        testrun(result[19] == '.');
+        testrun(result[16] == ':');
+        testrun(result[13] == ':');
+        testrun(result[10] == 'T');
+        testrun(result[7]  == '-');
+        testrun(result[4]  == '-');
 
         return testrun_log_success();
 }
@@ -152,7 +152,7 @@ int run_inline_testrun_log_create_timestamp_save(){
 
 int run_macro_testrun_log_file_print_plain(){
 
-        testrun_assert(testrun_log_file_print_plain(
+        testrun(testrun_log_file_print_plain(
                 stdout, "testrun_log_file_print_plain %s %d", "message", 1));
 
         /*
@@ -172,7 +172,7 @@ int run_macro_testrun_log_file_print_plain(){
 
 int run_macro_testrun_log_file_print_level_plain(){
 
-        testrun_assert(testrun_log_file_print_level_plain(
+        testrun(testrun_log_file_print_level_plain(
                 stdout, 1, "testrun_log_file_print_level_plain %s %d", \
                 "message", 1));
 
@@ -193,7 +193,7 @@ int run_macro_testrun_log_file_print_level_plain(){
 
 int run_macro_testrun_log_file_print_time_plain(){
 
-        testrun_assert(testrun_log_file_print_time_plain(
+        testrun(testrun_log_file_print_time_plain(
                 stdout, 1,
                 testrun_log_create_timestamp(false),
                 "testrun_log_file_print_time_plain %s %d",
@@ -216,7 +216,7 @@ int run_macro_testrun_log_file_print_time_plain(){
 
 int run_macro_testrun_log_file_print_all_plain(){
 
-        testrun_assert(testrun_log_file_print_all_plain(
+        testrun(testrun_log_file_print_all_plain(
                 stdout, 1,
                 testrun_log_create_timestamp(false),
                 "testrun_log_file_print_all_plain %s %d",
@@ -239,7 +239,7 @@ int run_macro_testrun_log_file_print_all_plain(){
 
 int run_macro_testrun_log_file_print_time_json(){
 
-        testrun_assert(testrun_log_file_print_time_json(
+        testrun(testrun_log_file_print_time_json(
                 stdout, 1,
                 testrun_log_create_timestamp(false),
                 "testrun_log_file_print_time_json %s %d",
@@ -262,7 +262,7 @@ int run_macro_testrun_log_file_print_time_json(){
 
 int run_macro_testrun_log_file_print_all_json_format1(){
 
-        testrun_assert(testrun_log_file_print_all_json_format1(
+        testrun(testrun_log_file_print_all_json_format1(
                 stdout, 1,
                 testrun_log_create_timestamp(false),
                 "testrun_log_file_print_all_json_format1 %s %d",
@@ -285,7 +285,7 @@ int run_macro_testrun_log_file_print_all_json_format1(){
 
 int run_macro_testrun_log_file_print_all_json_format2(){
 
-        testrun_assert(testrun_log_file_print_all_json_format2(
+        testrun(testrun_log_file_print_all_json_format2(
                 stdout, 1,
                 testrun_log_create_timestamp(false),
                 "testrun_log_file_print_all_json_format2 %s %d",
@@ -308,7 +308,7 @@ int run_macro_testrun_log_file_print_all_json_format2(){
 
 int run_macro_testrun_log_file_print_all_json_no_format(){
 
-        testrun_assert(testrun_log_file_print_all_json_no_format(
+        testrun(testrun_log_file_print_all_json_no_format(
                 stdout, 1,
                 testrun_log_create_timestamp(false),
                 "testrun_log_file_print_all_json_no_format %s %d",
