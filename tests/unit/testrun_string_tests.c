@@ -54,11 +54,11 @@ int test_testrun_string_free(){
 
         char *string = calloc(1, sizeof(char));
 
-        assert(NULL == testrun_string_free(NULL));
+        testrun(NULL == testrun_string_free(NULL));
 
-        assert(NULL != string);
+        testrun(NULL != string);
         string = testrun_string_free(string);
-        assert(NULL == string);
+        testrun(NULL == string);
 
         return testrun_log_success();
 }
@@ -72,22 +72,22 @@ int test_testrun_string_prepare(){
         size_t open = 0;
         size_t used = 0;
 
-        assert(false == testrun_string_prepare(NULL, NULL,  NULL,  NULL));
-        assert(false == testrun_string_prepare(NULL, &size, &open, &used));
-        assert(false == testrun_string_prepare(&ptr, NULL,  &open, &used));
-        assert(false == testrun_string_prepare(&ptr, &size, NULL,  &used));
-        assert(false == testrun_string_prepare(&ptr, &size, &open, NULL));
+        testrun(false == testrun_string_prepare(NULL, NULL,  NULL,  NULL));
+        testrun(false == testrun_string_prepare(NULL, &size, &open, &used));
+        testrun(false == testrun_string_prepare(&ptr, NULL,  &open, &used));
+        testrun(false == testrun_string_prepare(&ptr, &size, NULL,  &used));
+        testrun(false == testrun_string_prepare(&ptr, &size, &open, NULL));
 
         // -------------------------------------------------------------
         // Positive test - new allocation
         // -------------------------------------------------------------
 
-        assert(NULL == ptr);
-        assert(true == testrun_string_prepare(&ptr, &size, &open, &used));
-        assert(NULL != ptr);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
-        assert(open == testrun_STRING_DEFAULT_SIZE);
-        assert(used == 0);
+        testrun(NULL == ptr);
+        testrun(true == testrun_string_prepare(&ptr, &size, &open, &used));
+        testrun(NULL != ptr);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(open == testrun_STRING_DEFAULT_SIZE);
+        testrun(used == 0);
 
         // reset
         ptr  = testrun_string_free(ptr);
@@ -104,18 +104,18 @@ int test_testrun_string_prepare(){
         strcat(ptr, "test");
 
         // validate
-        assert(ptr  != NULL);
-        assert(size == 10);
-        assert(open == 0);
-        assert(used == 0);
+        testrun(ptr  != NULL);
+        testrun(size == 10);
+        testrun(open == 0);
+        testrun(used == 0);
 
-        assert(true == testrun_string_prepare(&ptr, &size, &open, &used));
+        testrun(true == testrun_string_prepare(&ptr, &size, &open, &used));
 
         // check
-        assert(ptr  != NULL);
-        assert(size == 10);
-        assert(open == 6);
-        assert(used == 4);
+        testrun(ptr  != NULL);
+        testrun(size == 10);
+        testrun(open == 6);
+        testrun(used == 4);
 
         // reset
         ptr  = testrun_string_free(ptr);
@@ -132,18 +132,18 @@ int test_testrun_string_prepare(){
         strcat(ptr, "0123456789");
 
         // validate
-        assert(ptr  != NULL);
-        assert(size == 11);
-        assert(open == 0);
-        assert(used == 0);
+        testrun(ptr  != NULL);
+        testrun(size == 11);
+        testrun(open == 0);
+        testrun(used == 0);
 
-        assert(true == testrun_string_prepare(&ptr, &size, &open, &used));
+        testrun(true == testrun_string_prepare(&ptr, &size, &open, &used));
 
         // check
-        assert(ptr  != NULL);
-        assert(size == 11);
-        assert(open == 1);
-        assert(used == 10);
+        testrun(ptr  != NULL);
+        testrun(size == 11);
+        testrun(open == 1);
+        testrun(used == 10);
 
 
         // -------------------------------------------------------------
@@ -155,13 +155,13 @@ int test_testrun_string_prepare(){
         open = 0;
         used = 0;
 
-        assert(false == testrun_string_prepare(&ptr, &size, &open, &used));
+        testrun(false == testrun_string_prepare(&ptr, &size, &open, &used));
 
         // check
-        assert(ptr  != NULL);
-        assert(size == 10);
-        assert(open == 0);
-        assert(used == 10);
+        testrun(ptr  != NULL);
+        testrun(size == 10);
+        testrun(open == 0);
+        testrun(used == 10);
 
         // reset
         ptr  = testrun_string_free(ptr);
@@ -184,11 +184,11 @@ int test_testrun_string_append(){
         size_t  s_size  = 0;
 
 
-        assert(false == testrun_string_append(NULL,  NULL,    NULL, 0));
-        assert(false == testrun_string_append(NULL,  &d_size, src,  s_size));
-        assert(false == testrun_string_append(&dest, NULL,    src,  s_size));
-        assert(false == testrun_string_append(&dest, &d_size, NULL,  s_size));
-        assert(false == testrun_string_append(&dest, &d_size, src,  0));
+        testrun(false == testrun_string_append(NULL,  NULL,    NULL, 0));
+        testrun(false == testrun_string_append(NULL,  &d_size, src,  s_size));
+        testrun(false == testrun_string_append(&dest, NULL,    src,  s_size));
+        testrun(false == testrun_string_append(&dest, &d_size, NULL,  s_size));
+        testrun(false == testrun_string_append(&dest, &d_size, src,  0));
 
         // -------------------------------------------------------------
         // Positive test, no realloc
@@ -201,9 +201,9 @@ int test_testrun_string_append(){
         expect = "test1";
 
 
-        assert(true == testrun_string_append(&dest, &d_size, src,  strlen(src)));
-        assert(strncmp(expect, dest, strlen(expect)) == 0);
-        assert(d_size == 10);
+        testrun(true == testrun_string_append(&dest, &d_size, src,  strlen(src)));
+        testrun(strncmp(expect, dest, strlen(expect)) == 0);
+        testrun(d_size == 10);
 
         free(dest);
         dest = NULL;
@@ -219,9 +219,9 @@ int test_testrun_string_append(){
         src    = "1";
         expect = "test1";
 
-        assert(true == testrun_string_append(&dest, &d_size, src,  strlen(src)));
-        assert(strncmp(expect, dest, strlen(expect)) == 0);
-        assert(d_size == 6);
+        testrun(true == testrun_string_append(&dest, &d_size, src,  strlen(src)));
+        testrun(strncmp(expect, dest, strlen(expect)) == 0);
+        testrun(d_size == 6);
 
         free(dest);
         dest = NULL;
@@ -237,9 +237,9 @@ int test_testrun_string_append(){
         expect = "test1";
 
 
-        assert(true == testrun_string_append(&dest, &d_size, src,  strlen(src)));
-        assert(strncmp(expect, dest, strlen(expect)) == 0);
-        assert(d_size == 6);
+        testrun(true == testrun_string_append(&dest, &d_size, src,  strlen(src)));
+        testrun(strncmp(expect, dest, strlen(expect)) == 0);
+        testrun(d_size == 6);
 
         free(dest);
         dest = NULL;
@@ -254,9 +254,9 @@ int test_testrun_string_append(){
         src    = "1";
         expect = "1";
 
-        assert(true == testrun_string_append(&dest, &d_size, src,  strlen(src)));
-        assert(strncmp(expect, dest, strlen(expect)) == 0);
-        assert(d_size == 2);
+        testrun(true == testrun_string_append(&dest, &d_size, src,  strlen(src)));
+        testrun(strncmp(expect, dest, strlen(expect)) == 0);
+        testrun(d_size == 2);
 
         free(dest);
         dest = NULL;
@@ -273,17 +273,17 @@ int test_testrun_string_append(){
 
         // dest length shorter dest string
         d_size = 9;
-        assert(false == testrun_string_append(&dest, &d_size, src,  strlen(src)));
+        testrun(false == testrun_string_append(&dest, &d_size, src,  strlen(src)));
 
         // dest length == strlen(dest);
         d_size = 10;
-        assert(false == testrun_string_append(&dest, &d_size, src,  strlen(src)));
+        testrun(false == testrun_string_append(&dest, &d_size, src,  strlen(src)));
 
         // dest length == strlen(dest) + 1;
         d_size = 11;
-        assert(true == testrun_string_append(&dest, &d_size, src,  strlen(src)));
-        assert(strncmp(expect, dest, strlen(expect)) == 0);
-        assert(d_size == strlen(expect) + 1);
+        testrun(true == testrun_string_append(&dest, &d_size, src,  strlen(src)));
+        testrun(strncmp(expect, dest, strlen(expect)) == 0);
+        testrun(d_size == strlen(expect) + 1);
 
         free(dest);
         dest = NULL;
@@ -299,12 +299,12 @@ int test_testrun_string_append(){
         expect = "0123456789xxx";
 
         // source len > strlen(source)
-        assert(false == testrun_string_append(&dest, &d_size, src,  4));
+        testrun(false == testrun_string_append(&dest, &d_size, src,  4));
 
         // source len  == strlen(source)
-        assert(true == testrun_string_append(&dest, &d_size, src,  3));
-        assert(strncmp(expect, dest, strlen(expect)) == 0);
-        assert(d_size == 15);
+        testrun(true == testrun_string_append(&dest, &d_size, src,  3));
+        testrun(strncmp(expect, dest, strlen(expect)) == 0);
+        testrun(d_size == 15);
 
         free(dest);
         dest = NULL;
@@ -320,9 +320,9 @@ int test_testrun_string_append(){
         expect = "0123456789xx";
 
         // source len  < strlen(source)
-        assert(true == testrun_string_append(&dest, &d_size, src,  2));
-        assert(strncmp(expect, dest, strlen(expect)) == 0);
-        assert(d_size == 15);
+        testrun(true == testrun_string_append(&dest, &d_size, src,  2));
+        testrun(strncmp(expect, dest, strlen(expect)) == 0);
+        testrun(d_size == 15);
 
         free(dest);
         dest = NULL;
@@ -347,49 +347,49 @@ int test_testrun_string_write_embeded(){
         char *data   = calloc(open, sizeof(char));
         char expect[5000];
 
-        assert(-1 == testrun_string_write_embeded(   NULL,
+        testrun(-1 == testrun_string_write_embeded(   NULL,
                                                 0,      0, 0,
                                                 NULL,   0,
                                                 NULL,   0,
                                                 NULL,   0,
                                                 NULL,   0));
 
-        assert(-1  == testrun_string_write_embeded(  &data,
+        testrun(-1  == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 NULL,   0,
                                                 NULL,   0,
                                                 NULL,   0,
                                                 NULL,   0));
 
-        assert(-1  == testrun_string_write_embeded(  NULL,
+        testrun(-1  == testrun_string_write_embeded(  NULL,
                                                 &open,  &used, rate,
                                                 NULL,   0,
                                                 NULL,   0,
                                                 NULL,   0,
                                                 NULL,   0));
 
-        assert(-1  == testrun_string_write_embeded(  &data,
+        testrun(-1  == testrun_string_write_embeded(  &data,
                                                 NULL,  &used, rate,
                                                 NULL,   0,
                                                 NULL,   0,
                                                 NULL,   0,
                                                 NULL,   0));
 
-        assert(-1  == testrun_string_write_embeded(  &data,
+        testrun(-1  == testrun_string_write_embeded(  &data,
                                                 &open,  NULL, rate,
                                                 NULL,   0,
                                                 NULL,   0,
                                                 NULL,   0,
                                                 NULL,   0));
 
-        assert(-1  == testrun_string_write_embeded(  &data,
+        testrun(-1  == testrun_string_write_embeded(  &data,
                                                 &open,  &used,  rate,
                                                 NULL,   0,
                                                 NULL,   0,
                                                 NULL,   0,
                                                 NULL,   0));
 
-        assert(-1  == testrun_string_write_embeded(  &data,
+        testrun(-1  == testrun_string_write_embeded(  &data,
                                                 &open,  &used,  0,
                                                 NULL,   0,
                                                 NULL,   0,
@@ -412,16 +412,16 @@ int test_testrun_string_write_embeded(){
 
         rate = 1;
 
-        assert( strlen(expect) == testrun_string_write_embeded(  &data,
+        testrun( strlen(expect) == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 NULL,   0,
                                                 NULL,   0,
                                                 NULL,   0,
                                                 lbreak, strlen(lbreak)));
 
-        assert(strncmp(expect, data, strlen(expect)) == 0);
-        assert(used == 1);
-        assert(open == 99);
+        testrun(strncmp(expect, data, strlen(expect)) == 0);
+        testrun(used == 1);
+        testrun(open == 99);
 
         bzero(&expect, 5000);
         used = 0;
@@ -435,16 +435,16 @@ int test_testrun_string_write_embeded(){
         sprintf(expect, "%s", source);
         rate = 1;
 
-        assert( strlen(expect) == testrun_string_write_embeded(  &data,
+        testrun( strlen(expect) == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 NULL,   0,
                                                 source, strlen(source),
                                                 NULL,   0,
                                                 NULL,   0));
 
-        assert(strncmp(expect, data, strlen(expect)) == 0);
-        assert(used == strlen(source));
-        assert(open == 100 - strlen(source));
+        testrun(strncmp(expect, data, strlen(expect)) == 0);
+        testrun(used == strlen(source));
+        testrun(open == 100 - strlen(source));
 
 
         bzero(&expect, 5000);
@@ -459,16 +459,16 @@ int test_testrun_string_write_embeded(){
         sprintf(expect, "%s", suffix);
         rate = 1;
 
-        assert( strlen(expect) == testrun_string_write_embeded(  &data,
+        testrun( strlen(expect) == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 NULL,   0,
                                                 NULL,   0,
                                                 suffix, strlen(suffix),
                                                 NULL,   0));
 
-        assert(strncmp(expect, data, strlen(expect)) == 0);
-        assert(used == strlen(suffix));
-        assert(open == 100 - strlen(suffix));
+        testrun(strncmp(expect, data, strlen(expect)) == 0);
+        testrun(used == strlen(suffix));
+        testrun(open == 100 - strlen(suffix));
 
         bzero(&expect, 5000);
         used = 0;
@@ -482,16 +482,16 @@ int test_testrun_string_write_embeded(){
         sprintf(expect, "%s", prefix);
         rate = 1;
 
-        assert( strlen(expect) == testrun_string_write_embeded(  &data,
+        testrun( strlen(expect) == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 prefix, strlen(prefix),
                                                 NULL,   0,
                                                 NULL,   0,
                                                 NULL,   0));
 
-        assert(strncmp(expect, data, strlen(expect)) == 0);
-        assert(used == strlen(prefix));
-        assert(open == 100 - strlen(prefix));
+        testrun(strncmp(expect, data, strlen(expect)) == 0);
+        testrun(used == strlen(prefix));
+        testrun(open == 100 - strlen(prefix));
 
 
         // -------------------------------------------------------------
@@ -510,16 +510,16 @@ int test_testrun_string_write_embeded(){
         sprintf(expect, "xxxabcdyyy\n\n\n");
         rate = 1;
 
-        assert( strlen(expect) == testrun_string_write_embeded(  &data,
+        testrun( strlen(expect) == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 prefix, strlen(prefix),
                                                 source, strlen(source),
                                                 suffix, strlen(suffix),
                                                 lbreak, strlen(lbreak)));
 
-        assert(strncmp(expect, data, strlen(expect)) == 0);
-        assert(used == strlen(expect));
-        assert(open == 100 - strlen(expect));
+        testrun(strncmp(expect, data, strlen(expect)) == 0);
+        testrun(used == strlen(expect));
+        testrun(open == 100 - strlen(expect));
 
         // -------------------------------------------------------------
         // Check length use
@@ -528,72 +528,72 @@ int test_testrun_string_write_embeded(){
         used = 0;
         open = 100;
         sprintf(expect, "xabcdyyy\n\n\n");
-        assert( strlen(expect) == testrun_string_write_embeded(  &data,
+        testrun( strlen(expect) == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 prefix, 1,
                                                 source, strlen(source),
                                                 suffix, strlen(suffix),
                                                 lbreak, strlen(lbreak)));
 
-        assert(strncmp(expect, data, strlen(expect)) == 0);
-        assert(used == strlen(expect));
-        assert(open == 100 - strlen(expect));
+        testrun(strncmp(expect, data, strlen(expect)) == 0);
+        testrun(used == strlen(expect));
+        testrun(open == 100 - strlen(expect));
 
         used = 0;
         open = 100;
         sprintf(expect, "xxxabcdyyy\n\n\n");
-        assert( strlen(expect) == testrun_string_write_embeded(  &data,
+        testrun( strlen(expect) == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 prefix, strlen(prefix),
                                                 source, strlen(source),
                                                 suffix, strlen(suffix),
                                                 lbreak, strlen(lbreak)));
 
-        assert(strncmp(expect, data, strlen(expect)) == 0);
-        assert(used == strlen(expect));
-        assert(open == 100 - strlen(expect));
+        testrun(strncmp(expect, data, strlen(expect)) == 0);
+        testrun(used == strlen(expect));
+        testrun(open == 100 - strlen(expect));
 
         used = 0;
         open = 100;
         sprintf(expect, "xxxabyyy\n\n\n");
-        assert( strlen(expect) == testrun_string_write_embeded(  &data,
+        testrun( strlen(expect) == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 prefix, strlen(prefix),
                                                 source, 2,
                                                 suffix, strlen(suffix),
                                                 lbreak, strlen(lbreak)));
 
-        assert(strncmp(expect, data, strlen(expect)) == 0);
-        assert(used == strlen(expect));
-        assert(open == 100 - strlen(expect));
+        testrun(strncmp(expect, data, strlen(expect)) == 0);
+        testrun(used == strlen(expect));
+        testrun(open == 100 - strlen(expect));
 
         used = 0;
         open = 100;
         sprintf(expect, "xxxabcd\n\n\n");
-        assert( strlen(expect) == testrun_string_write_embeded(  &data,
+        testrun( strlen(expect) == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 prefix, strlen(prefix),
                                                 source, strlen(source),
                                                 suffix, 0,
                                                 lbreak, strlen(lbreak)));
 
-        assert(strncmp(expect, data, strlen(expect)) == 0);
-        assert(used == strlen(expect));
-        assert(open == 100 - strlen(expect));
+        testrun(strncmp(expect, data, strlen(expect)) == 0);
+        testrun(used == strlen(expect));
+        testrun(open == 100 - strlen(expect));
 
         used = 0;
         open = 100;
         sprintf(expect, "xxxabcdyyy\n");
-        assert( strlen(expect) == testrun_string_write_embeded(  &data,
+        testrun( strlen(expect) == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 prefix, strlen(prefix),
                                                 source, strlen(source),
                                                 suffix, strlen(suffix),
                                                 lbreak, 1));
 
-        assert(strncmp(expect, data, strlen(expect)) == 0);
-        assert(used == strlen(expect));
-        assert(open == 100 - strlen(expect));
+        testrun(strncmp(expect, data, strlen(expect)) == 0);
+        testrun(used == strlen(expect));
+        testrun(open == 100 - strlen(expect));
 
         // -------------------------------------------------------------
         // Check reallocate by min rate
@@ -617,17 +617,17 @@ int test_testrun_string_write_embeded(){
         rate = 1;
         real = strlen(expect) + 1;
 
-        assert( strlen(expect) == testrun_string_write_embeded(  &data,
+        testrun( strlen(expect) == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 prefix, strlen(prefix),
                                                 source, strlen(source),
                                                 suffix, strlen(suffix),
                                                 lbreak, strlen(lbreak)));
 
-        assert(strncmp(expect, data, strlen(expect)) == 0);
-        assert(used == strlen(expect));
-        assert(open == real - used);
-        assert(open == 1);
+        testrun(strncmp(expect, data, strlen(expect)) == 0);
+        testrun(used == strlen(expect));
+        testrun(open == real - used);
+        testrun(open == 1);
 
         // -------------------------------------------------------------
         // Check reallocate with rate == required
@@ -651,17 +651,17 @@ int test_testrun_string_write_embeded(){
         rate = 3;
         real = open + rate + 1;
 
-        assert( strlen(expect) == testrun_string_write_embeded(  &data,
+        testrun( strlen(expect) == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 prefix, strlen(prefix),
                                                 source, strlen(source),
                                                 suffix, strlen(suffix),
                                                 lbreak, strlen(lbreak)));
 
-        assert(strncmp(expect, data, strlen(expect)) == 0);
-        assert(used == strlen(expect));
-        assert(open == real -used);
-        assert(open == 1);
+        testrun(strncmp(expect, data, strlen(expect)) == 0);
+        testrun(used == strlen(expect));
+        testrun(open == real -used);
+        testrun(open == 1);
 
         // -------------------------------------------------------------
         // Check reallocate with rate > required
@@ -685,17 +685,17 @@ int test_testrun_string_write_embeded(){
         rate = 10;
         real = open + rate;
 
-        assert( strlen(expect) == testrun_string_write_embeded(  &data,
+        testrun( strlen(expect) == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 prefix, strlen(prefix),
                                                 source, strlen(source),
                                                 suffix, strlen(suffix),
                                                 lbreak, strlen(lbreak)));
 
-        assert(strncmp(expect, data, strlen(expect)) == 0);
-        assert(used == strlen(expect));
-        assert(open == real - used);
-        assert(open == 7);
+        testrun(strncmp(expect, data, strlen(expect)) == 0);
+        testrun(used == strlen(expect));
+        testrun(open == real - used);
+        testrun(open == 7);
 
         // -------------------------------------------------------------
         // Check reallocate with rate < required (FALLBACK MIN REALLOC)
@@ -719,17 +719,17 @@ int test_testrun_string_write_embeded(){
         rate = 2;
         real = strlen(expect) + 1;
 
-        assert( strlen(expect) == testrun_string_write_embeded(  &data,
+        testrun( strlen(expect) == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 prefix, strlen(prefix),
                                                 source, strlen(source),
                                                 suffix, strlen(suffix),
                                                 lbreak, strlen(lbreak)));
 
-        assert(strncmp(expect, data, strlen(expect)) == 0);
-        assert(used == strlen(expect));
-        assert(open == real - used);
-        assert(open == 1);
+        testrun(strncmp(expect, data, strlen(expect)) == 0);
+        testrun(used == strlen(expect));
+        testrun(open == real - used);
+        testrun(open == 1);
 
 
         // -------------------------------------------------------------
@@ -754,17 +754,17 @@ int test_testrun_string_write_embeded(){
         rate = 2;
         real = strlen(expect) + 1;
 
-        assert( strlen(expect) == testrun_string_write_embeded(  &data,
+        testrun( strlen(expect) == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 prefix, strlen(prefix),
                                                 source, strlen(source),
                                                 suffix, strlen(suffix),
                                                 lbreak, strlen(lbreak)));
 
-        assert(strncmp(expect, data, strlen(expect)) == 0);
-        assert(used == strlen(expect));
-        assert(open == real - used);
-        assert(open == 1);
+        testrun(strncmp(expect, data, strlen(expect)) == 0);
+        testrun(used == strlen(expect));
+        testrun(open == real - used);
+        testrun(open == 1);
 
         // -------------------------------------------------------------
         // Check without any preallocation (and rate > required)
@@ -788,17 +788,17 @@ int test_testrun_string_write_embeded(){
         rate = 20;
         real = 20;
 
-        assert( strlen(expect) == testrun_string_write_embeded(  &data,
+        testrun( strlen(expect) == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 prefix, strlen(prefix),
                                                 source, strlen(source),
                                                 suffix, strlen(suffix),
                                                 lbreak, strlen(lbreak)));
 
-        assert(strncmp(expect, data, strlen(expect)) == 0);
-        assert(used == strlen(expect));
-        assert(open == real - used);
-        assert(open == 7);
+        testrun(strncmp(expect, data, strlen(expect)) == 0);
+        testrun(used == strlen(expect));
+        testrun(open == real - used);
+        testrun(open == 7);
 
 
         // -------------------------------------------------------------
@@ -822,16 +822,16 @@ int test_testrun_string_write_embeded(){
         // rate == min required, expected reallocation
         rate = 1;
 
-        assert( strlen(expect) == testrun_string_write_embeded(  &data,
+        testrun( strlen(expect) == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 prefix, strlen(prefix),
                                                 source, strlen(source),
                                                 0, 0,
                                                 lbreak, strlen(lbreak)));
 
-        assert(strncmp(expect, data, strlen(expect)) == 0);
-        assert(used == strlen(expect));
-        assert(open == 1);
+        testrun(strncmp(expect, data, strlen(expect)) == 0);
+        testrun(used == strlen(expect));
+        testrun(open == 1);
 
 
         free(data);
@@ -851,16 +851,16 @@ int test_testrun_string_write_embeded(){
         // rate == min required, expected reallocation
         rate = 1;
 
-        assert( strlen(expect) == testrun_string_write_embeded(  &data,
+        testrun( strlen(expect) == testrun_string_write_embeded(  &data,
                                                 &open,  &used, rate,
                                                 prefix, strlen(prefix),
                                                 source, strlen(source),
                                                 suffix, strlen(suffix),
                                                 0, 0));
 
-        assert(strncmp(expect, data, strlen(expect)) == 0);
-        assert(used == strlen(expect));
-        assert(open == 1);
+        testrun(strncmp(expect, data, strlen(expect)) == 0);
+        testrun(used == strlen(expect));
+        testrun(open == 1);
 
         free(data);
 
@@ -882,35 +882,35 @@ int test_testrun_string_embed(){
 
         char expect[1000];
 
-        assert(false == testrun_string_embed(NULL,   NULL,
+        testrun(false == testrun_string_embed(NULL,   NULL,
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0));
 
-        assert(false == testrun_string_embed(NULL,   &size,
+        testrun(false == testrun_string_embed(NULL,   &size,
                                         source, strlen(source),
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0));
 
-        assert(false == testrun_string_embed(&ptr,   NULL,
+        testrun(false == testrun_string_embed(&ptr,   NULL,
                                         source, strlen(source),
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0));
 
-        assert(false == testrun_string_embed(&ptr,   &size,
+        testrun(false == testrun_string_embed(&ptr,   &size,
                                         NULL,   strlen(source),
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0));
 
-        assert(false == testrun_string_embed(&ptr,   &size,
+        testrun(false == testrun_string_embed(&ptr,   &size,
                                         source, 0,
                                         NULL,   0,
                                         NULL,   0,
@@ -923,39 +923,39 @@ int test_testrun_string_embed(){
 
         sprintf(expect, "s");
 
-        assert(NULL == ptr);
-        assert(0 == size);
+        testrun(NULL == ptr);
+        testrun(0 == size);
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, 1,
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0));
 
-        assert(ptr);
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(ptr);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         // reset
         free(ptr);
         ptr  = NULL;
         size = 0;
 
-        assert(NULL == ptr);
-        assert(0    == size);
+        testrun(NULL == ptr);
+        testrun(0    == size);
         sprintf(expect, "%s", source);
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0));
 
-        assert(ptr);
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(ptr);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
 
         // -------------------------------------------------------------
@@ -967,80 +967,80 @@ int test_testrun_string_embed(){
         ptr  = NULL;
         size = 0;
 
-        assert(NULL == ptr);
-        assert(0    == size);
+        testrun(NULL == ptr);
+        testrun(0    == size);
         sprintf(expect, "%s%s", prefix, source);
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0));
 
-        assert(ptr);
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(ptr);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         // reset
         free(ptr);
         ptr  = NULL;
         size = 0;
 
-        assert(NULL == ptr);
-        assert(0    == size);
+        testrun(NULL == ptr);
+        testrun(0    == size);
         sprintf(expect, "%s%s", source, suffix);
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         NULL,   0,
                                         suffix, strlen(suffix),
                                         NULL,   0,
                                         NULL,   0));
 
-        assert(ptr);
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(ptr);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         // reset
         free(ptr);
         ptr  = NULL;
         size = 0;
 
-        assert(NULL == ptr);
-        assert(0    == size);
+        testrun(NULL == ptr);
+        testrun(0    == size);
         sprintf(expect, "%s", source);
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         NULL,   0,
                                         NULL,   0,
                                         delim1, strlen(delim1),
                                         NULL,   0));
 
-        assert(ptr);
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(ptr);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         // reset
         free(ptr);
         ptr  = NULL;
         size = 0;
 
-        assert(NULL == ptr);
-        assert(0    == size);
+        testrun(NULL == ptr);
+        testrun(0    == size);
         sprintf(expect, "%s%s", source, delim2);
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         NULL,   0,
                                         NULL,   0,
                                         NULL,   0,
                                         delim2, strlen(delim2)));
 
-        assert(ptr);
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(ptr);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         // reset
         free(ptr);
@@ -1051,20 +1051,20 @@ int test_testrun_string_embed(){
         // check all together
         // -------------------------------------------------------------
 
-        assert(NULL == ptr);
-        assert(0    == size);
+        testrun(NULL == ptr);
+        testrun(0    == size);
         sprintf(expect, "%s%s%s%s", prefix, source, suffix, delim2);
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
                                         delim1, strlen(delim1),
                                         delim2, strlen(delim2)));
 
-        assert(ptr);
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(ptr);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         // reset
         free(ptr);
@@ -1081,19 +1081,19 @@ int test_testrun_string_embed(){
         delim1 = ",";
         delim2 = ":";
 
-        assert(NULL == ptr);
-        assert(0    == size);
+        testrun(NULL == ptr);
+        testrun(0    == size);
         sprintf(expect, "(a):(b):(c):(d):");
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
                                         delim1, strlen(delim1),
                                         delim2, strlen(delim2)));
-        assert(ptr);
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(ptr);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         // reset
         free(ptr);
@@ -1116,16 +1116,16 @@ int test_testrun_string_embed(){
 
         sprintf(expect, "test(a):(b):(c):(d):");
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
                                         delim1, strlen(delim1),
                                         delim2, strlen(delim2)));
 
-        assert(ptr);
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == 100);
+        testrun(ptr);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == 100);
 
         // reset
         free(ptr);
@@ -1148,85 +1148,85 @@ int test_testrun_string_embed(){
 
         sprintf(expect, "test(a):(b):(c):(d):");
 
-        assert(size == 100);
+        testrun(size == 100);
 
         size = 2;
-        assert(false == testrun_string_embed(&ptr,   &size,
+        testrun(false == testrun_string_embed(&ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
                                         delim1, strlen(delim1),
                                         delim2, strlen(delim2)));
 
-        assert(strncmp(ptr, "test", strlen(ptr)) == 0);
+        testrun(strncmp(ptr, "test", strlen(ptr)) == 0);
 
-        assert(size == 2);
+        testrun(size == 2);
 
         size = 3;
-        assert(false == testrun_string_embed(&ptr,   &size,
+        testrun(false == testrun_string_embed(&ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
                                         delim1, strlen(delim1),
                                         delim2, strlen(delim2)));
 
-        assert(strncmp(ptr, "test", strlen(ptr)) == 0);
-        assert(size == 3);
+        testrun(strncmp(ptr, "test", strlen(ptr)) == 0);
+        testrun(size == 3);
 
 
         size = 4;
-        assert(false == testrun_string_embed(&ptr,   &size,
+        testrun(false == testrun_string_embed(&ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
                                         delim1, strlen(delim1),
                                         delim2, strlen(delim2)));
 
-        assert(strncmp(ptr, "test", strlen(ptr)) == 0);
-        assert(size == 4);
+        testrun(strncmp(ptr, "test", strlen(ptr)) == 0);
+        testrun(size == 4);
 
         // -------------------------------------------------------------
         // Contained string & size fit ... adding default length
         // -------------------------------------------------------------
 
         size = 5;
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
                                         delim1, strlen(delim1),
                                         delim2, strlen(delim2)));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE + 5);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE + 5);
 
         bzero(ptr, 100);
         strcat(ptr, "test");
 
         size = 6;
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
                                         delim1, strlen(delim1),
                                         delim2, strlen(delim2)));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE + 6);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE + 6);
 
         bzero(ptr, 100);
         strcat(ptr, "test");
 
         size = 10;
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
                                         delim1, strlen(delim1),
                                         delim2, strlen(delim2)));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE + 10);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE + 10);
 
         // reset
         free(ptr);
@@ -1250,15 +1250,15 @@ int test_testrun_string_embed(){
 
         sprintf(expect, "test(a,b,c,d)");
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
                                         delim1, strlen(delim1),
                                         delim2, strlen(delim2)));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == 100);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == 100);
 
         // reset
         free(ptr);
@@ -1277,15 +1277,15 @@ int test_testrun_string_embed(){
 
         sprintf(expect, "(a,b,c,d)");
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
                                         delim1, strlen(delim1),
                                         delim2, strlen(delim2)));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == 100);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == 100);
 
         // reset
         free(ptr);
@@ -1304,15 +1304,15 @@ int test_testrun_string_embed(){
 
         sprintf(expect, "(a,b,c,d)");
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
                                         delim1, strlen(delim1),
                                         delim2, strlen(delim2)));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         // reset
         free(ptr);
@@ -1336,7 +1336,7 @@ int test_testrun_string_embed(){
 
         sprintf(expect, "test(a) (b) (c) (d) ");
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
@@ -1345,8 +1345,8 @@ int test_testrun_string_embed(){
 
 
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == 100);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == 100);
 
         // reset
         free(ptr);
@@ -1365,15 +1365,15 @@ int test_testrun_string_embed(){
 
         sprintf(expect, "(a) (b) (c) (d) ");
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
                                         delim1, strlen(delim1),
                                         delim2, strlen(delim2)));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == 100);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == 100);
 
         // reset
         free(ptr);
@@ -1392,15 +1392,15 @@ int test_testrun_string_embed(){
 
         sprintf(expect, "(a) (b) (c) (d) ");
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
                                         delim1, strlen(delim1),
                                         delim2, strlen(delim2)));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         // reset
         free(ptr);
@@ -1423,15 +1423,15 @@ int test_testrun_string_embed(){
 
         sprintf(expect, "(a) (.b) (c..d) ");
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
                                         delim1, strlen(delim1),
                                         delim2, strlen(delim2)));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         // reset
         free(ptr);
@@ -1454,15 +1454,15 @@ int test_testrun_string_embed(){
 
         sprintf(expect, "(a)\n(b)\n(c)\n(d)\n");
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
                                         delim1, strlen(delim1),
                                         delim2, strlen(delim2)));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         // reset
         free(ptr);
@@ -1485,15 +1485,15 @@ int test_testrun_string_embed(){
 
         sprintf(expect, "(a)\n()\n()\n");
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
                                         delim1, strlen(delim1),
                                         delim2, strlen(delim2)));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         // reset
         free(ptr);
@@ -1516,15 +1516,15 @@ int test_testrun_string_embed(){
 
         sprintf(expect, "(a)()()");
 
-        assert(true == testrun_string_embed( &ptr,   &size,
+        testrun(true == testrun_string_embed( &ptr,   &size,
                                         source, strlen(source),
                                         prefix, strlen(prefix),
                                         suffix, strlen(suffix),
                                         delim1, strlen(delim1),
                                         NULL, 0));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         // reset
         free(ptr);
@@ -1553,14 +1553,14 @@ int test_testrun_string_unset_end(){
         size = strlen(source);
         len  = strlen(string);
 
-        assert(false == testrun_string_unset_end( NULL,    0,      NULL,   0));
-        assert(false == testrun_string_unset_end( NULL,    size,   string, len));
-        assert(false == testrun_string_unset_end( source,  0,      string, len));
-        assert(false == testrun_string_unset_end( source,  size,   NULL,   len));
-        assert(false == testrun_string_unset_end( source,  size,   string, 0));
+        testrun(false == testrun_string_unset_end( NULL,    0,      NULL,   0));
+        testrun(false == testrun_string_unset_end( NULL,    size,   string, len));
+        testrun(false == testrun_string_unset_end( source,  0,      string, len));
+        testrun(false == testrun_string_unset_end( source,  size,   NULL,   len));
+        testrun(false == testrun_string_unset_end( source,  size,   string, 0));
 
-        assert(true  == testrun_string_unset_end( source,  size,   string, len));
-        assert(strncmp(source, expect, strlen(source)) == 0);
+        testrun(true  == testrun_string_unset_end( source,  size,   string, len));
+        testrun(strncmp(source, expect, strlen(source)) == 0);
 
         // -------------------------------------------------------------
         // len != strlen(string)
@@ -1577,13 +1577,13 @@ int test_testrun_string_unset_end(){
         size = strlen(source);
         len  = strlen(string) + 1;
 
-        assert(false == testrun_string_unset_end( source, size,  string, len));
-        assert(strncmp(source, expect, strlen(source)) == 0);
+        testrun(false == testrun_string_unset_end( source, size,  string, len));
+        testrun(strncmp(source, expect, strlen(source)) == 0);
 
         len  = strlen(string);
 
-        assert(true == testrun_string_unset_end( source, size,  string, len));
-        assert(strncmp(source, expect, strlen(source)) == 0);
+        testrun(true == testrun_string_unset_end( source, size,  string, len));
+        testrun(strncmp(source, expect, strlen(source)) == 0);
 
         // -------------------------------------------------------------
         // size < len
@@ -1600,8 +1600,8 @@ int test_testrun_string_unset_end(){
         size = strlen(source);
         len  = strlen(string);
 
-        assert(false == testrun_string_unset_end( source, size,  string, len));
-        assert(strncmp(source, expect, strlen(source)) == 0);
+        testrun(false == testrun_string_unset_end( source, size,  string, len));
+        testrun(strncmp(source, expect, strlen(source)) == 0);
 
         // -------------------------------------------------------------
         // size == len
@@ -1615,9 +1615,9 @@ int test_testrun_string_unset_end(){
         size = strlen(source);
         len  = strlen(string);
 
-        assert(true == testrun_string_unset_end( source, size,  string, len));
-        assert(strlen(source) == 0);
-        assert(strncmp(source, expect, strlen(source)) == 0);
+        testrun(true == testrun_string_unset_end( source, size,  string, len));
+        testrun(strlen(source) == 0);
+        testrun(strncmp(source, expect, strlen(source)) == 0);
 
         // -------------------------------------------------------------
         // size == len (no match)
@@ -1634,8 +1634,8 @@ int test_testrun_string_unset_end(){
         size = strlen(source);
         len  = strlen(string) + 1;
 
-        assert(false == testrun_string_unset_end( source, size,  string, len));
-        assert(strncmp(source, expect, strlen(source)) == 0);
+        testrun(false == testrun_string_unset_end( source, size,  string, len));
+        testrun(strncmp(source, expect, strlen(source)) == 0);
 
         // -------------------------------------------------------------
         // no last match
@@ -1652,14 +1652,14 @@ int test_testrun_string_unset_end(){
         size = strlen(source);
         len  = strlen(string) + 1;
 
-        assert(false == testrun_string_unset_end( source, size,  string, len));
-        assert(strncmp(source, expect, strlen(source)) == 0);
+        testrun(false == testrun_string_unset_end( source, size,  string, len));
+        testrun(strncmp(source, expect, strlen(source)) == 0);
         bzero(source, 100);
         expect = "source_enx";
         strcat(source, expect);
 
-        assert(false == testrun_string_unset_end( source, size,  string, len));
-        assert(strncmp(source, expect, strlen(source)) == 0);
+        testrun(false == testrun_string_unset_end( source, size,  string, len));
+        testrun(strncmp(source, expect, strlen(source)) == 0);
 
         free(source);
         source = NULL;
@@ -1683,39 +1683,39 @@ int test_testrun_string_replace_first(){
         char *new    = ":";
         char *expect = "1:2\n3\n4";
 
-        assert(false == testrun_string_replace_first(NULL, NULL,
+        testrun(false == testrun_string_replace_first(NULL, NULL,
                                                 NULL, 0,
                                                 NULL, 0,
                                                 NULL, 0));
 
-        assert(false == testrun_string_replace_first(NULL,   &size,
+        testrun(false == testrun_string_replace_first(NULL,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 new,    strlen(new)));
 
-        assert(false == testrun_string_replace_first(&ptr,   NULL,
+        testrun(false == testrun_string_replace_first(&ptr,   NULL,
                                                 NULL,   strlen(source),
                                                 old,    strlen(old),
                                                 new,    strlen(new)));
 
-        assert(false == testrun_string_replace_first(&ptr,   &size,
+        testrun(false == testrun_string_replace_first(&ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 new,    0));
 
-        assert(false == testrun_string_replace_first(&ptr,   &size,
+        testrun(false == testrun_string_replace_first(&ptr,   &size,
                                                 source, strlen(source),
                                                 NULL,   strlen(old),
                                                 new,    strlen(new)));
 
         // new length not correct
-        assert(false == testrun_string_replace_first(&ptr,   &size,
+        testrun(false == testrun_string_replace_first(&ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 new,    strlen(new) - 1));
 
         // old length not correct
-        assert(false == testrun_string_replace_first(&ptr,   &size,
+        testrun(false == testrun_string_replace_first(&ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old) - 1,
                                                 new,    strlen(new)));
@@ -1724,21 +1724,21 @@ int test_testrun_string_replace_first(){
         // positive exchange (old + new)
         // -------------------------------------------------------------
 
-        assert(ptr  == NULL);
-        assert(size == 0);
+        testrun(ptr  == NULL);
+        testrun(size == 0);
 
         source = "1 2 3 4";
         old    = " ";
         new    = ":";
         expect = "1:2 3 4";
 
-        assert(true == testrun_string_replace_first( &ptr,   &size,
+        testrun(true == testrun_string_replace_first( &ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 new,    strlen(new)));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         // reset
         ptr  = testrun_string_free(ptr);
@@ -1748,21 +1748,21 @@ int test_testrun_string_replace_first(){
         // positive cut (no new)
         // -------------------------------------------------------------
 
-        assert(ptr  == NULL);
-        assert(size == 0);
+        testrun(ptr  == NULL);
+        testrun(size == 0);
 
         source = "1 2 3 4";
         old    = " ";
         new    = ":";
         expect = "12 3 4";
 
-        assert(true == testrun_string_replace_first( &ptr,   &size,
+        testrun(true == testrun_string_replace_first( &ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 NULL,   0));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         // reset
         ptr  = testrun_string_free(ptr);
@@ -1772,21 +1772,21 @@ int test_testrun_string_replace_first(){
         // positive old not found (copy source)
         // -------------------------------------------------------------
 
-        assert(ptr  == NULL);
-        assert(size == 0);
+        testrun(ptr  == NULL);
+        testrun(size == 0);
 
         source = "1 2 3 4";
         old    = "x";
         new    = ":";
         expect = "1 2 3 4";
 
-        assert(true == testrun_string_replace_first( &ptr,   &size,
+        testrun(true == testrun_string_replace_first( &ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 new,    strlen(new)));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         // reset
         ptr  = testrun_string_free(ptr);
@@ -1805,13 +1805,13 @@ int test_testrun_string_replace_first(){
         new    = ":";
         expect = "test1 2 3 4";
 
-        assert(true == testrun_string_replace_first( &ptr,   &size,
+        testrun(true == testrun_string_replace_first( &ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 new,    strlen(new)));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == 10 + testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == 10 + testrun_STRING_DEFAULT_SIZE);
 
         // -------------------------------------------------------------
         // append mode append with item replacement
@@ -1822,13 +1822,13 @@ int test_testrun_string_replace_first(){
         new    = ":";
         expect = "test1 2 3 41:2 3 4";
 
-        assert(true == testrun_string_replace_first( &ptr,   &size,
+        testrun(true == testrun_string_replace_first( &ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 new,    strlen(new)));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == 10 + testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == 10 + testrun_STRING_DEFAULT_SIZE);
 
         // -------------------------------------------------------------
         // append mode append with item delete
@@ -1839,13 +1839,13 @@ int test_testrun_string_replace_first(){
         new    = ":";
         expect = "test1 2 3 41:2 3 412 3 4";
 
-        assert(true == testrun_string_replace_first( &ptr,   &size,
+        testrun(true == testrun_string_replace_first( &ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 NULL,   0));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == 10 + testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == 10 + testrun_STRING_DEFAULT_SIZE);
 
 
         // reset
@@ -1865,13 +1865,13 @@ int test_testrun_string_replace_first(){
         new    = "_at_";
         expect = "testwh_at_ever_whenever";
 
-        assert(true == testrun_string_replace_first( &ptr,   &size,
+        testrun(true == testrun_string_replace_first( &ptr,   &size,
                                                 source, strlen(source),
                                                 old,    strlen(old),
                                                 new,    strlen(new)));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == 10 + testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == 10 + testrun_STRING_DEFAULT_SIZE);
 
         ptr  = testrun_string_free(ptr);
         size = 0;
@@ -1893,43 +1893,43 @@ int test_testrun_string_replace_all(){
         char *delim2 = ":";
         char *expect = "1:2:3:4";
 
-        assert(false == testrun_string_replace_all(  NULL, NULL,
+        testrun(false == testrun_string_replace_all(  NULL, NULL,
                                                 NULL, 0,
                                                 NULL, 0,
                                                 NULL, 0,
                                                 false));
 
-        assert(false == testrun_string_replace_all(  NULL, &size,
+        testrun(false == testrun_string_replace_all(  NULL, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 NULL, 0,
                                                 false));
 
-        assert(false == testrun_string_replace_all(  &ptr, NULL,
+        testrun(false == testrun_string_replace_all(  &ptr, NULL,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 NULL, 0,
                                                 false));
 
-        assert(false == testrun_string_replace_all(  &ptr, &size,
+        testrun(false == testrun_string_replace_all(  &ptr, &size,
                                                 NULL, strlen(source),
                                                 delim1, strlen(delim1),
                                                 NULL, 0,
                                                 false));
 
-        assert(false == testrun_string_replace_all(  &ptr, &size,
+        testrun(false == testrun_string_replace_all(  &ptr, &size,
                                                 source, strlen(source),
                                                 NULL, strlen(delim1),
                                                 NULL, 0,
                                                 false));
 
-        assert(false == testrun_string_replace_all(  &ptr, &size,
+        testrun(false == testrun_string_replace_all(  &ptr, &size,
                                                 source, 0,
                                                 delim1, strlen(delim1),
                                                 NULL, 0,
                                                 false));
 
-        assert(false == testrun_string_replace_all(  &ptr, &size,
+        testrun(false == testrun_string_replace_all(  &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, 0,
                                                 NULL, 0,
@@ -1940,7 +1940,7 @@ int test_testrun_string_replace_all(){
         // -------------------------------------------------------------
 
         expect = "1234";
-        assert(false == testrun_string_replace_all(  &ptr, &size,
+        testrun(false == testrun_string_replace_all(  &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 NULL, 0,
@@ -1950,14 +1950,14 @@ int test_testrun_string_replace_all(){
         free(ptr);
         ptr = NULL;
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 NULL, 0,
                                                 true));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -1973,14 +1973,14 @@ int test_testrun_string_replace_all(){
         delim2 = ":";
         expect = "1:2:3:4";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 false));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -1988,14 +1988,14 @@ int test_testrun_string_replace_all(){
 
         expect = "1:2:3:4:";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 true));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2010,14 +2010,14 @@ int test_testrun_string_replace_all(){
         delim2 = ":::";
         expect = "1:::2:::3:::4";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 false));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2025,14 +2025,14 @@ int test_testrun_string_replace_all(){
 
         expect = "1:::2:::3:::4:::";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 true));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2047,14 +2047,14 @@ int test_testrun_string_replace_all(){
         delim2 = " ";
         expect = "1 2 3 4";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 false));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2062,14 +2062,14 @@ int test_testrun_string_replace_all(){
 
         expect = "1 2 3 4 ";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 true));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2084,27 +2084,27 @@ int test_testrun_string_replace_all(){
         delim2 = "\r\n";
         expect = source;
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 false));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
         ptr = NULL;
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 true));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2119,27 +2119,27 @@ int test_testrun_string_replace_all(){
         delim2 = " ";
         expect = source;
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 false));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
         ptr = NULL;
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 true));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2154,14 +2154,14 @@ int test_testrun_string_replace_all(){
         delim2 = "x";
         expect = "x1x2x3x4";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 false));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2169,14 +2169,14 @@ int test_testrun_string_replace_all(){
 
         expect = "x1x2x3x4x";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 true));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2191,14 +2191,14 @@ int test_testrun_string_replace_all(){
         delim2 = "x";
         expect = "1x2x3x4";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 false));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2206,14 +2206,14 @@ int test_testrun_string_replace_all(){
 
         expect = "1x2x3x4x";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                  source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 true));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2228,27 +2228,27 @@ int test_testrun_string_replace_all(){
         delim2 = "en";
         expect = "Whenever";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 false));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
         ptr = NULL;
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 true));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2259,14 +2259,14 @@ int test_testrun_string_replace_all(){
         delim2 = "xx";
         expect = "CaxxCaxx";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 false));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2274,14 +2274,14 @@ int test_testrun_string_replace_all(){
 
         expect = "CaxxCa";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 true));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2296,27 +2296,27 @@ int test_testrun_string_replace_all(){
         delim2 = "0123456789";
         expect = "abc0123456789def";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 false));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
         ptr = NULL;
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 true));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2331,27 +2331,27 @@ int test_testrun_string_replace_all(){
         delim2 = "xx";
         expect = "abcxxdef";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 false));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
         ptr = NULL;
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 true));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2370,14 +2370,14 @@ int test_testrun_string_replace_all(){
         delim2 = "_at_";
         expect = "wh_at_ever_wh_at_ever";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 false));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2385,14 +2385,14 @@ int test_testrun_string_replace_all(){
 
         expect = "wh_at_ever_wh_at_ever_at_";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 true));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2415,14 +2415,14 @@ int test_testrun_string_replace_all(){
         delim2 = "_at_";
         expect = "testwh_at_ever_wh_at_ever_at_";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 true));
 
-        assert(strncmp(expect, ptr, strlen(ptr)) == 0);
-        assert(size == 10 + testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(ptr)) == 0);
+        testrun(size == 10 + testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2437,14 +2437,14 @@ int test_testrun_string_replace_all(){
         delim2 = "_at_";
         expect = "testwh_at_ever_wh_at_ever";
 
-        assert(true == testrun_string_replace_all(   &ptr, &size,
+        testrun(true == testrun_string_replace_all(   &ptr, &size,
                                                 source, strlen(source),
                                                 delim1, strlen(delim1),
                                                 delim2, strlen(delim2),
                                                 false));
 
-        assert(strncmp(expect, ptr, strlen(expect)) == 0);
-        assert(size == 10 + testrun_STRING_DEFAULT_SIZE);
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == 10 + testrun_STRING_DEFAULT_SIZE);
 
         size = 0;
         free(ptr);
@@ -2459,7 +2459,15 @@ int test_testrun_string_replace_all(){
  *
  ******************************************************************************/
 
-int all_tests() {
+/*
+ *      Cluster all tests in a way to be run and executed one after the other
+ *      that is the same way the setup SHOULD be done for assert based testing.
+ *
+ *      YOU MAY RUN THIS CLUSTER BY CHANGING testrun_run(???); TO
+ *
+ *              testrun_run(cluster_tests_non_configurable);
+ */
+int cluster_tests_non_configurable() {
 
        testrun_init();
 
@@ -2475,11 +2483,212 @@ int all_tests() {
        return testrun_counter;
 }
 
+/*----------------------------------------------------------------------------*/
+
+/*
+ *      Cluster the same test series as above in a way to be configurable for
+ *      the type of testrun (parallel or sequential).
+ */
+int64_t cluster_tests_configurable(
+        int(*tests[])(),
+        size_t slot,
+        size_t max){
+
+        testrun_init();
+
+        testrun_add(test_testrun_string_free);
+        testrun_add(test_testrun_string_prepare);
+        testrun_add(test_testrun_string_append);
+        testrun_add(test_testrun_string_write_embeded);
+        testrun_add(test_testrun_string_embed);
+        testrun_add(test_testrun_string_unset_end);
+        testrun_add(test_testrun_string_replace_first);
+        testrun_add(test_testrun_string_replace_all);
+
+        return testrun_counter;
+}
+
+/*******************************************************************************
+ *
+ *      TEST CONFIGURATION
+ *
+ ******************************************************************************/
+
+/*
+ *      Configure the series for parallel testing.
+ */
+bool testrun_configure_parallel(
+        int (*testcases[])(),
+        size_t * const start,
+        size_t const * const max){
+
+        int r = 0;
+
+        if (!testcases || !start || !max)
+                return false;
+
+        r = testrun_add_testcases(testcases,
+                        start, max, cluster_tests_configurable);
+
+        return (r < 0)? false : true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+/*
+ *      Configure the series for sequential testing.
+ */
+bool testrun_configure_sequential(
+        int (*testcases[])(),
+        size_t *const start,
+        size_t const * const max){
+
+        int r = 0;
+
+        if (!testcases || !start || !max)
+                return false;
+
+        r = testrun_add_testcases(testcases,
+                        start, max, cluster_tests_configurable);
+
+        return (r < 0)? false : true;
+
+}
+
+/*******************************************************************************
+ *
+ *      EXECUTION SEQUENCE
+ *
+ ******************************************************************************/
+
+/*
+ *      EXECUTION sequence for the test series:
+ *
+ *      OPTIONS
+ *
+ *      (1) run the testconfiguration in parallel and sequential:
+ *
+ *              testrun_run_tests(25,25,false);
+ *
+ *      (2) run the testconfiguration in parallel only:
+ *
+ *              testrun_run_tests(25,0,false);
+ *
+ *      (3) run the testconfiguration in sequential only:
+ *
+ *              testrun_run_tests(0,25,false);
+ *
+ *      (4) run the testconfiguration in sequential only, break_on_first_error:
+ *
+ *              testrun_run_tests(0,25,true);
+ *
+ *      NOTE the last execution sequence (4) is the same as running the test
+ *      using the function cluster_tests_non_configurable.
+ *
+ *      YOU MAY RUN THIS EXECUTION SEQUENCE BY CHANGING testrun_run(???); TO
+ *
+ *              testrun_run(run_tests);
+ *
+ */
+int64_t run_tests() {
+
+        return testrun_run_tests(25,0,true);
+}
+
+
 /*******************************************************************************
  *
  *      ACTIVATED TESTS
  *
  ******************************************************************************/
 
+//testrun_run(run_tests);
+testrun_run(cluster_tests_non_configurable);
 
-testrun_run(all_tests);
+
+/*******************************************************************************
+ *
+ *      TEST RESULTS AND NOTES
+ *
+ ******************************************************************************/
+
+/*
+ *      NOTE example testrun with 25 enabled test cases in parallel and
+ *      sequential shows a slightly better runtime in sequential run.
+ *
+ *      testrun_run(cluster_tests_non_configurable);
+ *      results around 0.000110 ms
+ *
+ *      testrun_run(run_tests); with sequential testrun_run_tests(0,25,true);
+ *      results around 0.000125 ms
+ *
+ *      testrun_run(run_tests); with parallel testrun_run_tests(25,0,true);
+ *      results around 0.000200 ms - 0.000300 ms
+ *
+ *      So the overhead for OpenMP is not worth to run the tests in parallel
+ *      here. This may be different for other test scenarios. Check your
+ *      tests and scenarios to select the best fitting testrun for you.
+ *
+ *      NOTE For these tests here non configuration tests runs the fastest!
+ *      NOTE as soon as this test series is compiled using OpenMP there will
+ *      be 8 bytes in 1 block shown as still reachable when running
+ *      with valgrind.
+ *
+ *      EXAMPLE RUN TIMES:
+ *      ALL TESTS RUN (8 tests)
+ *      Clock ticks function: ( main ) | 0.110468 | 0.000110 ms
+ *
+ *      Serial RUN (8) TESTS: success 8 error 0)
+ *      Clock ticks function: ( testrun_sequential ) | 0.096326 | 0.000096 ms
+ *      ALL TESTS RUN (8 tests)
+ *      Clock ticks function: ( main ) | 0.123577 | 0.000124 ms
+ *
+ *      Parallel RUN (8) TESTS in 0 threads: success 8 error 0)
+ *      Clock ticks function: ( testrun_parallel ) | 0.264922 | 0.000265 ms
+ *      ALL TESTS RUN (8 tests)
+ *      Clock ticks function: ( main ) | 0.292388 | 0.000292 ms
+ *
+ *      TEST RUN with following machine data:
+ *      markus@PC:~/projects/testrun.info/testrun_lib$ lscpu
+ *      Architecture:          x86_64
+ *      CPU op-mode(s):        32-bit, 64-bit
+ *      Byte Order:            Little Endian
+ *      CPU(s):                4
+ *      On-line CPU(s) list:   0-3
+ *      Thread(s) pro Kern:    2
+ *      Kern(e) pro Socket:    2
+ *      Socket(s):             1
+ *      NUMA-Knoten:           1
+ *      Anbieterkennung:       GenuineIntel
+ *      Prozessorfamilie:      6
+ *      Modell:                69
+ *      Model name:            Intel(R) Core(TM) i7-4600U CPU @ 2.10GHz
+ *      Stepping:              1
+ *      CPU MHz:               2654.681
+ *      CPU max MHz:           3300,0000
+ *      CPU min MHz:           800,0000
+ *      BogoMIPS:              5387.67
+ *      Virtualisierung:       VT-x
+ *      L1d Cache:             32K
+ *      L1i Cache:             32K
+ *      L2 Cache:              256K
+ *      L3 Cache:              4096K
+ *      NUMA node0 CPU(s):     0-3
+ *      Flags:                 fpu vme de pse tsc msr pae mce cx8 apic sep mtrr
+ *                             pge mca cmov pat pse36 clflush dts acpi mmx fxsr
+ *                             sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp
+ *                             lm constant_tsc arch_perfmon pebs bts rep_good
+ *                             nopl xtopology nonstop_tsc aperfmperf pni
+ *                             pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2
+ *                             ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2
+ *                             x2apic movbe popcnt tsc_deadline_timer aes xsave
+ *                             avx f16c rdrand lahf_lm abm epb tpr_shadow vnmi
+ *                             flexpriority ept vpid fsgsbase tsc_adjust bmi1
+ *                             avx2 smep bmi2 erms invpcid xsaveopt dtherm ida
+ *                             arat pln pts
+ *      markus@PC:~/projects/testrun.info/testrun_lib$ cat /proc/version
+ *      Linux version 4.10.0-38-generic (buildd@lgw01-amd64-059)
+ *      (gcc version 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.4) )
+ *      #42~16.04.1-Ubuntu SMP Tue Oct 10 16:32:20 UTC 2017
+ *
+ */
