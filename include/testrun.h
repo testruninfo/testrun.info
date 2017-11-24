@@ -568,6 +568,7 @@ static inline int64_t testrun_parallel(
 
         int nthreads = 0, tid = 0;
 
+
         /*
          *      Use this if you want to reduce or set the number of threads
          *
@@ -577,13 +578,13 @@ static inline int64_t testrun_parallel(
 
         #pragma omp parallel for
         for (size_t i = 0; i < items; i++){
-
+/*
                 if (nthreads == 0){
                         tid = omp_get_thread_num();
                         if (tid == 0)
                                 nthreads = omp_get_num_threads();
                 }
-
+*/
                 if (functions[i] != 0) {
 
                         if (functions[i]() < 0){
@@ -729,6 +730,7 @@ static inline int64_t testrun_run_tests(
 
                 if (result_parallel < 0)
                         testrun_log("Failure testrun parallel run");
+
         }
 
         if (max_sequential > 0) {
