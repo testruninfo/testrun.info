@@ -1531,6 +1531,99 @@ int test_testrun_string_embed(){
         ptr  = NULL;
         size = 0;
 
+        // -------------------------------------------------------------
+        // no delimiter 1 (don't change orig)
+        // -------------------------------------------------------------
+
+        // unallocated
+        size = 0;
+        ptr  = NULL;
+
+        source = "abcd\n";
+        prefix = NULL;
+        suffix = NULL;
+        delim1 = "1";
+        delim2 = "2";
+
+        sprintf(expect, "abcd\n");
+
+        testrun(true == testrun_string_embed( &ptr,   &size,
+                                        source, strlen(source),
+                                        NULL, 0,
+                                        NULL, 0,
+                                        delim1, strlen(delim1),
+                                        delim2, strlen(delim2)));
+
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
+
+        // reset
+        free(ptr);
+        ptr  = NULL;
+        size = 0;
+
+        // -------------------------------------------------------------
+        // no delimiter 1 (don't change orig)
+        // -------------------------------------------------------------
+
+        // unallocated
+        size = 0;
+        ptr  = NULL;
+
+        source = "abcd\n";
+        prefix = NULL;
+        suffix = NULL;
+        delim1 = "1234";
+        delim2 = "2";
+
+        sprintf(expect, "abcd\n");
+
+        testrun(true == testrun_string_embed( &ptr,   &size,
+                                        source, strlen(source),
+                                        NULL, 0,
+                                        NULL, 0,
+                                        delim1, strlen(delim1),
+                                        delim2, strlen(delim2)));
+
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
+
+        // reset
+        free(ptr);
+        ptr  = NULL;
+        size = 0;
+
+        // -------------------------------------------------------------
+        // no delimiter 1 (don't change orig)
+        // -------------------------------------------------------------
+
+        // unallocated
+        size = 0;
+        ptr  = NULL;
+
+        source = "abcd\n";
+        prefix = NULL;
+        suffix = NULL;
+        delim1 = "123456";
+        delim2 = "2";
+
+        sprintf(expect, "abcd\n");
+
+        testrun(true == testrun_string_embed( &ptr,   &size,
+                                        source, strlen(source),
+                                        NULL, 0,
+                                        NULL, 0,
+                                        delim1, strlen(delim1),
+                                        delim2, strlen(delim2)));
+
+        testrun(strncmp(expect, ptr, strlen(expect)) == 0);
+        testrun(size == testrun_STRING_DEFAULT_SIZE);
+
+        // reset
+        free(ptr);
+        ptr  = NULL;
+        size = 0;
+
 
 
         return testrun_log_success();

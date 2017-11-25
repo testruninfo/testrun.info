@@ -341,6 +341,7 @@ static inline bool testrun_log_create_timestamp_save(
 
 /* Development logging */
 #define log_dev(...)          testrun_log_file(LOG_DEBUG+1, stderr, __VA_ARGS__)
+#define log(...)              testrun_log_file_print_plain(stdout, __VA_ARGS__)
 
 /* special logging */
 #define log_oom(...)          log_critical("Out of memory.");

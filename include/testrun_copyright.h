@@ -51,6 +51,9 @@
 
 /*----------------------------------------------------------------------------*/
 
+/*----------------------------------------------------------------------------*/
+
+
 /**
  *      Create a copyright header with a line_intro as well as general intro
  *      and outro.
@@ -66,7 +69,7 @@
  *      @param  outro   outro to be added to header
  *      @param  o_len   length of the outro
  *      @return         0 on success -1 on error
- */
+ *
 int testrun_copyright_create_header(
         char **result, size_t *size,
         const char * const source, const size_t s_length,
@@ -74,21 +77,16 @@ int testrun_copyright_create_header(
         const char * const intro,  const size_t i_length,
         const char * const outro,  const size_t o_length);
 
-/*----------------------------------------------------------------------------*/
-/**
+
  *      Read a copyright definition from a given path.
  *      This functions reads a main copyright source from a path
  *      and add the comment prefix of the testrun tools.
  *
  *      @param  path    source path to read
  *      @return         allocated string (MUST be freed) with copyright or NULL
- */
+ *
 char *testrun_read_copyright_from(
-        const char * const path);
-
-/*----------------------------------------------------------------------------*/
-
-/**
+        const char * const path)
  *      Create a default fallback copyright in form of:
  *
  *              COPYRIGHT (c) YEAR  NAME
@@ -98,24 +96,9 @@ char *testrun_read_copyright_from(
  *      @param  name    (optional) name for the name
  *      @param  intro   if true, the standard header line intro will be used
  *      @return         allocated string (MUST be freed) with copyright or NULL
- */
-char *testrun_copyright_default(
-        char *year, char *name, bool intro);
-
-/*----------------------------------------------------------------------------*/
-
-/**
- *      Create a default fallback copyright in form of:
  *
- *              COPYRIGHT (c) YEAR  NAME
- *              All rights reserved.
- *
- *      @param  year    (optional) string for the year
- *      @param  name    (optional) name for the name
- *      @param  intro   if true, the standard header line intro will be used
- *      @return         allocated string (MUST be freed) with copyright or NULL
- */
 char *testrun_copyright_configure(
         char *path, char *year, char *name, char *note);
 
+*/
 #endif /* testrun_copyright_h */

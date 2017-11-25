@@ -35,8 +35,13 @@
 #include "../include/testrun_copyright.h"
 
 
+
+
+
 /*----------------------------------------------------------------------------*/
 
+
+/*
 int testrun_copyright_create_header(
         char **result, size_t *size,
         const char * const source, const size_t source_length,
@@ -50,7 +55,6 @@ int testrun_copyright_create_header(
         char  *step1  = NULL;
         size_t length = 0;
 
-        /* add a line prefix */
 
         if (!testrun_string_embed(&step1, &length,
                 (char*) source, source_length,
@@ -60,7 +64,7 @@ int testrun_copyright_create_header(
                 LINEBREAK,      strlen(LINEBREAK)))
                 goto error;
 
-        /* add intro and outro */
+
 
         printf("STEP1 |%s|%jd\n", step1, length);
 
@@ -86,7 +90,7 @@ error:
         return -1;
 }
 
-/*----------------------------------------------------------------------------*/
+
 
 char *testrun_read_copyright_from(
         const char * const path){
@@ -156,38 +160,4 @@ error:
 
 }
 
-/*----------------------------------------------------------------------------*/
-
-char *testrun_copyright_default(
-        char *date, char *name, bool intro){
-
-        char *snipped = calloc(1000, sizeof(char));
-        if (!snipped)
-                return NULL;
-
-        if (!date)
-                date = "[COPYRIGHT_DATE]";
-
-        if (!name)
-                name = "[COPYRIGHT_AUTHOR]";
-
-        if (intro){
-                sprintf(snipped,
-                        "%s%s"
-                        "COPYRIGHT (c) %s %s\n"
-                        "%sAll rights reserved.\n"
-                        "%s",
-                        TESTRUN_COPYRIGHT_INTRO,
-                        TESTRUN_HEADER_LINE_INTRO,
-                        date, name,
-                        TESTRUN_HEADER_LINE_INTRO,
-                        TESTRUN_COPYRIGHT_OUTRO);
-        } else {
-                sprintf(snipped,
-                        "COPYRIGHT (c) %s %s\n"
-                        "All rights reserved.\n",
-                        date, name);
-        }
-
-        return snipped;
-}
+*/

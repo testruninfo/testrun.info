@@ -38,12 +38,10 @@
  *
  ******************************************************************************/
 
-#include "../../include/testrun2.h"
+#include "../../include/testrun.h"
 #include "../../src/testrun_copyright.c"
 #include "../../include/testrun_lib.h"
 #include <sys/stat.h>
-
-static int testing = 1;
 
 /*******************************************************************************
  *
@@ -53,6 +51,12 @@ static int testing = 1;
 
 /*----------------------------------------------------------------------------*/
 
+
+
+
+
+/*----------------------------------------------------------------------------*/
+/*
 int test_testrun_copyright_create_header() {
 
         size_t size  = 0;
@@ -229,8 +233,6 @@ int test_testrun_copyright_create_header() {
         return testrun_log_success();
 }
 
-/*----------------------------------------------------------------------------*/
-
 
 int test_testrun_read_copyright_from() {
 
@@ -247,7 +249,6 @@ int test_testrun_read_copyright_from() {
 
         testrun_assert(!testrun_read_copyright_from(NULL));
 
-        /* Copyright file not found */
         testrun_assert(!testrun_read_copyright_from(path1));
         testrun_assert(!testrun_read_copyright_from(path2));
 
@@ -293,18 +294,17 @@ int test_testrun_read_copyright_from() {
 
         testrun_assert(0 < sprintf(path, "%s/%s", path5, TESTRUN_FILENAME_COPYRIGHT));
 
-        /* No access to file path/copyright */
+
         testrun_assert(0 == chmod(path, 000));
         testrun_assert(!testrun_read_copyright_from(path5));
         testrun_assert(0 == chmod(path, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH));
 
-        /* Recheck access ok */
-        result = testrun_read_copyright_from(path5);
+       result = testrun_read_copyright_from(path5);
         testrun_assert(result);
         testrun_assert(strncmp(expect, result, strlen(expect)) == 0);
         free(result);
 
-        /* No access to folder path */
+
         testrun_assert(0 == chmod(path5, 000));
         testrun_assert(!testrun_read_copyright_from(path5));
         testrun_assert(0 == chmod(path5,
@@ -313,87 +313,17 @@ int test_testrun_read_copyright_from() {
                 S_IROTH | S_IXOTH
                 ));
 
-        /* Recheck access ok */
         result = testrun_read_copyright_from(path5);
         testrun_assert(result);
         testrun_assert(strncmp(expect, result, strlen(expect)) == 0);
         free(result);
 
-        /* empty file */
+
         testrun_assert(!testrun_read_copyright_from(path6));
 
         return testrun_log_success();
 }
-
-/*----------------------------------------------------------------------------*/
-
-int test_testrun_copyright_default() {
-
-        size_t size  = 2000;
-        char *date   = NULL;
-        char *name   = NULL;
-        char *result = NULL;
-        char expect[size];
-
-        sprintf(expect,
-                "%s%s"
-                "COPYRIGHT (c) [COPYRIGHT_DATE] [COPYRIGHT_AUTHOR]\n"
-                "%sAll rights reserved.\n"
-                "%s",
-                TESTRUN_COPYRIGHT_INTRO,
-                TESTRUN_HEADER_LINE_INTRO,
-                TESTRUN_HEADER_LINE_INTRO,
-                TESTRUN_COPYRIGHT_OUTRO);
-
-        result = testrun_copyright_default(NULL, NULL, true);
-        testrun_assert(result);
-        testrun_assert(strncmp(result, expect, strlen(expect)) == 0);
-        memset(&expect, 0, size);
-        free(result);
-
-        sprintf(expect,
-                "COPYRIGHT (c) [COPYRIGHT_DATE] [COPYRIGHT_AUTHOR]\n"
-                "All rights reserved.\n");
-
-        result = testrun_copyright_default(NULL, NULL, false);
-        testrun_assert(result);
-        testrun_assert(strncmp(result, expect, strlen(expect)) == 0);
-        memset(&expect, 0, size);
-        free(result);
-
-        date = "1234";
-        name = "test";
-
-        sprintf(expect,
-                "%s%s"
-                "COPYRIGHT (c) %s %s\n"
-                "%sAll rights reserved.\n"
-                "%s",
-                TESTRUN_COPYRIGHT_INTRO,
-                TESTRUN_HEADER_LINE_INTRO,
-                date, name,
-                TESTRUN_HEADER_LINE_INTRO,
-                TESTRUN_COPYRIGHT_OUTRO);
-
-        result = testrun_copyright_default(date, name, true);
-        testrun_assert(result);
-        testrun_assert(strncmp(result, expect, strlen(expect)) == 0);
-        memset(&expect, 0, size);
-        free(result);
-
-        sprintf(expect,
-                "COPYRIGHT (c) %s %s\n"
-                "All rights reserved.\n",
-                date, name);
-
-        result = testrun_copyright_default(date, name, false);
-        testrun_assert(result);
-        testrun_assert(strncmp(result, expect, strlen(expect)) == 0);
-        memset(&expect, 0, size);
-        free(result);
-
-        return testrun_log_success();
-}
+*/
 
 /*----------------------------------------------------------------------------*/
 
@@ -406,11 +336,12 @@ int test_testrun_copyright_default() {
 int all_tests() {
 
        testrun_init();
-
+/*
        testrun_test(test_testrun_copyright_create_header);
        testrun_test(test_testrun_read_copyright_from);
-       testrun_test(test_testrun_copyright_default);
 
+       testrun_test(test_testrun_copyright_head_default);
+*/
        return testrun_counter;
 }
 

@@ -248,7 +248,7 @@
         end1_t = clock(); \
         testrun_log_clock(start1_t, end1_t); \
         testrun_log("");\
-        result > 0 ? exit(EXIT_SUCCESS) : exit(EXIT_FAILURE); \
+        result >= 0 ? exit(EXIT_SUCCESS) : exit(EXIT_FAILURE); \
 }
 
 /*----- END OF BLOCK OF REQUIRED FUNCTIONALITY FOR ASSERT BASED TESTING ----- */
