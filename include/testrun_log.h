@@ -1,44 +1,42 @@
 /***
- *      ------------------------------------------------------------------------
- *
- *      Copyright 2017 Markus Toepfer
- *
- *      Licensed under the Apache License, Version 2.0 (the "License");
- *      you may not use this file except in compliance with the License.
- *      You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *      Unless required by applicable law or agreed to in writing, software
- *      distributed under the License is distributed on an "AS IS" BASIS,
- *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *      See the License for the specific language governing permissions and
- *      limitations under the License.
- *
- *      This file is part of the testrun project. http://testrun.info
- *
- *      ------------------------------------------------------------------------
- ***//**
- *
- *      @file           testrun_log.h
- *      @author         Markus Toepfer
- *      @date           2017-11-13
- *
- *      @ingroup        testrun_lib
- *
- *      @brief          Implementation of a logging interface for testrun.
- *                      This library based logging is (by default) logging
- *                      to standard out, using standard syslog LOGLEVEL extended
- *                      with a log_dev method to log development messages only.
- *                      This log_dev is send to stdout, but NOT forwarded.
- *
- *                      The header shall be used to customize logging for
- *                      projects, based on rounting the internal log messages
- *                      to external outputs.
- *
- *
- *      ------------------------------------------------------------------------
- **/
+        ------------------------------------------------------------------------
+
+        Copyright 2017 Markus Toepfer
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+
+        This file is part of the testrun project. http://testrun.info
+
+        ------------------------------------------------------------------------
+*//**
+
+        @file           testrun_log.h
+        @author         Markus Toepfer
+        @date           2017-11-13
+
+        @ingroup        testrun_lib
+
+        Implementation of a logging interface for testrun. This library based
+        logging is (by default) logging to standard out, using standard syslog
+        LOGLEVEL extended with a log_dev method to log development messages.
+        log_dev is send to stdout, but NOT forwarded to e.g. syslog or the
+        journal.
+
+        The header shall be used to customize logging for projects, based on
+        rounting the internal log messages to external outputs.
+
+        ------------------------------------------------------------------------
+*/
 
 #ifndef testrun_log_h
 #define testrun_log_h
@@ -97,15 +95,15 @@
 /*----------------------------------------------------------------------------*/
 
 /**
- *      Create an ISO 8601 or an ISO 8601 enhanced timestamp including
- *      microseconds. The result will be either NULL on error or one of:
- *
- *      2017-11-20T14:57:01Z
- *      2017-11-20T14:57:01.123456Z
- *
- *      @param micro            if true use microseconds
- *      @returns                Timestring buffer of 25 or 30 byte including the
- *                              timestamp or NULL. Char MUST not be freed.
+        Create an ISO 8601 or an ISO 8601 enhanced timestamp including
+        microseconds. The result will be either NULL on error or one of:
+
+        2017-11-20T14:57:01Z
+        2017-11-20T14:57:01.123456Z
+
+        @param micro            if true use microseconds
+        @returns                Timestring buffer of 25 or 30 byte including the
+                                timestamp or NULL. Char MUST not be freed.
  */
 static inline char *testrun_log_create_timestamp(bool micro) {
 
@@ -150,23 +148,23 @@ static inline char *testrun_log_create_timestamp(bool micro) {
 /*----------------------------------------------------------------------------*/
 
 /**
- *      Create an ISO 8601 or an ISO 8601 enhanced timestamp including
- *      microseconds. The result will be either NULL on error or one of:
- *
- *      2017-11-20T14:57:01Z
- *      2017-11-20T14:57:01.123456Z
- *
- *      This is a threadsafe version of testrun_log_timestamp,
- *      which fills an external array with a timestamp and makes
- *      use of internal limited scope variables.
- *
- *      This function must be executed, to fill a timestamp buffer.
- *
- *      @param micro            if true use microseconds
- *      @param array            pointer to array to be filled with chars
- *      @param size             size of the array (incl. terminating zero)
- *      @returns                true on success, false on error
- */
+        Create an ISO 8601 or an ISO 8601 enhanced timestamp including
+        microseconds. The result will be either NULL on error or one of:
+
+        2017-11-20T14:57:01Z
+        2017-11-20T14:57:01.123456Z
+
+        This is a threadsafe version of testrun_log_timestamp,
+        which fills an external array with a timestamp and makes
+        use of internal limited scope variables.
+
+        This function must be executed, to fill a timestamp buffer.
+
+        @param micro            if true use microseconds
+        @param array            pointer to array to be filled with chars
+        @param size             size of the array (incl. terminating zero)
+        @returns                true on success, false on error
+*/
 static inline bool testrun_log_create_timestamp_save(
         bool micro, char *array, size_t size) {
 
@@ -203,7 +201,8 @@ static inline bool testrun_log_create_timestamp_save(
         return true;
 }
 
-/*      ------------------------------------------------------------------------
+/*
+ *      ------------------------------------------------------------------------
  *
  *      EXAMPLE LOG METHODS
  *
@@ -278,7 +277,8 @@ static inline bool testrun_log_create_timestamp_save(
                         lvl, tstamp, \
                         __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
-/*      ------------------------------------------------------------------------
+/*
+ *      ------------------------------------------------------------------------
  *
  *      FILE ROUTER
  *
@@ -288,11 +288,13 @@ static inline bool testrun_log_create_timestamp_save(
  *      ------------------------------------------------------------------------
  */
 
-/*----------------------------------------------------------------------------*/
 
-/*
- *      Thread save forwarding of log messages,
- *      using local timestamp bufferering.
+/**
+        Thread save forwarding of log messages,
+        using local timestamp bufferering.
+
+        @param level    loglevel to be used
+        @param file     logfile destination
  */
 #define testrun_log_file(level, file, ...) \
         do { \
@@ -305,14 +307,18 @@ static inline bool testrun_log_create_timestamp_save(
                                 file, level, timestamp, __VA_ARGS__); \
         } while(0)
 
-/*
- *      Non thread save forwarding, using shared timestamp buffers.
+/**
+        Non thread save forwarding, using shared timestamp buffers.
+
+        @param level    loglevel to be used
+        @param file     logfile destination
  */
 #define testrun_log_file_timestamp_shared(level, file, ...) \
         testrun_log_file_print_all_json_format2(file, level, \
                 testrun_log_create_timestamp(true), __VA_ARGS__)
 
-/*      ------------------------------------------------------------------------
+/*
+ *      ------------------------------------------------------------------------
  *
  *      MESSAGE ROUTER
  *
@@ -328,7 +334,8 @@ static inline bool testrun_log_create_timestamp_save(
         testrun_log_file(level, stdout, __VA_ARGS__)\
         testrun_log_journal(level, __VA_ARGS__ )
 
-/*      ------------------------------------------------------------------------
+/*
+ *      ------------------------------------------------------------------------
  *
  *      INTERNAL INTERFACE
  *
@@ -338,9 +345,9 @@ static inline bool testrun_log_create_timestamp_save(
  *      ------------------------------------------------------------------------
  */
 
-
-/* Development logging */
+/* Development logging (format) */
 #define log_dev(...)          testrun_log_file(LOG_DEBUG+1, stderr, __VA_ARGS__)
+/* Development logging (plain) */
 #define log(...)              testrun_log_file_print_plain(stdout, __VA_ARGS__)
 
 /* special logging */

@@ -1,46 +1,50 @@
 /***
- *      ------------------------------------------------------------------------
- *
- *      Copyright 2017 Markus Toepfer
- *
- *      Licensed under the Apache License, Version 2.0 (the "License");
- *      you may not use this file except in compliance with the License.
- *      You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *      Unless required by applicable law or agreed to in writing, software
- *      distributed under the License is distributed on an "AS IS" BASIS,
- *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *      See the License for the specific language governing permissions and
- *      limitations under the License.
- *
- *      This file is part of the testrun project. http://testrun.info
- *
- *      ------------------------------------------------------------------------
+        ------------------------------------------------------------------------
+
+        Copyright 2017 Markus Toepfer
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+                http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+
+        This file is part of the testrun project. http://testrun.info
+
+        ------------------------------------------------------------------------
  *//**
- *
- *      @file               testrun_parallel.h
- *      @author             Markus Toepfer
- *      @date               2017-11-17
- *
- *      @brief              Serial and parallel test executing framework
- *                          with or without assertion based testing.
- *
- *      This is an enhanced and compatible version of the initial idea of an
- *      small and simple C89 compatible C unittest header (@see testrun_C89.h)
- *
- *      For parallel test runs, this framework makes use of OpenMP and the
- *      code MUST be compiled with -fopenmp (at least for GCC), otherwise
- *      the code will stay unparallel and execution sequential.
- *
- *      @NOTE to use all provided functionality of the header, tests SHOULD be
- *      compiled using:
- *
- *              -fopenmp    (parallel execution) and
- *              -rdynamic   (function name backtracing)
- *
- *      ------------------------------------------------------------------------
+
+        @file           testrun_parallel.h
+        @author         Markus Toepfer
+        @date           2017-11-17
+
+        @brief          Serial and parallel test executing framework with or
+                        without assertion based testing.
+
+        This is an enhanced and compatible version of the initial idea of an
+        small and simple C89 compatible C unittest header (@see testrun.h)
+
+        For parallel test runs, this framework makes use of OpenMP. Therefore
+        the code MUST be compiled with -fopenmp, otherwise the code will stay
+        unparallel and execution sequential.
+
+        @NOTE to use all provided functionality of the header, tests SHOULD be
+        compiled using:
+
+                -fopenmp    (parallel execution) and
+                -rdynamic   (function name backtracing)
+
+        @NOTE Valgrind based file execution in libomp based OpenMP scenarios
+        may not work, @see docs/valgrind/openMP/README.MD for additional
+        information.
+
+        ------------------------------------------------------------------------
  */
 
 #ifndef testrun_h
@@ -65,17 +69,10 @@
 
 #define TESTRUN_DEFAULT_CLUSTER_MAX 1000
 
-/*----------------------------------------------------------------------------
- *
- *      Block for log function macros used within the framework.
- *
- *      All logging is based in simple STDOUT STDERR logging to
- *      simplify the framework.
- *
- *----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 
 /**
-        @brief          Error initialization of none error.
+        Error initialization of none error.
 */
 #define testrun_errno() \
         (errno == 0 ? "NONE" :  strerror(errno))
@@ -83,12 +80,8 @@
 /*----------------------------------------------------------------------------*/
 
 /**
-        @brief          Log a failure. Used in the sense of:
-                        Inability to perform a function as expected.
-                        (e.g. out of memory, environmental factors, and so on)
-        @param msg      message to be logged
-        @param ...      VA_ARGS to be logged
-**/
+        Log a failure. Failure: Inability to perform a function as expected.
+*/
 #define testrun_log_failure(msg, ...) \
         fprintf(stderr, "\t[FAIL]\t%s line:%d errno:%s message: " msg "\n",\
         __FUNCTION__, __LINE__, testrun_errno(), ##__VA_ARGS__)
@@ -96,52 +89,30 @@
 /*----------------------------------------------------------------------------*/
 
 /**
-        @brief          Log an error. Used in the sense of:
-                        Difference between expected and actual result.
-        @param msg      message to be logged
-        @param ...      VA_ARGS to be logged
-**/
+        Log an error. Error: Difference between expected and actual result.
+*/
 #define testrun_log_error(msg, ...) \
         fprintf(stderr, "\t[ERROR]\t%s line:%d errno:%s message: " msg "\n",\
         __FUNCTION__, __LINE__, testrun_errno(), ##__VA_ARGS__)
 
 /*----------------------------------------------------------------------------*/
-/**
-        @brief          Log a success. Used in the sense of:
-                        Result is as defined.
-        @param msg      message to be logged
-        @param ...      VA_ARGS to be logged
-**/
+
 #define testrun_log_success(msg, ...) \
         fprintf(stdout, "\t[OK] \t%s " msg "\n", __FUNCTION__, ##__VA_ARGS__)
 
 /*----------------------------------------------------------------------------*/
 
-/**
-        @brief          Log any message.
-        @param msg      message to be logged
-        @param ...      VA_ARGS to be logged
-**/
 #define testrun_log(msg, ...) \
         fprintf(stdout, "\t" msg "\n", ##__VA_ARGS__)
 
 /*----------------------------------------------------------------------------*/
 
-/**
-        @brief          Log any message with function and line position info.
-        @param msg      message to be logged
-        @param ...      VA_ARGS to be logged
-**/
 #define testrun_log_function_info(msg, ...) \
         fprintf(stdout, "\t[INFO] \t%s line:%d message: " msg "\n", \
                 __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
 /*----------------------------------------------------------------------------*/
-/**
-        @brief          log the start and end times of a test run.
-        @param start    clock_t with at the start of a test run.
-        @param end      clock_t at the end of a test run.
-**/
+
 #define testrun_log_clock(start, end) \
         fprintf(stdout, "\tClock ticks function: ( %s ) | %f | %.0f ms \n", \
         __func__, \
@@ -185,9 +156,6 @@
  *
  *----------------------------------------------------------------------------*/
 
-/**
-        @brief          Default initialization of used variables in macros.
-*/
 #define testrun_init()  \
         int result = 0; \
         int testrun_counter = 0;
@@ -195,9 +163,9 @@
 /*----------------------------------------------------------------------------*/
 
 /**
-        @brief          Wrapper around assert, which adds a message level
-                        to assert, to provide additional, related information
-                        E.g. an expected value, or a failure description.
+        Wrapper around assert, which adds a message level to assert, to provide
+        additional and related information e.g. a failure description.
+
         @param test     an actual test case e.g. (1 == 0)
         @param message  additional message to log e.g. "Failure: 1 is not one"
 */
@@ -207,12 +175,13 @@
 /*----------------------------------------------------------------------------*/
 
 /**
-        @brief          Run a single test (execute function pointer)
-                        Runs a test function.
-                        On success      increase a test counter.
-                        On error        return the parent function
-                                        with the result of the function pointer
+        Run a single test (execute a function pointer. Runs a test function.
+        On non negative return value of the function run, a testrun_counter
+        is increased, on negative result, the negative result will be returned.
+
         @param test     function pointer of the test to run
+        @NOTE           The surrounding block is left on negative result of the
+                        function pointer execution.
 */
 #define testrun_test(test)\
         result = test(); testrun_counter++; if (result < 0) return result;
@@ -220,29 +189,26 @@
 /*----------------------------------------------------------------------------*/
 
 /**
-        @brief          run a cluster of tests (function pointers)
-        @param cluster  function pointer to function containing the test
-                        function pointers.
+        Runs a function pointer, which SHALL contain the test function pointers
+        to run. The function pointer is wrapped in a main procedure, which and
+        allows indepentent testruns of the input testcluster over external
+        execution.
 
-        Runs a function pointer, which shall contain the test function pointers
-        to run. The function pointer is wrapped in a main procedure,
-        which allows indepentent test runs of the test cluster.
-
-        A clock will be started, when the command is invoked and stopped before
-        it returns.
+        A clock will be started, as soon as the main is executed and the the
+        time is stopped again, at the end of the execution. The difference
+        will be printed and is the runtime of the whole input testcluster.
 
         A run will fail, as soon as one of the tests in the testcluster fails.
-        (Fail early)
+        (Fail on first) or will run all functions dependent on the testsetup.
 
-        Note: Based on assert based test aborts, the test run will either abort
-        on failure or succed.
-**/
-#define testrun_run(cluster) int main(int argc, char *argv[]) {\
+        @param testcluster      function pointer to be executed.
+*/
+#define testrun_run(testcluster) int main(int argc, char *argv[]) {\
         argc = argc;\
         clock_t start1_t, end1_t; \
         start1_t = clock(); \
         testrun_log("\ntestrun\t%s", argv[0]);\
-        int64_t result = cluster();\
+        int64_t result = testcluster();\
         if (result > 0) \
                 testrun_log("ALL TESTS RUN (%jd tests)", result);\
         end1_t = clock(); \
@@ -250,8 +216,6 @@
         testrun_log("");\
         result >= 0 ? exit(EXIT_SUCCESS) : exit(EXIT_FAILURE); \
 }
-
-/*----- END OF BLOCK OF REQUIRED FUNCTIONALITY FOR ASSERT BASED TESTING ----- */
 
 /*----------------------------------------------------------------------------
  *
@@ -346,6 +310,7 @@
 
 /**
         MUST be implemented to configure parallel tests.
+
         @param testcases        array of function pointers
         @param start            first slot the be used in testcases
         @param max              maximum slots of testcases (last slot to be set)
@@ -360,6 +325,7 @@ bool testrun_configure_parallel(
 
 /**
         MUST be implemented to configure sequential tests.
+
         @param testcases        array of function pointers
         @param start            first slot the be used in testcases
         @param max              maximum slots of testcases (last slot to be set)
@@ -373,12 +339,10 @@ bool testrun_configure_sequential(
 /*----------------------------------------------------------------------------*/
 
 /**
-        @brief          Run a single atomar test. This function is leaving the
-                        test block function, where it is executed, on error.
-                        (e.g. Mindset note ... think of it like assert defused
-                         ... to leave a function, instead of the program ...)
-                        On error the block which failed will be logged.
-                        (e.g. the unit test block using this function)
+        Run a single atomar test. Return the surrounding block on error.
+        This function will leave the context block running on error. The
+        Mindset is a defused assert. LEAVE THE FUNCTION NOT THE PROGRAM.
+
         @param test     Boolean decision input.
 */
 #define testrun_check(test, ... )\
@@ -387,18 +351,18 @@ bool testrun_configure_sequential(
 /*----------------------------------------------------------------------------*/
 
 /**
-        @brief          alias to @see testrun_check
+        Alias to @see testrun_check.
 */
 #define testrun(test, ...)\
         testrun_check(test, __VA_ARGS__ )
 
-
 /*----------------------------------------------------------------------------*/
+
 /**
-        @brief          Add a new test to the tests array.
-                        This is just a convinience function to add a function
-                        pointer to the array tests[]. It used the variables of
-                        the function slot, testrun_counter, max and tests[].
+        Add a new test to the tests array. This is a convinience function
+        to add a function pointer to the array tests[]. This MACRO uses
+        block variables **slot**, **testrun_counter**, **max** and **tests[]**.
+
         @param test     function pointer to a new test to be added.
 */
 #define testrun_add(test)  \
@@ -416,7 +380,8 @@ bool testrun_configure_sequential(
 /*----------------------------------------------------------------------------*/
 
 /**
-        @brief          Array initialization to point to NULL
+        Array initialization to point to NULL.
+
         @param array    array to be initialized
         @param start    first item to set to NULL
         @param end      last item to set to NULL
@@ -427,18 +392,18 @@ bool testrun_configure_sequential(
 /*----------------------------------------------------------------------------*/
 
 /**
- *      Add some test cases to a testcase function pointer array, using
- *      a user provided function to add the testcases.
- *
- *      Function will log the result of testcases added.
- *
- *      @param tests            pointer to function pointer array
- *      @param last             pointer to counter of last set item
- *      @param max              pointer to value of max items
- *      @param function         function to add the tests to the array
- *
- *      @returns                negative count of testcases to add
- *                              positive count of added testcases
+        Add some test cases to a testcase function pointer array, using
+        a user provided function to add the testcases.
+
+        Function will log the result of testcases added.
+
+        @param tests            pointer to function pointer array
+        @param last             pointer to counter of last set item
+        @param max              pointer to value of max items
+        @param function         function to add the tests to the array
+
+        @returns                negative count of testcases to add
+                                positive count of added testcases
  */
 static inline int64_t testrun_add_testcases(
         int (*tests[])(),
@@ -482,17 +447,18 @@ static inline int64_t testrun_add_testcases(
 }
 
 /*----------------------------------------------------------------------------*/
+
 /**
- *      Dumb the test cases to stdout.
- *
- *      To enable a backtrace with names, the file MUST be compiled with
- *      MODCFLAGS += -rdynamic
- *
- *      @param function         pointer to function pointer array
- *      @param items            amount of items in functions
- *      @param names            bool to try to backtrace names
- *      @returns                negative count of failed tests
- *                              positive count of run tests otherwise
+        Dumb the test cases to stdout.
+
+        To enable a backtrace with names, the file MUST be compiled with
+        MODCFLAGS += -rdynamic
+
+        @param function         pointer to function pointer array
+        @param items            amount of items in functions
+        @param names            bool to try to backtrace names
+        @returns                negative count of failed tests
+                                positive count of run tests otherwise
  */
 static inline bool testrun_dump_testcases(
         int (*functions[])(),
@@ -537,19 +503,18 @@ static inline bool testrun_dump_testcases(
 /*----------------------------------------------------------------------------*/
 
 /**
- *      Run a bunch of tests in parallel. This will run all configured
- *      tests independently and return the result of the test batch,
- *      once all tests are done.
- *
- *      A clock of the batch runtime will be logged in addition to the
- *      result of the testrun.
- *
- *      @param function         pointer to function pointer array
- *      @param items            amount of items in functions
- *      @returns                negative count of failed tests
- *                              positive count of run tests otherwise
- */
+        Run a bunch of tests in parallel. This will run all configured
+        tests independently and return the result of the test batch,
+        once all tests are done.
 
+        A clock of the batch runtime will be logged in addition to the
+        result of the testrun.
+
+        @param function         pointer to function pointer array
+        @param items            amount of items in functions
+        @returns                negative count of failed tests
+                                positive count of run tests otherwise
+ */
 static inline int64_t testrun_parallel(
         int (*functions[])(),
         size_t items) {
@@ -578,13 +543,13 @@ static inline int64_t testrun_parallel(
 
         #pragma omp parallel for
         for (size_t i = 0; i < items; i++){
-/*
+
                 if (nthreads == 0){
                         tid = omp_get_thread_num();
                         if (tid == 0)
                                 nthreads = omp_get_num_threads();
                 }
-*/
+
                 if (functions[i] != 0) {
 
                         if (functions[i]() < 0){
@@ -624,20 +589,20 @@ static inline int64_t testrun_parallel(
 /*----------------------------------------------------------------------------*/
 
 /**
- *      Run a bunch of tests serial. This will run all configured
- *      tests independently and return the result of the test batch,
- *      once all tests are done or the first tests fails, if break_on_error
- *      is set.
- *
- *      A clock of the batch runtime will be logged in addition to the
- *      result of the testrun.
- *
- *      @param function         pointer to function pointer array
- *      @param items            amount of items in function
- *      @param break_on_error   (true) fail test batch on first error
- *                              (false) run all tests before error return
- *      @returns                negative count of failed tests
- *                              positive count of run tests otherwise
+        Run a bunch of tests serial. This will run all configured
+        tests independently and return the result of the test batch,
+        once all tests are done or the first tests fails, if break_on_error
+        is set.
+
+        A clock of the batch runtime will be logged in addition to the
+        result of the testrun.
+
+        @param function         pointer to function pointer array
+        @param items            amount of items in function
+        @param break_on_error   (true) fail test batch on first error
+                                (false) run all tests before error return
+        @returns                negative count of failed tests
+                                positive count of run tests otherwise
  */
 static inline int64_t testrun_sequential(
         int (*functions[])(),
@@ -691,14 +656,14 @@ static inline int64_t testrun_sequential(
 /*----------------------------------------------------------------------------*/
 
 /**
- *      Run a bunch of configurable parallel and sequential tests serial.
- *
- *      @param max_parallel     maximum test cases parallel
- *      @param max_sequential   maximum test cases sequential
- *      @param break_on_error   (true) fail sequential test batch on first error
- *                              (false) run all sequential tests
- *      @returns                negative count of run tests cased on error
- *                              positive count of run tests
+        Run a bunch of configurable parallel and sequential tests serial.
+
+        @param max_parallel     maximum test cases parallel
+        @param max_sequential   maximum test cases sequential
+        @param break_on_error   (true) fail sequential test batch on first error
+                                (false) run all sequential tests
+        @returns                negative count of run tests cased on error
+                                positive count of run tests
  */
 static inline int64_t testrun_run_tests(
         size_t max_parallel,
@@ -760,7 +725,6 @@ static inline int64_t testrun_run_tests(
 
         return (counter_parallel + counter_sequential);
 }
-
 
 /**     -----------------------------------------------------------------------
 
@@ -982,4 +946,4 @@ static inline int64_t testrun_run_tests(
 
 **/
 
-#endif /* testrun_h */
+#endif /* testrun2_h */

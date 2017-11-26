@@ -1,52 +1,47 @@
 /***
- *      ------------------------------------------------------------------------
- *
- *      Copyright 2017 Markus Toepfer
- *
- *      Licensed under the Apache License, Version 2.0 (the "License");
- *      you may not use this file except in compliance with the License.
- *      You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *      Unless required by applicable law or agreed to in writing, software
- *      distributed under the License is distributed on an "AS IS" BASIS,
- *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *      See the License for the specific language governing permissions and
- *      limitations under the License.
- *
- *      This file is part of the testrun project. http://testrun.info
- *
- *      ------------------------------------------------------------------------
- ***//**
- *
- *      @file           testrun2_tests.c
- *      @author         Markus Toepfer
- *      @date           2017-11-21
- *
- *      @ingroup        testrun_lib
- *
- *      @brief          Testing of the testrun2.h header
- *
- *      ------------------------------------------------------------------------
- **/
+        ------------------------------------------------------------------------
 
-/*******************************************************************************
- *
- *      TEST SETUP
- *
- ******************************************************************************/
+        Copyright 2017 Markus Toepfer
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+                http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+
+        This file is part of the testrun project. http://testrun.info
+
+        ------------------------------------------------------------------------
+*//**
+
+        @file           testrun2_tests.c
+        @author         Markus Toepfer
+        @date           2017-11-21
+
+        @ingroup        testrun_lib
+
+        @brief          Testing of the testrun2.h header
+
+        ------------------------------------------------------------------------
+*/
+
 
 #include "../../include/testrun2.h"
 #include "../../include/testrun_log.h"
 
-static int testing = 1;
-
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      TEST CASES
+ *      TEST CASES                                                      #CASES
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
 
 int test_test1() {
 
@@ -93,11 +88,13 @@ int test_test5() {
 
 /*----------------------------------------------------------------------------*/
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      TEST CLUSTER SETUP
+ *      TEST CLUSTER                                                   #CLUSTER
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
 
 int64_t module_add_tests(int(*tests[])(), size_t slot, size_t max) {
 
@@ -118,11 +115,13 @@ int64_t module_add_tests(int(*tests[])(), size_t slot, size_t max) {
         return testrun_counter;
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      ACTIVATED TESTS
+ *      TEST ACTIVATED                                                  #ACTIV
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
 
 int64_t run_tests() {
 
@@ -154,5 +153,13 @@ int64_t run_tests() {
 
         return counter;
 }
+
+/*
+ *      ------------------------------------------------------------------------
+ *
+ *      TEST EXECUTION                                                  #EXEC
+ *
+ *      ------------------------------------------------------------------------
+ */
 
 testrun_run(run_tests);

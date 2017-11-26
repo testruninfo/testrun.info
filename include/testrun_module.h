@@ -1,5 +1,5 @@
 /***
-        -------------------------------------------------------------------------
+        ------------------------------------------------------------------------
 
         Copyright 2017 Markus Toepfer
 
@@ -17,30 +17,22 @@
 
         This file is part of the testrun project. http://testrun.info
 
-        -------------------------------------------------------------------------
+        ------------------------------------------------------------------------
 *//**
 
-        @file           testrun_lib.h
+        @file           testrun_module.h
         @author         Markus Toepfer
-        @date           2017-11-13
+        @date           2017-11-26
 
         @ingroup        testrun_lib
 
-        @brief          Main interface for the testrun_lib.
+        @brief          Definition of module realted functionality.
 
 
-        -------------------------------------------------------------------------
+        ------------------------------------------------------------------------
 */
 
-#ifndef testrun_lib_h
-#define testrun_lib_h
+#ifndef testrun_module_h
+#define testrun_module_h
 
-/*----------------------------------------------------------------------------*/
-
-#include "testrun.h"
-#include "testrun_string.h"
-#include "testrun_vector.h"
-#include "testrun_copyright.h"
-#include "testrun_header.h"
-
-#endif /* testrun_lib_h */
+#endif /* testrun_module_h */

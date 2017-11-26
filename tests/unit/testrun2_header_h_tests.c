@@ -1,48 +1,49 @@
 /***
- *      ------------------------------------------------------------------------
- *
- *      Copyright 2017 Markus Toepfer
- *
- *      Licensed under the Apache License, Version 2.0 (the "License");
- *      you may not use this file except in compliance with the License.
- *      You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *      Unless required by applicable law or agreed to in writing, software
- *      distributed under the License is distributed on an "AS IS" BASIS,
- *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *      See the License for the specific language governing permissions and
- *      limitations under the License.
- *
- *      This file is part of the testrun project. http://testrun.info
- *
- *      ------------------------------------------------------------------------
- ***//**
- *
- *      @file           testrun2_header_h.c
- *      @author         Markus Toepfer
- *      @date           2017-11-23
- *
- *      @ingroup        testrun_lib
- *
- *      @brief          Check the header MACROs and inline functions
- *
- *
- *      ------------------------------------------------------------------------
- **/
+        ------------------------------------------------------------------------
 
-/*******************************************************************************
- *
- *      TEST SETUP
- *
- ******************************************************************************/
+        Copyright 2017 Markus Toepfer
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+                http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+
+        This file is part of the testrun project. http://testrun.info
+
+        ------------------------------------------------------------------------
+*//**
+
+        @file           testrun2_header_h.c
+        @author         Markus Toepfer
+        @date           2017-11-23
+
+        @ingroup        testrun_lib
+
+        @brief          Check the header MACROs and inline functions
+
+
+        ------------------------------------------------------------------------
+*/
 
 #include "../../include/testrun2.h"
 
 static int testing = 1;
 
-/*----------------------------------------------------------------------------*/
+/*
+ *      ------------------------------------------------------------------------
+ *
+ *      TEST CASES                                                      #CASES
+ *
+ *      ------------------------------------------------------------------------
+ */
+
 
 int dummy_test1() {
 
@@ -120,11 +121,14 @@ bool testrun_configure_sequential(
         return false;
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      TEST CASES LOGGING
+ *      TEST CASES LOGGING                                                 #LOG
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
+
 
 int check_macro_testrun_errno(){
 
@@ -225,11 +229,13 @@ int check_macro_testrun_log_function_info(){
         return testrun_log_success();
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      TEST CASES ASSERT BASED TESTING
+ *      TEST CASES ASSERT                                              #ASSERT
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
 
 int check_macro_testrun_init(){
 
@@ -268,11 +274,14 @@ int check_macro_testrun_assert(){
         return testrun_log_success();
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      TEST CASES TESTRUN BASED TESTING
+ *      TEST CASES TESTRUN                                              #TESTRUN
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
+
 
 int check_macro_testrun_check(){
 
@@ -831,11 +840,13 @@ printf("AFTER SLOT MISSING TESTS ----------------------------------------\n\n");
         return testrun_log_success();
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      TEST CLUSTER
+ *      TEST CLUSTER                                                   #CLUSTER
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
 
 int check_macros_logging() {
 
@@ -916,10 +927,11 @@ int all_tests() {
        return testrun_counter;
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      ACTIVATED TESTS
+ *      TEST EXECUTION                                                  #EXEC
  *
- ******************************************************************************/
-
+ *      ------------------------------------------------------------------------
+ */
 testrun_run(all_tests);

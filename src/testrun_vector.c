@@ -1,47 +1,48 @@
 /***
- *      ------------------------------------------------------------------------
- *
- *      Copyright 2017 Markus Toepfer
- *
- *      Licensed under the Apache License, Version 2.0 (the "License");
- *      you may not use this file except in compliance with the License.
- *      You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *      Unless required by applicable law or agreed to in writing, software
- *      distributed under the License is distributed on an "AS IS" BASIS,
- *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *      See the License for the specific language governing permissions and
- *      limitations under the License.
- *
- *      This file is part of the testrun project. http://testrun.info
- *
- *      ------------------------------------------------------------------------
- ***//**
- *
- *      @file           testrun_vector.c
- *      @author         Markus Toepfer
- *      @date           2017-11-18
- *
- *      @ingroup        testrun_lib
- *
- *      @brief          Implementation of testrun_vector related functionality.
- *
- *
- *      ------------------------------------------------------------------------
- **/
+        ------------------------------------------------------------------------
+
+        Copyright 2017 Markus Toepfer
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+                http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+
+        This file is part of the testrun project. http://testrun.info
+
+        ------------------------------------------------------------------------
+*//**
+
+        @file           testrun_vector.c
+        @author         Markus Toepfer
+        @date           2017-11-18
+
+        @ingroup        testrun_lib
+
+        @brief          Implementation of testrun_vector related functionality.
+
+
+        ------------------------------------------------------------------------
+*/
 
 #include "../include/testrun_vector.h"
 
-
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      STATIC FUNCTIONS
+ *      STATIC FUNCTIONS                                                #STATIC
  *
- ******************************************************************************/
-
-/*----------------------------------------------------------------------------*/
+ *      Static, private functions
+ *
+ *      ------------------------------------------------------------------------
+ */
 
 static bool testrun_vector_resize(
         testrun_vector * const self,
@@ -128,12 +129,16 @@ static bool testrun_vector_set_new_end(
         return true;
 }
 
-
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      STRUCTURE RELATED FUNCTIONS
+ *      STRUCTURE RELATED FUNCTIONS                                     #SRF
  *
- ******************************************************************************/
+ *      The first block contains function realted to the structure itself,
+ *      including creation, termination and copying.
+ *
+ *      ------------------------------------------------------------------------
+ */
 
 testrun_vector *testrun_vector_create(
         size_t rate,
@@ -303,11 +308,17 @@ error:
         return testrun_vector_terminate(copy);
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      CONTENT RELATED FUNCTIONS
+ *      GETTER / SETTER FUNCTIONS                                      #GETTER
  *
- ******************************************************************************/
+ *      The second part defines standard vector functions to GET and SET
+ *      a value within vector->items, whitout changing the amount of
+ *      possible elements of vector items.
+ *
+ *      ------------------------------------------------------------------------
+ */
 
 void *testrun_vector_get(
         testrun_vector const * const self,
@@ -350,11 +361,17 @@ bool testrun_vector_set(
 
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      USE CASE DYNAMIC GROWING & SHRINKING
+ *      DYNAMIC VECTOR FUNCTIONS                                        #DVF
  *
- ******************************************************************************/
+ *      The third part defines dynamic vector functions, like
+ *      DELETE, REMOVE, ADD, INSERT, PUSH and POP, which shrink and expand the
+ *      amount of possible vector items based on vector->rate.
+ *
+ *      ------------------------------------------------------------------------
+ */
 
 int testrun_vector_delete(
         testrun_vector * const self,
@@ -505,11 +522,15 @@ void *testrun_vector_pop(
         return testrun_vector_remove(self, self->last);
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      ADDITIONAL FUNCTIONS
+ *      ADDITIONAL FUNCTIONS                                            #ADD
  *
- ******************************************************************************/
+ *      Additional usefull external defined functionality.
+ *
+ *      ------------------------------------------------------------------------
+ */
 
 bool testrun_vector_is_empty(
         testrun_vector const * const self){

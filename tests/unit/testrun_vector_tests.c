@@ -1,65 +1,64 @@
 /***
- *      ------------------------------------------------------------------------
- *
- *      Copyright 2017 Markus Toepfer
- *
- *      Licensed under the Apache License, Version 2.0 (the "License");
- *      you may not use this file except in compliance with the License.
- *      You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *      Unless required by applicable law or agreed to in writing, software
- *      distributed under the License is distributed on an "AS IS" BASIS,
- *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *      See the License for the specific language governing permissions and
- *      limitations under the License.
- *
- *      This file is part of the testrun project. http://testrun.info
- *
- *      ------------------------------------------------------------------------
- ***//**
- *
- *      @file           testrun_vector_tests.c
- *      @author         Markus Toepfer
- *      @date           2017-11-18
- *
- *      @ingroup        testrun_lib
- *
- *      @brief          Unit testing of testrun_vector
- *
- *
- *      ------------------------------------------------------------------------
- **/
+        ------------------------------------------------------------------------
 
-/*******************************************************************************
- *
- *      TEST SETUP
- *
- ******************************************************************************/
+        Copyright 2017 Markus Toepfer
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+                http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+
+        This file is part of the testrun project. http://testrun.info
+
+        ------------------------------------------------------------------------
+*//**
+
+        @file           testrun_vector_tests.c
+        @author         Markus Toepfer
+        @date           2017-11-18
+
+        @ingroup        testrun_lib
+
+        @brief          Unit testing of testrun_vector
+
+
+        ------------------------------------------------------------------------
+*/
 
 #include <limits.h>
 
 #include "../../include/testrun2.h"
 #include "../../src/testrun_vector.c"
 
-static int testing = 1;
-
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      TEST HELPER
+ *      TEST HELPER                                                    #HELPER
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
 
 void *dummy_testrun_copy_failure() {
         return NULL;
 };
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      TEST CASES
+ *      STRUCTURE RELATED FUNCTIONS                                     #SRF
  *
- ******************************************************************************/
+ *      The first block contains function realted to the structure itself,
+ *      including creation, termination and copying.
+ *
+ *      ------------------------------------------------------------------------
+ */
 
 int test_testrun_vector_create(){
 
@@ -1805,19 +1804,21 @@ int check_testrun_header_example(){
         return testrun_log_success();
 }
 
-/*******************************************************************************
- *
- *      TEST CLUSTER
- *
- ******************************************************************************/
-
 /*
+ *      ------------------------------------------------------------------------
+ *
+ *      TEST CLUSTER                                                   #CLUSTER
+ *
+ *      ------------------------------------------------------------------------
+ *
  *      Cluster all tests in a way to be run and executed one after the other
  *      that is the same way the setup SHOULD be done for assert based testing.
  *
  *      YOU MAY RUN THIS CLUSTER BY CHANGING testrun_run(???); TO
  *
  *              testrun_run(cluster_tests_non_configurable);
+ *
+ *      ------------------------------------------------------------------------
  */
 int cluster_tests_non_configurable() {
 
@@ -1856,12 +1857,17 @@ int cluster_tests_non_configurable() {
         return testrun_counter;
 }
 
-/*----------------------------------------------------------------------------*/
-
 /*
+ *      ------------------------------------------------------------------------
+ *
+ *      TESTS CONFIGURABLE
+ *
  *      Cluster the same test series as above in a way to be configurable for
  *      the type of testrun (parallel or sequential).
+ *
+ *      ------------------------------------------------------------------------
  */
+
 int64_t cluster_tests_configurable(
         int(*tests[])(),
         size_t slot,
@@ -1897,15 +1903,18 @@ int64_t cluster_tests_configurable(
         return testrun_counter;
 }
 
-/*******************************************************************************
- *
- *      TEST CONFIGURATION
- *
- ******************************************************************************/
 
 /*
- *      Configure the series for parallel testing.
+ *      ------------------------------------------------------------------------
+ *
+ *      TESTS CONFIGURATION
+ *
+ *      Implementation of the required functions for parallel and
+ *      sequential testcase configuration of the testrun2.h header.
+ *
+ *      ------------------------------------------------------------------------
  */
+
 bool testrun_configure_parallel(
         int (*testcases[])(),
         size_t * const start,
@@ -1924,9 +1933,6 @@ bool testrun_configure_parallel(
 
 /*----------------------------------------------------------------------------*/
 
-/*
- *      Configure the series for sequential testing.
- */
 bool testrun_configure_sequential(
         int (*testcases[])(),
         size_t *const start,
@@ -1944,13 +1950,13 @@ bool testrun_configure_sequential(
 
 }
 
-/*******************************************************************************
- *
- *      EXECUTION SEQUENCE
- *
- ******************************************************************************/
-
 /*
+ *      ------------------------------------------------------------------------
+ *
+ *      TEST EXECUTION                                                  #EXEC
+ *
+ *      ------------------------------------------------------------------------
+ *
  *      EXECUTION sequence for the test series:
  *
  *      OPTIONS
@@ -1978,28 +1984,31 @@ bool testrun_configure_sequential(
  *
  *              testrun_run(run_tests);
  *
+ *      ------------------------------------------------------------------------
  */
 int64_t run_tests() {
 
         return testrun_run_tests(25,0,true);
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      ACTIVATED TESTS
+ *      TEST ACTIVATED                                                  #ACTIV
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
 
 //testrun_run(run_tests);
 testrun_run(cluster_tests_non_configurable);
 
-/*******************************************************************************
- *
- *      TEST RESULTS AND NOTES
- *
- ******************************************************************************/
-
 /*
+ *      ------------------------------------------------------------------------
+ *
+ *      TEST RESULTS AND NOTES                                         #RESULTS
+ *
+ *      ------------------------------------------------------------------------
+ *
  *      NOTE example testrun with 25 enabled test cases in parallel and
  *      sequential shows a slightly better runtime in sequential run.
  *
@@ -2024,6 +2033,8 @@ testrun_run(cluster_tests_non_configurable);
  *      be 8 bytes in 1 block shown as still reachable when running
  *      with valgrind.
  *
+ *      ------------------------------------------------------------------------
+ *
  *      EXAMPLE RUN TIMES:
  *
  *      ALL TESTS RUN (23 tests)
@@ -2039,6 +2050,7 @@ testrun_run(cluster_tests_non_configurable);
  *      ALL TESTS RUN (23 tests)
  *      Clock ticks function: ( main ) | 0.317900 | 318 ms
  *
+ *      ------------------------------------------------------------------------
  *
  *      TEST RUN with following machine data:
  *      markus@PC:~/projects/testrun.info/testrun_lib$ lscpu
@@ -2083,4 +2095,5 @@ testrun_run(cluster_tests_non_configurable);
  *      (gcc version 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.4) )
  *      #42~16.04.1-Ubuntu SMP Tue Oct 10 16:32:20 UTC 2017
  *
+ *      ------------------------------------------------------------------------
  */

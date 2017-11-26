@@ -1,47 +1,41 @@
 /***
- *      ------------------------------------------------------------------------
- *
- *      Copyright 2017 Markus Toepfer
- *
- *      Licensed under the Apache License, Version 2.0 (the "License");
- *      you may not use this file except in compliance with the License.
- *      You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *      Unless required by applicable law or agreed to in writing, software
- *      distributed under the License is distributed on an "AS IS" BASIS,
- *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *      See the License for the specific language governing permissions and
- *      limitations under the License.
- *
- *      This file is part of the testrun project. http://testrun.info
- *
- *      ------------------------------------------------------------------------
- ***//**
- *
- *      @file           testrun2_assert_example_tests.c
- *      @author         Markus Toepfer
- *      @date           2017-11-21
- *
- *      @ingroup        testrun_lib
- *
- *      @brief          Example test file using testrun2.h
- *
- *      This example shows assert() style based testing with testrun.h and is
- *      build around the testrun_test() macro, which increases a counter which
- *      MUST be initialized in a testcluster function.
- *
- *      @NOTE           This is the testrun_assert_example of the header.
- *
- *      ------------------------------------------------------------------------
- **/
+        ------------------------------------------------------------------------
 
-/*******************************************************************************
- *
- *      TEST SETUP
- *
- ******************************************************************************/
+        Copyright 2017 Markus Toepfer
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+                http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+
+        This file is part of the testrun project. http://testrun.info
+
+        ------------------------------------------------------------------------
+*//**
+
+        @file           testrun2_assert_example_tests.c
+        @author         Markus Toepfer
+        @date           2017-11-21
+
+        @ingroup        testrun_lib
+
+        @brief          Example test file using testrun2.h
+
+        This example shows assert() style based testing with testrun.h and is
+        build around the testrun_test() macro, which increases a counter which
+        MUST be initialized in a testcluster function.
+
+        @NOTE           This is the testrun_assert_example of the header.
+
+       ------------------------------------------------------------------------
+*/
 
 #include "../../include/testrun2.h"
 
@@ -49,11 +43,13 @@ bool example_function() {
         return true;
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      TEST CASES
+ *      TEST CASES                                                      #CASES
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
 
 int test_with_assert_function() {
 
@@ -111,11 +107,13 @@ int test_whatever_NOK() {
 
 /*----------------------------------------------------------------------------*/
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      TEST CLUSTER SETUP
+ *      TEST CLUSTER                                                   #CLUSTER
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
 
 int assert_based_testing() {
 
@@ -129,11 +127,13 @@ int assert_based_testing() {
 
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      ACTIVATED TESTS
+ *      TEST EXECUTION                                                  #EXEC
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
 
 testrun_run(assert_based_testing);
 

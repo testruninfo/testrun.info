@@ -1,51 +1,62 @@
 /***
- *      ------------------------------------------------------------------------
- *
- *      Copyright 2017 Markus Toepfer
- *
- *      Licensed under the Apache License, Version 2.0 (the "License");
- *      you may not use this file except in compliance with the License.
- *      You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *      Unless required by applicable law or agreed to in writing, software
- *      distributed under the License is distributed on an "AS IS" BASIS,
- *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *      See the License for the specific language governing permissions and
- *      limitations under the License.
- *
- *      This file is part of the testrun project. http://testrun.info
- *
- *      ------------------------------------------------------------------------
- ***//**
- *
- *      @file           testrun_config_tests.c
- *      @author         Markus Toepfer
- *      @date           2017-11-25
- *
- *      @ingroup
- *
- *      @brief
- *
- *
- *      ------------------------------------------------------------------------
- **/
+        ------------------------------------------------------------------------
 
-/*******************************************************************************
- *
- *      TEST SETUP
- *
- ******************************************************************************/
+        Copyright 2017 Markus Toepfer
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+                http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+
+        This file is part of the testrun project. http://testrun.info
+
+        ------------------------------------------------------------------------
+*//**
+
+        @file           testrun_config_tests.c
+        @author         Markus Toepfer
+        @date           2017-11-25
+
+        @ingroup
+
+        @brief
+
+
+        ------------------------------------------------------------------------
+*/
 
 #include "../../include/testrun2.h"
 #include "../../src/testrun_config.c"
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      TEST CASES
+ *      TEST HELPER                                                    #HELPER
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
+
+/*----------------------------------------------------------------------------*/
+
+/*
+ *      ------------------------------------------------------------------------
+ *
+ *      TEST CASES                                                      #CASES
+ *
+ *      ------------------------------------------------------------------------
+ */
+
+/*----------------------------------------------------------------------------*/
+
+
+
 
 /*
 int test_testrun_config_paths_default() {
@@ -173,11 +184,13 @@ int test_testrun_config_to_string() {
 
 /*----------------------------------------------------------------------------*/
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      TEST CLUSTER
+ *      TEST CLUSTER                                                   #CLUSTER
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
 
 int all_tests() {
 
@@ -191,11 +204,12 @@ int all_tests() {
        return testrun_counter;
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      ACTIVATED TESTS
+ *      TEST EXECUTION                                                  #EXEC
  *
- ******************************************************************************/
-
+ *      ------------------------------------------------------------------------
+ */
 
 testrun_run(all_tests);

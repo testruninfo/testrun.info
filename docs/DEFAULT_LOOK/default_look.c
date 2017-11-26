@@ -1,7 +1,7 @@
 /***
         -------------------------------------------------------------------------
 
-        Copyright 2017 Markus Toepfer
+        Copyright [COPYRIGHT_YEAR] [COPYRIGHT_NAME]
 
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -20,27 +20,28 @@
         -------------------------------------------------------------------------
 *//**
 
-        @file           testrun_lib.h
-        @author         Markus Toepfer
-        @date           2017-11-13
+        @file           [MODULE_NAME].c
+        @author         [AUTHOR_NAME]
+        @date           [CREATION_DATE]
 
-        @ingroup        testrun_lib
-
-        @brief          Main interface for the testrun_lib.
+        @ingroup        [PROJECT]
 
 
         -------------------------------------------------------------------------
 */
 
-#ifndef testrun_lib_h
-#define testrun_lib_h
+#include "../include/[MODULE_NAME].h"
+
+/*
+ *      ------------------------------------------------------------------------
+ *
+ *      FILESTRUCTURE PART 1                                            #FP1
+ *
+ *      Introduction notes about the functions next ...
+ *
+ *      ------------------------------------------------------------------------
+ */
+
 
 /*----------------------------------------------------------------------------*/
 
-#include "testrun.h"
-#include "testrun_string.h"
-#include "testrun_vector.h"
-#include "testrun_copyright.h"
-#include "testrun_header.h"
-
-#endif /* testrun_lib_h */

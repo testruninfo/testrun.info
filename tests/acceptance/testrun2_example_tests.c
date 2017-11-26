@@ -1,47 +1,41 @@
 /***
- *      ------------------------------------------------------------------------
- *
- *      Copyright 2017 Markus Toepfer
- *
- *      Licensed under the Apache License, Version 2.0 (the "License");
- *      you may not use this file except in compliance with the License.
- *      You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *      Unless required by applicable law or agreed to in writing, software
- *      distributed under the License is distributed on an "AS IS" BASIS,
- *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *      See the License for the specific language governing permissions and
- *      limitations under the License.
- *
- *      This file is part of the testrun project. http://testrun.info
- *
- *      ------------------------------------------------------------------------
- ***//**
- *
- *      @file           testrun2_example_tests.c
- *      @author         Markus Toepfer
- *      @date           2017-11-22
- *
- *      @ingroup        testrun_lib
- *
- *      @brief          Example test file using testrun2.h
- *
- *      This example shows parallel and sequential style based testing
- *      with testrun.h and is build around a MACRO set to execute tests in
- *      parallel or seqentuial run.
- *
- *      @NOTE           This is the testrun_example.c of the header.
- *
- *      ------------------------------------------------------------------------
- **/
+        ------------------------------------------------------------------------
 
-/*******************************************************************************
- *
- *      TEST SETUP
- *
- ******************************************************************************/
+        Copyright 2017 Markus Toepfer
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+                http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+
+        This file is part of the testrun project. http://testrun.info
+
+        ------------------------------------------------------------------------
+*//**
+
+        @file           testrun2_example_tests.c
+        @author         Markus Toepfer
+        @date           2017-11-22
+
+        @ingroup        testrun_lib
+
+        @brief          Example test file using testrun2.h
+
+        This example shows parallel and sequential style based testing
+        with testrun.h and is build around a MACRO set to execute tests in
+        parallel or seqentuial run.
+
+        @NOTE           This is the testrun_example.c of the header.
+
+        ------------------------------------------------------------------------
+*/
 
 #include "../../include/testrun2.h"
 
@@ -49,11 +43,13 @@ bool example_function() {
         return true;
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      TEST CASES
+ *      TEST CASES                                                      #CASES
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
 
 int testcase_block1(){
 
@@ -105,11 +101,14 @@ int testcase_block4(){
         return testrun_log_success();
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      TEST CLUSTER SETUP
+ *      TEST CLUSTER                                                   #CLUSTER
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
+
 
 int64_t cluster_tests1(int(*tests[])(), size_t slot, size_t max) {
 
@@ -135,11 +134,13 @@ int64_t cluster_tests2(int(*tests[])(), size_t slot, size_t max) {
         return testrun_counter;
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      TEST CONFIGURATION
+ *      TEST CONFIGURATION                                              #CONFIG
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
 
 bool testrun_configure_parallel(
         int (*testcases[])(),
@@ -188,11 +189,13 @@ bool testrun_configure_sequential(
 
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      EXECUTION SEQUENCE
+ *      TEST EXECUTION                                                  #EXEC
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
 
 int64_t run_tests() {
 
@@ -201,15 +204,23 @@ int64_t run_tests() {
         return testrun_run_tests(1000,1000,false);
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      ACTIVATED TESTS
+ *      TEST ACTIVATED                                                  #ACTIV
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
 
 testrun_run(run_tests);
 
 /*
+ *      ------------------------------------------------------------------------
+ *
+ *      TEST RESULTS AND NOTES                                         #RESULTS
+ *
+ *      ------------------------------------------------------------------------
+ *
  *      EXAMPLE RUN using combined test creation and valgrind execution
  *
  *      make test testname=tests/acceptance/testrun_example_tests.c  &&

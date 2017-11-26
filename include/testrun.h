@@ -1,60 +1,56 @@
 /***
- *      ------------------------------------------------------------------------
- *
- *      Copyright 2017 Markus Toepfer
- *
- *      Licensed under the Apache License, Version 2.0 (the "License");
- *      you may not use this file except in compliance with the License.
- *      You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *      Unless required by applicable law or agreed to in writing, software
- *      distributed under the License is distributed on an "AS IS" BASIS,
- *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *      See the License for the specific language governing permissions and
- *      limitations under the License.
- *
- *      This file is part of the testrun project. http://testrun.info
- *
- *      ------------------------------------------------------------------------
- *//**
- *
- *      @file               testrun.h
- *      @author             Markus Toepfer
- *      @date               2017-11-24
- *
- *      @brief              Serial test execution framework.
- *
- *      NOTE                This framework makes no use of assert, to force
- *                          to write testcases, which are 1 to 1 compatible
- *                          with the parallel testing framework.
- *
- *      NOTE                This testfile header is replacable with
- *                          testrun2.h for OpenMP based parallel
- *                          test execution.
- *
- *      ------------------------------------------------------------------------
- */
+        ------------------------------------------------------------------------
+
+        Copyright 2017 Markus Toepfer
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+                http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+
+        This file is part of the testrun project. http://testrun.info
+
+        ------------------------------------------------------------------------
+*//**
+
+        @file           testrun.h
+        @author         Markus Toepfer
+        @date           2017-11-24
+
+        @brief          Simple serial test execution framework.
+
+        NOTE            This framework uses an alternative to assert based
+                        testing, which is compatible with parallel
+                        test execution of @see testrun2.h. So this header is
+                        replacable with testrun2.h for parallel test setup,
+                        without replacing any written testcase.
+                        (Assert.h is not included, to force to write testrun2.h
+                        compatible tests by default)
+
+        ------------------------------------------------------------------------
+*/
 
 #ifndef testrun_h
 #define testrun_h
 
-#include <unistd.h>             /* C89/C90 */
-#include <stdlib.h>             /* C89/C90 */
-#include <stdio.h>              /* C89/C90 */
-#include <string.h>             /* C89/C90 */
-#include <errno.h>              /* C89/C90 */
-#include <time.h>               /* C89/C90 */
+#include <unistd.h>     /* C89/C90 */
+#include <stdlib.h>     /* C89/C90 */
+#include <stdio.h>      /* C89/C90 */
+#include <string.h>     /* C89/C90 */
+#include <errno.h>      /* C89/C90 */
+#include <time.h>       /* C89/C90 */
 
-/*----------------------------------------------------------------------------
- *
- *      Block of log function MACROS used within the framework.
- *
- *----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 
 /**
-        @brief          Error initialization of none error.
+        String error initialization of no error.
 */
 #define testrun_errno() \
         (errno == 0 ? "NONE" :  strerror(errno))
@@ -62,12 +58,8 @@
 /*----------------------------------------------------------------------------*/
 
 /**
-        @brief          Log a failure. Used in the sense of:
-                        Inability to perform a function as expected.
-                        (e.g. out of memory, environmental factors, and so on)
-        @param msg      message to be logged
-        @param ...      VA_ARGS to be logged
-**/
+        Log a failure. Failure: Inability to perform a function as expected.
+*/
 #define testrun_log_failure(msg, ...) \
         fprintf(stderr, "\t[FAIL]\t%s line:%d errno:%s message: " msg "\n",\
         __FUNCTION__, __LINE__, testrun_errno(), ##__VA_ARGS__)
@@ -75,67 +67,38 @@
 /*----------------------------------------------------------------------------*/
 
 /**
-        @brief          Log an error. Used in the sense of:
-                        Difference between expected and actual result.
-        @param msg      message to be logged
-        @param ...      VA_ARGS to be logged
-**/
+        Log an error. Error: Difference between expected and actual result.
+*/
 #define testrun_log_error(msg, ...) \
         fprintf(stderr, "\t[ERROR]\t%s line:%d errno:%s message: " msg "\n",\
         __FUNCTION__, __LINE__, testrun_errno(), ##__VA_ARGS__)
 
 /*----------------------------------------------------------------------------*/
-/**
-        @brief          Log a success. Used in the sense of:
-                        Result is as defined.
-        @param msg      message to be logged
-        @param ...      VA_ARGS to be logged
-**/
+
 #define testrun_log_success(msg, ...) \
         fprintf(stdout, "\t[OK] \t%s " msg "\n", __FUNCTION__, ##__VA_ARGS__)
 
 /*----------------------------------------------------------------------------*/
 
-/**
-        @brief          Log any message.
-        @param msg      message to be logged
-        @param ...      VA_ARGS to be logged
-**/
 #define testrun_log(msg, ...) \
         fprintf(stdout, "\t" msg "\n", ##__VA_ARGS__)
 
 /*----------------------------------------------------------------------------*/
 
-/**
-        @brief          Log any message with function and line position info.
-        @param msg      message to be logged
-        @param ...      VA_ARGS to be logged
-**/
 #define testrun_log_function_info(msg, ...) \
         fprintf(stdout, "\t[INFO] \t%s line:%d message: " msg "\n", \
                 __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
 /*----------------------------------------------------------------------------*/
-/**
-        @brief          log the start and end times of a test run.
-        @param start    clock_t with at the start of a test run.
-        @param end      clock_t at the end of a test run.
-**/
+
 #define testrun_log_clock(start, end) \
         fprintf(stdout, "\tClock ticks function: ( %s ) | %f s | %.0f ms \n", \
         __func__, \
         ((double)(end - start)) / CLOCKS_PER_SEC, \
         (((double)(end - start)) / CLOCKS_PER_SEC ) * 1000)
 
-/*----------------------------------------------------------------------------
- *
- *      Block of execution MACROS used for testing.
- *
- *----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 
-/**
-        @brief          Default initialization of used variables in macros.
-*/
 #define testrun_init()  \
         int result = 0; \
         int testrun_counter = 0;
@@ -143,13 +106,11 @@
 /*----------------------------------------------------------------------------*/
 
 /**
-        @brief          Run a single atomar test. This function is leaving the
-                        test block function, where it is executed, on error.
-                        (e.g. Mindset note ... think of it like assert defused
-                         ... to leave a function, instead of the program ...)
-                        On error the block which failed will be logged.
-                        (e.g. the unit test block using this function)
-        @param test     Boolean decision input.
+        Run a single atomar test. Return the surrounding block on error.
+        This function will leave the context block running on error. The
+        Mindset is a defused assert. LEAVE THE FUNCTION NOT THE PROGRAM.
+
+        @param test     boolean decision input.
         @returns        the calling function on error with -1
 */
 #define testrun_check(test, ... )\
@@ -158,8 +119,7 @@
 /*----------------------------------------------------------------------------*/
 
 /**
-        @brief          alias to @see testrun_check
-        @returns        the calling function on error with -1
+        Alias to @see testrun_check.
 */
 #define testrun(test, ...)\
         testrun_check(test, __VA_ARGS__ )
@@ -167,12 +127,13 @@
 /*----------------------------------------------------------------------------*/
 
 /**
-        @brief          Run a single test (execute function pointer)
-                        Runs a test function.
-                        On success      increase a test counter.
-                        On error        return the parent function
-                                        with the result of the function pointer
+        Run a single test (execute a function pointer. Runs a test function.
+        On non negative return value of the function run, a testrun_counter
+        is increased, on negative result, the negative result will be returned.
+
         @param test     function pointer of the test to run
+        @NOTE           The surrounding block is left on negative result of the
+                        function pointer execution.
 */
 #define testrun_test(test)\
         result = test(); testrun_counter++; if (result < 0) return result;
@@ -180,29 +141,26 @@
 /*----------------------------------------------------------------------------*/
 
 /**
-        @brief          run a cluster of tests (function pointers)
-        @param cluster  function pointer to function containing the test
-                        function pointers.
+        Runs a function pointer, which SHALL contain the test function pointers
+        to run. The function pointer is wrapped in a main procedure, which and
+        allows indepentent testruns of the input testcluster over external
+        execution.
 
-        Runs a function pointer, which shall contain the test function pointers
-        to run. The function pointer is wrapped in a main procedure,
-        which allows indepentent test runs of the test cluster.
-
-        A clock will be started, when the command is invoked and stopped before
-        it returns.
+        A clock will be started, as soon as the main is executed and the the
+        time is stopped again, at the end of the execution. The difference
+        will be printed and is the runtime of the whole input testcluster.
 
         A run will fail, as soon as one of the tests in the testcluster fails.
-        (Fail early)
+        (Fail on first) or will run all functions dependent on the testsetup.
 
-        Note: Based on assert based test aborts, the test run will either abort
-        on failure or succed.
-**/
-#define testrun_run(cluster) int main(int argc, char *argv[]) {\
+        @param testcluster      function pointer to be executed.
+*/
+#define testrun_run(testcluster) int main(int argc, char *argv[]) {\
         argc = argc;\
         clock_t start1_t, end1_t; \
         start1_t = clock(); \
         testrun_log("\ntestrun\t%s", argv[0]);\
-        int64_t result = cluster();\
+        int64_t result = testcluster();\
         if (result > 0) \
                 testrun_log("ALL TESTS RUN (%jd tests)", result);\
         end1_t = clock(); \
@@ -287,6 +245,6 @@
         testrun_run(testcase_cluster);
         @endcode
 
-**/
+*/
 
 #endif /* testrun_h */

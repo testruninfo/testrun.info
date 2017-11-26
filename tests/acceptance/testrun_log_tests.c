@@ -1,59 +1,52 @@
 /***
- *      ------------------------------------------------------------------------
- *
- *      Copyright 2017 Markus Toepfer
- *
- *      Licensed under the Apache License, Version 2.0 (the "License");
- *      you may not use this file except in compliance with the License.
- *      You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *      Unless required by applicable law or agreed to in writing, software
- *      distributed under the License is distributed on an "AS IS" BASIS,
- *      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *      See the License for the specific language governing permissions and
- *      limitations under the License.
- *
- *      This file is part of the testrun project. http://testrun.info
- *
- *      ------------------------------------------------------------------------
- ***//**
- *
- *      @file           testrun_log_tests.c
- *      @author         Markus Toepfer
- *      @date           2017-11-13
- *
- *      @ingroup        testrun_lib
- *
- *      @brief          Macro testing for testrun_log
- *                      This test function will call all defined macros
- *                      and inline functions of the header, and dump the
- *                      output to stdout.
- *
- *                      Output check need to be done manually.
- *                      This is not an automated unit test.
- *
- *      ------------------------------------------------------------------------
- **/
+        ------------------------------------------------------------------------
 
-/*******************************************************************************
- *
- *      TEST SETUP
- *
- ******************************************************************************/
+        Copyright 2017 Markus Toepfer
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+                http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+
+        This file is part of the testrun project. http://testrun.info
+
+        ------------------------------------------------------------------------
+*//**
+
+        @file           testrun_log_tests.c
+        @author         Markus Toepfer
+        @date           2017-11-13
+
+        @ingroup        testrun_lib
+
+        @brief          Macro testing for testrun_log
+                        This test function will call all defined macros
+                        and inline functions of the header, and dump the
+                        output to stdout.
+
+                        Output check need to be done manually.
+                        This is not an automated unit test.
+
+        ------------------------------------------------------------------------
+*/
 
 #include "../../include/testrun.h"
 #include "../../include/testrun_log.h"
 
-static int testing = 1;
-
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      TEST CASES
+ *      TEST CASES                                                      #CASES
  *
- ******************************************************************************/
-/*----------------------------------------------------------------------------*/
+ *      ------------------------------------------------------------------------
+ */
 
 int run_inline_testrun_log_create_timestamp(){
 
@@ -588,12 +581,13 @@ int run_macro_log_emergency(){
         return testrun_log_success();
 }
 
-
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      TEST CLUSTER
+ *      TEST CLUSTER                                                   #CLUSTER
  *
- ******************************************************************************/
+ *      ------------------------------------------------------------------------
+ */
 
 int all_tests() {
 
@@ -628,11 +622,12 @@ int all_tests() {
         return 1;
 }
 
-/*******************************************************************************
+/*
+ *      ------------------------------------------------------------------------
  *
- *      ACTIVATED TESTS
+ *      TEST EXECUTION                                                  #EXEC
  *
- ******************************************************************************/
-
+ *      ------------------------------------------------------------------------
+ */
 
 testrun_run(all_tests);
