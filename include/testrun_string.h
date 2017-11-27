@@ -47,6 +47,7 @@
 #include "testrun_vector.h"
 
 #define LINEBREAK "\n"
+#define TESTRUN_LINEEND "\n"
 
 /*----------------------------------------------------------------------------*/
 

@@ -270,6 +270,7 @@ char *testrun_copyright_to_header(
 
         char    *step1      = NULL;
         char    *step2      = NULL;
+        char    *step3      = NULL;
         char    *unset      = NULL;
         char    *orig       = statement->to_string(statement);
 
@@ -373,17 +374,26 @@ char *testrun_copyright_to_header(
                 NULL, 0))
                 goto error;
 
+        size3 = 0;
+        // remove additional whitespace added in all lines
+        if (!testrun_string_clear_whitespace_before_lineend(&step3, &size3,
+                step2, size2,
+                TESTRUN_LINEEND, length_end))
+                goto error;
+
         unset = testrun_string_free(unset);
         orig  = testrun_string_free(orig);
         step1 = testrun_string_free(step1);
+        step2 = testrun_string_free(step2);
 
-        return step2;
+        return step3;
 
 error:
         unset = testrun_string_free(unset);
         orig  = testrun_string_free(orig);
         step1 = testrun_string_free(step1);
         step2 = testrun_string_free(step2);
+        step3 = testrun_string_free(step3);
         return NULL;
 }
 
@@ -392,9 +402,118 @@ error:
 char *testrun_copyright_default_c_header(
         testrun_copyright const * const statement, bool docu_open){
 
-        if (!statement)
+        if (!statement || !statement->to_string)
                 return NULL;
 
+        // (0) varible setup
+
+        int linelen = 81;               // 80 char + '\0'
+        int indent  = 8;                // standard indent 8 chars
+        int i       = 0;
+
+        size_t px_size = 3 * linelen;   // introcomment, stripline and newline
+        size_t sx_size = 2 * linelen;   // stripline and outrocomment
+
+        char *intro = "/***";
+        char *outro = "*/";
+
+        char prefix[px_size];
+        char suffix[sx_size];
+        char linein[linelen];
+        char stripline[linelen];
+        bzero(stripline, linelen);
+        bzero(linein, linelen);
+        bzero(prefix, px_size);
+        bzero(suffix, sx_size);
+
+        char    *orig   = NULL;
+        char    *step1  = NULL;
+        char    *step2  = NULL;
+        char    *step3  = NULL;
+        size_t  size1   = 0;
+        size_t  size2   = 0;
+        size_t  size3   = 0;
+        size_t  le_len  = strlen(TESTRUN_LINEEND);
+
+        // (1) create original copyright statement
+
+        orig = statement->to_string(statement);
+        if (!orig)
+                goto error;
+
+        // log("orig %s", orig);
+
+        // (2) prepare formating helper
+
+        if (docu_open)
+                outro = "*//**";
+
+        for (i = 0; i < linelen - 1; i++){
+                if (i < indent)
+                        stripline[i] = ' ';
+                else
+                        stripline[i] = '-';
+        }
+
+        for (i = 0; i < indent; i++){
+                linein[i] = ' ';
+        }
+
+        // (3) prepare intro and outro for the copyright
+
+        if (snprintf(prefix, px_size,
+                "%s" TESTRUN_LINEEND
+                "%s" TESTRUN_LINEEND
+                TESTRUN_LINEEND,
+                intro, stripline) < 0)
+                goto error;
+
+        if (snprintf(suffix, sx_size,
+                "%s" TESTRUN_LINEEND
+                "%s" TESTRUN_LINEEND,
+                stripline, outro) < 0)
+                goto error;
+
+        // (4) prefix each line of orig with line indent
+
+        if (!testrun_string_embed(&step1, &size1,
+                orig, strlen(orig),
+                linein, strlen(linein),
+                NULL, 0,
+                TESTRUN_LINEEND, le_len,
+                TESTRUN_LINEEND, le_len))
+                goto error;
+
+        //log("step1 %s", step1);
+
+        // (5) prefix and suffix step1
+
+        if (!testrun_string_embed(&step2, &size2,
+                step1, size1,
+                prefix, px_size,
+                suffix, sx_size,
+                NULL, 0,
+                NULL, 0))
+                goto error;
+
+        //log("step2 %s", step2);
+
+        // (6) remove additional whitespace
+        if (!testrun_string_clear_whitespace_before_lineend(&step3, &size3,
+                step2, size2,
+                TESTRUN_LINEEND, le_len))
+                goto error;
+
+        orig  = testrun_string_free(orig);
+        step1 = testrun_string_free(step1);
+        step2 = testrun_string_free(step2);
+        return step3;
+error:
+        orig  = testrun_string_free(orig);
+        step1 = testrun_string_free(step1);
+        step2 = testrun_string_free(step2);
+        step3 = testrun_string_free(step3);
+        return NULL;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -402,8 +521,105 @@ char *testrun_copyright_default_c_header(
 char *testrun_copyright_default_shell_header(
         testrun_copyright const * const statement){
 
-        if (!statement)
+        if (!statement || !statement->to_string)
                 return NULL;
+
+        // (0) varible setup
+
+        int linelen = 81;               // 80 char + '\0'
+        int indent  = 8;                // standard indent 8 chars
+        int i       = 0;
+
+        size_t px_size = 2 * linelen;   // introcomment and newline
+
+        char *intro = "#!/usr/bin/env bash";
+
+        char prefix[px_size];
+        char linein[linelen];
+        char stripline[linelen];
+        bzero(stripline, linelen);
+        bzero(linein, linelen);
+        bzero(prefix, px_size);
+
+        char    *orig   = NULL;
+        char    *step1  = NULL;
+        char    *step2  = NULL;
+        char    *step3  = NULL;
+        size_t  size1   = 0;
+        size_t  size2   = 0;
+        size_t  size3   = 0;
+        size_t  le_len  = strlen(TESTRUN_LINEEND);
+
+        // (1) create original copyright statement
+
+        orig = statement->to_string(statement);
+        if (!orig)
+                goto error;
+
+        //log("orig %s", orig);
+
+        // (2) prepare formating helper
+
+        for (i = 0; i < linelen - 1; i++){
+                if (i == 0)
+                        stripline[i] = '#';
+                else
+                        stripline[i] = '-';
+        }
+
+        for (i = 0; i < indent; i++){
+                if (i == 0)
+                        linein[i] = '#';
+                else
+                        linein[i] = ' ';
+        }
+
+        // (2) prepare intro and outro for the copyright
+
+        if (snprintf(prefix, px_size,
+                "%s" TESTRUN_LINEEND
+                "#" TESTRUN_LINEEND,
+                intro) < 0)
+                goto error;
+
+        // (3) prefix each line of orig with line indent
+
+        if (!testrun_string_embed(&step1, &size1,
+                orig, strlen(orig),
+                linein, strlen(linein),
+                NULL, 0,
+                TESTRUN_LINEEND, le_len,
+                TESTRUN_LINEEND, le_len))
+                goto error;
+
+        // (4) prefix with intro and outro
+
+        if (!testrun_string_embed(&step2, &size2,
+                step1, size1,
+                prefix, px_size,
+                stripline, strlen(stripline),
+                NULL, 0,
+                NULL, 0))
+                goto error;
+
+        //log("step2 %s", step2);
+
+        // (5) remove additional whitespace
+        if (!testrun_string_clear_whitespace_before_lineend(&step3, &size3,
+                step2, size2,
+                TESTRUN_LINEEND, le_len))
+                goto error;
+
+        orig  = testrun_string_free(orig);
+        step1 = testrun_string_free(step1);
+        step2 = testrun_string_free(step2);
+        return step3;
+error:
+        orig  = testrun_string_free(orig);
+        step1 = testrun_string_free(step1);
+        step2 = testrun_string_free(step2);
+        step3 = testrun_string_free(step3);
+        return NULL;
 }
 
 /*
@@ -459,7 +675,7 @@ testrun_copyright testrun_copyright_apache_version_2(
         "You may obtain a copy of the License at"
         TESTRUN_LINEEND
         TESTRUN_LINEEND
-        "    http://www.apache.org/licenses/LICENSE-2.0"
+        "        http://www.apache.org/licenses/LICENSE-2.0"
         TESTRUN_LINEEND
         TESTRUN_LINEEND
         "Unless required by applicable law or agreed to in writing, software"

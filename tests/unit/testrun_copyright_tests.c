@@ -793,7 +793,7 @@ int test_testrun_copyright_to_header(){
                                 " *  line1" TESTRUN_LINEEND
                                 " *  line2" TESTRUN_LINEEND
                                 " *  line3" TESTRUN_LINEEND
-                                " *  "TESTRUN_LINEEND
+                                " *"TESTRUN_LINEEND
                                 " *  line4" TESTRUN_LINEEND
                                 " */"TESTRUN_LINEEND);
 
@@ -803,8 +803,8 @@ int test_testrun_copyright_to_header(){
                                                 line_prefix, strlen(line_prefix),
                                                 NULL, 0);
 
-        //log("EXPEXT|\n%s|END\n", expect);
-        //log("START|\n%s|END\n", result);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", result, strlen(result));
 
         testrun(strncmp(result, expect, strlen(expect)) == 0, "reallife");
         result = testrun_string_free(result);
@@ -836,7 +836,7 @@ int test_testrun_copyright_to_header(){
         TESTRUN_LINEEND
         " *"
         TESTRUN_LINEEND
-        " *      http://www.apache.org/licenses/LICENSE-2.0"
+        " *          http://www.apache.org/licenses/LICENSE-2.0"
         TESTRUN_LINEEND
         " *"
         TESTRUN_LINEEND
@@ -863,8 +863,8 @@ int test_testrun_copyright_to_header(){
                                                 line_prefix, strlen(line_prefix),
                                                 NULL, 0);
 
-        //log("EXPECT|\n%s|END\n", expect);
-        //log("START|\n%s|END\n", result);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", result, strlen(result));
 
         testrun(strncmp(result, expect, strlen(expect)) == 0, "reallife");
         result = testrun_string_free(result);
@@ -875,7 +875,7 @@ int test_testrun_copyright_to_header(){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_copyright_default_c_header(){
-/*
+
         testrun_copyright statement;
         bzero(&statement, sizeof(testrun_copyright));
 
@@ -884,55 +884,89 @@ int test_testrun_copyright_default_c_header(){
         char text[size];
         char *result = NULL;
 
-        statement = (testrun_copyright) {
-                .intro          = "intro",
-                .year           = "year",
-                .owner          = "owner",
-                .note           = "This it a note at the end.",
-                .text           = "line1\nline2\nline3",
-                .to_string      = testrun_copyright_to_string
-        };
+        statement = testrun_copyright_default("2017", "NAME", "NOTE");
 
         snprintf(expect, size,
-        "/**"
+        "/***"  TESTRUN_LINEEND
+        "        ------------------------------------------------------------------------" TESTRUN_LINEEND
         TESTRUN_LINEEND
-        " *      -----------------------------------------------------------"
+        "        Copyright (c) 2017 NAME"       TESTRUN_LINEEND
+        "        All rights reserved."          TESTRUN_LINEEND
         TESTRUN_LINEEND
-        " *      "
+        "        NOTE" TESTRUN_LINEEND
         TESTRUN_LINEEND
-        " *      intro year owner"
-        TESTRUN_LINEEND
-        " *      "
-        TESTRUN_LINEEND
-        " *  you may not use this file except in compliance with the License."
-        TESTRUN_LINEEND
-        " *  You may obtain a copy of the License at"
-        TESTRUN_LINEEND
-        " *  "
-        TESTRUN_LINEEND
-        " *      http://www.apache.org/licenses/LICENSE-2.0"
-        TESTRUN_LINEEND
-        " *  "
-        TESTRUN_LINEEND
-        " *  Unless required by applicable law or agreed to in writing, software"
-        TESTRUN_LINEEND
-        " *  distributed under the License is distributed on an \"AS IS\" BASIS,"
-        TESTRUN_LINEEND
-        " *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."
-        TESTRUN_LINEEND
-        " *  See the License for the specific language governing permissions and"
-        TESTRUN_LINEEND
-        " *  limitations under the License."
-        TESTRUN_LINEEND
-        " *  "
-        TESTRUN_LINEEND
-        " *  some additional note"
-        TESTRUN_LINEEND
-        "
-        TESTRUN_LINEEND);
+        "        ------------------------------------------------------------------------" TESTRUN_LINEEND
+        "*/" TESTRUN_LINEEND
+        );
+
+        testrun(!testrun_copyright_default_c_header(NULL, false));
+        testrun(!testrun_copyright_default_c_header(NULL, true));
+
+        result = testrun_copyright_default_c_header(&statement, false);
+        testrun(result);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", result, strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        result = testrun_string_free(result);
 
 
-*/
+        statement = testrun_copyright_apache_version_2("YEAR", "NAME", NULL);
+
+        snprintf(expect, size,
+        "/***"  TESTRUN_LINEEND
+        "        ------------------------------------------------------------------------" TESTRUN_LINEEND
+        TESTRUN_LINEEND
+        "        Copyright YEAR NAME" TESTRUN_LINEEND
+        TESTRUN_LINEEND
+        "        Licensed under the Apache License, Version 2.0 (the \"License\");" TESTRUN_LINEEND
+        "        you may not use this file except in compliance with the License." TESTRUN_LINEEND
+        "        You may obtain a copy of the License at" TESTRUN_LINEEND
+        TESTRUN_LINEEND
+        "                http://www.apache.org/licenses/LICENSE-2.0" TESTRUN_LINEEND
+        TESTRUN_LINEEND
+        "        Unless required by applicable law or agreed to in writing, software" TESTRUN_LINEEND
+        "        distributed under the License is distributed on an \"AS IS\" BASIS," TESTRUN_LINEEND
+        "        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied." TESTRUN_LINEEND
+        "        See the License for the specific language governing permissions and" TESTRUN_LINEEND
+        "        limitations under the License." TESTRUN_LINEEND
+        TESTRUN_LINEEND
+        "        ------------------------------------------------------------------------" TESTRUN_LINEEND
+        "*/" TESTRUN_LINEEND
+        );
+
+        testrun(!testrun_copyright_default_c_header(NULL, false));
+        testrun(!testrun_copyright_default_c_header(NULL, true));
+
+        result = testrun_copyright_default_c_header(&statement, false);
+        testrun(result);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", result, strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        result = testrun_string_free(result);
+
+
+        statement = testrun_copyright_default("2017", "NAME", "NOTE");
+
+        snprintf(expect, size,
+        "/***"  TESTRUN_LINEEND
+        "        ------------------------------------------------------------------------" TESTRUN_LINEEND
+        TESTRUN_LINEEND
+        "        Copyright (c) 2017 NAME"       TESTRUN_LINEEND
+        "        All rights reserved."          TESTRUN_LINEEND
+        TESTRUN_LINEEND
+        "        NOTE" TESTRUN_LINEEND
+        TESTRUN_LINEEND
+        "        ------------------------------------------------------------------------" TESTRUN_LINEEND
+        "*//**" TESTRUN_LINEEND
+        );
+
+        result = testrun_copyright_default_c_header(&statement, true);
+        testrun(result);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", result, strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        result = testrun_string_free(result);
+
         return testrun_log_success();
 }
 
@@ -940,6 +974,66 @@ int test_testrun_copyright_default_c_header(){
 
 int test_testrun_copyright_default_shell_header(){
 
+        testrun_copyright statement;
+        bzero(&statement, sizeof(testrun_copyright));
+
+        size_t size = 1500;
+        char expect[size];
+        char text[size];
+        char *result = NULL;
+
+        statement = testrun_copyright_default("2017", "NAME", "NOTE");
+
+        snprintf(expect, size,
+        "#!/usr/bin/env bash"  TESTRUN_LINEEND
+        "#" TESTRUN_LINEEND
+        "#       Copyright (c) 2017 NAME"       TESTRUN_LINEEND
+        "#       All rights reserved."          TESTRUN_LINEEND
+        "#" TESTRUN_LINEEND
+        "#       NOTE" TESTRUN_LINEEND
+        "#" TESTRUN_LINEEND
+        "#-------------------------------------------------------------------------------" TESTRUN_LINEEND
+        );
+
+
+        testrun(!testrun_copyright_default_shell_header(NULL));
+
+        result = testrun_copyright_default_shell_header(&statement);
+        testrun(result);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", result, strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        result = testrun_string_free(result);
+
+
+        statement = testrun_copyright_apache_version_2("YEAR", "NAME", NULL);
+
+        snprintf(expect, size,
+        "#!/usr/bin/env bash"  TESTRUN_LINEEND
+        "#" TESTRUN_LINEEND
+        "#       Copyright YEAR NAME" TESTRUN_LINEEND
+        "#" TESTRUN_LINEEND
+        "#       Licensed under the Apache License, Version 2.0 (the \"License\");" TESTRUN_LINEEND
+        "#       you may not use this file except in compliance with the License." TESTRUN_LINEEND
+        "#       You may obtain a copy of the License at" TESTRUN_LINEEND
+        "#" TESTRUN_LINEEND
+        "#               http://www.apache.org/licenses/LICENSE-2.0" TESTRUN_LINEEND
+        "#" TESTRUN_LINEEND
+        "#       Unless required by applicable law or agreed to in writing, software" TESTRUN_LINEEND
+        "#       distributed under the License is distributed on an \"AS IS\" BASIS," TESTRUN_LINEEND
+        "#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied." TESTRUN_LINEEND
+        "#       See the License for the specific language governing permissions and" TESTRUN_LINEEND
+        "#       limitations under the License." TESTRUN_LINEEND
+        "#" TESTRUN_LINEEND
+        "#-------------------------------------------------------------------------------" TESTRUN_LINEEND
+        );
+
+        result = testrun_copyright_default_shell_header(&statement);
+        testrun(result);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", result, strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        result = testrun_string_free(result);
 
         return testrun_log_success();
 }
@@ -1051,7 +1145,7 @@ int test_testrun_copyright_apache_version_2(){
         "You may obtain a copy of the License at"
         TESTRUN_LINEEND
         TESTRUN_LINEEND
-        "    http://www.apache.org/licenses/LICENSE-2.0"
+        "        http://www.apache.org/licenses/LICENSE-2.0"
         TESTRUN_LINEEND
         TESTRUN_LINEEND
         "Unless required by applicable law or agreed to in writing, software"
@@ -1685,6 +1779,12 @@ int all_tests() {
         testrun_counter += r;
 
         r = testcases_content();
+        if (r < 0)
+                return -1;
+
+       testrun_counter += r;
+
+       r = testcases_output_formating();
         if (r < 0)
                 return -1;
 

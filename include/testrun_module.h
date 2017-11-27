@@ -26,7 +26,7 @@
 
         @ingroup        testrun_lib
 
-        @brief          Definition of module realted functionality.
+        @brief          Definition of module realated functionality.
 
 
         ------------------------------------------------------------------------

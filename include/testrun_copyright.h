@@ -46,7 +46,6 @@
 #define TESTRUN_COPYRIGHT_TAG_OWNER     "[COPYRIGHT_OWNER]"
 #define TESTRUN_COPYRIGHT_TAG_PROGRAM   "[COPYRIGHT_PROGRAM]"
 #define TESTRUN_COPYRIGHT_TAG_VARIANT   "[COPYRIGHT_VARIANT]"
-#define TESTRUN_LINEEND                 "\n"
 
 typedef enum {GENERAL, LESSER, AFFERTO} testrun_gpl_v3_types;
 
@@ -253,7 +252,7 @@ char *testrun_copyright_default_shell_header(
 
         ------------------------------------------------------------------------
 
-        COPYRIGHT (c) YEAR  NAME
+        Copyright (c) YEAR NAME
         All rights reserved.
 
         note
@@ -276,6 +275,7 @@ testrun_copyright testrun_copyright_default(
         ------------------------------------------------------------------------
 
         Copyright YEAR NAME
+
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
         You may obtain a copy of the License at
