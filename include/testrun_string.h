@@ -39,8 +39,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <stdbool.h>
+
+#include <string.h>
+#include <ctype.h>
+
+#include "testrun_vector.h"
 
 #define LINEBREAK "\n"
 
@@ -397,9 +401,151 @@ bool testrun_string_replace_all(
 /*----------------------------------------------------------------------------*/
 
 /**
+        Point to chunks of a string separated by a delimiter. This pointing
+        will be nonintrusive and the result vector will point to the start
+        of each chunk within the source string. (Non-intrusive, Zero-Copy)
 
+        Example:
+
+                delim  = "\n"
+                source = "line1\nline2\nline3\nline4\nline5\n"
+        vector->items[0] _^      ^      ^      ^      ^
+        vector->items[1] ________|      |      |      |
+        vector->items[2] _______________|      |      |
+        vector->items[3] ______________________|      |
+        vector->items[4] _____________________________|
+
+        NOTE This will point to the start of the string, but NOT set or change
+        any lineend. So as an result, the lineend of all strings stays the same.
+        You MAY use pointer arithmetik to mask the lines of the above example:
+
+        e.g. to print the chunk "line2\n"
+        printf("%.s", vector->items[2] - vector->items[1], vector->items[1]);
+
+        @param  source  source to write to result
+        @param  sc_len  length of source (at most)
+        @param  delim   delimiter to use
+        @param  dm_len  length of the delimiter (at most)
+*/
+testrun_vector *testrun_string_pointer(
+        char * const source, size_t sc_len,
+        char const * const delim,  size_t dm_len);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Split a string based on a delimiter. The testvector will contain
+        value copies of the chunks separated by the delimiter, the source
+        will be unchanged. The chunks of the vector are independent of the
+        source (value copy)
+
+        Example:
+
+                delim   = "\n"
+                source   = "line1\nline2\nline3\nline4\nline5\n"
+                            ^      ^      ^      ^      ^
+        vector->items[0] = "line1"
+        vector->items[1] =        "line2"
+        vector->items[2] =               "line3"
+        vector->items[3] =                       "line4"
+        vector->items[4] =                              "line5"
+
+        NOTE The example shows the use with copy_delimter == false
+
+        @param  source          source to write to result
+        @param  sc_len          length of source (at most)
+        @param  delim           delimiter to use
+        @param  dm_len          length of the delimiter (at most)
+        @param  copy_delimiter  if true, the chunks will contain the delimiter
+*/
+testrun_vector *testrun_string_split(
+        char * const source, size_t sc_len,
+        char const * const delim,  size_t dm_len,
+        bool copy_delimiter);
+
+/*----------------------------------------------------------------------------*/
+/**
+        Remove all whitespace before the lineend. If result is NULL, a result
+        will be allocated. If the result contains some string, but the size
+        is not sufficient, result will be reallocated. The size will be set
+        to strlen(result) on success. If result contains a string, source will
+        be appended to the previous result. (Append mode string add)
+
+        Example:
+
+                *result = "0123456789"
+                source  = "     \n"
+                          "line1\t\n"
+                          "line2\n"
+                          "line3 \v   \r \t \n"
+
+                after running the function result will contain the string
+
+                *result = "0123456789\n"
+                          "line1\n"
+                          "line2\n"
+                          "line3\n";
+
+        @param  result  pointer to write to (allocated OR null)
+        @param  size    pointer to size of result (may be 0)
+        @param  source  source to write to result
+        @param  sc_len  length of source (at most)
+        @param  lineend lineend string
+        @param  le_len  length of lineend string
+
+        @return         true on success, false on error
+*/
 bool testrun_string_clear_whitespace_before_lineend(
         char **result, size_t * const size,
-        char const * const lineend, size_t length_lineend);
+        char * const source,   size_t sc_len,
+        char const * const lineend,  size_t le_len);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Remove all whitespace from front and/or end of vector items.
+        The vector MUST contain independent items. If the vector is
+        classified as a pointer vector (no item_free function), this
+        function will fail.
+
+        NOTE This function MAY change, reallocate and manipulate any
+        content pointer item of the vector.
+
+        NOTE This function requires the use of '\0' terminated content
+        string pointers.
+
+        @param vector   vector the be worked
+        @param front    remove whitespace form the front
+        @param end      remove whitespace from the end
+        @param lineend  string of the lineend, (prevent delete empty last line)
+        @returns        -1 on error,
+                        required bytelength, including terminating NULL, of
+                        the sum of all content lines on success
+*/
+int64_t testrun_string_vector_remove_whitespace(
+        testrun_vector *vector, bool front, bool end);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Remove all whitespace from front and/or end of and string.
+        The pointer may be changed, as removing whitespace from the
+        front will recreate the string. Size will always be set to
+        strlen of *string including the terminating NULL byte.
+        One of the parameter front or end has to be set to true,
+        otherwise the result will be false by default an the function
+        will not do anything.
+
+        NOTE If the string is whitespace only, the string will be freed.
+
+        @param vector   vector the be worked
+        @param front    remove whitespace form the front
+        @param end      remove whitespace from the end
+        @returns        true on success
+*/
+bool testrun_string_remove_whitespace(
+        char **string, size_t * size, bool front, bool end);
+
+/*----------------------------------------------------------------------------*/
 
 #endif /* testrun_string_h */

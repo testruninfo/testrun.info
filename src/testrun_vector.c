@@ -580,6 +580,15 @@ void testrun_vector_int64_example_free(
 
 /*----------------------------------------------------------------------------*/
 
+void testrun_vector_item_free(
+        void * pointer){
+
+        if (pointer)
+                free(pointer);
+}
+
+/*----------------------------------------------------------------------------*/
+
 bool testrun_vector_dump_function_backtrace(
         testrun_vector const * const self){
 
@@ -640,3 +649,5 @@ bool testrun_vector_dump(
 
         return true;
 }
+
+/*----------------------------------------------------------------------------*/

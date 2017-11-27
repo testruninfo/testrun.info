@@ -657,6 +657,23 @@ int test_testrun_vector_int64_example_free(){
 
 /*----------------------------------------------------------------------------*/
 
+int test_testrun_vector_item_free(){
+
+        void *pointer1 = NULL;
+        void *pointer2 = NULL;
+
+        pointer1  = calloc(1, sizeof(int64_t));
+        pointer2  = calloc(1, sizeof(int64_t));
+
+        testrun_vector_item_free(pointer1);
+        testrun_vector_item_free(pointer2);
+
+        // check with valgrind run
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
 int test_testrun_vector_resize(){
 
         testrun_vector *vector = NULL;
@@ -1834,6 +1851,7 @@ int cluster_tests_non_configurable() {
         testrun_test(test_testrun_vector_is_empty);
         testrun_test(test_testrun_vector_int64_example_copy);
         testrun_test(test_testrun_vector_int64_example_free);
+        testrun_test(test_testrun_vector_item_free);
 
         testrun_test(test_testrun_vector_resize);
         testrun_test(test_testrun_vector_auto_adjust);
@@ -1884,6 +1902,7 @@ int64_t cluster_tests_configurable(
         testrun_add(test_testrun_vector_is_empty);
         testrun_add(test_testrun_vector_int64_example_copy);
         testrun_add(test_testrun_vector_int64_example_free);
+        testrun_add(test_testrun_vector_item_free);
         testrun_add(test_testrun_vector_resize);
         testrun_add(test_testrun_vector_auto_adjust);
         testrun_add(test_testrun_vector_set_new_end);

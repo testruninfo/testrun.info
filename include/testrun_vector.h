@@ -396,6 +396,16 @@ void *testrun_vector_int64_example_copy(
 void testrun_vector_int64_example_free(
         void  * pointer);
 
+/*----------------------------------------------------------------------------*/
+
+/**
+
+        @param pointer          pointer to be freed
+        @returns                This function returns nothing.
+ */
+void testrun_vector_item_free(
+        void  * pointer);
+
 
 /*----------------------------------------------------------------------------*/
 

@@ -2541,6 +2541,1075 @@ int test_testrun_string_replace_all(){
         return testrun_log_success();
 }
 
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_string_pointer(){
+
+        testrun_vector *vector = NULL;
+        size_t size  = 100;
+        char source[size];
+        char *delim  = "\n";
+        char *string = NULL;
+        int i = 0;
+
+        for(i = 0; i < size; i+=2) {
+                source[i]   = 'x';
+                source[i+1] = '\n';
+        }
+        source[size] = 0;
+
+        testrun(!testrun_string_pointer(NULL,   0, NULL,  0));
+        testrun(!testrun_string_pointer(NULL,   1, delim, 1));
+        testrun(!testrun_string_pointer(source, 0, delim, 1));
+        testrun(!testrun_string_pointer(source, 1, NULL,  1));
+        testrun(!testrun_string_pointer(source, 1, delim, 0));
+
+        // -------------------------------------------------------------
+        // Example testing 1
+        // -------------------------------------------------------------
+
+        vector = testrun_string_pointer(source, size, delim, strlen(delim));
+        testrun(vector);
+        testrun(vector->last == 49);
+
+        for(i = 0; i < vector->last; i++) {
+                testrun(strncmp(testrun_vector_get(vector,i), "x", 1) == 0);
+        }
+        vector = testrun_vector_terminate(vector);
+
+        // -------------------------------------------------------------
+        // Example testing 2
+        // -------------------------------------------------------------
+
+        delim = "123";
+        snprintf(source, size, "abc%sdefg%shijkl%sxyz", delim, delim, delim);
+
+        vector = testrun_string_pointer(source, size, delim, strlen(delim));
+        testrun(vector);
+        testrun(vector->last == 3);
+        testrun(strncmp(testrun_vector_get(vector,0),
+                "abc123defg123hijkl123xyz",
+                strlen("abc123defg123hijkl123xyz")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,1),
+                "defg123hijkl123xyz",
+                strlen("defg123hijkl123xyz")) == 0);
+
+        testrun(strncmp(testrun_vector_get(vector,2),
+                "hijkl123xyz",
+                strlen("hijkl123xyz")) == 0);
+
+        testrun(strncmp(testrun_vector_get(vector,3),
+                "xyz",
+                strlen("xyz")) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        // -------------------------------------------------------------
+        // DELIMITER NOT CONTAINED
+        // -------------------------------------------------------------
+
+        delim = "123";
+        snprintf(source, size, "abc\ndefg\nhijkl\nxyz\n");
+
+        vector = testrun_string_pointer(source, size, delim, strlen(delim));
+        testrun(vector);
+        testrun(vector->last == 0);
+        testrun(strncmp(testrun_vector_get(vector,0),
+                "abc\ndefg\nhijkl\nxyz\n",
+                strlen("abc\ndefg\nhijkl\nxyz\n")) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        // -------------------------------------------------------------
+        // DELIMITER LAST
+        // -------------------------------------------------------------
+
+        delim = "\n";
+        snprintf(source, size, "abc\ndefg\nhijkl\nxyz\n");
+
+        vector = testrun_string_pointer(source, size, delim, strlen(delim));
+        testrun(vector);
+
+        //testrun_vector_dump(stdout, vector);
+
+        testrun(vector->last == 3);
+        testrun(strncmp(testrun_vector_get(vector,0),
+                "abc\ndefg\nhijkl\nxyz\n",
+                strlen("abc\ndefg\nhijkl\nxyz\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,1),
+                "defg\nhijkl\nxyz\n",
+                strlen("defg\nhijkl\nxyz\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,2),
+                "hijkl\nxyz\n",
+                strlen("hijkl\nxyz\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,3),
+                "xyz\n",
+                strlen("xyz\n")) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        // -------------------------------------------------------------
+        // DELIMITER FIRST
+        // -------------------------------------------------------------
+
+        delim = "\n";
+        snprintf(source, size, "\nabc\ndefg\nhijkl\nxyz\n");
+
+        vector = testrun_string_pointer(source, size, delim, strlen(delim));
+        testrun(vector);
+
+        //testrun_vector_dump(stdout, vector);
+
+        testrun(vector->last == 4);
+        testrun(strncmp(testrun_vector_get(vector,0),
+                "\nabc\ndefg\nhijkl\nxyz\n",
+                strlen("\nabc\ndefg\nhijkl\nxyz\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,1),
+                "abc\ndefg\nhijkl\nxyz\n",
+                strlen("abc\ndefg\nhijkl\nxyz\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,2),
+                "defg\nhijkl\nxyz\n",
+                strlen("defg\nhijkl\nxyz\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,3),
+                "hijkl\nxyz\n",
+                strlen("hijkl\nxyz\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,4),
+                "xyz\n",
+                strlen("xyz\n")) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        // -------------------------------------------------------------
+        // DELIMITER Partial last
+        // -------------------------------------------------------------
+
+        delim = "123";
+        snprintf(source, size, "a123b123c12d");
+
+        vector = testrun_string_pointer(source, size, delim, strlen(delim));
+        testrun(vector);
+
+        //testrun_vector_dump(stdout, vector);
+
+        testrun(vector->last == 2);
+        testrun(strncmp(testrun_vector_get(vector,0),
+                "a123b123c12d",
+                strlen("a123b123c12d")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,1),
+                "b123c12d",
+                strlen("b123c12d")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,2),
+                "c12d",
+                strlen("c12d")) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        // -------------------------------------------------------------
+        // DELIMITER Partial last
+        // -------------------------------------------------------------
+
+        delim = "123";
+        snprintf(source, size, "a123b123c12");
+
+        vector = testrun_string_pointer(source, size, delim, strlen(delim));
+        testrun(vector);
+
+        //testrun_vector_dump(stdout, vector);
+
+        testrun(vector->last == 2);
+        testrun(strncmp(testrun_vector_get(vector,0),
+                "a123b123c12",
+                strlen("a123b123c12")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,1),
+                "b123c12",
+                strlen("b123c12")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,2),
+                "c12",
+                strlen("c12")) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        // -------------------------------------------------------------
+        // DELIMITER EMPTY
+        // -------------------------------------------------------------
+
+        delim = "\n";
+        snprintf(source, size, "\nabc\ndefg\n\nxyz\n");
+
+        vector = testrun_string_pointer(source, size, delim, strlen(delim));
+        testrun(vector);
+
+        //testrun_vector_dump(stdout, vector);
+
+        testrun(vector->last == 4);
+        testrun(strncmp(testrun_vector_get(vector,0),
+                "\nabc\ndefg\n\nxyz\n",
+                strlen("\nabc\ndefg\n\nxyz\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,1),
+                "abc\ndefg\n\nxyz\n",
+                strlen("abc\ndefg\n\nxyz\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,2),
+                "defg\n\nxyz\n",
+                strlen("defg\n\nxyz\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,3),
+                "\nxyz\n",
+                strlen("\nxyz\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,4),
+                "xyz\n",
+                strlen("xyz\n")) == 0);
+
+        vector = testrun_vector_terminate(vector);
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_string_split(){
+
+        testrun_vector *vector = NULL;
+        size_t size  = 1000;
+        char source[size];
+        char *delim  = "\n";
+        char *string = NULL;
+        int i = 0;
+
+        bzero(source, size);
+
+        for(i = 0; i < size; i+=2) {
+                source[i]   = 'x';
+                source[i+1] = '\n';
+        }
+        source[size] = 0;
+
+        testrun(!testrun_string_split(NULL,   0, NULL,  0, false));
+        testrun(!testrun_string_split(NULL,   1, delim, 1, false));
+        testrun(!testrun_string_split(source, 0, delim, 1, false));
+        testrun(!testrun_string_split(source, 1, NULL,  1, false));
+        testrun(!testrun_string_split(source, 1, delim, 0, false));
+
+        // -------------------------------------------------------------
+        // Example testing 1
+        // -------------------------------------------------------------
+
+        vector = testrun_string_split(source, size, delim, strlen(delim),false);
+        testrun(vector);
+        testrun(vector->last == 499);
+        //testrun_vector_dump(stdout, vector);
+
+        for(i = 0; i < vector->last; i++) {
+                testrun(strncmp(testrun_vector_get(vector,i), "x", 1) == 0);
+        }
+        vector = testrun_vector_terminate(vector);
+
+        // -------------------------------------------------------------
+        // Example testing 2
+        // -------------------------------------------------------------
+
+        delim = "123";
+        bzero(source, size);
+        snprintf(source, size, "abc%sdefg%shijkl%sxyz", delim, delim, delim);
+
+        vector = testrun_string_split(source, size, delim, strlen(delim), false);
+        testrun(vector);
+        testrun(vector->last == 3);
+        testrun(strncmp(testrun_vector_get(vector,0),
+                "abc",
+                strlen("abc")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,1),
+                "defg",
+                strlen("defg")) == 0);
+
+        testrun(strncmp(testrun_vector_get(vector,2),
+                "hijkl",
+                strlen("hijkl")) == 0);
+
+        testrun(strncmp(testrun_vector_get(vector,3),
+                "xyz",
+                strlen("xyz")) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        // -------------------------------------------------------------
+        // DELIMITER NOT CONTAINED
+        // -------------------------------------------------------------
+
+        delim = "123";
+        snprintf(source, size, "abc\ndefg\nhijkl\nxyz\n");
+
+        vector = testrun_string_split(source, size, delim, strlen(delim), false);
+        testrun(vector);
+        testrun(vector->last == 0);
+        testrun(strncmp(testrun_vector_get(vector,0),
+                "abc\ndefg\nhijkl\nxyz\n",
+                strlen("abc\ndefg\nhijkl\nxyz\n")) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        // -------------------------------------------------------------
+        // DELIMITER LAST
+        // -------------------------------------------------------------
+
+        delim = "\n";
+        snprintf(source, size, "abc\ndefg\nhijkl\nxyz\n");
+
+        vector = testrun_string_split(source, size, delim, strlen(delim), false);
+        testrun(vector);
+
+        //testrun_vector_dump(stdout, vector);
+
+        testrun(vector->last == 3);
+        testrun(strncmp(testrun_vector_get(vector,0),
+                "abc",strlen("abc")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,1),
+                "defg",strlen("defg")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,2),
+                "hijkl",strlen("hijkl")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,3),
+                "xyz", strlen("xyz")) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        vector = testrun_string_split(source, size, delim, strlen(delim), true);
+        testrun(vector);
+
+        //testrun_vector_dump(stdout, vector);
+
+        testrun(vector->last == 3);
+        testrun(strncmp(testrun_vector_get(vector,0),
+                "abc\n",strlen("abc\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,1),
+                "defg\n",strlen("defg\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,2),
+                "hijkl\n",strlen("hijkl\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,3),
+                "xyz\n", strlen("xyz\n")) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        // -------------------------------------------------------------
+        // DELIMITER FIRST
+        // -------------------------------------------------------------
+
+        delim = "\n";
+        snprintf(source, size, "\nabc\ndefg\nhijkl\nxyz\n");
+
+        vector = testrun_string_split(source, size, delim, strlen(delim),false);
+        testrun(vector);
+
+        //testrun_vector_dump(stdout, vector);
+
+        testrun(vector->last == 4);
+        testrun(NULL == testrun_vector_get(vector,0));
+        testrun(strncmp(testrun_vector_get(vector,1),
+                "abc", strlen("abc")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,2),
+                "defg", strlen("defg")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,3),
+                "hijkl",strlen("hijkl")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,4),
+                "xyz", strlen("xyz")) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        vector = testrun_string_split(source, size, delim, strlen(delim),true);
+        testrun(vector);
+
+        //testrun_vector_dump(stdout, vector);
+
+        testrun(vector->last == 4);
+        testrun(strncmp(testrun_vector_get(vector,0),
+                "\n", strlen("\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,1),
+                "abc\n", strlen("abc\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,2),
+                "defg\n", strlen("defg\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,3),
+                "hijkl\n",strlen("hijkl\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,4),
+                "xyz\n", strlen("xyz\n")) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        // -------------------------------------------------------------
+        // DELIMITER EMPTY
+        // -------------------------------------------------------------
+
+        delim = "\n";
+        snprintf(source, size, "\nabc\ndefg\n\nxyz\n");
+
+        vector = testrun_string_split(source, size, delim, strlen(delim),false);
+        testrun(vector);
+
+        //testrun_vector_dump(stdout, vector);
+
+        testrun(vector->last == 4);
+        testrun(NULL == testrun_vector_get(vector,0));
+        testrun(strncmp(testrun_vector_get(vector,1),
+                "abc", strlen("abc")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,2),
+                "defg", strlen("defg")) == 0);
+        testrun(NULL == testrun_vector_get(vector,3));
+        testrun(strncmp(testrun_vector_get(vector,4),
+                "xyz", strlen("xyz")) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        vector = testrun_string_split(source, size, delim, strlen(delim),true);
+        testrun(vector);
+
+        //testrun_vector_dump(stdout, vector);
+
+        testrun(vector->last == 4);
+        testrun(strncmp(testrun_vector_get(vector,0),
+                "\n", strlen("\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,1),
+                "abc\n", strlen("abc\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,2),
+                "defg\n", strlen("defg\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,3),
+                "\n",strlen("\n")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,4),
+                "xyz\n", strlen("xyz\n")) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        // -------------------------------------------------------------
+        // DELIMITER Partial last
+        // -------------------------------------------------------------
+
+        delim = "123";
+        snprintf(source, size, "a123b123c12d");
+
+        vector = testrun_string_split(source, size, delim, strlen(delim), false);
+        testrun(vector);
+
+        //testrun_vector_dump(stdout, vector);
+
+        testrun(vector->last == 2);
+        testrun(strncmp(testrun_vector_get(vector,0),
+                "a",strlen("a")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,1),
+                "b", strlen("b")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,2),
+                "c12d",
+                strlen("c12d")) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        vector = testrun_string_split(source, size, delim, strlen(delim), true);
+        testrun(vector);
+
+        //testrun_vector_dump(stdout, vector);
+
+        testrun(vector->last == 2);
+        testrun(strncmp(testrun_vector_get(vector,0),
+                "a123",strlen("a123")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,1),
+                "b123", strlen("b123")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,2),
+                "c12d",
+                strlen("c12d")) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        // -------------------------------------------------------------
+        // DELIMITER Partial last
+        // -------------------------------------------------------------
+
+        delim = "123";
+        snprintf(source, size, "a123b123c12");
+
+        vector = testrun_string_split(source, size, delim, strlen(delim), false);
+        testrun(vector);
+
+        //testrun_vector_dump(stdout, vector);
+
+        testrun(vector->last == 2);
+        testrun(strncmp(testrun_vector_get(vector,0),
+                "a",strlen("a")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,1),
+                "b",strlen("b")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,2),
+                "c12", strlen("c12")) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        vector = testrun_string_split(source, size, delim, strlen(delim), true);
+        testrun(vector);
+
+        //testrun_vector_dump(stdout, vector);
+
+        testrun(vector->last == 2);
+        testrun(strncmp(testrun_vector_get(vector,0),
+                "a123",strlen("a123")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,1),
+                "b123",strlen("b123")) == 0);
+        testrun(strncmp(testrun_vector_get(vector,2),
+                "c12", strlen("c12")) == 0);
+        vector = testrun_vector_terminate(vector);
+
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_string_clear_whitespace_before_lineend(){
+
+        char    *lineend = "\n";
+        char    *result  = NULL;
+        size_t  size     = 0;
+        size_t  size_src = 1000;
+        char source[size_src];
+        char expect[size_src];
+
+        snprintf(source, size_src,
+                        "line1 \n"
+                        "line2\t\n"
+                        "line3\n"
+                        "line4 \v   \r \t \n");
+
+        snprintf(expect, size_src,
+                        "line1\n"
+                        "line2\n"
+                        "line3\n"
+                        "line4\n");
+
+        testrun(!testrun_string_clear_whitespace_before_lineend(
+                NULL, NULL, NULL, 0, NULL, 0));
+        testrun(!testrun_string_clear_whitespace_before_lineend(
+                NULL, &size, source, size_src, lineend, strlen(lineend)));
+        testrun(!testrun_string_clear_whitespace_before_lineend(
+                &result, NULL, source, size_src, lineend, strlen(lineend)));
+        testrun(!testrun_string_clear_whitespace_before_lineend(
+                &result, &size, NULL, size_src, lineend, strlen(lineend)));
+        testrun(!testrun_string_clear_whitespace_before_lineend(
+                &result, &size, source, 0, lineend, strlen(lineend)));
+        testrun(!testrun_string_clear_whitespace_before_lineend(
+                &result, &size, source, size_src, NULL, strlen(lineend)));
+        testrun(!testrun_string_clear_whitespace_before_lineend(
+                &result, &size, source, size_src, lineend, 0));
+
+        testrun(result == NULL);
+        testrun(testrun_string_clear_whitespace_before_lineend(
+                &result, &size, source, size_src, lineend, strlen(lineend)));
+        testrun(result != NULL);
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        testrun(size == strlen(expect));
+
+        // -------------------------------------------------------------
+        // Lineend first
+        // -------------------------------------------------------------
+
+        result = testrun_string_free(result);
+        size   = 0;
+
+        snprintf(source, size_src,
+                        "     \n"
+                        "line1\t\n"
+                        "line2\n"
+                        "line3 \v   \r \t \n");
+
+        snprintf(expect, size_src,
+                        "\n"
+                        "line1\n"
+                        "line2\n"
+                        "line3\n");
+
+        testrun(result == NULL);
+        testrun(testrun_string_clear_whitespace_before_lineend(
+                &result, &size, source, size_src, lineend, strlen(lineend)));
+        testrun(result != NULL);
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        testrun(size == strlen(expect));
+
+        // -------------------------------------------------------------
+        // Lineend last
+        // -------------------------------------------------------------
+
+        result = testrun_string_free(result);
+        size   = 0;
+
+        snprintf(source, size_src,
+                        "     \n"
+                        "line1\t\n"
+                        "line2\n"
+                        "line3 \v   \r \t \n"
+                        "     \n");
+
+        snprintf(expect, size_src,
+                        "\n"
+                        "line1\n"
+                        "line2\n"
+                        "line3\n"
+                        "\n");
+
+        testrun(result == NULL);
+        testrun(testrun_string_clear_whitespace_before_lineend(
+                &result, &size, source, size_src, lineend, strlen(lineend)));
+        testrun(result != NULL);
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        testrun(size == strlen(expect));
+
+        // -------------------------------------------------------------
+        // Lineend middle
+        // -------------------------------------------------------------
+
+        result = testrun_string_free(result);
+        size   = 0;
+
+        snprintf(source, size_src,
+                        "     \n\n\n"
+                        "line1\t\n"
+                        "line2\n"
+                        "line3 \v   \r \t \n"
+                        "     \n");
+
+        snprintf(expect, size_src,
+                        "\n"
+                        "\n"
+                        "\n"
+                        "line1\n"
+                        "line2\n"
+                        "line3\n"
+                        "\n");
+
+        testrun(result == NULL);
+        testrun(testrun_string_clear_whitespace_before_lineend(
+                &result, &size, source, size_src, lineend, strlen(lineend)));
+        testrun(result != NULL);
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        testrun(size == strlen(expect));
+
+        // -------------------------------------------------------------
+        // Append mode
+        // -------------------------------------------------------------
+
+        result = testrun_string_free(result);
+        size   = 0;
+
+        result = calloc(11, sizeof(char));
+        strcat(result, "0123456789");
+        size = strlen(result);
+
+        snprintf(source, size_src,
+                        "     \n\n\n"
+                        "line1\t\n"
+                        "line2\n"
+                        "line3 \v   \r \t \n"
+                        "     \n");
+
+        snprintf(expect, size_src,
+                        "0123456789"
+                        "\n"
+                        "\n"
+                        "\n"
+                        "line1\n"
+                        "line2\n"
+                        "line3\n"
+                        "\n");
+
+        testrun(testrun_string_clear_whitespace_before_lineend(
+                &result, &size, source, size_src, lineend, strlen(lineend)));
+        testrun(result != NULL);
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        testrun(size == strlen(expect));
+
+        result = testrun_string_free(result);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_string_remove_whitespace(){
+
+        size_t  size    = 100;
+        size_t  length  = 0;
+        char    *string = calloc(size, sizeof(char));
+        char    source[size];
+        bzero(source, size);
+
+        for (int i = 0; i < size; i++) {
+
+                string[i] = ' ';
+                if ( (i % 4 ) == 0 ) {
+                        string[i] = '\n';
+                } else if ((i%7) == 0 ) {
+                        string[i] = '\t';
+                }
+
+        }
+
+        string[75] = 'x';
+        string[99] = '\0';
+
+        testrun(!testrun_string_remove_whitespace(NULL,    NULL, false, false));
+        testrun(!testrun_string_remove_whitespace(&string, NULL, false, false));
+        testrun(!testrun_string_remove_whitespace(NULL,    &size,false, false));
+        testrun(!testrun_string_remove_whitespace(&string, &size,false, false));
+
+        for(int i = 0; i < size - 1; i++){
+
+                if (i == 75) {
+                        testrun(!isspace(string[i]));
+                } else {
+                        testrun(isspace(string[i]));
+                }
+        }
+
+        testrun(strlen(string) == (size -1));
+
+        // -------------------------------------------------------------
+        // Remove front
+        // -------------------------------------------------------------
+
+        testrun(testrun_string_remove_whitespace(&string,  &size, true, false));
+        testrun(string[0] == 'x');
+        testrun(size == 25);
+
+        // -------------------------------------------------------------
+        // Remove end
+        // -------------------------------------------------------------
+
+        testrun(testrun_string_remove_whitespace(&string, &size, false, true));
+        testrun(string[0] == 'x');
+        testrun(size == 2);
+
+        // -------------------------------------------------------------
+        // No whitespace
+        // -------------------------------------------------------------
+
+        testrun(testrun_string_remove_whitespace(&string, &size, true, true));
+        testrun(string[0] == 'x');
+        testrun(size == 2);
+
+        testrun(testrun_string_remove_whitespace(&string, &size, false, true));
+        testrun(string[0] == 'x');
+        testrun(size == 2);
+
+        testrun(testrun_string_remove_whitespace(&string, &size, true, false));
+        testrun(string[0] == 'x');
+        testrun(size == 2);
+
+        string = testrun_string_free(string);
+        size   = 100;
+        string = calloc(size, sizeof(char));
+
+        snprintf(source, size, "some string without front or last whitespaces");
+        strcat(string, source);
+        length = strlen(string);
+
+        testrun(size != length);
+        testrun(testrun_string_remove_whitespace(&string, &size, false, true));
+        testrun(strncmp(string, source, strlen(source)) == 0);
+        testrun(size == length + 1);
+        testrun(size == 46);
+
+        testrun(testrun_string_remove_whitespace(&string, &size, true, false));
+        testrun(strncmp(string, source, strlen(source)) == 0);
+        testrun(size == length + 1);
+
+        testrun(testrun_string_remove_whitespace(&string, &size, true, true));
+        testrun(strncmp(string, source, strlen(source)) == 0);
+        testrun(size == length + 1);
+
+        // -------------------------------------------------------------
+        // Prevent cutting a string (length < strlen)
+        // -------------------------------------------------------------
+
+        size = 40;
+        testrun(!testrun_string_remove_whitespace(&string, &size, false, true));
+        testrun(strncmp(string, source, strlen(source)) == 0);
+        testrun(size == 40);
+
+        testrun(!testrun_string_remove_whitespace(&string, &size, true, false));
+        testrun(strncmp(string, source, strlen(source)) == 0);
+        testrun(size == 40);
+
+        testrun(!testrun_string_remove_whitespace(&string, &size, true, true));
+        testrun(strncmp(string, source, strlen(source)) == 0);
+        testrun(size == 40);
+
+        // -------------------------------------------------------------
+        // Check size = strlen + 1  (OK + unchanged string and size)
+        // -------------------------------------------------------------
+
+        size = strlen(string) + 1;
+        testrun(testrun_string_remove_whitespace(&string, &size, false, true));
+        testrun(strncmp(string, source, strlen(source)) == 0);
+        testrun(size == strlen(string) +1);
+
+        testrun(testrun_string_remove_whitespace(&string, &size, true, false));
+        testrun(strncmp(string, source, strlen(source)) == 0);
+        testrun(size == strlen(string) +1);
+
+        testrun(testrun_string_remove_whitespace(&string, &size, true, true));
+        testrun(strncmp(string, source, strlen(source)) == 0);
+        testrun(size == strlen(string) +1);
+
+        // -------------------------------------------------------------
+        // Check size = strlen(string) (NOK + unchanged string and size)
+        // -------------------------------------------------------------
+
+        size = strlen(string);
+        testrun(!testrun_string_remove_whitespace(&string, &size, false, true));
+        testrun(strncmp(string, source, strlen(source)) == 0);
+        testrun(size == strlen(string));
+
+        testrun(!testrun_string_remove_whitespace(&string, &size, true, false));
+        testrun(strncmp(string, source, strlen(source)) == 0);
+        testrun(size == strlen(string));
+
+        testrun(!testrun_string_remove_whitespace(&string, &size, true, true));
+        testrun(strncmp(string, source, strlen(source)) == 0);
+        testrun(size == strlen(string));
+
+        // -------------------------------------------------------------
+        // Check size = strlen + 2  (OK + unchanged string but changed size)
+        // -------------------------------------------------------------
+
+        size = strlen(string) + 2;
+        testrun(testrun_string_remove_whitespace(&string, &size, false, true));
+        testrun(strncmp(string, source, strlen(source)) == 0);
+        testrun(size == strlen(string) +1);
+
+        size = strlen(string) + 2;
+        testrun(testrun_string_remove_whitespace(&string, &size, true, false));
+        testrun(strncmp(string, source, strlen(source)) == 0);
+        testrun(size == strlen(string) +1);
+
+        size = strlen(string) + 2;
+        testrun(testrun_string_remove_whitespace(&string, &size, true, true));
+        testrun(strncmp(string, source, strlen(source)) == 0);
+        testrun(size == strlen(string) +1);
+
+        // -------------------------------------------------------------
+        // Check whitespace only (free string)
+        // -------------------------------------------------------------
+
+        string = testrun_string_free(string);
+        size   = 100;
+        string = calloc(size, sizeof(char));
+
+        snprintf(source, size, " \t \n \r \v   ");
+        strcat(string, source);
+        length = strlen(string);
+        testrun(testrun_string_remove_whitespace(&string, &size, false, true));
+        testrun(string == NULL);
+        testrun(size   == 0);
+
+        size   = 100;
+        string = calloc(size, sizeof(char));
+        snprintf(source, size, " \t \n \r \v   ");
+        strcat(string, source);
+        testrun(testrun_string_remove_whitespace(&string, &size, true, false));
+        testrun(string == NULL);
+        testrun(size   == 0);
+
+        size   = 100;
+        string = calloc(size, sizeof(char));
+        snprintf(source, size, " \t \n \r \v   ");
+        strcat(string, source);
+        testrun(testrun_string_remove_whitespace(&string, &size, true, true));
+        testrun(string == NULL);
+        testrun(size   == 0);
+
+        size   = 100;
+        string = calloc(size, sizeof(char));
+        snprintf(source, size, " \t \n \r \v   ");
+        strcat(string, source);
+        testrun(!testrun_string_remove_whitespace(&string, &size, false, false));
+        testrun(strncmp(string, source, strlen(source)) == 0);
+        testrun(size == 100);
+
+        string = testrun_string_free(string);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_string_vector_remove_whitespace(){
+
+        testrun_vector *vector = testrun_vector_create(0,
+                testrun_vector_item_free, NULL);
+
+        char *string = NULL;
+        char expect[1000];
+        bzero(expect, 1000);
+        size_t size = 0;
+
+        testrun(vector);
+        testrun(testrun_vector_is_empty(vector));
+
+        testrun(-1 == testrun_string_vector_remove_whitespace(NULL, true, false));
+
+        // -------------------------------------------------------------
+        // Check empty vector
+        // -------------------------------------------------------------
+
+        testrun( 1 == testrun_string_vector_remove_whitespace(vector, true,  false));
+        testrun( 1 == testrun_string_vector_remove_whitespace(vector, true,  true));
+        testrun( 1 == testrun_string_vector_remove_whitespace(vector, false, true));
+        testrun(-1 == testrun_string_vector_remove_whitespace(vector, false, false));
+
+        // -------------------------------------------------------------
+        // Check non empty vector
+        // -------------------------------------------------------------
+
+        string = calloc(20, sizeof(char));
+        strcat(string, " <front");
+        testrun(testrun_vector_add(vector, string), "whitespace front");
+        string = calloc(20, sizeof(char));
+        strcat(string, "last> ");
+        testrun(testrun_vector_add(vector, string), "whitespace end");
+        string = calloc(20, sizeof(char));
+        strcat(string, " <both> ");
+        testrun(testrun_vector_add(vector, string), "whitespace both");
+        string = calloc(20, sizeof(char));
+        strcat(string, " ");
+        testrun(testrun_vector_add(vector, string), "only whitespace");
+        string = calloc(20, sizeof(char));
+        strcat(string, "none");
+        testrun(testrun_vector_add(vector, string), "no whitespace");
+
+        testrun(vector->last == 4);
+
+        // -------------------------------------------------------------
+        // Remove false false
+        // -------------------------------------------------------------
+
+        testrun(-1 == testrun_string_vector_remove_whitespace(
+                vector,false, false));
+
+        testrun(vector->last == 4);
+
+        sprintf(expect, " <front");
+        string = testrun_vector_get(vector, 0);
+        testrun(strncmp(string, expect, strlen(expect)) == 0, "check 1");
+        sprintf(expect, "last> ");
+        string = (char*) testrun_vector_get(vector, 1);
+        testrun(strncmp(string, expect, strlen(expect)) == 0);
+        sprintf(expect, " <both> ");
+        string = testrun_vector_get(vector, 2);
+        testrun(strncmp(string, expect, strlen(expect)) == 0);
+        sprintf(expect, " ");
+        string = testrun_vector_get(vector, 3);
+        testrun(strncmp(string, expect, strlen(expect)) == 0);
+        sprintf(expect, "none");
+        string = testrun_vector_get(vector, 4);
+        testrun(strncmp(string, expect, strlen(expect)) == 0);
+
+        // -------------------------------------------------------------
+        // Remove front
+        // -------------------------------------------------------------
+
+        sprintf(expect, "<front" "last> " "<both> " "none");
+        size = strlen(expect) + 1;
+
+        testrun(size == testrun_string_vector_remove_whitespace(
+                vector, true, false));
+
+        testrun(vector->last == 4);
+
+        sprintf(expect, "<front");
+        string = testrun_vector_get(vector, 0);
+        testrun(strncmp(string, expect, strlen(expect)) == 0);
+        sprintf(expect, "last> ");
+        string = testrun_vector_get(vector, 1);
+        testrun(strncmp(string, expect, strlen(expect)) == 0);
+        sprintf(expect, "<both> ");
+        string = testrun_vector_get(vector, 2);
+        testrun(strncmp(string, expect, strlen(expect)) == 0);
+        testrun(!testrun_vector_get(vector, 3));
+        sprintf(expect, "none");
+        string = testrun_vector_get(vector, 4);
+        testrun(strncmp(string, expect, strlen(expect)) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        // -------------------------------------------------------------
+        // Remove last
+        // -------------------------------------------------------------
+
+        vector = testrun_vector_create(0,
+                testrun_vector_item_free, NULL);
+
+        string = calloc(20, sizeof(char));
+        strcat(string, " <front");
+        testrun(testrun_vector_add(vector, string), "whitespace front");
+        string = calloc(20, sizeof(char));
+        strcat(string, "last> ");
+        testrun(testrun_vector_add(vector, string), "whitespace end");
+        string = calloc(20, sizeof(char));
+        strcat(string, " <both> ");
+        testrun(testrun_vector_add(vector, string), "whitespace both");
+        string = calloc(20, sizeof(char));
+        strcat(string, " ");
+        testrun(testrun_vector_add(vector, string), "only whitespace");
+        string = calloc(20, sizeof(char));
+        strcat(string, "none");
+        testrun(testrun_vector_add(vector, string), "no whitespace");
+
+        testrun(vector->last == 4);
+
+        sprintf(expect, " <front" "last>" " <both>" "none");
+        size = strlen(expect) + 1;
+
+        testrun(size == testrun_string_vector_remove_whitespace(
+                vector, false, true));
+
+        testrun(vector->last == 4);
+
+        sprintf(expect, " <front");
+        string = testrun_vector_get(vector, 0);
+        testrun(strncmp(string, expect, strlen(expect)) == 0);
+        sprintf(expect, "last>");
+        string = testrun_vector_get(vector, 1);
+        testrun(strncmp(string, expect, strlen(expect)) == 0);
+        sprintf(expect, " <both>");
+        string = testrun_vector_get(vector, 2);
+        testrun(strncmp(string, expect, strlen(expect)) == 0);
+        testrun(!testrun_vector_get(vector, 3));
+        sprintf(expect, "none");
+        string = testrun_vector_get(vector, 4);
+        testrun(strncmp(string, expect, strlen(expect)) == 0);
+        vector = testrun_vector_terminate(vector);
+
+        // -------------------------------------------------------------
+        // Remove both
+        // -------------------------------------------------------------
+
+        vector = testrun_vector_create(0,
+                testrun_vector_item_free, NULL);
+
+        string = calloc(20, sizeof(char));
+        strcat(string, " <front");
+        testrun(testrun_vector_add(vector, string), "whitespace front");
+        string = calloc(20, sizeof(char));
+        strcat(string, "last> ");
+        testrun(testrun_vector_add(vector, string), "whitespace end");
+        string = calloc(20, sizeof(char));
+        strcat(string, " <both> ");
+        testrun(testrun_vector_add(vector, string), "whitespace both");
+        string = calloc(20, sizeof(char));
+        strcat(string, " ");
+        testrun(testrun_vector_add(vector, string), "only whitespace");
+        string = calloc(20, sizeof(char));
+        strcat(string, "none");
+        testrun(testrun_vector_add(vector, string), "no whitespace");
+
+        testrun(vector->last == 4);
+
+        sprintf(expect, "<front" "last>" "<both>" "none");
+        size = strlen(expect) + 1;
+
+        testrun(size ==testrun_string_vector_remove_whitespace(
+                vector, true, true));
+
+        testrun(vector->last == 4);
+
+        sprintf(expect, "<front");
+        string = testrun_vector_get(vector, 0);
+        testrun(strncmp(string, expect, strlen(expect)) == 0);
+        sprintf(expect, "last>");
+        string = testrun_vector_get(vector, 1);
+        testrun(strncmp(string, expect, strlen(expect)) == 0);
+        sprintf(expect, "<both>");
+        string = testrun_vector_get(vector, 2);
+        testrun(strncmp(string, expect, strlen(expect)) == 0);
+        testrun(!testrun_vector_get(vector, 3));
+        sprintf(expect, "none");
+        string = testrun_vector_get(vector, 4);
+        testrun(strncmp(string, expect, strlen(expect)) == 0);
+        vector = testrun_vector_terminate(vector);
+
+
+        return testrun_log_success();
+}
+
 /*
  *      ------------------------------------------------------------------------
  *
@@ -2559,18 +3628,23 @@ int test_testrun_string_replace_all(){
  */
 int cluster_tests_non_configurable() {
 
-       testrun_init();
+        testrun_init();
 
-       testrun_test(test_testrun_string_free);
-       testrun_test(test_testrun_string_prepare);
-       testrun_test(test_testrun_string_append);
-       testrun_test(test_testrun_string_write_embeded);
-       testrun_test(test_testrun_string_embed);
-       testrun_test(test_testrun_string_unset_end);
-       testrun_test(test_testrun_string_replace_first);
-       testrun_test(test_testrun_string_replace_all);
+        testrun_test(test_testrun_string_free);
+        testrun_test(test_testrun_string_prepare);
+        testrun_test(test_testrun_string_append);
+        testrun_test(test_testrun_string_write_embeded);
+        testrun_test(test_testrun_string_embed);
+        testrun_test(test_testrun_string_unset_end);
+        testrun_test(test_testrun_string_replace_first);
+        testrun_test(test_testrun_string_replace_all);
+        testrun_test(test_testrun_string_pointer);
+        testrun_test(test_testrun_string_split);
+        testrun_test(test_testrun_string_clear_whitespace_before_lineend);
+        testrun_test(test_testrun_string_remove_whitespace);
+        testrun_test(test_testrun_string_vector_remove_whitespace);
 
-       return testrun_counter;
+        return testrun_counter;
 }
 
 /*
@@ -2599,6 +3673,11 @@ int64_t cluster_tests_configurable(
         testrun_add(test_testrun_string_unset_end);
         testrun_add(test_testrun_string_replace_first);
         testrun_add(test_testrun_string_replace_all);
+        testrun_add(test_testrun_string_pointer);
+        testrun_add(test_testrun_string_split);
+        testrun_add(test_testrun_string_clear_whitespace_before_lineend);
+        testrun_add(test_testrun_string_remove_whitespace);
+        testrun_add(test_testrun_string_vector_remove_whitespace);
 
         return testrun_counter;
 }

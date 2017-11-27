@@ -451,3 +451,420 @@ bool testrun_string_replace_all(
 
         return testrun_string_unset_end(*result, *size, delim2, d2_len);
 }
+
+/*----------------------------------------------------------------------------*/
+
+testrun_vector *testrun_string_pointer(
+        char * const source, size_t sc_len,
+        char const * const delim,  size_t dm_len){
+
+        if (!source || !delim)
+                return NULL;
+
+        testrun_vector *vector = testrun_vector_create(0, NULL, NULL);
+        if (!vector)
+                return NULL;
+
+        if ( (sc_len < 1) || (dm_len < 1))
+                goto error;
+
+        if (dm_len > sc_len)
+                goto error;
+
+        char *start   = source;
+        char *pointer = strstr(source, delim);
+
+        if (!testrun_vector_add(vector, start))
+                goto error;
+
+        while (pointer) {
+
+                start = pointer + dm_len;
+
+                if ( (start - source) >= (int64_t) sc_len - 1)
+                        break;
+
+                if (start[0] == 0)
+                        break;
+
+                if (!testrun_vector_add(vector, start))
+                        goto error;
+
+                pointer = strstr(start, delim);
+        }
+
+        return vector;
+
+error:
+        vector = testrun_vector_terminate(vector);
+        return NULL;
+}
+
+/*----------------------------------------------------------------------------*/
+
+testrun_vector *testrun_string_split(
+        char * const source, size_t sc_len,
+        char const * const delim,  size_t dm_len,
+        bool copy_delimiter){
+
+        if (!source || !delim)
+                return NULL;
+
+        if ((sc_len < 1) || (dm_len < 1))
+                return NULL;
+
+        void    *ptr1   = NULL;
+        void    *ptr2   = NULL;
+        char    *string = NULL;
+        int64_t length  = 0;
+
+
+        testrun_vector *vector_pointer = NULL;
+        testrun_vector *vector_copies  = NULL;
+
+        vector_pointer = testrun_string_pointer(source, sc_len, delim, dm_len);
+        if (!vector_pointer)
+                goto error;
+
+        vector_copies = testrun_vector_create(vector_pointer->last + 1,
+                testrun_vector_item_free, NULL);
+        if (!vector_copies)
+                return NULL;
+
+        vector_copies->last = vector_pointer->last;
+
+        for (size_t i = 0; i <= vector_pointer->last; i++){
+
+                ptr1 = vector_pointer->items[i];
+                if (!ptr1)
+                        goto error;
+
+                if (i < vector_pointer->last){
+
+                        ptr2 = vector_pointer->items[i + 1];
+                        if (!ptr2)
+                                goto error;
+
+                        length = ptr2 - ptr1;
+
+                        if (!copy_delimiter)
+                                length -= dm_len;
+
+                } else {
+
+                        ptr2 = source + strlen(source);
+                        length = ptr2 - ptr1;
+
+                        if (strstr(ptr1, delim))
+                                if (!copy_delimiter)
+                                        length -= dm_len;
+                }
+
+                if (length < 0)
+                        goto error;
+
+                if (length == 0)
+                        continue;
+
+                string = calloc(length + 1, sizeof(char));
+                if (!string)
+                        goto error;
+
+                if (!strncpy(string, ptr1, length)){
+                        free(string);
+                        goto error;
+                }
+                vector_copies->items[i] = string;
+
+        }
+
+        vector_pointer = testrun_vector_terminate(vector_pointer);
+        return vector_copies;
+
+error:
+        vector_copies  = testrun_vector_terminate(vector_copies);
+        vector_pointer = testrun_vector_terminate(vector_pointer);
+        return NULL;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_string_clear_whitespace_before_lineend(
+        char **result,  size_t * const size,
+        char * const source, size_t sc_len,
+        char const * const lineend,  size_t le_len){
+
+        if (NULL == result || NULL == size )
+                return false;
+
+        if (NULL == source || 0 == sc_len )
+                return false;
+
+        if (NULL == lineend || 0 == le_len )
+                return false;
+
+        // (1) SPLIT to lines
+        testrun_vector *lines = testrun_string_split(
+                source, sc_len, lineend, le_len, true);
+
+        if (!lines)
+                return false;
+
+        size_t  length      = 0;
+        size_t  line_length = 0;
+        size_t  used        = 0;
+        char    *string     = NULL;
+        char    *pointer    = NULL;
+
+        // (2) Adapt the result size
+
+        for (size_t i = 0; i <= lines->last; i++) {
+
+                string = testrun_vector_get(lines, i);
+                if (!string){
+                        // empty line
+                        length += le_len;
+                        continue;
+                }
+
+                line_length = strlen(string);
+
+                pointer = string + line_length - 1;
+                while(isspace(pointer[0])){
+
+                        if ((pointer - string) == 0){
+                                // whitespace only line
+                                pointer--;
+                                break;
+                        }
+
+                        pointer--;
+                }
+
+                *(pointer+1) = '\0';
+                line_length  = (pointer - string) + 1 + le_len;
+                length += line_length;
+
+        }
+
+        // (3) Adapt the result size
+        if (*result == NULL) {
+
+                *result = calloc(length + 1, sizeof(char));
+                if (!*result)
+                        goto error;
+
+                used  = 0;
+                *size = length;
+
+        } else {
+
+                used = strlen(*result);
+
+                if (*size < (length + used)){
+
+                        *result = realloc(*result,
+                                ((length + used) + 1) * sizeof(char));
+
+                        if (!*result)
+                                goto error;
+
+                        *size  = (length + used);
+                }
+        }
+
+        // (4) Write in append mode to result
+        pointer = *result + used;
+
+        for (size_t i = 0; i <= lines->last; i++) {
+
+                string = testrun_vector_get(lines, i);
+
+                if (string) {
+
+                        line_length = strlen(string);
+
+                        if (!strncpy(pointer, string, line_length))
+                                goto error;
+
+                        pointer += line_length;
+                }
+
+                if (!strncpy(pointer, lineend, le_len))
+                        goto error;
+
+                pointer += le_len;
+
+        }
+
+        // (5) remove helper structure
+        lines = testrun_vector_terminate(lines);
+        return true;
+error:
+        lines = testrun_vector_terminate(lines);
+        return false;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_string_remove_whitespace(
+        char **string, size_t * length, bool front, bool end){
+
+        if (!string || !length)
+                return false;
+
+        if (!front)
+                if (!end)
+                        return false;
+
+        char *first  = *string;
+        char *last   = NULL;
+        char *result = NULL;
+        size_t len   = 0;
+
+        // Limit length to input as max
+        len = strnlen(*string, *length);
+
+        // Allow only NULL terminated strings
+        if (len == *length)
+                return false;
+
+        last = *string + len;
+
+        if (front) {
+
+                while(isspace(first[0])){
+
+                        if ( (first - *string) == (int64_t) length){
+                                // all whitespace
+                                *string = testrun_string_free(*string);
+                                *length = 0;
+                                return true;
+                        }
+
+                        first++;
+                }
+        }
+
+        if (end) {
+
+                if (last[0] == '\0')
+                        last--;
+
+                while(isspace(last[0])){
+
+                        if ( (last - *string) == 0){
+                                // all whitespace
+                                *string = testrun_string_free(*string);
+                                *length = 0;
+                                return true;
+                        }
+
+                        last--;
+                }
+        }
+
+        //log("string |%s|%s|%s|%d", *string, first, last, last-first);
+
+        // check first last consistency
+        if (first == last) {
+
+                if (isspace(first[0]) || (first[0] == '\0')){
+                        // all whitespace
+                        *string = testrun_string_free(*string);
+                        *length = 0;
+                        return true;
+                }
+
+        } else {
+
+                if (first > last)
+                        return false;
+        }
+
+        if (first != *string){
+
+                // remove whitespace in front of string
+
+                result = calloc(last - first + 2, sizeof(char));
+                if (!result)
+                        return false;
+
+                if (!strncpy(result, first, (last-first) + 1 )){
+                        free(result);
+                        return false;
+                }
+
+                *string = testrun_string_free(*string);
+                *string = result;
+                *length = strlen(result) + 1;
+
+        } else {
+
+                // remove whitespace behind string
+
+                if (last < *string + (*length -1)){
+
+                        // cut string behind last
+                        last[1] = '\0';
+                        *length = strlen(*string) + 1;
+
+                } else {
+
+                        // cut length to strlen + 1
+                        *length = strlen(*string) + 1;
+                }
+        }
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+int64_t testrun_string_vector_remove_whitespace(
+        testrun_vector *vector, bool front, bool end){
+
+        if (!vector)
+                return -1;
+
+        if (!front)
+                if (!end)
+                        return -1;
+
+        // check for pointer vector
+        if (!vector->item_free)
+                return -1;
+
+        char    *pointer = NULL;
+        size_t    length = 0;
+        int64_t   result = 0;
+
+        for (size_t i = 0; i <= vector->last; +i++){
+
+                /*
+                 *      Use of remove to be save if pointer is deleted,
+                 *      or reallocated.
+                 */
+
+                pointer = testrun_vector_remove(vector, i);
+                if (!pointer)
+                        continue;
+
+                //log("%d|%s|", i, pointer);
+                length = strlen(pointer) + 1;
+
+                if (!testrun_string_remove_whitespace(
+                        &pointer, &length, front, end))
+                        return -1;
+
+                if (pointer){
+                        testrun_vector_set(vector, i, pointer);
+                        result += length - 1;
+                }
+        }
+
+        //log("result %jd", result);
+        return result + 1;
+}
+
+/*----------------------------------------------------------------------------*/
