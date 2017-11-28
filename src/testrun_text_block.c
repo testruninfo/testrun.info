@@ -65,12 +65,6 @@ char *testrun_text_block_header_body(char *name){
 
 /*----------------------------------------------------------------------------*/
 
-/**
-        Generate the content body of a C source file.
-
-        @param name     input name of the module
-        @return         body for the file name.c
- */
 char *testrun_text_block_source_body(char *name){
 
         if (!name)
@@ -81,16 +75,34 @@ char *testrun_text_block_source_body(char *name){
                 return NULL;
 
         sprintf(snipped,
-                "#include \"../include/%s.h\"" TESTRUN_LINEEND,
+                "#include \"%s\"" TESTRUN_LINEEND,
                 name);
         return snipped;
 }
 
 /*----------------------------------------------------------------------------*/
 
-char *testrun_text_block_test_body(char *name){
+char *testrun_text_block_test_body(
+        char *path_src,
+        char *path_testrun){
 
-        if (!name)
+        if (!path_src || !path_testrun)
+                return NULL;
+
+        size_t len_src = strlen(path_src);
+        size_t len_run = strlen(path_testrun);
+
+        if ( (len_run < 4) || (len_src < 4) )
+                return NULL;
+
+        if (path_testrun[len_run -1 ]   != 'h')
+                return NULL;
+        if (path_testrun[len_run -2 ]   != '.')
+                return NULL;
+
+        if (path_src[len_src -1 ]       != 'c')
+                return NULL;
+        if (path_src[len_src -2 ]       != '.')
                 return NULL;
 
         char *snipped = calloc(2500, sizeof(char));
@@ -98,11 +110,22 @@ char *testrun_text_block_test_body(char *name){
                 return NULL;
 
         char *splitline = testrun_text_block_splitline(0, 81, true);
+        char *helper    = testrun_text_block_comment_header(
+                        "TEST HELPER", "HELPER");
+        char *cases     = testrun_text_block_comment_header(
+                        "TEST CASES", "CASES");
+        char *cluster   = testrun_text_block_comment_header(
+                        "TEST CLUSTER", "CLUSTER");
+        char *exec      = testrun_text_block_comment_header(
+                        "TEST EXECUTION", "EXEC");
+
+        if (!splitline || !helper || !cases || !cluster || !exec)
+                goto error;
 
         sprintf(snipped,
                 TESTRUN_LINEEND
-                "#include \"../tools/testrun.h\""       TESTRUN_LINEEND
-                "#include \"../../src/%s.c\""           TESTRUN_LINEEND
+                "#include \"%s\""                       TESTRUN_LINEEND
+                "#include \"%s\""                       TESTRUN_LINEEND
                 TESTRUN_LINEEND
                 "%s"                                    // #HELPER
                 TESTRUN_LINEEND
@@ -138,17 +161,29 @@ char *testrun_text_block_test_body(char *name){
                 "%s"                                    // #EXEC
                 TESTRUN_LINEEND
                 "testrun_run(all_tests);"               TESTRUN_LINEEND,
-                name,
-                testrun_text_block_comment_header("TEST HELPER", "HELPER"),
+                path_testrun, path_src,
+                helper,
                 splitline,
-                testrun_text_block_comment_header("TEST CASES", "CASES"),
+                cases,
                 splitline,
                 splitline,
-                testrun_text_block_comment_header("TEST CLUSTER", "CLUSTER"),
-                testrun_text_block_comment_header("TEST EXECUTION", "EXEC")
+                cluster,
+                exec
                 );
 
+        testrun_string_free(splitline);
+        testrun_string_free(helper);
+        testrun_string_free(cases);
+        testrun_string_free(cluster);
+        testrun_string_free(exec);
         return snipped;
+error:
+        testrun_string_free(splitline);
+        testrun_string_free(helper);
+        testrun_string_free(cases);
+        testrun_string_free(cluster);
+        testrun_string_free(exec);
+        return NULL;
 }
 
 /*

@@ -417,16 +417,19 @@ int test_testrun_text_block_source_body() {
 
         char *expect = NULL;
         char *result = NULL;
+        char *name   = NULL;
 
         testrun(!testrun_text_block_source_body(NULL));
 
-        expect = "#include \"../include/name.h\"\n";
-        result = testrun_text_block_source_body("name");
+        name   = "../include/name.h";
+        expect = "#include \"../include/name.h\"" TESTRUN_LINEEND;
+        result = testrun_text_block_source_body(name);
         testrun(strncmp(expect, result, strlen(result)) == 0);
         free(result);
 
-        expect = "#include \"../include/test.h\"\n";
-        result = testrun_text_block_source_body("test");
+        name   = "../include/test.h";
+        expect = "#include \"../include/test.h\"" TESTRUN_LINEEND;
+        result = testrun_text_block_source_body(name);
         testrun(strncmp(expect, result, strlen(result)) == 0);
         free(result);
 
@@ -441,14 +444,19 @@ int test_testrun_text_block_test_body(){
         char expect[size];
         bzero(expect, size);
 
-        testrun(!testrun_text_block_test_body(NULL));
+        char *path_src     = "../../src/XXXXXXX.c";
+        char *path_testrun = "../tools/testrun.h";
+
+        testrun(!testrun_text_block_test_body(NULL,     NULL));
+        testrun(!testrun_text_block_test_body(path_src, NULL));
+        testrun(!testrun_text_block_test_body(NULL,     path_testrun));
 
         char *result = NULL;
 
         snprintf(expect, size,
                 TESTRUN_LINEEND
-                "#include \"../tools/testrun.h\""       TESTRUN_LINEEND
-                "#include \"../../src/XXXXXXX.c\""      TESTRUN_LINEEND
+                "#include \"../tools/testrun.h\""               TESTRUN_LINEEND
+                "#include \"../../src/XXXXXXX.c\""              TESTRUN_LINEEND
                 TESTRUN_LINEEND
                 "/*"    TESTRUN_LINEEND
                 " *      ------------------------------------------------------------------------" TESTRUN_LINEEND
@@ -470,13 +478,13 @@ int test_testrun_text_block_test_body(){
                 TESTRUN_LINEEND
                 "/*----------------------------------------------------------------------------*/" TESTRUN_LINEEND
                 TESTRUN_LINEEND
-                "/**"                                   TESTRUN_LINEEND
-                "int test_ ... (){"                     TESTRUN_LINEEND
-                "        testrun(true);"                TESTRUN_LINEEND
+                "/**"                                           TESTRUN_LINEEND
+                "int test_ ... (){"                             TESTRUN_LINEEND
+                "        testrun(true);"                        TESTRUN_LINEEND
                 TESTRUN_LINEEND
-                "        return testrun_log_success();"  TESTRUN_LINEEND
-                "}"                                     TESTRUN_LINEEND
-                "*/"                                    TESTRUN_LINEEND
+                "        return testrun_log_success();"         TESTRUN_LINEEND
+                "}"                                             TESTRUN_LINEEND
+                "*/"                                            TESTRUN_LINEEND
                 TESTRUN_LINEEND
                 "/*----------------------------------------------------------------------------*/" TESTRUN_LINEEND
                 TESTRUN_LINEEND
@@ -488,12 +496,12 @@ int test_testrun_text_block_test_body(){
                 " *      ------------------------------------------------------------------------" TESTRUN_LINEEND
                 " */"   TESTRUN_LINEEND
                 TESTRUN_LINEEND
-                "int all_tests() {"                     TESTRUN_LINEEND
+                "int all_tests() {"                             TESTRUN_LINEEND
                 TESTRUN_LINEEND
-                "        testrun_init();"                TESTRUN_LINEEND
-                "        //testrun_test(test_);"         TESTRUN_LINEEND
+                "        testrun_init();"                       TESTRUN_LINEEND
+                "        //testrun_test(test_);"                TESTRUN_LINEEND
                 TESTRUN_LINEEND
-                "        return testrun_counter;"        TESTRUN_LINEEND
+                "        return testrun_counter;"               TESTRUN_LINEEND
                 "}"TESTRUN_LINEEND
                 TESTRUN_LINEEND
                 "/*"    TESTRUN_LINEEND
@@ -504,14 +512,24 @@ int test_testrun_text_block_test_body(){
                 " *      ------------------------------------------------------------------------" TESTRUN_LINEEND
                 " */"   TESTRUN_LINEEND
                 TESTRUN_LINEEND
-                "testrun_run(all_tests);"               TESTRUN_LINEEND);
+                "testrun_run(all_tests);"                       TESTRUN_LINEEND);
 
-        result = testrun_text_block_test_body("XXXXXXX");
+        result = testrun_text_block_test_body(path_src, path_testrun);
         testrun(result);
         //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
         //log("START|\n%s|END|%jd\n", result, strlen(result));
         testrun(strncmp(result, expect, strlen(expect)) == 0);
         result = testrun_string_free(result);
+
+        path_src     = "../../src/XXXXXXX";
+        path_testrun = "../tools/testrun.h";
+        testrun(!testrun_text_block_test_body(path_src, path_testrun),
+                "source extension not .c");
+
+        path_src     = "../../src/XXXXXXX.c";
+        path_testrun = "../tools/testrun";
+        testrun(!testrun_text_block_test_body(path_src, path_testrun),
+                "testrun extension not .h");
 
         return testrun_log_success();
 }

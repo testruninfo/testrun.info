@@ -78,7 +78,7 @@ char *testrun_text_block_header_body(
 /**
         Generate the content body of a C source file.
 
-        @param name     input name of the module
+        @param name     relative path to header file e.g. ../include/name.h
         @return         body for the file name.c
  */
 char *testrun_text_block_source_body(
@@ -89,11 +89,13 @@ char *testrun_text_block_source_body(
 /**
         Generate the content body of a C test file.
 
-        @param name     input name of the module
+        @param path_src relative path to source file e.g. ../../src/name.c
+        @param path_run relative path to testrun.h   e.g. ../tools/testrun.h
         @return         body for the file name_tests.c
  */
 char *testrun_text_block_test_body(
-        char *name);
+        char *path_src,
+        char *path_run);
 
 /*----------------------------------------------------------------------------*/
 
@@ -158,12 +160,12 @@ char *testrun_text_block_c_header_documentation(
         Example:
 
         |*
-        *      ----------------------------------------------------------------
-        *
-        *      NAME                                                       #TAG
-        *
-        *      ----------------------------------------------------------------
-        *|
+         *      ----------------------------------------------------------------
+         *
+         *      NAME                                                       #TAG
+         *
+         *      ----------------------------------------------------------------
+         *|
 
         NOTE: the slash  is replaced with | to prevent compiler error messages
 
