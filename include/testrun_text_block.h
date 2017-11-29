@@ -26,7 +26,7 @@
 
         @ingroup        testrun_lib
 
-        @brief          Definition of some general text blocks.
+        @brief          Definition of standard text block elements.
 
 
         ------------------------------------------------------------------------
@@ -36,21 +36,8 @@
 #define testrun_text_block_h
 
 #include "testrun_string.h"
-#include "testrun_copyright.h"
-#include "testrun_path.h"
-
-#define TESTRUN_TAG_FILE                        "@file"
-#define TESTRUN_TAG_AUTHOR                      "@author"
-#define TESTRUN_TAG_DATE                        "@date"
-#define TESTRUN_TAG_GROUP                       "@ingroup"
-#define TESTRUN_TAG_BRIEF                       "@brief"
-
-#define TESTRUN_TAG_DEFAULT_NAME                "[NAME]"
-#define TESTRUN_TAG_DEFAULT_TAG                 "[TAG]"
-#define TESTRUN_TAG_DEFAULT_MODULE              "[MODULE]"
-#define TESTRUN_TAG_DEFAULT_AUTHOR              "[AUTHOR]"
-#define TESTRUN_TAG_DEFAULT_DATE                "[DATE]"
-#define TESTRUN_TAG_DEFAULT_PROJECT             "[PROJECT]"
+#include "testrun_config.h"
+#include "testrun_time.h"
 
 /*----------------------------------------------------------------------------*/
 
@@ -109,6 +96,8 @@ char *testrun_text_block_test_body(
  *      ------------------------------------------------------------------------
  */
 
+/*----------------------------------------------------------------------------*/
+
 /**
         Create the testrun default C documentation header block-
 
@@ -129,18 +118,20 @@ char *testrun_text_block_test_body(
 
         NOTE: the slash  is replaced with | to prevent compiler error messages
 
-        @param statement        copyright statement to be written
+        @param module_name      name for the module
+        @param extention        type of file to create
+        @param config           configuration to be used
+        @param brief            (optional) addition content for brief intro
         @param docu_open        on true  the last line will be *||**
                                 on false the last line will be *|
         @returns                allocated string with statement or NULL
 */
 char *testrun_text_block_c_header_documentation(
-        char *filename,
-        char *extension,
-        char *author,
-        char *date,
-        char *project,
-        bool documentation_tag_open);
+        char *module_name,
+        testrun_extension_t extension,
+        struct testrun_config const * const config,
+        bool docu_open,
+        char *brief);
 
 /*----------------------------------------------------------------------------*/
 

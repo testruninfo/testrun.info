@@ -44,8 +44,12 @@
 
 #include <dirent.h>
 #include <unistd.h>
+#include <limits.h>
 
 #include "testrun_config.h"
+
+#define TESTRUN_PATH_SPLIT "/"
+
 
 /*----------------------------------------------------------------------------*/
 
@@ -72,5 +76,40 @@ bool testrun_path_is_project_top_dir(
 */
 char *testrun_path_search_project_path(
         char *path);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Search the project root path starting from an input path.
+        @param path     path to start search
+        @returns        path to project root or NULL on error
+*/
+bool testrun_path_source_to_include(
+        char *buffer, size_t max,
+        struct testrun_config const * const config,
+        char * module_name);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Search the project root path starting from an input path.
+        @param path     path to start search
+        @returns        path to project root or NULL on error
+*/
+bool testrun_path_test_to_source(
+        char *buffer, size_t max,
+        struct testrun_config const * const config,
+        char * module_name);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Search the project root path starting from an input path.
+        @param path     path to start search
+        @returns        path to project root or NULL on error
+*/
+bool testrun_path_testrun_header(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
 
 #endif /* testrun_path_h */

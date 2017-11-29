@@ -43,4 +43,9 @@
 #include "testrun_copyright.h"
 #include "testrun_header.h"
 
+/**
+        Generate the content of the testrun.h files.
+*/
+char *testrun_lib_testrun_header();
+
 #endif /* testrun_lib_h */

@@ -205,6 +205,169 @@ int test_testrun_path_search_project_path() {
 
 /*----------------------------------------------------------------------------*/
 
+int test_testrun_path_source_to_include() {
+
+        char buffer[PATH_MAX];
+        bzero(buffer, PATH_MAX);
+
+        char expect[PATH_MAX];
+        bzero(expect, PATH_MAX);
+
+        char *name = "module";
+
+        testrun_config config = testrun_config_default();
+
+        testrun(!testrun_path_source_to_include(NULL,   0, NULL,  NULL));
+        testrun(!testrun_path_source_to_include(NULL,   PATH_MAX, &config, name));
+        testrun(!testrun_path_source_to_include(buffer, PATH_MAX, NULL,    name));
+        testrun(!testrun_path_source_to_include(buffer, PATH_MAX, &config, NULL));
+
+        testrun(!testrun_path_source_to_include(buffer, 4,        &config, name),
+                "MAX to small");
+
+        testrun(buffer[0] == 0);
+
+        snprintf(expect, PATH_MAX, "..%sinclude%smodule.h",
+                TESTRUN_PATH_SPLIT,TESTRUN_PATH_SPLIT);
+        testrun(testrun_path_source_to_include(buffer, PATH_MAX, &config, name));
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", buffer, strlen(buffer));
+        testrun(strlen(expect) == strlen(buffer));
+        testrun(strncmp(expect, buffer, strlen(expect)) == 0);
+
+
+        // -------------------------------------------------------------
+        // Check configurability
+        // -------------------------------------------------------------
+
+        config.project.path.src_to_include = "../home";
+        snprintf(expect, PATH_MAX, "../home%sinclude%smodule.h",
+                TESTRUN_PATH_SPLIT,TESTRUN_PATH_SPLIT);
+        testrun(testrun_path_source_to_include(buffer, PATH_MAX, &config, name));
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", buffer, strlen(buffer));
+        testrun(strlen(expect) == strlen(buffer));
+        testrun(strncmp(expect, buffer, strlen(expect)) == 0);
+
+        config.format.extensions.c_header = ".header";
+        snprintf(expect, PATH_MAX, "../home%sinclude%smodule.header",
+                TESTRUN_PATH_SPLIT,TESTRUN_PATH_SPLIT);
+        testrun(testrun_path_source_to_include(buffer, PATH_MAX, &config, name));
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", buffer, strlen(buffer));
+        testrun(strlen(expect) == strlen(buffer));
+        testrun(strncmp(expect, buffer, strlen(expect)) == 0);
+
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_path_test_to_source() {
+
+        char buffer[PATH_MAX];
+        bzero(buffer, PATH_MAX);
+
+        char expect[PATH_MAX];
+        bzero(expect, PATH_MAX);
+
+        char *name = "module";
+
+        testrun_config config = testrun_config_default();
+
+        testrun(!testrun_path_test_to_source(NULL,   0, NULL,  NULL));
+        testrun(!testrun_path_test_to_source(NULL,   PATH_MAX, &config, name));
+        testrun(!testrun_path_test_to_source(buffer, PATH_MAX, NULL,    name));
+        testrun(!testrun_path_test_to_source(buffer, PATH_MAX, &config, NULL));
+
+        testrun(!testrun_path_test_to_source(buffer, 4,        &config, name),
+                "MAX to small");
+
+        testrun(buffer[0] == 0);
+
+        snprintf(expect, PATH_MAX, "..%s..%ssrc%smodule.c",
+                TESTRUN_PATH_SPLIT,TESTRUN_PATH_SPLIT, TESTRUN_PATH_SPLIT);
+        testrun(testrun_path_test_to_source(buffer, PATH_MAX, &config, name));
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", buffer, strlen(buffer));
+        testrun(strlen(expect) == strlen(buffer));
+        testrun(strncmp(expect, buffer, strlen(expect)) == 0);
+
+
+        // -------------------------------------------------------------
+        // Check configurability
+        // -------------------------------------------------------------
+
+        config.project.path.tests.tests_to_src = "home";
+        snprintf(expect, PATH_MAX, "..%shome%ssrc%smodule.c",
+                TESTRUN_PATH_SPLIT,TESTRUN_PATH_SPLIT, TESTRUN_PATH_SPLIT);
+        testrun(testrun_path_test_to_source(buffer, PATH_MAX, &config, name));
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", buffer, strlen(buffer));
+        testrun(strlen(expect) == strlen(buffer));
+        testrun(strncmp(expect, buffer, strlen(expect)) == 0);
+
+        config.format.extensions.c_source = ".source";
+        snprintf(expect, PATH_MAX, "..%shome%ssrc%smodule.source",
+                TESTRUN_PATH_SPLIT,TESTRUN_PATH_SPLIT, TESTRUN_PATH_SPLIT);
+        testrun(testrun_path_test_to_source(buffer, PATH_MAX, &config, name));
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", buffer, strlen(buffer));
+        testrun(strlen(expect) == strlen(buffer));
+        testrun(strncmp(expect, buffer, strlen(expect)) == 0);
+
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_path_testrun_header() {
+
+        char buffer[PATH_MAX];
+        bzero(buffer, PATH_MAX);
+
+        char expect[PATH_MAX];
+        bzero(expect, PATH_MAX);
+
+        testrun_config config = testrun_config_default();
+
+        testrun(!testrun_path_testrun_header(NULL,   0, NULL));
+        testrun(!testrun_path_testrun_header(NULL,   PATH_MAX, &config));
+        testrun(!testrun_path_testrun_header(buffer, PATH_MAX, NULL));
+
+        testrun(!testrun_path_testrun_header(buffer, 4, &config),
+                "MAX to small");
+
+        testrun(buffer[0] == 0);
+
+        snprintf(expect, PATH_MAX, "..%s.%stools%stestrun.h",
+                TESTRUN_PATH_SPLIT,TESTRUN_PATH_SPLIT,TESTRUN_PATH_SPLIT);
+        testrun(testrun_path_testrun_header(buffer, PATH_MAX, &config));
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", buffer, strlen(buffer));
+        testrun(strlen(expect) == strlen(buffer));
+        testrun(strncmp(expect, buffer, strlen(expect)) == 0);
+
+        // -------------------------------------------------------------
+        // Check configurability
+        // -------------------------------------------------------------
+
+        config.project.path.tests.tests_to_tools = "home";
+        snprintf(expect, PATH_MAX, "..%shome%stools%stestrun.h",
+                TESTRUN_PATH_SPLIT, TESTRUN_PATH_SPLIT,TESTRUN_PATH_SPLIT);
+        testrun(testrun_path_testrun_header(buffer, PATH_MAX, &config));
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", buffer, strlen(buffer));
+        testrun(strlen(expect) == strlen(buffer));
+        testrun(strncmp(expect, buffer, strlen(expect)) == 0);
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
 /*
  *      ------------------------------------------------------------------------
  *
@@ -219,6 +382,9 @@ int all_tests() {
 
        testrun_test(test_testrun_path_is_project_top_dir);
        testrun_test(test_testrun_path_search_project_path);
+       testrun_test(test_testrun_path_source_to_include);
+       testrun_test(test_testrun_path_test_to_source);
+       testrun_test(test_testrun_path_testrun_header);
 
        return 1;
 }

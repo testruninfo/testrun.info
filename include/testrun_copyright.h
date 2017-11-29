@@ -47,6 +47,9 @@
 #define TESTRUN_COPYRIGHT_TAG_PROGRAM   "[COPYRIGHT_PROGRAM]"
 #define TESTRUN_COPYRIGHT_TAG_VARIANT   "[COPYRIGHT_VARIANT]"
 
+#define TESTRUN_COPYRIGHT_INTRO_DEFAULT "Copyright (c)"
+#define TESTRUN_COPYRIGHT_TEXT_DEFAULT  "All rights reserved."
+
 typedef enum {GENERAL, LESSER, AFFERTO} testrun_gpl_v3_types;
 
 /*

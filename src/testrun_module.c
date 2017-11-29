@@ -33,3 +33,105 @@
 */
 
 #include "../include/testrun_module.h"
+
+/*----------------------------------------------------------------------------*/
+
+char * testrun_module_c_file_content(
+        char * module_name,
+        testrun_extension_t filetype,
+        struct testrun_config const * const config){
+
+        if (!config)
+                return false;
+
+        if (!module_name)
+                return false;
+
+        char *body = NULL;
+
+        char *head = testrun_copyright_default_c_header(
+                        &config->copyright, true);
+
+        char *docu = testrun_text_block_c_header_documentation(
+                        module_name,
+                        filetype,
+                        config, false, NULL);
+
+        char source[PATH_MAX];
+        bzero(source, PATH_MAX);
+
+        char header[PATH_MAX];
+        bzero(header, PATH_MAX);
+
+        if (!head || !docu)
+                return NULL;
+
+        switch(filetype) {
+
+                case TESTRUN_HEADER:
+
+                        body = testrun_text_block_header_body(
+                                module_name);
+                        break;
+
+                case TESTRUN_SOURCE:
+
+                        if (!testrun_path_source_to_include(source, PATH_MAX,
+                                config, module_name))
+                                goto error;
+
+                        body = testrun_text_block_source_body(
+                                source);
+
+                        break;
+
+                case TESTRUN_TEST:
+
+
+                        if (!testrun_path_test_to_source(source, PATH_MAX,
+                                config, module_name))
+                                goto error;
+
+                        if (!testrun_path_testrun_header(header, PATH_MAX,
+                                config))
+                                goto error;
+
+                        body = testrun_text_block_test_body(
+                                source, header);
+
+                        break;
+
+                default:
+                        goto error;
+        }
+
+        if (!body)
+                goto error;
+
+        char    *result = NULL;
+        size_t  size    = strlen(head) + strlen(docu) + strlen(body) +
+                          strlen(config->format.line_end) + 1;
+
+        result = calloc(size, sizeof(char));
+        if (!result)
+                goto error;
+
+        if (!snprintf(result, size, "%s%s%s%s", head, docu, body,
+                config->format.line_end))
+                goto error;
+
+        head = testrun_string_free(head);
+        docu = testrun_string_free(docu);
+        body = testrun_string_free(body);
+        return result;
+error:
+        head = testrun_string_free(head);
+        docu = testrun_string_free(docu);
+        body = testrun_string_free(body);
+        return NULL;
+}
+
+/*----------------------------------------------------------------------------*/
+
+
+

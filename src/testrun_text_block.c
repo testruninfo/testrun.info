@@ -24,9 +24,9 @@
         @author         Markus Toepfer
         @date           2017-11-26
 
-        @ingroup
+        @ingroup        testrun_lib
 
-        @brief
+        @brief          Implementation of standard text block elements.
 
 
         ------------------------------------------------------------------------
@@ -196,248 +196,539 @@ error:
  *      ------------------------------------------------------------------------
  */
 
+static bool testrun_text_block_write_space(
+        char *buffer, size_t * size, size_t len){
+
+        if (!buffer || !size)
+                return false;
+
+        if (len >= *size)
+                return false;
+
+        for (size_t i = 0; i < len; i++) {
+                *buffer = ' ';
+                buffer++;
+        }
+
+        *size -= len;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+/*
+ *      Write a documentation header line with indent, tag, offset and lineend
+ *      to an buffer.
+ *
+ *      (1) Move the *buffer to point to the stringend '\0'
+ *      (2) Reduces the *size by the amount of written bytes.
+ */
+static bool testrun_text_block_write_docu_line(
+        char **buffer,  size_t * size,
+        size_t indent,  size_t offset,
+        char *tag,      size_t tag_length,
+        char *content,  size_t content_length,
+        char *lineend,  size_t le_len){
+
+        if (!buffer || !size || !tag)
+                return false;
+
+        //char *pointer = *buffer;
+
+        if ((indent + tag_length) >= offset){
+                offset = 1;
+        } else {
+                offset -= indent;
+                offset -= tag_length;
+        }
+
+        if (offset < 1)
+                offset = 1;
+
+        if (*size < (indent + tag_length + offset + content_length + le_len))
+                return false;
+
+        if (!testrun_text_block_write_space(*buffer, size, indent))
+                return false;
+
+        *buffer += indent;
+
+        //log("indent     |%s|%jd|%jd", pointer, strlen(pointer), *size);
+
+        if (!strncat(*buffer, tag, strnlen(tag, tag_length)))
+                return false;
+
+        *buffer += strnlen(tag, tag_length);
+        *size   -= tag_length;
+
+        //log("tag        |%s|%jd|%jd", pointer, strlen(pointer), *size);
+
+        if (!testrun_text_block_write_space(*buffer, size, offset))
+                return false;
+
+        *buffer += offset;
+
+        //log("offset     |%s|%jd|%jd", pointer, strlen(pointer), *size);
+
+        if (!strncat(*buffer, content, strnlen(content, content_length)))
+                return false;
+
+        *buffer += content_length;
+        *size  -= content_length;
+
+        //log("content    |%s|%jd|%jd", pointer, strlen(pointer), *size);
+
+        if (!strncat(*buffer, lineend, strnlen(lineend, le_len)))
+                return false;
+
+        *buffer += le_len;
+        *size   -= le_len;
+
+        //log("lineend    |%s|%jd|%jd", pointer, strlen(pointer), *size);
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+/*
+ *      Write a documentation header line with indent, tag, offset and lineend
+ *      to an buffer.
+ *
+ *      (1) Move the *buffer to point to the stringend '\0'
+ *      (2) Reduces the *size by the amount of written bytes.
+ */
+static bool testrun_text_block_write_shell_commented(
+        char **buffer, size_t * size, char *string){
+
+        if (!buffer || !size)
+                return false;
+
+        if (*size < 2)
+                return false;
+
+        if (string){
+
+                if (*size < (2 + strlen(string)))
+                        return false;
+
+                if (snprintf(*buffer, *size, "%s%s", "#", string)< 0)
+                        return false;
+
+                *buffer += (1 + strlen(string));
+                *size   -= (1 + strlen(string));
+
+        } else {
+
+                if (snprintf(*buffer, *size, "%s", "#")< 0)
+                        return false;
+
+                *buffer += 1;
+                *size   -= 1;
+        }
+
+        return true;
+}
+/*----------------------------------------------------------------------------*/
+
 char *testrun_text_block_c_header_documentation(
-        char *filename,
-        char *extension,
-        char *author,
-        char *date,
-        char *project,
-        bool documentation_tag_open){
+        char *module_name,
+        testrun_extension_t extension,
+        struct testrun_config const * const config,
+        bool documentation_tag_open,
+        char *brief){
 
-        if (!filename)
-                filename = TESTRUN_TAG_DEFAULT_MODULE;
+        if (!config || !module_name)
+                return NULL;
 
-        if (!extension)
-                extension = "c";
+        char   *result = NULL;
+        size_t re_size = 0;
 
-        if (!author)
-                author = TESTRUN_TAG_DEFAULT_AUTHOR;
+        // going to create:
+/**
 
-        if (!date)
-                date = TESTRUN_TAG_DEFAULT_DATE;
+        @file           [MODULE_NAME].h
+        @author         [AUTHOR_NAME]
+        @date           [CREATION_DATE]
 
-        if (!project)
-                project = TESTRUN_TAG_DEFAULT_PROJECT;
+        @ingroup        [PROJECT]
 
-        size_t linelength = 81;
-        size_t i = 0;
-        size_t indent = 8;
+        @brief
 
 
-        char *step1  = NULL;
-        char *step2  = NULL;
-        char *step3  = NULL;
-        char *suffix = "*/";
+        ------------------------------------------------------------------------
+*/
 
-        size_t size1  = 0;
-        size_t size2  = 0;
-        size_t size3  = 0;
-        size_t px_len = linelength;
-        size_t le_len = strlen(TESTRUN_LINEEND);
+        char *file_extension = NULL;
 
-        size_t size = 1000;
-        size_t open = size;
+        switch (extension) {
 
-        char string[size];
-        char prefix[px_len];
-        bzero(string, size);
-        bzero(prefix, px_len);
-
-        // (1) prepare the content header
-
-        /* ------------------------------------------ */
-
-        strncat(string, TESTRUN_TAG_FILE, open);
-        size = strlen(TESTRUN_TAG_FILE);
-        open -= size;
-        for (i = size; i < 2*indent; i++){
-                strncat(string, " ", open);
-                open--;
+                case TESTRUN_HEADER:
+                        file_extension = config->format.extensions.c_header;
+                        break;
+                case TESTRUN_SOURCE:
+                        file_extension = config->format.extensions.c_source;
+                        break;
+                case TESTRUN_TEST:
+                        file_extension = config->format.extensions.c_test;
+                        break;
+                default:
+                        return NULL;
         }
 
-        size = strlen(filename);
-        if (size > open)
-                goto error;
-        strncat(string, filename, open);
-        open -= size;
+        char   *lineend = config->format.line_end;
+        size_t  linelen = config->format.line_length + strlen(lineend) + 1;
 
-        size = strlen(extension);
-        if (open < size + 1)
-                goto error;
-        strcat(string, ".");
-        open--;
-        strncat(string, extension, open);
-        open -= size;
+        size_t size   = 12 * linelen;
+        size_t length = 0;
+        size_t le_len = strlen(lineend);
 
-        if (open < le_len)
-                goto error;
-        strcat(string, TESTRUN_LINEEND);
-        open -= le_len;
+        char buffer[size];
+        bzero(buffer, size);
+        char *pointer = buffer;
 
-        /* ------------------------------------------ */
+        // (1) Prepare content data
 
-        size = strlen(TESTRUN_TAG_AUTHOR);
-        if (size > open)
-                goto error;
-        strncat(string, TESTRUN_TAG_AUTHOR, open);
-        open -= size;
-        for (i = size; i < 2*indent; i++){
-                strncat(string, " ", open);
-                open--;
-        }
+        char filename[linelen];
+        bzero(filename, linelen);
 
-        size = strlen(author);
-        if (size > open)
-                goto error;
-        strncat(string, author, open);
-        open -= size;
-
-        if (open < le_len)
-                goto error;
-        strcat(string, TESTRUN_LINEEND);
-        open -= le_len;
-
-        /* ------------------------------------------ */
-
-        size = strlen(TESTRUN_TAG_DATE);
-        if (size > open)
-                goto error;
-        strncat(string, TESTRUN_TAG_DATE, open);
-        open -= size;
-        for (i = size; i < 2*indent; i++){
-                strncat(string, " ", open);
-                open--;
-        }
-
-        size = strlen(date);
-        if (size > open)
-                goto error;
-        strncat(string, date, open);
-        open -= size;
-
-        if (open < le_len)
-                goto error;
-        strcat(string, TESTRUN_LINEEND);
-        open -= le_len;
-
-        /* ------------------------------------------ */
-
-        if (open < le_len)
-                goto error;
-        strcat(string, TESTRUN_LINEEND);
-        open -= le_len;
-
-        /* ------------------------------------------ */
-
-        size = strlen(TESTRUN_TAG_GROUP);
-        if (size > open)
-                goto error;
-        strncat(string, TESTRUN_TAG_GROUP, open);
-        open -= size;
-        for (i = size; i < 2*indent; i++){
-                strncat(string, " ", open);
-                open--;
-        }
-
-        size = strlen(project);
-        if (size > open)
-                goto error;
-        strncat(string, project, open);
-        open -= size;
-
-        if (open < le_len)
-                goto error;
-        strcat(string, TESTRUN_LINEEND);
-        open -= le_len;
-
-        /* ------------------------------------------ */
-
-        if (open < le_len)
-                goto error;
-        strcat(string, TESTRUN_LINEEND);
-        open -= le_len;
-
-        /* ------------------------------------------ */
-
-        size = strlen(TESTRUN_TAG_BRIEF);
-        if (size > open)
-                goto error;
-        strncat(string, TESTRUN_TAG_BRIEF, open);
-        open -= size;
-        for (i = size; i < 2*indent; i++){
-                strncat(string, " ", open);
-                open--;
-        }
-
-        if (open < 3 * le_len)
-                goto error;
-        strcat(string, TESTRUN_LINEEND);
-        strcat(string, TESTRUN_LINEEND);
-        strcat(string, TESTRUN_LINEEND);
-        open -= 3 * le_len;
-
-        /* ------------------------------------------ */
-
-        if (open < linelength)
+        if (snprintf(filename, linelen, "%s%s",
+                module_name, file_extension) < 0)
                 goto error;
 
-        for (i = 0; i < linelength - 1 - indent; i++){
-                strcat(string, "-");
-        }
+        char *date  = testrun_time_string(TESTRUN_SCOPE_DAY);
+        char *split = testrun_text_block_splitline(
+                        config->format.indent_c,
+                        linelen - le_len,false);
 
-        /* ------------------------------------------ */
-
-        for (i = 0; i < indent; i++){
-                prefix[i] = ' ';
-        }
-
-        // (2) prefix the content header wiht indent
-
-        if (!testrun_string_embed(&step1, &size1,
-                string, strlen(string),
-                prefix, strlen(prefix),
-                NULL, 0,
-                TESTRUN_LINEEND, le_len,
-                TESTRUN_LINEEND, le_len))
-                goto error;
-
-        // (3) prefix and suffix the result of step1
+        // (2) Write header buffer
 
         if (documentation_tag_open){
 
-                snprintf(prefix, px_len, "/**%s", TESTRUN_LINEEND);
-
-                if (!testrun_string_embed(&step2, &size2,
-                        step1,  size1,
-                        prefix, strlen(prefix),
-                        suffix, strlen(suffix),
-                        NULL, 0,
-                        NULL, 0))
+                if (!strncat(pointer, "/**", 3))
                         goto error;
-        } else {
 
-                if (!testrun_string_embed(&step2, &size2,
-                        step1,  size1,
-                        NULL, 0,
-                        suffix, strlen(suffix),
-                        NULL, 0,
-                        NULL, 0))
+                size    -= 3;
+                pointer += 3;
+
+                if (!strncat(pointer, lineend, strnlen(lineend, le_len)))
                         goto error;
+
+                size    -= le_len;
+                pointer += le_len;
         }
 
-        // (4) remove whitespace
-        if (!testrun_string_clear_whitespace_before_lineend(&step3, &size3,
-                step2, size2,
-                TESTRUN_LINEEND, le_len))
+        //log("comment    |%s|%jd|%jd", buffer, strlen(buffer), size);
+
+        if (!testrun_text_block_write_docu_line(
+                &pointer, &size,
+                config->format.indent_c,
+                config->format.offset_docu,
+                TESTRUN_TAG_FILE,       strlen(TESTRUN_TAG_FILE),
+                filename,               strlen(filename),
+                lineend,                le_len))
                 goto error;
 
-        step1 = testrun_string_free(step1);
-        step2 = testrun_string_free(step2);
-        return step3;
+        //log("TESTRUN_TAG_FILE    |%s|%jd|%jd", buffer, strlen(buffer), size);
+
+        if (!testrun_text_block_write_docu_line(
+                &pointer, &size,
+                config->format.indent_c,
+                config->format.offset_docu,
+                TESTRUN_TAG_AUTHOR,     strlen(TESTRUN_TAG_AUTHOR),
+                config->author,         strlen(config->author),
+                lineend,                le_len))
+                goto error;
+
+        //log("TESTRUN_TAG_AUTHOR    |%s|%jd|%jd", buffer, strlen(buffer), size);
+
+        if (!testrun_text_block_write_docu_line(
+                &pointer, &size,
+                config->format.indent_c,
+                config->format.offset_docu,
+                TESTRUN_TAG_DATE,       strlen(TESTRUN_TAG_DATE),
+                date,                   strlen(date),
+                lineend,                le_len))
+                goto error;
+
+        //log("TESTRUN_TAG_DATE    |%s|%jd|%jd", buffer, strlen(buffer), size);
+
+        if (!strncat(pointer, lineend, size))
+                goto error;
+
+        pointer += le_len;
+        size    -= le_len;
+
+        //log("line    |%s|%jd|%jd", buffer, strlen(buffer), size);
+
+        if (!testrun_text_block_write_docu_line(
+                &pointer, &size,
+                config->format.indent_c,
+                config->format.offset_docu,
+                TESTRUN_TAG_GROUP,      strlen(TESTRUN_TAG_GROUP),
+                config->project.name,  strlen(config->project.name),
+                lineend,                le_len))
+                goto error;
+
+        //log("TESTRUN_TAG_GROUP    |%s|%jd|%jd", buffer, strlen(buffer), size);
+
+        if (!strncat(pointer, lineend, size))
+                goto error;
+
+        pointer += le_len;
+        size    -= le_len;
+
+        //log("line    |%s|%jd|%jd", buffer, strlen(buffer), size);
+
+        length = 0;
+        if (brief)
+                length = strlen(brief);
+
+        if (!testrun_text_block_write_docu_line(
+                &pointer, &size,
+                config->format.indent_c,
+                config->format.offset_docu,
+                TESTRUN_TAG_BRIEF,      strlen(TESTRUN_TAG_BRIEF),
+                brief,                  length,
+                lineend,                le_len))
+                goto error;
+
+        //log("TESTRUN_TAG_BRIEF    |%s|%jd|%jd", buffer, strlen(buffer), size);
+
+
+        if (snprintf(pointer, size, "%s%s%s%s*/%s",
+                lineend,
+                lineend,
+                split, lineend,
+                lineend) < 0)
+                goto error;
+
+        if (!testrun_string_clear_whitespace_before_lineend(&result, &re_size,
+                buffer, size,
+                lineend, le_len))
+                goto error;
+
+        //log("outro    |%s|%jd|%jd", buffer, strlen(buffer), size);
+        split = testrun_string_free(split);
+        date  = testrun_string_free(date);
+        return result;
 error:
-        step1 = testrun_string_free(step1);
-        step2 = testrun_string_free(step2);
-        step3 = testrun_string_free(step3);
+        split  = testrun_string_free(split);
+        date   = testrun_string_free(date);
+        return NULL;
+}
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_text_block_sh_header_documentation(
+        char *module_name,
+        struct testrun_config const * const config,
+        char *description,
+        char *usage,
+        char *dependencies){
+
+        if (!config || !module_name)
+                return NULL;
+
+        char   *result = NULL;
+        size_t re_size = 0;
+
+        // going to create:
+/*
+#
+#       File            [FILE].sh
+#       Authors         [AUTHOR_NAME]
+#       Date            [CREATION_DATE]
+#
+#       Project         [PROJECT]
+#
+#       ------------------------------------------------------------------------
+*/
+
+        char   *lineend = config->format.line_end;
+        size_t  linelen = config->format.line_length + strlen(lineend) + 1;
+
+        size_t size   = 18 * linelen;
+        size_t le_len = strlen(lineend);
+
+        char buffer[size];
+        bzero(buffer, size);
+        char *pointer = buffer;
+
+        size_t length = 0;
+
+        char *tag     = NULL;
+        char comment[linelen];
+        bzero(comment, linelen);
+
+        char *date  = testrun_time_string(TESTRUN_SCOPE_DAY);
+        char *split = testrun_text_block_splitline(7,linelen - le_len - 1,false);
+
+        if (!testrun_text_block_write_shell_commented(
+                &pointer, &size, lineend))
+                goto error;
+
+        if (!testrun_text_block_write_shell_commented(
+                &pointer, &size, NULL))
+                goto error;
+
+        tag = "File";
+        if (snprintf(comment, linelen, "%s%s",
+                module_name, config->format.extensions.shell) < 0)
+                goto error;
+        if (!testrun_text_block_write_docu_line(
+                &pointer, &size,
+                7,
+                config->format.offset_docu - 1,
+                tag,           strlen(tag),
+                comment,        strlen(comment),
+                lineend,        le_len))
+                goto error;
+
+        //log("TESTRUN_TAG_FILE    |%s|%jd|%jd", buffer, strlen(buffer), size);
+
+        if (!testrun_text_block_write_shell_commented(
+                &pointer, &size, NULL))
+                goto error;
+
+        tag = "Authors";
+        if (!testrun_text_block_write_docu_line(
+                &pointer, &size,
+                7,
+                config->format.offset_docu - 1,
+                tag,            strlen(tag),
+                config->author, strlen(config->author),
+                lineend,        le_len))
+                goto error;
+
+        if (!testrun_text_block_write_shell_commented(
+                &pointer, &size, NULL))
+                goto error;
+
+        tag = "Date";
+        if (!testrun_text_block_write_docu_line(
+                &pointer, &size,
+                7,
+                config->format.offset_docu - 1,
+                tag,           strlen(tag),
+                date,          strlen(date),
+                lineend,        le_len))
+                goto error;
+
+        if (!testrun_text_block_write_shell_commented(
+                &pointer, &size, lineend))
+                goto error;
+
+        if (!testrun_text_block_write_shell_commented(
+                &pointer, &size, NULL))
+                goto error;
+
+        tag = "Project";
+        if (!testrun_text_block_write_docu_line(
+                &pointer, &size,
+                7,
+                config->format.offset_docu - 1,
+                tag,           strlen(tag),
+                config->project.name,        strlen(config->project.name),
+                lineend,        le_len))
+                goto error;
+
+        if (!testrun_text_block_write_shell_commented(
+                &pointer, &size, lineend))
+                goto error;
+
+        if (!testrun_text_block_write_shell_commented(
+                &pointer, &size, NULL))
+                goto error;
+
+        tag = "Description";
+        length = 0;
+        if (description)
+                length = strlen(description);
+        if (!testrun_text_block_write_docu_line(
+                &pointer, &size,
+                7,
+                config->format.offset_docu - 1,
+                tag,           strlen(tag),
+                description,   length,
+                lineend,       le_len))
+                goto error;
+
+        if (!testrun_text_block_write_shell_commented(
+                &pointer, &size, lineend))
+                goto error;
+
+        if (!testrun_text_block_write_shell_commented(
+                &pointer, &size, NULL))
+                goto error;
+
+        tag = "Usage";
+        length = 0;
+        if (usage)
+                length = strlen(usage);
+        if (!testrun_text_block_write_docu_line(
+                &pointer, &size,
+                7,
+                config->format.offset_docu - 1,
+                tag,           strlen(tag),
+                usage,          length,
+                lineend,       le_len))
+                goto error;
+
+        if (!testrun_text_block_write_shell_commented(
+                &pointer, &size, lineend))
+                goto error;
+
+        if (!testrun_text_block_write_shell_commented(
+                &pointer, &size, NULL))
+                goto error;
+
+        tag = "Dependencies";
+        length = 0;
+        if (dependencies)
+                length = strlen(dependencies);
+        if (!testrun_text_block_write_docu_line(
+                &pointer, &size,
+                7,
+                config->format.offset_docu - 1,
+                tag,           strlen(tag),
+                dependencies,  length,
+                lineend,       le_len))
+                goto error;
+
+        if (!testrun_text_block_write_shell_commented(
+                &pointer, &size, lineend))
+                goto error;
+
+        if (!testrun_text_block_write_shell_commented(
+                &pointer, &size, NULL))
+                goto error;
+
+        tag = "Last changed";
+        if (!testrun_text_block_write_docu_line(
+                &pointer, &size,
+                7,
+                config->format.offset_docu - 1,
+                tag,           strlen(tag),
+                date,          strlen(date),
+                lineend,        le_len))
+                goto error;
+
+        if (snprintf(pointer, size, "#%s%s%s",
+                split, lineend, lineend) < 0)
+                goto error;
+
+        if (!testrun_string_clear_whitespace_before_lineend(&result, &re_size,
+                buffer, size,
+                lineend, le_len))
+                goto error;
+
+        split = testrun_string_free(split);
+        date  = testrun_string_free(date);
+        return result;
+error:
+        split  = testrun_string_free(split);
+        date   = testrun_string_free(date);
         return NULL;
 }
 

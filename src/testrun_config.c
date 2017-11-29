@@ -34,6 +34,85 @@
 
 #include "../include/testrun_config.h"
 
+
+testrun_config testrun_config_default(){
+
+        testrun_config config = {
+
+                .author  = TESTRUN_TAG_DEFAULT_AUTHOR,
+                .project =
+                {
+                        .name = TESTRUN_TAG_DEFAULT_PROJECT,
+                        .path =
+                        {
+                                .root           = TESTRUN_PATH_DUMMY,
+                                .include        = TESTRUN_PATH_INCLUDE,
+                                .src            = TESTRUN_PATH_SRC,
+                                .docs           = TESTRUN_PATH_DOCS,
+                                .copyright      = TESTRUN_PATH_COPYRIGHT,
+                                .config         = TESTRUN_PATH_CONFIG,
+                                .src_to_include = TESTRUN_PATH_SRC_TO_INCLUDE,
+                                .tests          =
+                                {
+                                        .root           = TESTRUN_PATH_TESTS,
+                                        .unit           = TESTRUN_PATH_UNIT_TESTS,
+                                        .acceptance     = TESTRUN_PATH_ACCEPTANCE_TESTS,
+                                        .tools          = TESTRUN_PATH_TEST_TOOLS,
+                                        .tests_to_src   = TESTRUN_PATH_TESTS_TO_SRC,
+                                        .tests_to_tools = TESTRUN_PATH_TESTS_TO_TOOLS
+                                }
+                        },
+                        .doxygen =
+                        {
+                                .path = TESTRUN_PATH_DOXYGEN,
+                                .file = TESTRUN_FILE_DOXYGEN
+                        }
+                },
+                .copyright =
+                {
+                        .intro          = TESTRUN_COPYRIGHT_INTRO_DEFAULT,
+                        .year           = TESTRUN_COPYRIGHT_TAG_YEAR,
+                        .owner          = TESTRUN_COPYRIGHT_TAG_OWNER,
+                        .text           = TESTRUN_COPYRIGHT_TEXT_DEFAULT,
+
+                        .note           = NULL,
+                        .variant        = NULL,
+                        .program        = NULL,
+
+                        .to_string      = testrun_copyright_to_string
+                },
+                .format =
+                {
+                        .line_end       = "\n",
+                        .line_length    = 80,
+                        .indent_c       = 8,
+                        .offset_docu    = 3 * 8,
+                        .indent_sh      = 4,
+                        .prefix         =
+                        {
+                                .unit_test = "test_"
+                        },
+                        .suffix         =
+                        {
+                                .test_exec = "_test"
+                        },
+                        .extensions =
+                        {
+                                .c_header = ".h",
+                                .c_source = ".c",
+                                .c_test   = "_test.c",
+                                .shell    = ".sh",
+                                .make     = ".mk",
+                                .markdown = ".md",
+                                .config   = ".config"
+                        }
+                }
+        };
+
+        return config;
+}
+
+
 /*
 testrun_config_paths testrun_config_paths_default(){
 

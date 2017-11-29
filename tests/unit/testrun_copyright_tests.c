@@ -992,7 +992,7 @@ int test_testrun_copyright_default_shell_header(){
         "#" TESTRUN_LINEEND
         "#       NOTE" TESTRUN_LINEEND
         "#" TESTRUN_LINEEND
-        "#-------------------------------------------------------------------------------" TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
         );
 
 
@@ -1025,7 +1025,7 @@ int test_testrun_copyright_default_shell_header(){
         "#       See the License for the specific language governing permissions and" TESTRUN_LINEEND
         "#       limitations under the License." TESTRUN_LINEEND
         "#" TESTRUN_LINEEND
-        "#-------------------------------------------------------------------------------" TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
         );
 
         result = testrun_copyright_default_shell_header(&statement);

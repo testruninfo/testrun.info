@@ -55,9 +55,98 @@
 
 /*----------------------------------------------------------------------------*/
 
+int test_testrun_config_default() {
+
+        testrun_config c = testrun_config_default();
+
+/*
+        // -------------------------------------------------------------
+        // AUTHOR
+        // -------------------------------------------------------------
+
+        testrun(strncmp(c.author, TESTRUN_TAG_DEFAULT_AUTHOR,
+                strlen(TESTRUN_TAG_DEFAULT_AUTHOR)) == 0);
+
+        // -------------------------------------------------------------
+        // PROJECT
+        // -------------------------------------------------------------
+
+        testrun(strncmp(c.project.name, TESTRUN_TAG_DEFAULT_PROJECT,
+                strlen(TESTRUN_TAG_DEFAULT_PROJECT)) == 0);
+
+        // -------------------------------------------------------------
+        // PROJECT PATH
+        // -------------------------------------------------------------
+
+        testrun(strncmp(c.project.path.root,
+                TESTRUN_PATH_DUMMY,
+                strlen(TESTRUN_PATH_DUMMY)) == 0);
+
+        testrun(strncmp(c.project.path.include,
+                TESTRUN_PATH_INCLUDE,
+                strlen(TESTRUN_PATH_INCLUDE)) == 0);
+
+        testrun(strncmp(c.project.path.src,
+                TESTRUN_PATH_SRC,
+                strlen(TESTRUN_PATH_SRC)) == 0);
+
+        testrun(strncmp(c.project.path.docs,
+                TESTRUN_PATH_DOCS,
+                strlen(TESTRUN_PATH_DOCS)) == 0);
+
+        testrun(strncmp(c.project.path.copyright,
+                TESTRUN_PATH_COPYRIGHT,
+                strlen(TESTRUN_PATH_COPYRIGHT)) == 0);
+
+        testrun(strncmp(c.project.path.config,
+                TESTRUN_PATH_CONFIG,
+                strlen(TESTRUN_PATH_CONFIG)) == 0);
 
 
+        testrun(strncmp(c.project.path.tests.unit,
+                TESTRUN_PATH_UNIT_TESTS,
+                strlen(TESTRUN_PATH_UNIT_TESTS)) == 0);
 
+        testrun(strncmp(c.project.path.tests.acceptance,
+                TESTRUN_PATH_ACCEPTANCE_TESTS,
+                strlen(TESTRUN_PATH_UNIT_TESTS)) == 0);
+
+        testrun(strncmp(c.project.path.tests.tools,
+                TESTRUN_PATH_TEST_TOOLS,
+                strlen(TESTRUN_PATH_TEST_TOOLS)) == 0);
+
+        // -------------------------------------------------------------
+        // PROJECT DOXYGEN
+        // -------------------------------------------------------------
+
+        testrun(strncmp(c.project.doxygen.path,
+                TESTRUN_PATH_DOXYGEN,
+                strlen(TESTRUN_PATH_DOXYGEN)) == 0);
+
+        testrun(strncmp(c.project.doxygen.config_file,
+                TESTRUN_FILE_DOXYGEN,
+                strlen(TESTRUN_FILE_DOXYGEN)) == 0);
+
+        // -------------------------------------------------------------
+        // COPYRIGHT
+        // -------------------------------------------------------------
+
+        testrun(strncmp(c.copyright.intro, "Copyright (c)",
+                strlen("Copyright (c)")) == 0);
+
+        testrun(strncmp(c.copyright.text, "All rights reserved.",
+                strlen("All rights reserved.")) == 0);
+
+        testrun(strncmp(c.copyright.year, TESTRUN_TAG_DEFAULT_YEAR,
+                strlen(TESTRUN_TAG_DEFAULT_YEAR)) == 0);
+
+        testrun(strncmp(c.copyright.owner, TESTRUN_TAG_DEFAULT_OWNER,
+                strlen(TESTRUN_TAG_DEFAULT_OWNER)) == 0);
+
+        testrun(c.copyright.note == NULL);
+*/
+        return testrun_log_success();
+}
 /*
 int test_testrun_config_paths_default() {
 
@@ -195,6 +284,11 @@ int test_testrun_config_to_string() {
 int all_tests() {
 
        testrun_init();
+
+       testrun_test(test_testrun_config_default);
+
+
+
 /*
        testrun_test(test_testrun_config_paths_default);
        testrun_test(test_testrun_config_default);

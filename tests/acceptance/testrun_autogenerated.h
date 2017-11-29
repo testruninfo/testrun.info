@@ -19,20 +19,14 @@
 
         ------------------------------------------------------------------------
 *//**
-
         @file           testrun.h
         @author         Markus Toepfer
-        @date           2017-11-24
+        @date           2017-11-29
+
+        @ingroup        testrun
 
         @brief          Simple serial test execution framework.
 
-        NOTE            This framework uses an alternative to assert based
-                        testing, which is compatible with parallel
-                        test execution of @see testrun2.h. So this header is
-                        replacable with testrun2.h for parallel test setup,
-                        without replacing any written testcase.
-                        (Assert.h is not included, to force to write testrun2.h
-                        compatible tests by default)
 
         ------------------------------------------------------------------------
 */
@@ -49,9 +43,6 @@
 
 /*----------------------------------------------------------------------------*/
 
-/**
-        String error initialization of no error.
-*/
 #define testrun_errno() \
         (errno == 0 ? "NONE" :  strerror(errno))
 
@@ -62,7 +53,7 @@
 */
 #define testrun_log_failure(msg, ...) \
         fprintf(stderr, "\t[FAIL]\t%s line:%d errno:%s message: " msg "\n",\
-        __FUNCTION__, __LINE__, testrun_errno(), ##__VA_ARGS__)
+               __FUNCTION__, __LINE__, testrun_errno(), ##__VA_ARGS__)
 
 /*----------------------------------------------------------------------------*/
 
@@ -126,7 +117,6 @@
 
 /*----------------------------------------------------------------------------*/
 
-/*--------------- For EXAMPLE code check http://testrun.info -----------------*/
 /**
         Run a single test (execute a function pointer. Runs a test function.
         On non negative return value of the function run, a testrun_counter
@@ -138,6 +128,8 @@
 */
 #define testrun_test(test)\
         result = test(); testrun_counter++; if (result < 0) return result;
+
+/*----------------------------------------------------------------------------*/
 
 /**
         Runs a function pointer, which SHALL contain the test function pointers
@@ -164,86 +156,10 @@
                 testrun_log("ALL TESTS RUN (%jd tests)", result);\
         end1_t = clock(); \
         testrun_log_clock(start1_t, end1_t); \
-        testrun_log("");\
+        testrun_log();\
         result >=0 ? exit(EXIT_SUCCESS) : exit(EXIT_FAILURE); \
 }
 
-/**     -----------------------------------------------------------------------
-
-        @example        testrun_base_example.c
-        @author         Markus Toepfer
-        @date           2017-11-24
-
-        @brief          Example test file using testrun.h
-
-        This example shows the test style for testing with testrun.h and is
-        build around the testrun_test() macro, which increases a counter which
-        MUST be initialized in a testcluster function.
-
-        //---------------------------------------------------------------------
-
-        @code
-        #include "../tools/testrun.h"
-
-        int example_function() {
-                return 1;
-        }
-
-        //---------------------------------------------------------------------
-
-        int test_function1() {
-
-                // use of testrun_check() for evaluation
-                testrun_check(1 == 1);
-                testrun_check(1 == 1, "some additional information");
-
-                // use of testrun() for evaluation
-                testrun(1 == 1);
-                testrun(1 == 1, "some additional information");
-
-                // use of manual evaluation and logging
-                if (1 != example_function()){
-                        testrun_log_error("some additional information.");
-                        return -1;
-                }
-
-                // will not be reached in case of error
-                return testrun_log_success();
-        }
-
-        //---------------------------------------------------------------------
-
-        int test_function2() {
-
-                testrun_check(1 == 1);
-                return testrun_log_success();
-        }
-
-        //---------------------------------------------------------------------
-
-        int test_function3() {
-
-                testrun_check(1 == 1);
-                return testrun_log_success();
-        }
-
-        //---------------------------------------------------------------------
-
-        int testcase_cluster() {
-
-                testrun_init();
-
-                testrun_test(test_function1);
-                testrun_test(test_function2);
-                testrun_test(test_function3);
-
-                return testrun_counter;
-
-        }
-
-        testrun_run(testcase_cluster);
-        @endcode
-
-*/
+/*--------------- For EXAMPLE code check http://testrun.info -----------------*/
 
 #endif /* testrun_h */

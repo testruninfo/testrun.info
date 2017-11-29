@@ -568,10 +568,13 @@ char *testrun_copyright_default_shell_header(
         }
 
         for (i = 0; i < indent; i++){
-                if (i == 0)
+                if (i == 0){
                         linein[i] = '#';
-                else
+                } else {
                         linein[i] = ' ';
+                        stripline[i] = ' ';
+                }
+
         }
 
         // (2) prepare intro and outro for the copyright
@@ -643,11 +646,11 @@ testrun_copyright testrun_copyright_default(
                 owner = TESTRUN_COPYRIGHT_TAG_OWNER;
 
         testrun_copyright copyright = {
-                .intro = "Copyright (c)",
+                .intro = TESTRUN_COPYRIGHT_INTRO_DEFAULT,
                 .year  = year,
                 .owner = owner,
                 .note  = note,
-                .text  = "All rights reserved.",
+                .text  = TESTRUN_COPYRIGHT_TEXT_DEFAULT,
 
                 .to_string = testrun_copyright_to_string
         };

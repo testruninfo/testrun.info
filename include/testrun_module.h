@@ -35,4 +35,17 @@
 #ifndef testrun_module_h
 #define testrun_module_h
 
+#include "testrun_copyright.h"
+#include "testrun_text_block.h"
+#include "testrun_config.h"
+#include "testrun_path.h"
+
+char * testrun_module_c_file_content(
+        char * module_name,
+        testrun_extension_t filetype,
+        struct testrun_config const * const config);
+
+
+char * testrun_module_testrun_header_content();
+
 #endif /* testrun_module_h */

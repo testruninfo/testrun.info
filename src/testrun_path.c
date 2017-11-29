@@ -58,8 +58,8 @@ bool testrun_path_is_project_top_dir(
 
                         if (!include) {
                                 if (strncmp(ep->d_name,
-                                        TESTRUN_CONFIG_PATH_INCLUDE,
-                                        strlen(TESTRUN_CONFIG_PATH_INCLUDE))
+                                        TESTRUN_PATH_INCLUDE,
+                                        strlen(TESTRUN_PATH_INCLUDE))
                                         == 0) {
                                         include = true;
                                         continue;
@@ -68,8 +68,8 @@ bool testrun_path_is_project_top_dir(
 
                         if (!src) {
                                 if (strncmp(ep->d_name,
-                                        TESTRUN_CONFIG_PATH_SRC,
-                                        strlen(TESTRUN_CONFIG_PATH_SRC))
+                                        TESTRUN_PATH_SRC,
+                                        strlen(TESTRUN_PATH_SRC))
                                         == 0) {
                                         src = true;
                                         continue;
@@ -78,8 +78,8 @@ bool testrun_path_is_project_top_dir(
 
                         if (!tests) {
                                 if (strncmp(ep->d_name,
-                                        TESTRUN_CONFIG_PATH_TESTS,
-                                        strlen(TESTRUN_CONFIG_PATH_TESTS))
+                                        TESTRUN_PATH_TESTS,
+                                        strlen(TESTRUN_PATH_TESTS))
                                         == 0) {
                                         tests = true;
                                         continue;
@@ -112,7 +112,11 @@ char *testrun_path_search_project_path(
         if (!testrun_path_is_project_top_dir(current)){
 
                 /* walk up one level */
-                sprintf(path, "%s/%s/", current, "..");
+                sprintf(path, "%s%s%s%s",
+                        current,
+                        TESTRUN_PATH_SPLIT,
+                        "..",
+                        TESTRUN_PATH_SPLIT);
 
                 parent = realpath(path, parent);
                 if (!parent)
@@ -144,3 +148,106 @@ error:
         return NULL;
 }
 
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_source_to_include(
+        char *buffer, size_t max,
+        struct testrun_config const * const config,
+        char * module_name){
+
+        if (!buffer || !config || !module_name )
+                return false;
+
+        /**
+         *      default LINUX   "../include/module_name.h
+         *
+         *      step1 - add config transition src_to_include
+         *      step3 - add include foldername
+         *      step4 - add filename for the module.
+         */
+
+        if (max < (     strlen(module_name) +
+                        strlen(config->format.extensions.c_header) +
+                        2 * strlen(TESTRUN_PATH_SPLIT) +
+                        strlen(config->project.path.src_to_include) +
+                        strlen(config->project.path.include) + 1 ))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s%s%s%s",
+                config->project.path.src_to_include,
+                TESTRUN_PATH_SPLIT,
+                config->project.path.include,
+                TESTRUN_PATH_SPLIT,
+                module_name,
+                config->format.extensions.c_header) < 0)
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_test_to_source(
+        char *buffer, size_t max,
+        struct testrun_config const * const config,
+        char * module_name){
+
+        if (!buffer || !config || !module_name )
+                return false;
+
+        /**
+         *      default LINUX   "../../src/module_name.c
+         *
+         *      step1 - move 1 level up to be at tests
+         *      step2 - add config transition tests_to_src
+         *      step3 - add src foldername
+         *      step4 - add filename for the module.
+         */
+
+        if (max < (     strlen(module_name) +
+                        strlen(config->format.extensions.c_source) +
+                        3 * strlen(TESTRUN_PATH_SPLIT) +
+                        strlen(config->project.path.tests.tests_to_src) +
+                        strlen( config->project.path.src) + 3 ))
+                return false;
+
+        if (snprintf(buffer, max, "..%s%s%s%s%s%s%s",
+                TESTRUN_PATH_SPLIT,
+                config->project.path.tests.tests_to_src,
+                TESTRUN_PATH_SPLIT,
+                config->project.path.src,
+                TESTRUN_PATH_SPLIT,
+                module_name,
+                config->format.extensions.c_source) < 0)
+                return false;
+
+        return true;
+}
+
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_testrun_header(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config)
+                return false;
+
+        if (max < (     strlen(TESTRUN_FILE_TESTRUN_HEADER) +
+                        3 * strlen(TESTRUN_PATH_SPLIT) +
+                        strlen(config->project.path.tests.tests_to_tools) +
+                        strlen(config->project.path.tests.tools) + 1 ))
+                return false;
+
+        if (snprintf(buffer, max, "..%s%s%s%s%s%s",
+                TESTRUN_PATH_SPLIT,
+                config->project.path.tests.tests_to_tools,
+                TESTRUN_PATH_SPLIT,
+                config->project.path.tests.tools,
+                TESTRUN_PATH_SPLIT,
+                TESTRUN_FILE_TESTRUN_HEADER) < 0)
+                return false;
+
+        return true;
+}
