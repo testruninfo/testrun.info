@@ -39,21 +39,20 @@
 #include "testrun_copyright.h"
 
 #define TESTRUN_PATH_DUMMY                      "/tmp/test_dummy_path"
-#define TESTRUN_PATH_INCLUDE                    "include"
-#define TESTRUN_PATH_SRC                        "src"
-#define TESTRUN_PATH_TESTS                      "tests"
 
-#define TESTRUN_PATH_SRC_TO_INCLUDE             ".."
-#define TESTRUN_PATH_TESTS_TO_SRC               ".."
-#define TESTRUN_PATH_TESTS_TO_TOOLS             "."
-#define TESTRUN_PATH_UNIT_TESTS                 "unit"
-#define TESTRUN_PATH_ACCEPTANCE_TESTS           "acceptance"
-#define TESTRUN_PATH_TEST_TOOLS                 "tools"
+#define TESTRUN_PATH_LEVEL_UP                   ".."
+#define TESTRUN_PATH_LEVEL_DOWN                 "."
 
-#define TESTRUN_PATH_CONFIG                     "config"
-#define TESTRUN_PATH_DOXYGEN                    "doxygen"
-#define TESTRUN_PATH_DOCS                       "docs"
-#define TESTRUN_PATH_COPYRIGHT                  "copyright"
+#define TESTRUN_FOLDER_CONFIG                   "config"
+#define TESTRUN_FOLDER_DOXYGEN                  "doxygen"
+#define TESTRUN_FOLDER_DOCS                     "docs"
+#define TESTRUN_FOLDER_COPYRIGHT                "copyright"
+#define TESTRUN_FOLDER_INCLUDE                  "include"
+#define TESTRUN_FOLDER_SOURCE                   "src"
+#define TESTRUN_FOLDER_TESTS                    "tests"
+#define TESTRUN_FOLDER_TESTS_UNIT               "unit"
+#define TESTRUN_FOLDER_TESTS_ACCEPTANCE         "acceptance"
+#define TESTRUN_FOLDER_TESTS_TOOLS              "tools"
 
 #define TESTRUN_FILE_DOXYGEN                    "doxygen.config"
 #define TESTRUN_FILE_CHANGELOG                  "CHANGELOG.MD"
@@ -61,10 +60,15 @@
 #define TESTRUN_FILE_COPYRIGHT                  "copyright"
 
 #define TESTRUN_FILE_MAKEFILE                   "makefile"
-#define TESTRUN_FILE_MAKEFILE_SOURCE            "makefile.src"
+#define TESTRUN_FILE_MAKEFILE_SOURCE            "makefile.source"
 #define TESTRUN_FILE_MAKEFILE_TESTRUN           "makefile.testrun"
 
 #define TESTRUN_FILE_TESTRUN_HEADER             "testrun.h"
+#define TESTRUN_SCRIPT_RUNNER                   "testrun_runner.sh"
+#define TESTRUN_SCRIPT_ACCEPTANCE               "testrun_simple_acceptance_tests.sh"
+#define TESTRUN_SCRIPT_UNIT                     "testrun_simple_unit_tests.sh"
+#define TESTRUN_SCRIPT_COVERAGE                 "testrun_simple_coverage_tests.sh"
+#define TESTRUN_SCRIPT_LOC                      "testrun_simple_loc.sh"
 
 #define TESTRUN_TAG_FILE                        "@file"
 #define TESTRUN_TAG_AUTHOR                      "@author"
@@ -80,6 +84,12 @@
 #define TESTRUN_TAG_DEFAULT_PROJECT             "[PROJECT]"
 #define TESTRUN_TAG_DEFAULT_YEAR                "[YEAR]"
 #define TESTRUN_TAG_DEFAULT_OWNER               "[OWNER]"
+
+#define TESTRUN_TAG_OFFSET                      "[OFFSET]"
+#define TESTRUN_TAG_END                         "[END]"
+
+
+#define TESTRUN_PATH_SPLIT                      "/"
 
 typedef enum testrun_extension {
         TESTRUN_HEADER,
@@ -108,7 +118,9 @@ struct testrun_config_file_extensions{
         char *make;
         char *markdown;
         char *config;
+        char *testexec;
 };
+
 
 /*----------------------------------------------------------------------------*/
 
@@ -121,7 +133,7 @@ struct testrun_config_prefix{
 
 struct testrun_config_suffix{
 
-        char *test_exec;
+        char *test_source;
 };
 
 /*----------------------------------------------------------------------------*/
@@ -130,6 +142,7 @@ struct testrun_config_format{
 
         char    *line_end;              /* @param linebreak defintion        */
         size_t  line_length;            /* @param visible char length        */
+        char    *path_split;            /* @param format for path split      */
         size_t  indent_c;               /* @param indent used in c files     */
         size_t  indent_sh;              /* @param indent used in shell files */
         size_t  offset_docu;            /* @param offset of docu content     */
@@ -144,21 +157,38 @@ struct testrun_config_format{
 
 struct testrun_config_doxygen{
 
-        char *path;
-        char *file;
+        char *foldername;
+        char *filename;
 
+};
+
+/*----------------------------------------------------------------------------*/
+
+struct testrun_config_test_tools{
+
+        char *name;
+        char *to_tests;
+
+        char *header;
+        char *runner_script;
+        char *acceptance_script;
+        char *unit_script;
+        char *coverage_script;
+        char *loc_script;
 };
 
 /*----------------------------------------------------------------------------*/
 
 struct testrun_config_path_tests{
 
-        char *root;
+        char *name;
         char *unit;
         char *acceptance;
-        char *tools;
-        char *tests_to_src;
-        char *tests_to_tools;
+
+        char *to_project;
+        char *to_tools;
+
+        struct testrun_config_test_tools tools;
 
 };
 
@@ -166,13 +196,30 @@ struct testrun_config_path_tests{
 
 struct testrun_config_path{
 
-        char *root;
+        char *name;
+
         char *include;
-        char *src;
+        char *source;
         char *docs;
         char *copyright;
         char *config;
-        char *src_to_include;
+
+        char *to_include;
+        char *to_source;
+        char *to_docs;
+        char *to_copyright;
+        char *to_config;
+
+        char *to_doxygen;
+        char *to_tests;
+
+        char *from_include;
+        char *from_source;
+        char *from_docs;
+        char *from_copyright;
+        char *from_config;
+        char *from_doxygen;
+        char *from_tests;
 
         struct testrun_config_path_tests tests;
 

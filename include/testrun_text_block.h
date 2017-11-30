@@ -135,6 +135,45 @@ char *testrun_text_block_c_header_documentation(
 
 /*----------------------------------------------------------------------------*/
 
+/**
+        Create the testrun default Shell documentation header block-
+
+        Output will be formated like:
+
+        #
+        #       File            [FILE].sh
+        #       Authors         [AUTHOR_NAME]
+        #       Date            [CREATION_DATE]
+        #
+        #       Project         [PROJECT]
+        #
+        #       Description     Description of the file, including some
+        #                       statements about the purpose of the file,
+        #                       or any other description ...
+        #
+        #       Usage           ./file.sh /path/to/something
+        #
+        #       Dependencies    touch, cmod, ls, wc
+        #
+        #       Last changed    [CHANGED_DATA]  ... optional reason
+        #
+        #       -------------------------------------------------------------
+
+        @param module_name      name for the module
+        @param config           configuration to be used
+        @param description      (optional) addition content for description
+        @param usage            (optional) addition content for usage
+        @param dependencies     (optional) addition content for dependencies
+        @returns                allocated string with statement or NULL
+*/
+char *testrun_text_block_sh_header_documentation(
+        char *module_name,
+        struct testrun_config const * const config,
+        char *description,
+        char *usage,
+        char *dependencies);
+/*----------------------------------------------------------------------------*/
+
 /*
  *      ------------------------------------------------------------------------
  *
@@ -179,5 +218,27 @@ char *testrun_text_block_comment_header(
 */
 char *testrun_text_block_splitline(
         size_t indent, size_t linelength, bool commented);
+
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Create script content. Will combine, copyright, documentation header
+        and script content within a united string, which is ready to be written
+        to a file.
+
+        @param config           configuration to be used
+        @param description      (optional) addition content for description
+        @param usage            (optional) addition content for usage
+        @param dependencies     (optional) addition content for dependencies
+        @param content          (optional) content body of the script
+        @returns                allocated string with statement or NULL
+*/
+char *testrun_text_block_script(
+        testrun_config *config,
+        char *description,
+        char *usage,
+        char *dependencies,
+        char *content);
 
 #endif /* testrun_text_block_h */

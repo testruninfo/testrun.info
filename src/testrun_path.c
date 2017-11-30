@@ -43,7 +43,7 @@ bool testrun_path_is_project_top_dir(
                 return false;
 
         bool include    = false;
-        bool src        = false;
+        bool source     = false;
         bool tests      = false;
 
         DIR *dp;
@@ -58,28 +58,28 @@ bool testrun_path_is_project_top_dir(
 
                         if (!include) {
                                 if (strncmp(ep->d_name,
-                                        TESTRUN_PATH_INCLUDE,
-                                        strlen(TESTRUN_PATH_INCLUDE))
+                                        TESTRUN_FOLDER_INCLUDE,
+                                        strlen(TESTRUN_FOLDER_INCLUDE))
                                         == 0) {
                                         include = true;
                                         continue;
                                 }
                         }
 
-                        if (!src) {
+                        if (!source) {
                                 if (strncmp(ep->d_name,
-                                        TESTRUN_PATH_SRC,
-                                        strlen(TESTRUN_PATH_SRC))
+                                        TESTRUN_FOLDER_SOURCE,
+                                        strlen(TESTRUN_FOLDER_SOURCE))
                                         == 0) {
-                                        src = true;
+                                        source = true;
                                         continue;
                                 }
                         }
 
                         if (!tests) {
                                 if (strncmp(ep->d_name,
-                                        TESTRUN_PATH_TESTS,
-                                        strlen(TESTRUN_PATH_TESTS))
+                                        TESTRUN_FOLDER_TESTS,
+                                        strlen(TESTRUN_FOLDER_TESTS))
                                         == 0) {
                                         tests = true;
                                         continue;
@@ -89,7 +89,7 @@ bool testrun_path_is_project_top_dir(
         }
         (void) closedir (dp);
 
-    return (include && src && tests);
+    return (include && source && tests);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -159,25 +159,32 @@ bool testrun_path_source_to_include(
                 return false;
 
         /**
-         *      default LINUX   "../include/module_name.h
+         *      default LINUX   ".././include/module_name.h
          *
-         *      step1 - add config transition src_to_include
+         *      step1 - move up to project
+         *      step2 - move down to include
          *      step3 - add include foldername
          *      step4 - add filename for the module.
          */
 
         if (max < (     strlen(module_name) +
                         strlen(config->format.extensions.c_header) +
-                        2 * strlen(TESTRUN_PATH_SPLIT) +
-                        strlen(config->project.path.src_to_include) +
-                        strlen(config->project.path.include) + 1 ))
+                        strlen(config->project.path.from_source) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.to_include) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.include) +
+                        strlen(config->format.path_split) +
+                        1 ))
                 return false;
 
-        if (snprintf(buffer, max, "%s%s%s%s%s%s",
-                config->project.path.src_to_include,
-                TESTRUN_PATH_SPLIT,
+        if (snprintf(buffer, max, "%s%s%s%s%s%s%s%s",
+                config->project.path.from_source,
+                config->format.path_split,
+                config->project.path.to_include,
+                config->format.path_split,
                 config->project.path.include,
-                TESTRUN_PATH_SPLIT,
+                config->format.path_split,
                 module_name,
                 config->format.extensions.c_header) < 0)
                 return false;
@@ -196,27 +203,36 @@ bool testrun_path_test_to_source(
                 return false;
 
         /**
-         *      default LINUX   "../../src/module_name.c
+         *      default LINUX   "../../source/module_name.h
          *
-         *      step1 - move 1 level up to be at tests
-         *      step2 - add config transition tests_to_src
-         *      step3 - add src foldername
-         *      step4 - add filename for the module.
+         *      step1 - move up to tests
+         *      step2 - move up to project
+         *      step3 - move to source
+         *      step5 - add source foldername
+         *      step6 - add filename for the module.
          */
 
         if (max < (     strlen(module_name) +
                         strlen(config->format.extensions.c_source) +
-                        3 * strlen(TESTRUN_PATH_SPLIT) +
-                        strlen(config->project.path.tests.tests_to_src) +
-                        strlen( config->project.path.src) + 3 ))
+                        2 +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.from_tests) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.to_source) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.source) +
+                        strlen(config->format.path_split) +
+                        1 ))
                 return false;
 
-        if (snprintf(buffer, max, "..%s%s%s%s%s%s%s",
-                TESTRUN_PATH_SPLIT,
-                config->project.path.tests.tests_to_src,
-                TESTRUN_PATH_SPLIT,
-                config->project.path.src,
-                TESTRUN_PATH_SPLIT,
+        if (snprintf(buffer, max, "..%s%s%s%s%s%s%s%s%s",
+                config->format.path_split,
+                config->project.path.from_tests,
+                config->format.path_split,
+                config->project.path.to_source,
+                config->format.path_split,
+                config->project.path.source,
+                config->format.path_split,
                 module_name,
                 config->format.extensions.c_source) < 0)
                 return false;
@@ -224,30 +240,279 @@ bool testrun_path_test_to_source(
         return true;
 }
 
-
 /*----------------------------------------------------------------------------*/
 
-bool testrun_path_testrun_header(
+bool testrun_path_test_to_testrun_header(
         char *buffer, size_t max,
         struct testrun_config const * const config){
 
         if (!buffer || !config)
                 return false;
 
-        if (max < (     strlen(TESTRUN_FILE_TESTRUN_HEADER) +
-                        3 * strlen(TESTRUN_PATH_SPLIT) +
-                        strlen(config->project.path.tests.tests_to_tools) +
-                        strlen(config->project.path.tests.tools) + 1 ))
+        if (max < (     strlen(config->project.path.tests.tools.header) +
+                        2 +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.tests.to_tools) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.tests.tools.name) +
+                        strlen(config->format.path_split) +
+                        1 ))
                 return false;
 
         if (snprintf(buffer, max, "..%s%s%s%s%s%s",
-                TESTRUN_PATH_SPLIT,
-                config->project.path.tests.tests_to_tools,
-                TESTRUN_PATH_SPLIT,
-                config->project.path.tests.tools,
-                TESTRUN_PATH_SPLIT,
-                TESTRUN_FILE_TESTRUN_HEADER) < 0)
+                config->format.path_split,
+                config->project.path.tests.to_tools,
+                config->format.path_split,
+                config->project.path.tests.tools.name,
+                config->format.path_split,
+                config->project.path.tests.tools.header) < 0)
                 return false;
 
         return true;
 }
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_project_to_tools(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        /**
+         *      default LINUX   "../../tests/tools
+         *
+         *      step1 - move up to project
+         *      step2 - move down to include
+         *      step3 - add include foldername
+         *      step4 - add filename for the module.
+         */
+
+        if (max < (     strlen(config->project.path.to_tests) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.tests.name) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.tests.to_tools) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.tests.tools.name) +
+                        1 ))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s%s%s%s%s",
+                config->project.path.to_tests,
+                config->format.path_split,
+                config->project.path.tests.name,
+                config->format.path_split,
+                config->project.path.tests.to_tools,
+                config->format.path_split,
+                config->project.path.tests.tools.name) < 0)
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_project_to_source(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        /**
+         *      default LINUX   "./src"
+         */
+
+        if (max < (     strlen(config->project.path.to_source) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.source)  +
+                        1 ))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s",
+                config->project.path.to_source,
+                config->format.path_split,
+                config->project.path.source) < 0)
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_project_to_include(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        /**
+         *      default LINUX   "./include"
+         */
+
+        if (max < (     strlen(config->project.path.to_include) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.include)  +
+                        1 ))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s",
+                config->project.path.to_include,
+                config->format.path_split,
+                config->project.path.include) < 0)
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_project_to_docs(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        /**
+         *      default LINUX   "./docs"
+         */
+
+        if (max < (     strlen(config->project.path.to_docs) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.docs)  +
+                        1 ))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s",
+                config->project.path.to_docs,
+                config->format.path_split,
+                config->project.path.docs) < 0)
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_project_to_copyright(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        /**
+         *      default LINUX   "./copyright"
+         */
+
+        if (max < (     strlen(config->project.path.to_copyright) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.copyright)  +
+                        1 ))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s",
+                config->project.path.to_copyright,
+                config->format.path_split,
+                config->project.path.copyright) < 0)
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_project_to_config(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        /**
+         *      default LINUX   "./config"
+         */
+
+        if (max < (     strlen(config->project.path.to_config) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.config)  +
+                        1 ))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s",
+                config->project.path.to_config,
+                config->format.path_split,
+                config->project.path.config) < 0)
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_project_to_unit_tests(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        /**
+         *      default LINUX   "./tests/unit"
+         */
+
+        if (max < (     strlen(config->project.path.to_tests) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.tests.name)  +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.tests.unit)  +
+                        1 ))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s%s%s",
+                config->project.path.to_tests,
+                config->format.path_split,
+                config->project.path.tests.name,
+                config->format.path_split,
+                config->project.path.tests.unit) < 0)
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_project_to_acceptance_tests(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        /**
+         *      default LINUX   "./tests/acceptance"
+         */
+
+        if (max < (     strlen(config->project.path.to_tests) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.tests.name)  +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.tests.acceptance)  +
+                        1 ))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s%s%s",
+                config->project.path.to_tests,
+                config->format.path_split,
+                config->project.path.tests.name,
+                config->format.path_split,
+                config->project.path.tests.acceptance) < 0)
+                return false;
+
+        return true;
+}
+

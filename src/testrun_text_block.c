@@ -573,15 +573,17 @@ char *testrun_text_block_sh_header_documentation(
                 goto error;
 
         tag = "File";
+        /*
         if (snprintf(comment, linelen, "%s%s",
                 module_name, config->format.extensions.shell) < 0)
                 goto error;
+        */
         if (!testrun_text_block_write_docu_line(
                 &pointer, &size,
                 7,
                 config->format.offset_docu - 1,
                 tag,           strlen(tag),
-                comment,        strlen(comment),
+                module_name,   strlen(module_name),
                 lineend,        le_len))
                 goto error;
 
@@ -845,4 +847,103 @@ char *testrun_text_block_splitline(
         }
 
         return line;
+}
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_text_block_script(
+        testrun_config *config,
+        char *description,
+        char *usage,
+        char *dependencies,
+        char *content){
+
+        if (!config)
+                return NULL;
+
+        char    *result = NULL;
+        size_t  re_size = 0;
+
+        char    *step1  = NULL;
+        char    *step2  = NULL;
+        char    *step3  = NULL;
+        size_t  size1   = 0;
+        size_t  size2   = 0;
+        size_t  size3   = 0;
+        size_t  length  = 0;
+
+        char *head = testrun_copyright_default_shell_header(
+                        &config->copyright);
+
+        char *docu = testrun_text_block_sh_header_documentation(
+                        config->project.name, config,
+                        description, usage, dependencies);
+
+        // header offset used by default
+        char offset[100];
+        bzero(offset, 100);
+
+        length = 100;
+        if (!testrun_text_block_write_space(offset, &length,
+                config->format.offset_docu))
+                goto error;
+        offset[0] = '#';
+        length = 0;
+
+        if (!head || !docu)
+                goto error;
+
+        if (content)
+                length = strlen(content);
+        else
+                length = 0;
+
+        // merge head, docu and content
+        if (!testrun_string_embed(&step1, &size1,
+                docu, strlen(docu),
+                head, strlen(head),
+                content, length,
+                0,0,0,0))
+                goto error;
+
+        length = strlen(offset);
+
+        // perform offset replacement (if any)
+        if (!testrun_string_replace_all(&step2, &size2,
+                step1,   size1,
+                TESTRUN_TAG_OFFSET, strlen(TESTRUN_TAG_OFFSET),
+                offset, length,
+                false))
+                goto error;
+
+        length = strlen(config->format.line_end);
+
+        // perform lineend replacement (if any)
+        if (!testrun_string_replace_all(&step3, &size3,
+                step2,   size2,
+                TESTRUN_TAG_END, strlen(TESTRUN_TAG_END),
+                config->format.line_end, length,
+                false))
+                goto error;
+
+        if (!testrun_string_clear_whitespace_before_lineend(&result, &re_size,
+                step3, size3,
+                config->format.line_end, length))
+                goto error;
+
+        head  = testrun_string_free(head);
+        docu  = testrun_string_free(docu);
+        step1 = testrun_string_free(step1);
+        step2 = testrun_string_free(step2);
+        step3 = testrun_string_free(step3);
+
+        return result;
+
+error:
+        head  = testrun_string_free(head);
+        docu  = testrun_string_free(docu);
+        step1 = testrun_string_free(step1);
+        step2 = testrun_string_free(step2);
+        step3 = testrun_string_free(step3);
+        return NULL;
 }

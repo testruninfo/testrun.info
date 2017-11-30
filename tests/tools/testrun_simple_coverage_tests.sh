@@ -14,101 +14,110 @@
 #       See the License for the specific language governing permissions and
 #       limitations under the License.
 #
-#       This file is part of the testrun project. http://testrun.info
+#       ------------------------------------------------------------------------
 #
-#       -----------------------------------------------------------------------
-# 
-#       Content         Count functions in folder $1/src against their
-#                       counterparts in $1/test/unit.
-#
-#       Description     Counting function names against test function names 
-#                       using following simple coding convention: 
-#               
-#                       "each function x_func will have a corresponding 
-#                       test function with name test_x_func"
-#
-#                       In addition a logfile for each run will be created 
-#                       at build/test/log/coverage.<time>.log
-#
+#       File            testrun_simpe_coverage_tests.sh
 #       Authors         Markus Toepfer
+#       Date            2017-11-30
 #
-#       Usage           ./testrun_simple_coverage_tests.sh /path/to/project
+#       Project         testrun_simpe_coverage_tests.sh
 #
-#       Note            This simple coverage test just covers the observance 
-#                       of the coding convention, nothing else. 
-#                       
-#       Dependencies	bash, ctags, awk, sed, grep
-#   
-#       -----------------------------------------------------------------------
+#       Description     Count functions of folder src against their counterparts
+#                       in the unit test folder.
+#
+#                       CONVENTION
+#
+#                       Each function in any file of the source folder located
+#                       "./src"
+#                       will have a corresponding test function using the same
+#                       name in any other file of the unit test folder located
+#                       "./tests/unit",
+#                       with a function name prefix of
+#                       "test_".
+#
+#                       EXAMPLE      function | test_function
+#
+#                       NOTE         This simple coverage test just covers the
+#                                    observance of the given coding convention.
+#
+#
+#       Usage           ./testrun_simpe_unit_tests.sh /path/to/project
+#
+#       Dependencies    bash, ctags, awk, sed, grep
+#
+#       Last changed    2017-11-30
+#       ------------------------------------------------------------------------
 
-echo "-------------------------------------------------------"
-echo "              SIMPLE COVERAGE TESTING"
-echo "-------------------------------------------------------"
-
-current_time=$(date "+%Y.%m.%d-%H.%M.%S")
+start_time=$(date "+%Y.%m.%d-%H.%M.%S")
 PREFIX="test_"
 
 LIBDIR=$1
-echo $LIBDIR
+SRCDIR=$1/./src
+TESTDIR=$1/./tests/unit
 
-logfileName="$LIBDIR/build/test/log/coverage_".$current_time."log"
-echo "logfile "$logfileName
-echo $LIBDIR
+# SET A LOGFILE
+LOGFILE="$LIBDIR/build/test/log/coverage_".$start_time."log"
+touch $LOGFILE
+chmod a+w $LOGFILE
 
-# generate the ctags
-cd $LIBDIR/src
+echo "-------------------------------------------------------" >> $LOGFILE
+echo "               REPORT COVERAGE TESTING"                  >> $LOGFILE
+echo "-------------------------------------------------------" >> $LOGFILE
+echo "   TIME \t $start_time" >> $LOGFILE
+echo "" >> $LOGFILE
+
+# GENERATE CTAGS SOURCE
+cd $SRCDIR
 if [ $? -ne 0 ]; then
-	exit 1
+        exit 1
 fi
 ctags --c-types=f -R
 # remove the ctags stuff, to leave just the function lines
 sed -e '/[ ]*m$/d' -e '/TAG/d' <tags>functions
 # remove anything but the function names
-awk '{print $1 }' $LIBDIR/src/functions > \
-        $LIBDIR/src/functionNames
+awk '{print $1 }' $SRCDIR/functions > \
+        $SRCDIR/functionNames
 # count the lines
 sourceFkt="$(cat functions | wc -l)"
+echo "   count source\t" $sourceFkt >> $LOGFILE
 
-echo "   count source " $sourceFkt >> $logfileName
-
-# generate the ctags
-cd $LIBDIR/tests/unit
+# GENERATE CTAGS TESTS
+cd $TESTDIR
 if [ $? -ne 0 ]; then
-	exit 1
+        exit 1
 fi
 ctags --c-types=f -R
 # remove the ctags stuff, to leave just the function lines
 sed -e '/[ ]*m$/d' -e '/TAG/d' <tags>functions
 # remove anything but the function names
-awk '{print $1 }' $LIBDIR/tests/unit/functions > \
-        $LIBDIR/tests/unit/functionNames
+awk '{print $1 }' $TESTDIR/functions > \
+        $TESTDIR/functionNames
 # count the lines
 testFkt="$(cat functions | grep -i ^$PREFIX | wc -l)"
+echo "   count tests\t" $testFkt >> $LOGFILE
 
-echo "   count tests  " $testFkt >> $logfileName
-
-echo "\nUNTESTED: " >> $logfileName
+echo "\nUNTESTED: " >> $LOGFILE
 # Found functions:
 while read line;
 do
-        grep -n '^test_'$line'$' $LIBDIR/tests/unit/functionNames > \
-        /dev/null || echo $line >> $logfileName
-done < $LIBDIR/src/functionNames
+        grep -n '^test_'$line'$' $TESTDIR/functionNames > \
+        /dev/null || echo $line >> $LOGFILE
+done < $SRCDIR/functionNames
 
 if [ $sourceFkt != 0 ]; then
-        echo "............................................"  >> $logfileName
+        echo "............................................"  >> $LOGFILE
         echo "COVERAGE: $sourceFkt $testFkt" | \
-        awk '{ printf $1 " %.2f %% \n", $3/$2*100}' >> $logfileName
+        awk '{ printf $1 " %.2f %% \n", $3/$2*100}' >> $LOGFILE
 fi
 
-cat $logfileName
+cat $LOGFILE
 echo "-------------------------------------------------------"
 echo ""
 
 # cleanup remove the files we created
-rm $LIBDIR/src/tags
-rm $LIBDIR/src/functions
-rm $LIBDIR/src/functionNames
-rm $LIBDIR/tests/unit/tags
-rm $LIBDIR/tests/unit/functions
-rm $LIBDIR/tests/unit/functionNames
+rm $SRCDIR/tags
+rm $SRCDIR/functions
+rm $SRCDIR/functionNames
+rm $TESTDIR/tags
+rm $TESTDIR/functions
+rm $TESTDIR/functionNames

@@ -877,7 +877,7 @@ int test_testrun_text_block_sh_header_documentation(){
 
         snprintf(expect, size,
         "#"                                            TESTRUN_LINEEND
-        "#       File            %s.sh"                TESTRUN_LINEEND
+        "#       File            %s"                   TESTRUN_LINEEND
         "#       Authors         [AUTHOR]"             TESTRUN_LINEEND
         "#       Date            %s"                   TESTRUN_LINEEND
         "#"                                            TESTRUN_LINEEND
@@ -920,7 +920,7 @@ int test_testrun_text_block_sh_header_documentation(){
 
         snprintf(expect, size,
         "#"                                            TESTRUN_LINEEND
-        "#       File            %s.sh"                TESTRUN_LINEEND
+        "#       File            %s"                    TESTRUN_LINEEND
         "#       Authors         test"                 TESTRUN_LINEEND
         "#       Date            %s"                   TESTRUN_LINEEND
         "#"                                            TESTRUN_LINEEND
@@ -956,7 +956,7 @@ int test_testrun_text_block_sh_header_documentation(){
 
         snprintf(expect, size,
         "#"                                             TESTRUN_LINEEND
-        "#       File            %s.sh"                 TESTRUN_LINEEND
+        "#       File            %s"                    TESTRUN_LINEEND
         "#       Authors         test"                  TESTRUN_LINEEND
         "#       Date            %s"                    TESTRUN_LINEEND
         "#"                                             TESTRUN_LINEEND
@@ -975,6 +975,468 @@ int test_testrun_text_block_sh_header_documentation(){
 
         result = testrun_text_block_sh_header_documentation(
                 module, &config, "description text", "usage text", "some dependencies");
+
+        testrun(result);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n",  result, strlen(result));
+        testrun(strlen(expect) == strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        result = testrun_string_free(result);
+
+        date = testrun_string_free(date);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_text_block_script(){
+
+        size_t size = 10000;
+        char expect[size];
+        bzero(expect, size);
+
+        char *date =  testrun_time_string(TESTRUN_SCOPE_DAY);
+
+        char *result = NULL;
+        char *module = "test";
+        testrun_config config = testrun_config_default();
+
+        // -------------------------------------------------------------
+        // Check default
+        // -------------------------------------------------------------
+
+        result = testrun_text_block_script(&config, NULL, NULL, NULL, NULL);
+        snprintf(expect, size,
+        "#!/usr/bin/env bash"                           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Copyright (c) [COPYRIGHT_YEAR] [COPYRIGHT_OWNER]"TESTRUN_LINEEND
+        "#       All rights reserved."                  TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       File            %s"                    TESTRUN_LINEEND
+        "#       Authors         %s"                    TESTRUN_LINEEND
+        "#       Date            %s"                    TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Project         %s"                    TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Description"                           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Usage"                                 TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Dependencies"                          TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Last changed    %s"                    TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        TESTRUN_LINEEND,
+        "[PROJECT]","[AUTHOR]",date, "[PROJECT]", date);
+
+        testrun(result);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n",  result, strlen(result));
+        testrun(strlen(expect) == strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        result = testrun_string_free(result);
+
+        // -------------------------------------------------------------
+        // Check configured
+        // -------------------------------------------------------------
+
+        config.project.name = "shellscript";
+        config.author       = "author name";
+        config.copyright.year  = "1888";
+        config.copyright.owner = "owner";
+
+        result = testrun_text_block_script(&config, NULL, NULL, NULL, NULL);
+        snprintf(expect, size,
+        "#!/usr/bin/env bash"                           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Copyright (c) 1888 owner"              TESTRUN_LINEEND
+        "#       All rights reserved."                  TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       File            %s"                    TESTRUN_LINEEND
+        "#       Authors         %s"                    TESTRUN_LINEEND
+        "#       Date            %s"                    TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Project         %s"                    TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Description"                           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Usage"                                 TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Dependencies"                          TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Last changed    %s"                    TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        TESTRUN_LINEEND,
+        "shellscript","author name",date, "shellscript", date);
+
+        testrun(result);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n",  result, strlen(result));
+        testrun(strlen(expect) == strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        result = testrun_string_free(result);
+
+        // -------------------------------------------------------------
+        // Description
+        // -------------------------------------------------------------
+
+        config.project.name = "shellscript";
+        config.author       = "author";
+        config.copyright.year  = "1888";
+        config.copyright.owner = "owner";
+
+        char *description = "This is a one line description.";
+
+        result = testrun_text_block_script(&config, description, NULL, NULL, NULL);
+        snprintf(expect, size,
+        "#!/usr/bin/env bash"                           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Copyright (c) 1888 owner"              TESTRUN_LINEEND
+        "#       All rights reserved."                  TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       File            shellscript"           TESTRUN_LINEEND
+        "#       Authors         author"                TESTRUN_LINEEND
+        "#       Date            %s"                    TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Project         shellscript"           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Description     %s"                    TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Usage"                                 TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Dependencies"                          TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Last changed    %s"                    TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        TESTRUN_LINEEND,
+        date, description, date);
+
+        testrun(result);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n",  result, strlen(result));
+        testrun(strlen(expect) == strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        result = testrun_string_free(result);
+
+        // NOTE keep in mind, that we have automated whitespace cleaning enabled
+        // so something like " test \n" will fail the test, based on the space
+        description = "This\n is\n a\n multi\n line\n description.\n";
+
+        result = testrun_text_block_script(&config, description, NULL, NULL, NULL);
+        snprintf(expect, size,
+        "#!/usr/bin/env bash"                           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Copyright (c) 1888 owner"              TESTRUN_LINEEND
+        "#       All rights reserved."                  TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       File            shellscript"           TESTRUN_LINEEND
+        "#       Authors         author"                TESTRUN_LINEEND
+        "#       Date            %s"                    TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Project         shellscript"           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Description     %s"                    TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Usage"                                 TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Dependencies"                          TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Last changed    %s"                    TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        TESTRUN_LINEEND,
+        date, description, date);
+
+        testrun(result);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n",  result, strlen(result));
+        testrun(strlen(expect) == strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        result = testrun_string_free(result);
+
+        // Fail non whitespace clean expectation
+        description = "This    \n is  \n a  \n wrong \n expectation .   \n";
+
+        result = testrun_text_block_script(&config, description, NULL, NULL, NULL);
+        snprintf(expect, size,
+        "#!/usr/bin/env bash"                           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Copyright (c) 1888 owner"              TESTRUN_LINEEND
+        "#       All rights reserved."                  TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       File            shellscript"           TESTRUN_LINEEND
+        "#       Authors         author"                TESTRUN_LINEEND
+        "#       Date            %s"                    TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Project         shellscript"           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Description     %s"                    TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Usage"                                 TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Dependencies"                          TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Last changed    %s"                    TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        TESTRUN_LINEEND,
+        date, description, date);
+
+        testrun(result);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n",  result, strlen(result));
+        testrun(strlen(expect) != strlen(result));
+        result = testrun_string_free(result);
+
+
+        // -------------------------------------------------------------
+        // Usage
+        // -------------------------------------------------------------
+
+        config.project.name = "shellscript";
+        config.author       = "author";
+        config.copyright.year  = "1888";
+        config.copyright.owner = "owner";
+
+        char *usage = "This is a one line usage.";
+
+        result = testrun_text_block_script(&config, NULL, usage, NULL, NULL);
+        snprintf(expect, size,
+        "#!/usr/bin/env bash"                           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Copyright (c) 1888 owner"              TESTRUN_LINEEND
+        "#       All rights reserved."                  TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       File            shellscript"           TESTRUN_LINEEND
+        "#       Authors         author"                TESTRUN_LINEEND
+        "#       Date            %s"                    TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Project         shellscript"           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Description"                           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Usage           %s"                    TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Dependencies"                          TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Last changed    %s"                    TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        TESTRUN_LINEEND,
+        date, usage, date);
+
+        testrun(result);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n",  result, strlen(result));
+        testrun(strlen(expect) == strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        result = testrun_string_free(result);
+
+        // -------------------------------------------------------------
+        // Dependencies
+        // -------------------------------------------------------------
+
+        config.project.name = "shellscript";
+        config.author       = "author";
+        config.copyright.year  = "1888";
+        config.copyright.owner = "owner";
+
+        char *dependencies = "This are dependencies";
+
+        result = testrun_text_block_script(&config, NULL, NULL, dependencies, NULL);
+        snprintf(expect, size,
+        "#!/usr/bin/env bash"                           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Copyright (c) 1888 owner"              TESTRUN_LINEEND
+        "#       All rights reserved."                  TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       File            shellscript"           TESTRUN_LINEEND
+        "#       Authors         author"                TESTRUN_LINEEND
+        "#       Date            %s"                    TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Project         shellscript"           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Description"                           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Usage"                                 TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Dependencies    %s"                    TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Last changed    %s"                    TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        TESTRUN_LINEEND,
+        date, dependencies, date);
+
+        testrun(result);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n",  result, strlen(result));
+        testrun(strlen(expect) == strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        result = testrun_string_free(result);
+
+        // -------------------------------------------------------------
+        // Content
+        // -------------------------------------------------------------
+
+        config.project.name = "shellscript";
+        config.author       = "author";
+        config.copyright.year  = "1888";
+        config.copyright.owner = "owner";
+
+        char *content = "This is some content.";
+
+        result = testrun_text_block_script(&config, NULL, NULL, NULL, content);
+        snprintf(expect, size,
+        "#!/usr/bin/env bash"                           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Copyright (c) 1888 owner"              TESTRUN_LINEEND
+        "#       All rights reserved."                  TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       File            shellscript"           TESTRUN_LINEEND
+        "#       Authors         author"                TESTRUN_LINEEND
+        "#       Date            %s"                    TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Project         shellscript"           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Description"                           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Usage"                                 TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Dependencies"                          TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Last changed    %s"                    TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        TESTRUN_LINEEND
+        "%s"
+        TESTRUN_LINEEND,
+        date, date, content);
+
+        testrun(result);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n",  result, strlen(result));
+        testrun(strlen(expect) == strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        result = testrun_string_free(result);
+
+
+        // -------------------------------------------------------------
+        // Check offset replacement
+        // -------------------------------------------------------------
+
+        description     = "Line1\n"TESTRUN_TAG_OFFSET"Line2\n"TESTRUN_TAG_OFFSET"Line3";
+        usage           = "Line1\n"TESTRUN_TAG_OFFSET"Line2\n"TESTRUN_TAG_OFFSET"Line3";
+        dependencies    = "Line1\n"TESTRUN_TAG_OFFSET"Line2\n"TESTRUN_TAG_OFFSET"Line3";
+        content         = "Line1\n"TESTRUN_TAG_OFFSET"Line2\n"TESTRUN_TAG_OFFSET"Line3";
+
+        result = testrun_text_block_script(&config, description, usage, dependencies, content);
+        snprintf(expect, size,
+        "#!/usr/bin/env bash"                           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Copyright (c) 1888 owner"              TESTRUN_LINEEND
+        "#       All rights reserved."                  TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       File            shellscript"           TESTRUN_LINEEND
+        "#       Authors         author"                TESTRUN_LINEEND
+        "#       Date            %s"                    TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Project         shellscript"           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Description     Line1"                 TESTRUN_LINEEND
+        "#                       Line2"                 TESTRUN_LINEEND
+        "#                       Line3"                 TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Usage           Line1"                 TESTRUN_LINEEND
+        "#                       Line2"                 TESTRUN_LINEEND
+        "#                       Line3"                 TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Dependencies    Line1"                 TESTRUN_LINEEND
+        "#                       Line2"                 TESTRUN_LINEEND
+        "#                       Line3"                 TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Last changed    %s"                    TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        TESTRUN_LINEEND
+        "Line1"                                         TESTRUN_LINEEND
+        "#                       Line2"                 TESTRUN_LINEEND
+        "#                       Line3"                 TESTRUN_LINEEND,
+        date, date);
+
+        testrun(result);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n",  result, strlen(result));
+        testrun(strlen(expect) == strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        result = testrun_string_free(result);
+
+        // -------------------------------------------------------------
+        // Check END replacement
+        // -------------------------------------------------------------
+
+        description     =       "Line1"TESTRUN_TAG_END TESTRUN_TAG_OFFSET
+                                "Line2"TESTRUN_TAG_END TESTRUN_TAG_OFFSET
+                                "Line3";
+
+        usage           =       "Line1"TESTRUN_TAG_END TESTRUN_TAG_OFFSET
+                                "Line2"TESTRUN_TAG_END TESTRUN_TAG_OFFSET
+                                "Line3";
+
+        dependencies    =       "Line1"TESTRUN_TAG_END TESTRUN_TAG_OFFSET
+                                "Line2"TESTRUN_TAG_END TESTRUN_TAG_OFFSET
+                                "Line3";
+
+        content         =       "Line1"TESTRUN_TAG_END TESTRUN_TAG_OFFSET
+                                "Line2"TESTRUN_TAG_END TESTRUN_TAG_OFFSET
+                                "Line3";
+
+        result = testrun_text_block_script(&config, description, usage, dependencies, content);
+        snprintf(expect, size,
+        "#!/usr/bin/env bash"                           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Copyright (c) 1888 owner"              TESTRUN_LINEEND
+        "#       All rights reserved."                  TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       File            shellscript"           TESTRUN_LINEEND
+        "#       Authors         author"                TESTRUN_LINEEND
+        "#       Date            %s"                    TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Project         shellscript"           TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Description     Line1"                 TESTRUN_LINEEND
+        "#                       Line2"                 TESTRUN_LINEEND
+        "#                       Line3"                 TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Usage           Line1"                 TESTRUN_LINEEND
+        "#                       Line2"                 TESTRUN_LINEEND
+        "#                       Line3"                 TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Dependencies    Line1"                 TESTRUN_LINEEND
+        "#                       Line2"                 TESTRUN_LINEEND
+        "#                       Line3"                 TESTRUN_LINEEND
+        "#"                                             TESTRUN_LINEEND
+        "#       Last changed    %s"                    TESTRUN_LINEEND
+        "#       ------------------------------------------------------------------------" TESTRUN_LINEEND
+        TESTRUN_LINEEND
+        "Line1"                                         TESTRUN_LINEEND
+        "#                       Line2"                 TESTRUN_LINEEND
+        "#                       Line3"                 TESTRUN_LINEEND,
+        date, date);
 
         testrun(result);
         //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
@@ -1012,6 +1474,8 @@ int all_tests() {
 
         testrun_test(test_testrun_text_block_write_shell_commented);
         testrun_test(test_testrun_text_block_sh_header_documentation);
+
+        testrun_test(test_testrun_text_block_script);
 
         return 1;
 }

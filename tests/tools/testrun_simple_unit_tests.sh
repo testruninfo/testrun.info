@@ -14,54 +14,67 @@
 #       See the License for the specific language governing permissions and
 #       limitations under the License.
 #
-#       This file is part of the testrun project. http://testrun.info
+#       ------------------------------------------------------------------------
 #
-#       -----------------------------------------------------------------------
-# 
-#       Content         Run all test executables build/test/unit/*.test
-#
-#       Description     Run each test.test until an error occurs. If an error 
-#                       occurs, skip remaining tests of the executable.
-#               
-#                       This is a fail on first error for each test.test.
-#               
-#                       In addition a logfile for each run will be created 
-#                       at build/test/log/acceptancetest.<time>.log
-#                       
+#       File            testrun_simpe_unit_tests.sh
 #       Authors         Markus Toepfer
+#       Date            2017-11-30
 #
-#       Usage           ./testrun_simple_acceptance_tests.sh /path/to/project
-#                       
-#       Dependencies	bash, touch, chmod, ls, wc, date
-#   
-#       -----------------------------------------------------------------------
+#       Project         testrun_simpe_unit_tests.sh
+#
+#       Description     Run all test executables build/test/unit/*.test
+#                       Run the whole folder, until an error occurs.
+#
+#                       MODE         FAIL ON ERROR (Fail on first test error)
+#
+#                       LOGFILE      build/test/log/unittest.<time>.log
+#
+#
+#       Usage           ./testrun_simpe_unit_tests.sh /path/to/project
+#
+#       Dependencies    bash, touch, chmod, ls, wc, date
+#
+#       Last changed    2017-11-30
+#       ------------------------------------------------------------------------
 
 echo "-------------------------------------------------------"
 echo "               SIMPLE UNIT TESTING"
 echo "-------------------------------------------------------"
+
 start_time=$(date "+%Y.%m.%d-%H.%M.%S.%N")
 
 # SET A LOGFILE
 LOGFILE="build/test/log/unit_".$start_time."log"
-echo " (log)   "$LOGFILE
+echo " (log)   $start_time" > $LOGFILE
 touch $LOGFILE
 chmod a+w $LOGFILE
 
 # SET THE FOLDER
 FOLDER="build/test/unit"
 
-sh tests/tools/testrun_runner.sh  $LOGFILE $FOLDER FAIL_ON_ERROR
+echo "-------------------------------------------------------" >> $LOGFILE
+echo "               REPORT UNIT TESTING"                      >> $LOGFILE
+echo "-------------------------------------------------------" >> $LOGFILE
+
+# RUN THE RUNNER
+sh ./tests/./tools/testrun_runner.sh  $LOGFILE $FOLDER FAIL_ON_ERROR
 RESULT=$?
 
-echo ""
 end_time=$(date "+%Y.%m.%d-%H.%M.%S.%N")
 
-# PRINT THE REPORT (which is written to the LOGFILE)
+# FINISH THE REPORT
+echo "-------------------------------------------------------">> $LOGFILE
+echo "DONE \t UNIT TEST RUN"  >> $LOGFILE
+if [ $RESULT -eq 0 ]; then
+        echo "RESULT\t SUCCESS"  >> $LOGFILE
+else
+        echo "RESULT\t FAILURE"  >> $LOGFILE
+fi
 echo "START \t $start_time" >> $LOGFILE
 echo "END   \t $end_time" >> $LOGFILE
-echo "REPORT-------------------------------------------------"
-cat $LOGFILE
-echo "-------------------------------------------------------"
-echo ""
+echo "-------------------------------------------------------">> $LOGFILE
 
+# DUMP THE REPORT
+cat $LOGFILE
+echo ""
 exit $RESULT

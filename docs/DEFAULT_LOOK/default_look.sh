@@ -24,8 +24,6 @@
 #
 #       Project         [PROJECT]
 #
-#       ------------------------------------------------------------------------
-#
 #       Description     Description of the file, including some
 #                       statements about the purpose of the file,
 #                       or any other description ...

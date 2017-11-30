@@ -133,7 +133,7 @@ int test_testrun_module_c_file_content() {
         TESTRUN_LINEEND
         "        ------------------------------------------------------------------------" TESTRUN_LINEEND
         "*/" TESTRUN_LINEEND
-        "#include \"../include/%s.h\""  TESTRUN_LINEEND
+        "#include \".././include/%s.h\""  TESTRUN_LINEEND
         TESTRUN_LINEEND,
         name, date, name);
 
@@ -169,7 +169,7 @@ int test_testrun_module_c_file_content() {
         "*/" TESTRUN_LINEEND
         TESTRUN_LINEEND
         "#include \".././tools/testrun.h\"" TESTRUN_LINEEND
-        "#include \"../../src/%s.c\"" TESTRUN_LINEEND
+        "#include \"../.././src/%s.c\"" TESTRUN_LINEEND
         TESTRUN_LINEEND
         "/*" TESTRUN_LINEEND
         " *      ------------------------------------------------------------------------" TESTRUN_LINEEND
@@ -240,11 +240,11 @@ int test_testrun_module_c_file_content() {
         // -------------------------------------------------------------
 
         // move include header to project/src/include
-        config.project.path.src_to_include = ".";
+        config.project.path.to_include = ".";
         // move tests to project/src/tests
-        config.project.path.tests.tests_to_src = ".";
+        config.project.path.tests.to_project = ".";
         // move tests tools to project/tools
-        config.project.path.tests.tests_to_tools = "..";
+        config.project.path.tests.to_tools = "..";
 
 
         // -------------------------------------------------------------
@@ -309,7 +309,7 @@ int test_testrun_module_c_file_content() {
         TESTRUN_LINEEND
         "        ------------------------------------------------------------------------" TESTRUN_LINEEND
         "*/" TESTRUN_LINEEND
-        "#include \"./include/%s.h\""  TESTRUN_LINEEND
+        "#include \".././include/%s.h\""  TESTRUN_LINEEND
         TESTRUN_LINEEND,
         name, date, name);
 
@@ -345,7 +345,7 @@ int test_testrun_module_c_file_content() {
         "*/" TESTRUN_LINEEND
         TESTRUN_LINEEND
         "#include \"../../tools/testrun.h\"" TESTRUN_LINEEND
-        "#include \".././src/%s.c\"" TESTRUN_LINEEND
+        "#include \"../.././src/%s.c\"" TESTRUN_LINEEND
         TESTRUN_LINEEND
         "/*" TESTRUN_LINEEND
         " *      ------------------------------------------------------------------------" TESTRUN_LINEEND

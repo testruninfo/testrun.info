@@ -314,7 +314,7 @@ testrun-unit:
 # COVERAGE TEST script invocation
 .PHONY: testrun-coverage
 testrun-coverage:
-	sh tests/tools/testrun_simple_coverage_tests.sh $(PROJECTMK)
+	sh tests/tools/testrun_simple_coverage_tests.sh $(PROJECTPATH)
 
 # LOC TEST script invocation
 .PHONY: testrun-loc

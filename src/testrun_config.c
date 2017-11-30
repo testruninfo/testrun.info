@@ -45,27 +45,55 @@ testrun_config testrun_config_default(){
                         .name = TESTRUN_TAG_DEFAULT_PROJECT,
                         .path =
                         {
-                                .root           = TESTRUN_PATH_DUMMY,
-                                .include        = TESTRUN_PATH_INCLUDE,
-                                .src            = TESTRUN_PATH_SRC,
-                                .docs           = TESTRUN_PATH_DOCS,
-                                .copyright      = TESTRUN_PATH_COPYRIGHT,
-                                .config         = TESTRUN_PATH_CONFIG,
-                                .src_to_include = TESTRUN_PATH_SRC_TO_INCLUDE,
+                                .name           = TESTRUN_PATH_DUMMY,
+
+                                .include        = TESTRUN_FOLDER_INCLUDE,
+                                .source         = TESTRUN_FOLDER_SOURCE,
+                                .docs           = TESTRUN_FOLDER_DOCS,
+                                .config         = TESTRUN_FOLDER_CONFIG,
+                                .copyright      = TESTRUN_FOLDER_COPYRIGHT,
+
+                                .to_include     = TESTRUN_PATH_LEVEL_DOWN,
+                                .to_source      = TESTRUN_PATH_LEVEL_DOWN,
+                                .to_docs        = TESTRUN_PATH_LEVEL_DOWN,
+                                .to_copyright   = TESTRUN_PATH_LEVEL_DOWN,
+                                .to_config      = TESTRUN_PATH_LEVEL_DOWN,
+                                .to_doxygen     = TESTRUN_PATH_LEVEL_DOWN,
+                                .to_tests       = TESTRUN_PATH_LEVEL_DOWN,
+                                .from_include   = TESTRUN_PATH_LEVEL_UP,
+                                .from_source    = TESTRUN_PATH_LEVEL_UP,
+                                .from_docs      = TESTRUN_PATH_LEVEL_UP,
+                                .from_copyright = TESTRUN_PATH_LEVEL_UP,
+                                .from_config    = TESTRUN_PATH_LEVEL_UP,
+                                .from_doxygen   = TESTRUN_PATH_LEVEL_UP,
+                                .from_tests     = TESTRUN_PATH_LEVEL_UP,
                                 .tests          =
                                 {
-                                        .root           = TESTRUN_PATH_TESTS,
-                                        .unit           = TESTRUN_PATH_UNIT_TESTS,
-                                        .acceptance     = TESTRUN_PATH_ACCEPTANCE_TESTS,
-                                        .tools          = TESTRUN_PATH_TEST_TOOLS,
-                                        .tests_to_src   = TESTRUN_PATH_TESTS_TO_SRC,
-                                        .tests_to_tools = TESTRUN_PATH_TESTS_TO_TOOLS
+                                        .name       = TESTRUN_FOLDER_TESTS,
+                                        .unit       = TESTRUN_FOLDER_TESTS_UNIT,
+                                        .acceptance = TESTRUN_FOLDER_TESTS_ACCEPTANCE,
+
+                                        .to_project = TESTRUN_PATH_LEVEL_UP,
+                                        .to_tools   = TESTRUN_PATH_LEVEL_DOWN,
+
+                                        .tools =
+                                        {
+                                                .name     = TESTRUN_FOLDER_TESTS_TOOLS,
+                                                .to_tests = TESTRUN_PATH_LEVEL_UP,
+
+                                                .header            = TESTRUN_FILE_TESTRUN_HEADER,
+                                                .runner_script     = TESTRUN_SCRIPT_RUNNER,
+                                                .acceptance_script = TESTRUN_SCRIPT_ACCEPTANCE,
+                                                .unit_script       = TESTRUN_SCRIPT_UNIT,
+                                                .coverage_script   = TESTRUN_SCRIPT_COVERAGE,
+                                                .loc_script        = TESTRUN_SCRIPT_LOC
+                                        }
                                 }
                         },
                         .doxygen =
                         {
-                                .path = TESTRUN_PATH_DOXYGEN,
-                                .file = TESTRUN_FILE_DOXYGEN
+                                .foldername = TESTRUN_FOLDER_DOXYGEN,
+                                .filename   = TESTRUN_FILE_DOXYGEN
                         }
                 },
                 .copyright =
@@ -85,6 +113,7 @@ testrun_config testrun_config_default(){
                 {
                         .line_end       = "\n",
                         .line_length    = 80,
+                        .path_split     = TESTRUN_PATH_SPLIT,
                         .indent_c       = 8,
                         .offset_docu    = 3 * 8,
                         .indent_sh      = 4,
@@ -94,7 +123,7 @@ testrun_config testrun_config_default(){
                         },
                         .suffix         =
                         {
-                                .test_exec = "_test"
+                                .test_source = "_test"
                         },
                         .extensions =
                         {
@@ -104,7 +133,8 @@ testrun_config testrun_config_default(){
                                 .shell    = ".sh",
                                 .make     = ".mk",
                                 .markdown = ".md",
-                                .config   = ".config"
+                                .config   = ".config",
+                                .testexec = ".test"
                         }
                 }
         };
@@ -119,7 +149,7 @@ testrun_config_paths testrun_config_paths_default(){
         testrun_config_paths paths = {
                 .path                   = TESTRUN_CONFIG_PATH_DUMMY,
                 .include                = TESTRUN_CONFIG_PATH_INCLUDE,
-                .src                    = TESTRUN_CONFIG_PATH_SRC,
+                .source                    = TESTRUN_CONFIG_PATH_source,
                 .tests                  = TESTRUN_CONFIG_PATH_TESTS,
                 .tests_unit             = TESTRUN_CONFIG_PATH_UNIT_TESTS,
                 .tests_acceptance       = TESTRUN_CONFIG_PATH_ACCEPTANCE_TESTS,
@@ -142,8 +172,8 @@ testrun_config testrun_config_default(){
                 .name                   = "NAME",
                 .author                 = "AUTHOR",
                 .copyright              = "All rights reserved.",
-                .copyright_src          = NULL,
-                .makefile_src           = NULL,
+                .copyright_source          = NULL,
+                .makefile_source           = NULL,
                 .path                   = path
         };
 

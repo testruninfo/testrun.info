@@ -92,7 +92,7 @@ char * testrun_module_c_file_content(
                                 config, module_name))
                                 goto error;
 
-                        if (!testrun_path_testrun_header(header, PATH_MAX,
+                        if (!testrun_path_test_to_testrun_header(header, PATH_MAX,
                                 config))
                                 goto error;
 

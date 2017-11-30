@@ -48,8 +48,6 @@
 
 #include "testrun_config.h"
 
-#define TESTRUN_PATH_SPLIT "/"
-
 
 /*----------------------------------------------------------------------------*/
 
@@ -80,9 +78,11 @@ char *testrun_path_search_project_path(
 /*----------------------------------------------------------------------------*/
 
 /**
-        Search the project root path starting from an input path.
-        @param path     path to start search
-        @returns        path to project root or NULL on error
+        Get the path from source to include.
+        @param buffer   buffer to write to
+        @param max      max open buffer
+        @param config   current config
+        @returns        true if path was written to buffer
 */
 bool testrun_path_source_to_include(
         char *buffer, size_t max,
@@ -92,9 +92,11 @@ bool testrun_path_source_to_include(
 /*----------------------------------------------------------------------------*/
 
 /**
-        Search the project root path starting from an input path.
-        @param path     path to start search
-        @returns        path to project root or NULL on error
+        Get the path from test to source.
+        @param buffer   buffer to write to
+        @param max      max open buffer
+        @param config   current config
+        @returns        true if path was written to buffer
 */
 bool testrun_path_test_to_source(
         char *buffer, size_t max,
@@ -104,11 +106,117 @@ bool testrun_path_test_to_source(
 /*----------------------------------------------------------------------------*/
 
 /**
-        Search the project root path starting from an input path.
-        @param path     path to start search
-        @returns        path to project root or NULL on error
+        Get the path from test to testrun.h.
+        @param buffer   buffer to write to
+        @param max      max open buffer
+        @param config   current config
+        @returns        true if path was written to buffer
 */
-bool testrun_path_testrun_header(
+bool testrun_path_test_to_testrun_header(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Get the path from project to tools.
+        @param buffer   buffer to write to
+        @param max      max open buffer
+        @param config   current config
+        @returns        true if path was written to buffer
+*/
+bool testrun_path_project_to_tools(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Get the path from project to src.
+        @param buffer   buffer to write to
+        @param max      max open buffer
+        @param config   current config
+        @returns        true if path was written to buffer
+*/
+bool testrun_path_project_to_source(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Get the path from project to include.
+        @param buffer   buffer to write to
+        @param max      max open buffer
+        @param config   current config
+        @returns        true if path was written to buffer
+*/
+bool testrun_path_project_to_include(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Get the path from project to docs.
+        @param buffer   buffer to write to
+        @param max      max open buffer
+        @param config   current config
+        @returns        true if path was written to buffer
+*/
+bool testrun_path_project_to_docs(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Get the path from project to config.
+        @param buffer   buffer to write to
+        @param max      max open buffer
+        @param config   current config
+        @returns        true if path was written to buffer
+*/
+bool testrun_path_project_to_config(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Get the path from project to copyright.
+        @param buffer   buffer to write to
+        @param max      max open buffer
+        @param config   current config
+        @returns        true if path was written to buffer
+*/
+bool testrun_path_project_to_copyright(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Get the path from project to unit tests.
+        @param buffer   buffer to write to
+        @param max      max open buffer
+        @param config   current config
+        @returns        true if path was written to buffer
+*/
+bool testrun_path_project_to_unit_tests(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Get the path from project to acceptance tests.
+        @param buffer   buffer to write to
+        @param max      max open buffer
+        @param config   current config
+        @returns        true if path was written to buffer
+*/
+bool testrun_path_project_to_acceptance_tests(
         char *buffer, size_t max,
         struct testrun_config const * const config);
 
