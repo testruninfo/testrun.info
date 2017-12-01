@@ -866,5 +866,3 @@ int64_t testrun_string_vector_remove_whitespace(
         //log("result %jd", result);
         return result + 1;
 }
-
-/*----------------------------------------------------------------------------*/
