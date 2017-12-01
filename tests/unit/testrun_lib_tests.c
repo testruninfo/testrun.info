@@ -968,7 +968,7 @@ int test_testrun_lib_script_loc_tests_content(){
 
         testrun_config config = testrun_config_default();
 
-        char *result = testrun_lib_script_coverage_tests_content(config);
+        char *result = NULL;
 
         char *date   = testrun_time_string(TESTRUN_SCOPE_DAY);
 
@@ -1072,7 +1072,6 @@ int test_testrun_lib_c_file_content() {
         // -------------------------------------------------------------
         // Positive test - HEADER
         // -------------------------------------------------------------
-
 
         result = testrun_lib_c_file_content(name, TESTRUN_HEADER, &config);
         snprintf(expect, size,
@@ -1411,6 +1410,1202 @@ int test_testrun_lib_c_file_content() {
         return testrun_log_success();
 }
 
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_makefile_content(){
+
+        size_t size = 10000;
+        char expect[size];
+        bzero(expect, size);
+
+        testrun_config config = testrun_config_default();
+
+        char *result = testrun_lib_makefile_content(config);
+        char *date   = testrun_time_string(TESTRUN_SCOPE_DAY);
+
+
+        snprintf(expect, size,
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Copyright 2017 Markus Toepfer"                                         TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Licensed under the Apache License, Version 2.0 (the \"License\");"     TESTRUN_LINEEND
+"#       you may not use this file except in compliance with the License."      TESTRUN_LINEEND
+"#       You may obtain a copy of the License at"                               TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#               http://www.apache.org/licenses/LICENSE-2.0"                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Unless required by applicable law or agreed to in writing, software"   TESTRUN_LINEEND
+"#       distributed under the License is distributed on an \"AS IS\" BASIS,"   TESTRUN_LINEEND
+"#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."TESTRUN_LINEEND
+"#       See the License for the specific language governing permissions and"   TESTRUN_LINEEND
+"#       limitations under the License."                                        TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       File            makefile"                                              TESTRUN_LINEEND
+"#       Authors         Markus Toepfer"                                        TESTRUN_LINEEND
+"#       Date            %s"                                                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Project         %s"                                                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Description     This makefile defines project specific parameter."     TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#                       These parameter are:"                                  TESTRUN_LINEEND
+"#                       (1) used compiler and special flags"                   TESTRUN_LINEEND
+"#                       (2) name and version"                                  TESTRUN_LINEEND
+"#                       (3) installation prefix"                               TESTRUN_LINEEND
+"#                       (4) used libraries"                                    TESTRUN_LINEEND
+"#                       (5) general makefiles used"                            TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Usage           make"                                                  TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Dependencies    make & compiler"                                       TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Last changed    %s"                                                    TESTRUN_LINEEND
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+""                                                                              TESTRUN_LINEEND
+"CC = gcc"                                                                      TESTRUN_LINEEND
+""                                                                              TESTRUN_LINEEND
+"PROJECT         := %s"                                                         TESTRUN_LINEEND
+"VERSION         := 0.0.1"                                                      TESTRUN_LINEEND
+""                                                                              TESTRUN_LINEEND
+"# project path recalculation (if used included from parent make)"              TESTRUN_LINEEND
+"PROJECTMK       := $(abspath $(lastword $(MAKEFILE_LIST)))"                    TESTRUN_LINEEND
+""                                                                              TESTRUN_LINEEND
+"# base directory for installation"                                             TESTRUN_LINEEND
+"PREFIX          := /usr/local"                                                 TESTRUN_LINEEND
+""                                                                              TESTRUN_LINEEND
+"# LIBS USED (uncommented example includes)"                                    TESTRUN_LINEEND
+"#LIBS           += `pkg-config --libs libsystemd`"                             TESTRUN_LINEEND
+"#LIBS           += `pkg-config --libs uuid`"                                   TESTRUN_LINEEND
+"#LIBS           += `pkg-config --libs openssl`"                                TESTRUN_LINEEND
+""                                                                              TESTRUN_LINEEND
+"# EXTRA CFLAGS (example)"                                                      TESTRUN_LINEEND
+"MODCFLAGS       += -std=gnu11"                                                 TESTRUN_LINEEND
+"#MODCFLAGS      += -fopenmp"                                                   TESTRUN_LINEEND
+""                                                                              TESTRUN_LINEEND
+"#GCC only flags (example)"                                                     TESTRUN_LINEEND
+"#MODCFLAGS      += -rdynamic"                                                  TESTRUN_LINEEND
+""                                                                              TESTRUN_LINEEND
+"#TMP FILE DEFINITION"                                                          TESTRUN_LINEEND
+"TESTS_TMP_FILES = $(wildcard /tmp/test_*)"                                     TESTRUN_LINEEND
+""                                                                              TESTRUN_LINEEND
+"# INCLUDE BASE MAKEFILE"                                                       TESTRUN_LINEEND
+"include testrun_makefile.main"                                                 TESTRUN_LINEEND
+"include testrun_makefile.test"                                                 TESTRUN_LINEEND
+,date,
+config.project.name,
+date,
+config.project.name);
+
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", result, strlen(result));
+        testrun(strlen(result) == strlen(expect));
+        testrun(strncmp(result, expect, strlen(expect))== 0);
+
+        // -------------------------------------------------------------
+        // Configuration changes
+        // -------------------------------------------------------------
+
+        config.project.name = "test";
+             snprintf(expect, size,
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Copyright 2017 Markus Toepfer"                                         TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Licensed under the Apache License, Version 2.0 (the \"License\");"     TESTRUN_LINEEND
+"#       you may not use this file except in compliance with the License."      TESTRUN_LINEEND
+"#       You may obtain a copy of the License at"                               TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#               http://www.apache.org/licenses/LICENSE-2.0"                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Unless required by applicable law or agreed to in writing, software"   TESTRUN_LINEEND
+"#       distributed under the License is distributed on an \"AS IS\" BASIS,"   TESTRUN_LINEEND
+"#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."TESTRUN_LINEEND
+"#       See the License for the specific language governing permissions and"   TESTRUN_LINEEND
+"#       limitations under the License."                                        TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       File            makefile"                                              TESTRUN_LINEEND
+"#       Authors         Markus Toepfer"                                        TESTRUN_LINEEND
+"#       Date            %s"                                                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Project         %s"                                                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Description     This makefile defines project specific parameter."     TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#                       These parameter are:"                                  TESTRUN_LINEEND
+"#                       (1) used compiler and special flags"                   TESTRUN_LINEEND
+"#                       (2) name and version"                                  TESTRUN_LINEEND
+"#                       (3) installation prefix"                               TESTRUN_LINEEND
+"#                       (4) used libraries"                                    TESTRUN_LINEEND
+"#                       (5) general makefiles used"                            TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Usage           make"                                                  TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Dependencies    make & compiler"                                       TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Last changed    %s"                                                    TESTRUN_LINEEND
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+""                                                                              TESTRUN_LINEEND
+"CC = gcc"                                                                      TESTRUN_LINEEND
+""                                                                              TESTRUN_LINEEND
+"PROJECT         := %s"                                                         TESTRUN_LINEEND
+"VERSION         := 0.0.1"                                                      TESTRUN_LINEEND
+""                                                                              TESTRUN_LINEEND
+"# project path recalculation (if used included from parent make)"              TESTRUN_LINEEND
+"PROJECTMK       := $(abspath $(lastword $(MAKEFILE_LIST)))"                    TESTRUN_LINEEND
+""                                                                              TESTRUN_LINEEND
+"# base directory for installation"                                             TESTRUN_LINEEND
+"PREFIX          := /usr/local"                                                 TESTRUN_LINEEND
+""                                                                              TESTRUN_LINEEND
+"# LIBS USED (uncommented example includes)"                                    TESTRUN_LINEEND
+"#LIBS           += `pkg-config --libs libsystemd`"                             TESTRUN_LINEEND
+"#LIBS           += `pkg-config --libs uuid`"                                   TESTRUN_LINEEND
+"#LIBS           += `pkg-config --libs openssl`"                                TESTRUN_LINEEND
+""                                                                              TESTRUN_LINEEND
+"# EXTRA CFLAGS (example)"                                                      TESTRUN_LINEEND
+"MODCFLAGS       += -std=gnu11"                                                 TESTRUN_LINEEND
+"#MODCFLAGS      += -fopenmp"                                                   TESTRUN_LINEEND
+""                                                                              TESTRUN_LINEEND
+"#GCC only flags (example)"                                                     TESTRUN_LINEEND
+"#MODCFLAGS      += -rdynamic"                                                  TESTRUN_LINEEND
+""                                                                              TESTRUN_LINEEND
+"#TMP FILE DEFINITION"                                                          TESTRUN_LINEEND
+"TESTS_TMP_FILES = $(wildcard /tmp/test_*)"                                     TESTRUN_LINEEND
+""                                                                              TESTRUN_LINEEND
+"# INCLUDE BASE MAKEFILE"                                                       TESTRUN_LINEEND
+"include testrun_makefile.main"                                                 TESTRUN_LINEEND
+"include testrun_makefile.test"                                                 TESTRUN_LINEEND
+,date,
+config.project.name,
+date,
+config.project.name);
+
+        testrun(strlen(result) != strlen(expect));
+        result = testrun_string_free(result);
+        result = testrun_lib_makefile_content(config);
+        testrun(strlen(result) == strlen(expect));
+        testrun(strncmp(result, expect, strlen(expect))== 0);
+
+        date   = testrun_string_free(date);
+        result = testrun_string_free(result);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_makefile_main_content(){
+
+        size_t size = 10000;
+        char expect[size];
+        bzero(expect, size);
+
+        testrun_config config = testrun_config_default();
+
+        char *result = testrun_lib_makefile_main_content(config);
+        char *date   = testrun_time_string(TESTRUN_SCOPE_DAY);
+
+
+        char *all_target = NULL;
+        char *install    = NULL;
+        char *uninstall  = NULL;
+
+        switch (config.project.type){
+
+                case TESTRUN_LIB:
+                        all_target = "all_lib";
+                        install    = "install_lib";
+                        uninstall  = "uinstall_lib";
+                        break;
+                case TESTRUN_EXEC:
+                        all_target = "all_exec";
+                        install    = "install_exec";
+                        uninstall  = "uinstall_exec";
+                        break;
+                case TESTRUN_SERVICE:
+                        all_target = "all_exec";
+                        install    = "install_service";
+                        uninstall  = "uinstall_service";
+                        break;
+                default:
+                        testrun(false);
+        }
+
+        char path_src[PATH_MAX];
+        char script_install[PATH_MAX];
+        char script_uninstall[PATH_MAX];
+        char doxygen_config[PATH_MAX];
+
+        bzero(path_src, PATH_MAX);
+        bzero(script_install, PATH_MAX);
+        bzero(script_uninstall, PATH_MAX);
+        bzero(doxygen_config, PATH_MAX);
+
+        testrun(testrun_path_project_to_source(
+                path_src, PATH_MAX, &config));
+
+        testrun(testrun_path_script_service_install(
+                script_install, PATH_MAX, &config));
+
+        testrun(testrun_path_script_service_uninstall(
+                script_uninstall, PATH_MAX, &config));
+
+        testrun(testrun_path_doxygen_config(
+                doxygen_config, PATH_MAX, &config));
+
+
+        snprintf(expect, size,
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Copyright 2017 Markus Toepfer"                                         TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Licensed under the Apache License, Version 2.0 (the \"License\");"     TESTRUN_LINEEND
+"#       you may not use this file except in compliance with the License."      TESTRUN_LINEEND
+"#       You may obtain a copy of the License at"                               TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#               http://www.apache.org/licenses/LICENSE-2.0"                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Unless required by applicable law or agreed to in writing, software"   TESTRUN_LINEEND
+"#       distributed under the License is distributed on an \"AS IS\" BASIS,"   TESTRUN_LINEEND
+"#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."TESTRUN_LINEEND
+"#       See the License for the specific language governing permissions and"   TESTRUN_LINEEND
+"#       limitations under the License."                                        TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       File            testrun_makefile.main"                                 TESTRUN_LINEEND
+"#       Authors         Markus Toepfer"                                        TESTRUN_LINEEND
+"#       Date            %s"                                                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Project         %s"                                                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Description     Generic makefile for testrun based projects."          TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#                       Target of this makefile is an independent library"     TESTRUN_LINEEND
+"#                       or executable to be installed at either PREFIX/lib"    TESTRUN_LINEEND
+"#                       or PREFIX/bin."                                        TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Usage           SHOULD be used included by parent makefile"            TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Dependencies    testrun (makefile & service scripts), doxygen (if used)"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Last changed    %s"                                                    TESTRUN_LINEEND
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Switch on colors"                                                            TESTRUN_LINEEND
+"GCC_COLORS ?= 'gcc colors available, use them!'"                               TESTRUN_LINEEND
+"export GCC_COLORS"                                                             TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- PARAMETER DEFINITION --------------------------------------------------"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# CFLAGS"                                                                      TESTRUN_LINEEND
+"# -g            enable Debugging symbols"                                      TESTRUN_LINEEND
+"# -Ox           code optimization"                                             TESTRUN_LINEEND
+"# -Wall         enable Warnings"                                               TESTRUN_LINEEND
+"# -Wextra       additional Warnings"                                           TESTRUN_LINEEND
+TESTRUN_LINEEND
+"CFLAGS\t\t= -c -Wall -Wextra -fPIC"                                            TESTRUN_LINEEND
+"CFLAGS\t\t+= $(EXTRAHEADER)"                                                   TESTRUN_LINEEND
+"CFLAGS\t\t+= $(MODCFLAGS)"                                                     TESTRUN_LINEEND
+TESTRUN_LINEEND
+"PROJECTPATH\t:= $(abspath $(dir $(PROJECTMK)))"                                TESTRUN_LINEEND
+"DIRNAME\t\t:= $(notdir $(patsubst %%/,%%,$(dir $(PROJECTMK))))"                TESTRUN_LINEEND
+TESTRUN_LINEEND
+"LIBNAME\t\t:= lib$(DIRNAME)"                                                   TESTRUN_LINEEND
+"LIBNAMEPC\t:= $(LIBNAME).pc"                                                   TESTRUN_LINEEND
+TESTRUN_LINEEND
+"INSTALL\t\t:= install"                                                         TESTRUN_LINEEND
+TESTRUN_LINEEND
+"INCDIR\t\t:= $(PREFIX)/include/$(DIRNAME)"                                     TESTRUN_LINEEND
+"LIBDIR\t\t:= $(PREFIX)/lib"                                                    TESTRUN_LINEEND
+"EXECDIR\t\t:= $(PREFIX)/bin"                                                   TESTRUN_LINEEND
+"PRODIR\t\t:= $(LIBDIR)/$(DIRNAME)"                                             TESTRUN_LINEEND
+TESTRUN_LINEEND
+"EXECUTABLE\t= bin/$(DIRNAME)"                                                  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"CFLAGS\t\t+= -Iinclude"                                                        TESTRUN_LINEEND
+TESTRUN_LINEEND
+"MODMAKE\t\t:= $(patsubst %%,%s/%%/mod.mk,$(MODULES))"                          TESTRUN_LINEEND
+TESTRUN_LINEEND
+"STATIC\t\t= build/lib$(DIRNAME).a"                                             TESTRUN_LINEEND
+"SHARED\t\t= $(patsubst %%.a,%%.so,$(STATIC))"                                  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Source and object files to compile"                                          TESTRUN_LINEEND
+"SOURCES\t\t= $(wildcard %s/**/*.c %s/*.c)"                                     TESTRUN_LINEEND
+"OBJECTS\t\t= $(patsubst %%.c,%%.o,$(SOURCES))"                                 TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- DEFAULT MAKE RULES ----------------------------------------------------"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"%%.o : %%.c"                                                                   TESTRUN_LINEEND
+"\t@echo \" (CC)    $@\""                                                       TESTRUN_LINEEND
+"\t@$(CC) $(CFLAGS) -g -o $@ -c $< $(LIBS)"                                     TESTRUN_LINEEND
+TESTRUN_LINEEND
+"all:\t\t%s"                                                                    TESTRUN_LINEEND
+"install:\t%s"                                                                  TESTRUN_LINEEND
+"uninstall:\t%s"                                                                TESTRUN_LINEEND
+TESTRUN_LINEEND
+"all_lib:\tstart lib tests pkgconfig done"                                      TESTRUN_LINEEND
+"all_exec:\tstart lib tests $(EXECUTABLE) done"                                 TESTRUN_LINEEND
+"all_service:\tall_exec"                                                        TESTRUN_LINEEND
+TESTRUN_LINEEND
+"lib:\t\tbuild sources"                                                         TESTRUN_LINEEND
+"sources:\tbuild $(STATIC) $(SHARED)"                                           TESTRUN_LINEEND
+TESTRUN_LINEEND
+"$(STATIC):  $(OBJECTS)"                                                        TESTRUN_LINEEND
+"\t@echo \" (AR)    $@ $(OBJECTS)\""                                            TESTRUN_LINEEND
+"\t@ar rcs $@ $(OBJECTS)"TESTRUN_LINEEND
+"\t@ranlib $@"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"$(SHARED): $(STATIC) $(OBJECTS)"                                               TESTRUN_LINEEND
+"\t@echo \" (CC)    $@ $(OBJECTS)\""                                            TESTRUN_LINEEND
+"\t@$(CC) -shared -o $@ $(OBJECTS) $(LIBS)"                                     TESTRUN_LINEEND
+TESTRUN_LINEEND
+"$(EXECUTABLE): $(OBJECTS)"                                                     TESTRUN_LINEEND
+"\t@echo \" (CC)    $@ $(OBJECTS)\""                                            TESTRUN_LINEEND
+"\t$(CC) -o $@ $(STATIC) $(LIBS)"                                               TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- BUILD & CLEANUP -----------------------------------------------------" TESTRUN_LINEEND
+TESTRUN_LINEEND
+"build:"                                                                        TESTRUN_LINEEND
+"\t@mkdir -p bin"                                                               TESTRUN_LINEEND
+"\t@mkdir -p build"                                                             TESTRUN_LINEEND
+"\t@mkdir -p build/test"                                                        TESTRUN_LINEEND
+"\t@mkdir -p build/test/omp"                                                    TESTRUN_LINEEND
+"\t@mkdir -p build/test/omp/unit"                                               TESTRUN_LINEEND
+"\t@mkdir -p build/test/omp/acceptance"                                         TESTRUN_LINEEND
+"\t@mkdir -p build/test/unit"                                                   TESTRUN_LINEEND
+"\t@mkdir -p build/test/acceptance"                                             TESTRUN_LINEEND
+"\t@mkdir -p build/test/log"                                                    TESTRUN_LINEEND
+"\t@echo \" (MK)    directories for build\""                                    TESTRUN_LINEEND
+TESTRUN_LINEEND
+".PHONY: clean"                                                                 TESTRUN_LINEEND
+"clean:"TESTRUN_LINEEND
+"\t@echo \" (CLEAN) $(LIBNAME)\""                                               TESTRUN_LINEEND
+"\t@rm -rf build bin doxygen/documentation $(OBJECTS) $(TESTS_OBJECTS) \\"      TESTRUN_LINEEND
+"\t\t$(LIBNAMEPC) $(TESTS_TMP_FILES)"                                           TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- DOCUMENATION -------------------------------------------------------"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"#NOTE requires doxygen"
+".PHONY: documentation"                                                         TESTRUN_LINEEND
+"documentation:"                                                                TESTRUN_LINEEND
+"\tdoxygen %s"                                                                  TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- PKGCONFIG LIBRARY BUILD --------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+".PHONY: pkgconfig"                                                             TESTRUN_LINEEND
+"pkgconfig:"                                                                    TESTRUN_LINEEND
+"\t@echo 'prefix='$(PREFIX)                     >  $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'exec_prefix=$${prefix}'               >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'libdir=$${prefix}/lib'                >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'includedir=$${prefix}/include'        >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo ''                                     >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Name: '$(LIBNAME)                     >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Description: '                        >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Version: '$(VERSION)                  >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'URL: '$(PROJECT_URL)                  >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Libs: -L$${libdir} -l'$(DIRNAME)      >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Cflags: -I$${includedir}'             >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- INSTALLATION -------------------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Installation as a library ------------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"install_lib: $(SHARED) $(STATIC)"                                              TESTRUN_LINEEND
+"\t@echo \" (OK)    installed $(LIBNAME) to $(LIBDIR)\""                        TESTRUN_LINEEND
+"\t@mkdir -p $(PRODIR)"                                                         TESTRUN_LINEEND
+"\t@mkdir -p $(LIBDIR)/pkgconfig"                                               TESTRUN_LINEEND
+"\t@mkdir -p $(INCDIR)"                                                         TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0644 -t $(INCDIR) $(shell find include -name \"*.h\")"        TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0755 $(SHARED) $(PRODIR)"                                     TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0755 $(STATIC) $(PRODIR)"                                     TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0644 $(LIBNAMEPC) $(LIBDIR)/pkgconfig"                        TESTRUN_LINEEND
+"\t@ldconfig $(PRODIR)"                                                         TESTRUN_LINEEND
+TESTRUN_LINEEND
+"uninstall_lib:"                                                                TESTRUN_LINEEND
+"\t@echo \" (OK)    uninstalled $(LIBNAME) from $(LIBDIR)\""                    TESTRUN_LINEEND
+"\t@rm -rf $(INCDIR)"                                                           TESTRUN_LINEEND
+"\t@rm -rf $(PRODIR)"                                                           TESTRUN_LINEEND
+"\t@rm -rf $(PRODIR)/$(LIBNAME).a"                                              TESTRUN_LINEEND
+"\t@rm -rf $(PRODIR)/$(LIBNAME).so"                                             TESTRUN_LINEEND
+"\t@rm -rf $(LIBDIR)/pkgconfig/$(LIBNAMEPC)"                                    TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Installation as an executable --------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"install_exec: $(SHARED) $(STATIC)"                                             TESTRUN_LINEEND
+"\t@echo \" (OK)    installed $(DIRNAME) to $(EXECDIR)\""                       TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0755 bin/$(DIRNAME) $(EXECDIR)"                               TESTRUN_LINEEND
+TESTRUN_LINEEND
+"uninstall_exec:"                                                               TESTRUN_LINEEND
+"\t@echo \" (OK)    uninstalled $(DIRNAME) from $(EXECDIR)\""                   TESTRUN_LINEEND
+"\t@rm -rf $(EXECDIR)/$(DIRNAME)"                                               TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Installation as a service (outsourced to script)--------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"install_service: $(EXECUTABLE)"                                                TESTRUN_LINEEND
+"\t%s"                                                                          TESTRUN_LINEEND
+TESTRUN_LINEEND
+"uninstall_service:"                                                            TESTRUN_LINEEND
+"\t%s"                                                                          TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- INFORMATION PRINTING -----------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# print out a variable of the make file (e.g. \"make print-PROJECTPATH\")"     TESTRUN_LINEEND
+".PHONY: print"                                                                 TESTRUN_LINEEND
+"print-%%  : ; @echo $* = $($*)"                                                TESTRUN_LINEEND
+TESTRUN_LINEEND
+".PHONY: start"                                                                 TESTRUN_LINEEND
+"start:"                                                                        TESTRUN_LINEEND
+"\t@echo \"\\n (HINT)    $(PROJECT) \\t\\t ==> running make\\n\""               TESTRUN_LINEEND
+TESTRUN_LINEEND
+".PHONY: done"                                                                  TESTRUN_LINEEND
+"done:"                                                                         TESTRUN_LINEEND
+"\t@echo"                                                                       TESTRUN_LINEEND
+"\t@echo \" (DONE)  make $(PROJECT)\""                                          TESTRUN_LINEEND
+"\t@echo \" (HINT)  with unit testing      ==> 'make tested'\""                 TESTRUN_LINEEND
+"\t@echo \" (HINT)  perform installation   ==> 'sudo make install\\n\""         TESTRUN_LINEEND
+"\t@echo \" (HINT)  generate documentation ==> 'make documentation\\n\""        TESTRUN_LINEEND
+,date,
+config.project.name,
+date,
+path_src, path_src, path_src,
+all_target,
+install,
+uninstall,
+doxygen_config, script_install, script_uninstall);
+
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", result, strlen(result));
+        testrun(strlen(result) == strlen(expect));
+        testrun(strncmp(result, expect, strlen(expect))== 0);
+
+        // -------------------------------------------------------------
+        // Configuration changes
+        // -------------------------------------------------------------
+
+        config.project.type = TESTRUN_SERVICE;
+        all_target = "all_exec";
+        install    = "install_service";
+        uninstall  = "uinstall_service";
+
+
+        snprintf(expect, size,
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Copyright 2017 Markus Toepfer"                                         TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Licensed under the Apache License, Version 2.0 (the \"License\");"     TESTRUN_LINEEND
+"#       you may not use this file except in compliance with the License."      TESTRUN_LINEEND
+"#       You may obtain a copy of the License at"                               TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#               http://www.apache.org/licenses/LICENSE-2.0"                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Unless required by applicable law or agreed to in writing, software"   TESTRUN_LINEEND
+"#       distributed under the License is distributed on an \"AS IS\" BASIS,"   TESTRUN_LINEEND
+"#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."TESTRUN_LINEEND
+"#       See the License for the specific language governing permissions and"   TESTRUN_LINEEND
+"#       limitations under the License."                                        TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       File            testrun_makefile.main"                                 TESTRUN_LINEEND
+"#       Authors         Markus Toepfer"                                        TESTRUN_LINEEND
+"#       Date            %s"                                                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Project         %s"                                                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Description     Generic makefile for testrun based projects."          TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#                       Target of this makefile is an independent library"     TESTRUN_LINEEND
+"#                       or executable to be installed at either PREFIX/lib"    TESTRUN_LINEEND
+"#                       or PREFIX/bin."                                        TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Usage           SHOULD be used included by parent makefile"            TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Dependencies    testrun (makefile & service scripts), doxygen (if used)"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Last changed    %s"                                                    TESTRUN_LINEEND
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Switch on colors"                                                            TESTRUN_LINEEND
+"GCC_COLORS ?= 'gcc colors available, use them!'"                               TESTRUN_LINEEND
+"export GCC_COLORS"                                                             TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- PARAMETER DEFINITION --------------------------------------------------"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# CFLAGS"                                                                      TESTRUN_LINEEND
+"# -g            enable Debugging symbols"                                      TESTRUN_LINEEND
+"# -Ox           code optimization"                                             TESTRUN_LINEEND
+"# -Wall         enable Warnings"                                               TESTRUN_LINEEND
+"# -Wextra       additional Warnings"                                           TESTRUN_LINEEND
+TESTRUN_LINEEND
+"CFLAGS\t\t= -c -Wall -Wextra -fPIC"                                            TESTRUN_LINEEND
+"CFLAGS\t\t+= $(EXTRAHEADER)"                                                   TESTRUN_LINEEND
+"CFLAGS\t\t+= $(MODCFLAGS)"                                                     TESTRUN_LINEEND
+TESTRUN_LINEEND
+"PROJECTPATH\t:= $(abspath $(dir $(PROJECTMK)))"                                TESTRUN_LINEEND
+"DIRNAME\t\t:= $(notdir $(patsubst %%/,%%,$(dir $(PROJECTMK))))"                TESTRUN_LINEEND
+TESTRUN_LINEEND
+"LIBNAME\t\t:= lib$(DIRNAME)"                                                   TESTRUN_LINEEND
+"LIBNAMEPC\t:= $(LIBNAME).pc"                                                   TESTRUN_LINEEND
+TESTRUN_LINEEND
+"INSTALL\t\t:= install"                                                         TESTRUN_LINEEND
+TESTRUN_LINEEND
+"INCDIR\t\t:= $(PREFIX)/include/$(DIRNAME)"                                     TESTRUN_LINEEND
+"LIBDIR\t\t:= $(PREFIX)/lib"                                                    TESTRUN_LINEEND
+"EXECDIR\t\t:= $(PREFIX)/bin"                                                   TESTRUN_LINEEND
+"PRODIR\t\t:= $(LIBDIR)/$(DIRNAME)"                                             TESTRUN_LINEEND
+TESTRUN_LINEEND
+"EXECUTABLE\t= bin/$(DIRNAME)"                                                  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"CFLAGS\t\t+= -Iinclude"                                                        TESTRUN_LINEEND
+TESTRUN_LINEEND
+"MODMAKE\t\t:= $(patsubst %%,%s/%%/mod.mk,$(MODULES))"                          TESTRUN_LINEEND
+TESTRUN_LINEEND
+"STATIC\t\t= build/lib$(DIRNAME).a"                                             TESTRUN_LINEEND
+"SHARED\t\t= $(patsubst %%.a,%%.so,$(STATIC))"                                  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Source and object files to compile"                                          TESTRUN_LINEEND
+"SOURCES\t\t= $(wildcard %s/**/*.c %s/*.c)"                                     TESTRUN_LINEEND
+"OBJECTS\t\t= $(patsubst %%.c,%%.o,$(SOURCES))"                                 TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- DEFAULT MAKE RULES ----------------------------------------------------"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"%%.o : %%.c"                                                                   TESTRUN_LINEEND
+"\t@echo \" (CC)    $@\""                                                       TESTRUN_LINEEND
+"\t@$(CC) $(CFLAGS) -g -o $@ -c $< $(LIBS)"                                     TESTRUN_LINEEND
+TESTRUN_LINEEND
+"all:\t\t%s"                                                                    TESTRUN_LINEEND
+"install:\t%s"                                                                  TESTRUN_LINEEND
+"uninstall:\t%s"                                                                TESTRUN_LINEEND
+TESTRUN_LINEEND
+"all_lib:\tstart lib tests pkgconfig done"                                      TESTRUN_LINEEND
+"all_exec:\tstart lib tests $(EXECUTABLE) done"                                 TESTRUN_LINEEND
+"all_service:\tall_exec"                                                        TESTRUN_LINEEND
+TESTRUN_LINEEND
+"lib:\t\tbuild sources"                                                         TESTRUN_LINEEND
+"sources:\tbuild $(STATIC) $(SHARED)"                                           TESTRUN_LINEEND
+TESTRUN_LINEEND
+"$(STATIC):  $(OBJECTS)"                                                        TESTRUN_LINEEND
+"\t@echo \" (AR)    $@ $(OBJECTS)\""                                            TESTRUN_LINEEND
+"\t@ar rcs $@ $(OBJECTS)"TESTRUN_LINEEND
+"\t@ranlib $@"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"$(SHARED): $(STATIC) $(OBJECTS)"                                               TESTRUN_LINEEND
+"\t@echo \" (CC)    $@ $(OBJECTS)\""                                            TESTRUN_LINEEND
+"\t@$(CC) -shared -o $@ $(OBJECTS) $(LIBS)"                                     TESTRUN_LINEEND
+TESTRUN_LINEEND
+"$(EXECUTABLE): $(OBJECTS)"                                                     TESTRUN_LINEEND
+"\t@echo \" (CC)    $@ $(OBJECTS)\""                                            TESTRUN_LINEEND
+"\t$(CC) -o $@ $(STATIC) $(LIBS)"                                               TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- BUILD & CLEANUP -----------------------------------------------------" TESTRUN_LINEEND
+TESTRUN_LINEEND
+"build:"                                                                        TESTRUN_LINEEND
+"\t@mkdir -p bin"                                                               TESTRUN_LINEEND
+"\t@mkdir -p build"                                                             TESTRUN_LINEEND
+"\t@mkdir -p build/test"                                                        TESTRUN_LINEEND
+"\t@mkdir -p build/test/omp"                                                    TESTRUN_LINEEND
+"\t@mkdir -p build/test/omp/unit"                                               TESTRUN_LINEEND
+"\t@mkdir -p build/test/omp/acceptance"                                         TESTRUN_LINEEND
+"\t@mkdir -p build/test/unit"                                                   TESTRUN_LINEEND
+"\t@mkdir -p build/test/acceptance"                                             TESTRUN_LINEEND
+"\t@mkdir -p build/test/log"                                                    TESTRUN_LINEEND
+"\t@echo \" (MK)    directories for build\""                                    TESTRUN_LINEEND
+TESTRUN_LINEEND
+".PHONY: clean"                                                                 TESTRUN_LINEEND
+"clean:"TESTRUN_LINEEND
+"\t@echo \" (CLEAN) $(LIBNAME)\""                                               TESTRUN_LINEEND
+"\t@rm -rf build bin doxygen/documentation $(OBJECTS) $(TESTS_OBJECTS) \\"      TESTRUN_LINEEND
+"\t\t$(LIBNAMEPC) $(TESTS_TMP_FILES)"                                           TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- DOCUMENATION -------------------------------------------------------"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"#NOTE requires doxygen"
+".PHONY: documentation"                                                         TESTRUN_LINEEND
+"documentation:"                                                                TESTRUN_LINEEND
+"\tdoxygen %s"                                                                  TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- PKGCONFIG LIBRARY BUILD --------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+".PHONY: pkgconfig"                                                             TESTRUN_LINEEND
+"pkgconfig:"                                                                    TESTRUN_LINEEND
+"\t@echo 'prefix='$(PREFIX)                     >  $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'exec_prefix=$${prefix}'               >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'libdir=$${prefix}/lib'                >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'includedir=$${prefix}/include'        >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo ''                                     >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Name: '$(LIBNAME)                     >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Description: '                        >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Version: '$(VERSION)                  >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'URL: '$(PROJECT_URL)                  >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Libs: -L$${libdir} -l'$(DIRNAME)      >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Cflags: -I$${includedir}'             >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- INSTALLATION -------------------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Installation as a library ------------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"install_lib: $(SHARED) $(STATIC)"                                              TESTRUN_LINEEND
+"\t@echo \" (OK)    installed $(LIBNAME) to $(LIBDIR)\""                        TESTRUN_LINEEND
+"\t@mkdir -p $(PRODIR)"                                                         TESTRUN_LINEEND
+"\t@mkdir -p $(LIBDIR)/pkgconfig"                                               TESTRUN_LINEEND
+"\t@mkdir -p $(INCDIR)"                                                         TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0644 -t $(INCDIR) $(shell find include -name \"*.h\")"        TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0755 $(SHARED) $(PRODIR)"                                     TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0755 $(STATIC) $(PRODIR)"                                     TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0644 $(LIBNAMEPC) $(LIBDIR)/pkgconfig"                        TESTRUN_LINEEND
+"\t@ldconfig $(PRODIR)"                                                         TESTRUN_LINEEND
+TESTRUN_LINEEND
+"uninstall_lib:"                                                                TESTRUN_LINEEND
+"\t@echo \" (OK)    uninstalled $(LIBNAME) from $(LIBDIR)\""                    TESTRUN_LINEEND
+"\t@rm -rf $(INCDIR)"                                                           TESTRUN_LINEEND
+"\t@rm -rf $(PRODIR)"                                                           TESTRUN_LINEEND
+"\t@rm -rf $(PRODIR)/$(LIBNAME).a"                                              TESTRUN_LINEEND
+"\t@rm -rf $(PRODIR)/$(LIBNAME).so"                                             TESTRUN_LINEEND
+"\t@rm -rf $(LIBDIR)/pkgconfig/$(LIBNAMEPC)"                                    TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Installation as an executable --------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"install_exec: $(SHARED) $(STATIC)"                                             TESTRUN_LINEEND
+"\t@echo \" (OK)    installed $(DIRNAME) to $(EXECDIR)\""                       TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0755 bin/$(DIRNAME) $(EXECDIR)"                               TESTRUN_LINEEND
+TESTRUN_LINEEND
+"uninstall_exec:"                                                               TESTRUN_LINEEND
+"\t@echo \" (OK)    uninstalled $(DIRNAME) from $(EXECDIR)\""                   TESTRUN_LINEEND
+"\t@rm -rf $(EXECDIR)/$(DIRNAME)"                                               TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Installation as a service (outsourced to script)--------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"install_service: $(EXECUTABLE)"                                                TESTRUN_LINEEND
+"\t%s"                                                                          TESTRUN_LINEEND
+TESTRUN_LINEEND
+"uninstall_service:"                                                            TESTRUN_LINEEND
+"\t%s"                                                                          TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- INFORMATION PRINTING -----------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# print out a variable of the make file (e.g. \"make print-PROJECTPATH\")"     TESTRUN_LINEEND
+".PHONY: print"                                                                 TESTRUN_LINEEND
+"print-%%  : ; @echo $* = $($*)"                                                TESTRUN_LINEEND
+TESTRUN_LINEEND
+".PHONY: start"                                                                 TESTRUN_LINEEND
+"start:"                                                                        TESTRUN_LINEEND
+"\t@echo \"\\n (HINT)    $(PROJECT) \\t\\t ==> running make\\n\""               TESTRUN_LINEEND
+TESTRUN_LINEEND
+".PHONY: done"                                                                  TESTRUN_LINEEND
+"done:"                                                                         TESTRUN_LINEEND
+"\t@echo"                                                                       TESTRUN_LINEEND
+"\t@echo \" (DONE)  make $(PROJECT)\""                                          TESTRUN_LINEEND
+"\t@echo \" (HINT)  with unit testing      ==> 'make tested'\""                 TESTRUN_LINEEND
+"\t@echo \" (HINT)  perform installation   ==> 'sudo make install\\n\""         TESTRUN_LINEEND
+"\t@echo \" (HINT)  generate documentation ==> 'make documentation\\n\""        TESTRUN_LINEEND
+,date,
+config.project.name,
+date,
+path_src, path_src, path_src,
+all_target,
+install,
+uninstall,
+doxygen_config, script_install, script_uninstall);
+
+        testrun(strlen(result) != strlen(expect));
+        result = testrun_string_free(result);
+        result = testrun_lib_makefile_main_content(config);
+        testrun(strlen(result) == strlen(expect));
+        testrun(strncmp(result, expect, strlen(expect))== 0);
+
+        config.project.type = TESTRUN_EXEC;
+        all_target = "all_exec";
+        install    = "install_exec";
+        uninstall  = "uinstall_exec";
+
+
+        config.project.path.to_source = "../../..";
+        config.project.path.source = "123";
+        config.project.doxygen.filename = "AAA";
+
+        config.project.service.install_script = "XXX";
+        config.project.service.uninstall_script = "YYY";
+
+        testrun(testrun_path_project_to_source(
+                path_src, PATH_MAX, &config));
+
+        testrun(testrun_path_script_service_install(
+                script_install, PATH_MAX, &config));
+
+        testrun(testrun_path_script_service_uninstall(
+                script_uninstall, PATH_MAX, &config));
+
+        testrun(testrun_path_doxygen_config(
+                doxygen_config, PATH_MAX, &config));
+
+
+
+        snprintf(expect, size,
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Copyright 2017 Markus Toepfer"                                         TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Licensed under the Apache License, Version 2.0 (the \"License\");"     TESTRUN_LINEEND
+"#       you may not use this file except in compliance with the License."      TESTRUN_LINEEND
+"#       You may obtain a copy of the License at"                               TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#               http://www.apache.org/licenses/LICENSE-2.0"                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Unless required by applicable law or agreed to in writing, software"   TESTRUN_LINEEND
+"#       distributed under the License is distributed on an \"AS IS\" BASIS,"   TESTRUN_LINEEND
+"#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."TESTRUN_LINEEND
+"#       See the License for the specific language governing permissions and"   TESTRUN_LINEEND
+"#       limitations under the License."                                        TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       File            testrun_makefile.main"                                 TESTRUN_LINEEND
+"#       Authors         Markus Toepfer"                                        TESTRUN_LINEEND
+"#       Date            %s"                                                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Project         %s"                                                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Description     Generic makefile for testrun based projects."          TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#                       Target of this makefile is an independent library"     TESTRUN_LINEEND
+"#                       or executable to be installed at either PREFIX/lib"    TESTRUN_LINEEND
+"#                       or PREFIX/bin."                                        TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Usage           SHOULD be used included by parent makefile"            TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Dependencies    testrun (makefile & service scripts), doxygen (if used)"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Last changed    %s"                                                    TESTRUN_LINEEND
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Switch on colors"                                                            TESTRUN_LINEEND
+"GCC_COLORS ?= 'gcc colors available, use them!'"                               TESTRUN_LINEEND
+"export GCC_COLORS"                                                             TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- PARAMETER DEFINITION --------------------------------------------------"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# CFLAGS"                                                                      TESTRUN_LINEEND
+"# -g            enable Debugging symbols"                                      TESTRUN_LINEEND
+"# -Ox           code optimization"                                             TESTRUN_LINEEND
+"# -Wall         enable Warnings"                                               TESTRUN_LINEEND
+"# -Wextra       additional Warnings"                                           TESTRUN_LINEEND
+TESTRUN_LINEEND
+"CFLAGS\t\t= -c -Wall -Wextra -fPIC"                                            TESTRUN_LINEEND
+"CFLAGS\t\t+= $(EXTRAHEADER)"                                                   TESTRUN_LINEEND
+"CFLAGS\t\t+= $(MODCFLAGS)"                                                     TESTRUN_LINEEND
+TESTRUN_LINEEND
+"PROJECTPATH\t:= $(abspath $(dir $(PROJECTMK)))"                                TESTRUN_LINEEND
+"DIRNAME\t\t:= $(notdir $(patsubst %%/,%%,$(dir $(PROJECTMK))))"                TESTRUN_LINEEND
+TESTRUN_LINEEND
+"LIBNAME\t\t:= lib$(DIRNAME)"                                                   TESTRUN_LINEEND
+"LIBNAMEPC\t:= $(LIBNAME).pc"                                                   TESTRUN_LINEEND
+TESTRUN_LINEEND
+"INSTALL\t\t:= install"                                                         TESTRUN_LINEEND
+TESTRUN_LINEEND
+"INCDIR\t\t:= $(PREFIX)/include/$(DIRNAME)"                                     TESTRUN_LINEEND
+"LIBDIR\t\t:= $(PREFIX)/lib"                                                    TESTRUN_LINEEND
+"EXECDIR\t\t:= $(PREFIX)/bin"                                                   TESTRUN_LINEEND
+"PRODIR\t\t:= $(LIBDIR)/$(DIRNAME)"                                             TESTRUN_LINEEND
+TESTRUN_LINEEND
+"EXECUTABLE\t= bin/$(DIRNAME)"                                                  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"CFLAGS\t\t+= -Iinclude"                                                        TESTRUN_LINEEND
+TESTRUN_LINEEND
+"MODMAKE\t\t:= $(patsubst %%,../../../123/%%/mod.mk,$(MODULES))"                 TESTRUN_LINEEND
+TESTRUN_LINEEND
+"STATIC\t\t= build/lib$(DIRNAME).a"                                             TESTRUN_LINEEND
+"SHARED\t\t= $(patsubst %%.a,%%.so,$(STATIC))"                                  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Source and object files to compile"                                          TESTRUN_LINEEND
+"SOURCES\t\t= $(wildcard ../../../123/**/*.c ../../../123/*.c)"                   TESTRUN_LINEEND
+"OBJECTS\t\t= $(patsubst %%.c,%%.o,$(SOURCES))"                                 TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- DEFAULT MAKE RULES ----------------------------------------------------"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"%%.o : %%.c"                                                                   TESTRUN_LINEEND
+"\t@echo \" (CC)    $@\""                                                       TESTRUN_LINEEND
+"\t@$(CC) $(CFLAGS) -g -o $@ -c $< $(LIBS)"                                     TESTRUN_LINEEND
+TESTRUN_LINEEND
+"all:\t\t%s"                                                                    TESTRUN_LINEEND
+"install:\t%s"                                                                  TESTRUN_LINEEND
+"uninstall:\t%s"                                                                TESTRUN_LINEEND
+TESTRUN_LINEEND
+"all_lib:\tstart lib tests pkgconfig done"                                      TESTRUN_LINEEND
+"all_exec:\tstart lib tests $(EXECUTABLE) done"                                 TESTRUN_LINEEND
+"all_service:\tall_exec"                                                        TESTRUN_LINEEND
+TESTRUN_LINEEND
+"lib:\t\tbuild sources"                                                         TESTRUN_LINEEND
+"sources:\tbuild $(STATIC) $(SHARED)"                                           TESTRUN_LINEEND
+TESTRUN_LINEEND
+"$(STATIC):  $(OBJECTS)"                                                        TESTRUN_LINEEND
+"\t@echo \" (AR)    $@ $(OBJECTS)\""                                            TESTRUN_LINEEND
+"\t@ar rcs $@ $(OBJECTS)"TESTRUN_LINEEND
+"\t@ranlib $@"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"$(SHARED): $(STATIC) $(OBJECTS)"                                               TESTRUN_LINEEND
+"\t@echo \" (CC)    $@ $(OBJECTS)\""                                            TESTRUN_LINEEND
+"\t@$(CC) -shared -o $@ $(OBJECTS) $(LIBS)"                                     TESTRUN_LINEEND
+TESTRUN_LINEEND
+"$(EXECUTABLE): $(OBJECTS)"                                                     TESTRUN_LINEEND
+"\t@echo \" (CC)    $@ $(OBJECTS)\""                                            TESTRUN_LINEEND
+"\t$(CC) -o $@ $(STATIC) $(LIBS)"                                               TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- BUILD & CLEANUP -----------------------------------------------------" TESTRUN_LINEEND
+TESTRUN_LINEEND
+"build:"                                                                        TESTRUN_LINEEND
+"\t@mkdir -p bin"                                                               TESTRUN_LINEEND
+"\t@mkdir -p build"                                                             TESTRUN_LINEEND
+"\t@mkdir -p build/test"                                                        TESTRUN_LINEEND
+"\t@mkdir -p build/test/omp"                                                    TESTRUN_LINEEND
+"\t@mkdir -p build/test/omp/unit"                                               TESTRUN_LINEEND
+"\t@mkdir -p build/test/omp/acceptance"                                         TESTRUN_LINEEND
+"\t@mkdir -p build/test/unit"                                                   TESTRUN_LINEEND
+"\t@mkdir -p build/test/acceptance"                                             TESTRUN_LINEEND
+"\t@mkdir -p build/test/log"                                                    TESTRUN_LINEEND
+"\t@echo \" (MK)    directories for build\""                                    TESTRUN_LINEEND
+TESTRUN_LINEEND
+".PHONY: clean"                                                                 TESTRUN_LINEEND
+"clean:"TESTRUN_LINEEND
+"\t@echo \" (CLEAN) $(LIBNAME)\""                                               TESTRUN_LINEEND
+"\t@rm -rf build bin doxygen/documentation $(OBJECTS) $(TESTS_OBJECTS) \\"      TESTRUN_LINEEND
+"\t\t$(LIBNAMEPC) $(TESTS_TMP_FILES)"                                           TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- DOCUMENATION -------------------------------------------------------"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"#NOTE requires doxygen"
+".PHONY: documentation"                                                         TESTRUN_LINEEND
+"documentation:"                                                                TESTRUN_LINEEND
+"\tdoxygen ./doxygen/AAA"                                                       TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- PKGCONFIG LIBRARY BUILD --------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+".PHONY: pkgconfig"                                                             TESTRUN_LINEEND
+"pkgconfig:"                                                                    TESTRUN_LINEEND
+"\t@echo 'prefix='$(PREFIX)                     >  $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'exec_prefix=$${prefix}'               >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'libdir=$${prefix}/lib'                >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'includedir=$${prefix}/include'        >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo ''                                     >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Name: '$(LIBNAME)                     >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Description: '                        >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Version: '$(VERSION)                  >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'URL: '$(PROJECT_URL)                  >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Libs: -L$${libdir} -l'$(DIRNAME)      >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Cflags: -I$${includedir}'             >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- INSTALLATION -------------------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Installation as a library ------------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"install_lib: $(SHARED) $(STATIC)"                                              TESTRUN_LINEEND
+"\t@echo \" (OK)    installed $(LIBNAME) to $(LIBDIR)\""                        TESTRUN_LINEEND
+"\t@mkdir -p $(PRODIR)"                                                         TESTRUN_LINEEND
+"\t@mkdir -p $(LIBDIR)/pkgconfig"                                               TESTRUN_LINEEND
+"\t@mkdir -p $(INCDIR)"                                                         TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0644 -t $(INCDIR) $(shell find include -name \"*.h\")"        TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0755 $(SHARED) $(PRODIR)"                                     TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0755 $(STATIC) $(PRODIR)"                                     TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0644 $(LIBNAMEPC) $(LIBDIR)/pkgconfig"                        TESTRUN_LINEEND
+"\t@ldconfig $(PRODIR)"                                                         TESTRUN_LINEEND
+TESTRUN_LINEEND
+"uninstall_lib:"                                                                TESTRUN_LINEEND
+"\t@echo \" (OK)    uninstalled $(LIBNAME) from $(LIBDIR)\""                    TESTRUN_LINEEND
+"\t@rm -rf $(INCDIR)"                                                           TESTRUN_LINEEND
+"\t@rm -rf $(PRODIR)"                                                           TESTRUN_LINEEND
+"\t@rm -rf $(PRODIR)/$(LIBNAME).a"                                              TESTRUN_LINEEND
+"\t@rm -rf $(PRODIR)/$(LIBNAME).so"                                             TESTRUN_LINEEND
+"\t@rm -rf $(LIBDIR)/pkgconfig/$(LIBNAMEPC)"                                    TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Installation as an executable --------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"install_exec: $(SHARED) $(STATIC)"                                             TESTRUN_LINEEND
+"\t@echo \" (OK)    installed $(DIRNAME) to $(EXECDIR)\""                       TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0755 bin/$(DIRNAME) $(EXECDIR)"                               TESTRUN_LINEEND
+TESTRUN_LINEEND
+"uninstall_exec:"                                                               TESTRUN_LINEEND
+"\t@echo \" (OK)    uninstalled $(DIRNAME) from $(EXECDIR)\""                   TESTRUN_LINEEND
+"\t@rm -rf $(EXECDIR)/$(DIRNAME)"                                               TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Installation as a service (outsourced to script)--------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"install_service: $(EXECUTABLE)"                                                TESTRUN_LINEEND
+"\t./config/install/XXX"                                                        TESTRUN_LINEEND
+TESTRUN_LINEEND
+"uninstall_service:"                                                            TESTRUN_LINEEND
+"\t./config/install/YYY"                                                        TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- INFORMATION PRINTING -----------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# print out a variable of the make file (e.g. \"make print-PROJECTPATH\")"     TESTRUN_LINEEND
+".PHONY: print"                                                                 TESTRUN_LINEEND
+"print-%%  : ; @echo $* = $($*)"                                                TESTRUN_LINEEND
+TESTRUN_LINEEND
+".PHONY: start"                                                                 TESTRUN_LINEEND
+"start:"                                                                        TESTRUN_LINEEND
+"\t@echo \"\\n (HINT)    $(PROJECT) \\t\\t ==> running make\\n\""               TESTRUN_LINEEND
+TESTRUN_LINEEND
+".PHONY: done"                                                                  TESTRUN_LINEEND
+"done:"                                                                         TESTRUN_LINEEND
+"\t@echo"                                                                       TESTRUN_LINEEND
+"\t@echo \" (DONE)  make $(PROJECT)\""                                          TESTRUN_LINEEND
+"\t@echo \" (HINT)  with unit testing      ==> 'make tested'\""                 TESTRUN_LINEEND
+"\t@echo \" (HINT)  perform installation   ==> 'sudo make install\\n\""         TESTRUN_LINEEND
+"\t@echo \" (HINT)  generate documentation ==> 'make documentation\\n\""        TESTRUN_LINEEND
+,date,
+config.project.name,
+date,
+all_target,
+install,
+uninstall);
+
+        testrun(strlen(result) != strlen(expect));
+        result = testrun_string_free(result);
+        result = testrun_lib_makefile_main_content(config);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", result, strlen(result));
+        testrun(strlen(result) == strlen(expect));
+        testrun(strncmp(result, expect, strlen(expect))== 0);
+
+        date   = testrun_string_free(date);
+        result = testrun_string_free(result);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_makefile_test_content(){
+
+        size_t size = 10000;
+        char expect[size];
+        bzero(expect, size);
+
+        testrun_config config = testrun_config_default();
+
+        char *result = testrun_lib_makefile_test_content(config);
+        char *date   = testrun_time_string(TESTRUN_SCOPE_DAY);
+
+        char script_unit[PATH_MAX];
+        char script_acceptance[PATH_MAX];
+        char script_coverage[PATH_MAX];
+        char script_loc[PATH_MAX];
+
+        bzero(script_unit,      PATH_MAX);
+        bzero(script_acceptance,PATH_MAX);
+        bzero(script_coverage,  PATH_MAX);
+        bzero(script_loc,       PATH_MAX);
+
+        // load script pathes out of config
+        testrun(testrun_path_script_unit_tests(
+                script_unit, PATH_MAX, &config));
+
+        testrun(testrun_path_script_acceptance_tests(
+                script_acceptance, PATH_MAX, &config));
+
+        testrun(testrun_path_script_coverage_tests(
+                script_coverage, PATH_MAX, &config));
+
+        testrun(testrun_path_script_loc_tests(
+                script_loc, PATH_MAX, &config));
+
+        snprintf(expect, size,
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Copyright 2017 Markus Toepfer"                                         TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Licensed under the Apache License, Version 2.0 (the \"License\");"     TESTRUN_LINEEND
+"#       you may not use this file except in compliance with the License."      TESTRUN_LINEEND
+"#       You may obtain a copy of the License at"                               TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#               http://www.apache.org/licenses/LICENSE-2.0"                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Unless required by applicable law or agreed to in writing, software"   TESTRUN_LINEEND
+"#       distributed under the License is distributed on an \"AS IS\" BASIS,"   TESTRUN_LINEEND
+"#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."TESTRUN_LINEEND
+"#       See the License for the specific language governing permissions and"   TESTRUN_LINEEND
+"#       limitations under the License."                                        TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       File            testrun_makefile.test"                                 TESTRUN_LINEEND
+"#       Authors         Markus Toepfer"                                        TESTRUN_LINEEND
+"#       Date            %s"                                                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Project         %s"                                                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Description     Makefile extension for the testrun enabled projects."  TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#                       The following part contains all required functionality"TESTRUN_LINEEND
+"#                       to use the testrun tools via a makefile. It may be"    TESTRUN_LINEEND
+"#                       seen as a makefile integrated testrunner framework."   TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#                       in particular:"                                        TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#                            \"make clean && make tested\""                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#                       may be used to build all sources as well as tests from"TESTRUN_LINEEND
+"#                       scratch and perform an integrated testrun over all after"TESTRUN_LINEEND
+"#                       compilation."                                          TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#                       Following folder structure is required"                TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#                            tests MUST be located at tests/"                  TESTRUN_LINEEND
+"#                            build MUST be located at build/"                  TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#                       ALL TEST SCRIPTS MAY BE EXCHANGED WITH CUSTOM RUNNERS" TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Usage           SHOULD be used included by parent makefile"            TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Dependencies    testrun scripts, lib for OpenMP (if used for testing)"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Last changed    %s"                                                    TESTRUN_LINEEND
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# (1) TESTRUN SOURCE DEFINITION --------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"TESTS_OMP_SRC\t= $(wildcard tests/**/*%s.c tests/*%s.c)"                       TESTRUN_LINEEND
+"TESTS_OMP_TARGET= $(patsubst %%.c,%%%s,$(TESTS_OMP_SRC))"                      TESTRUN_LINEEND
+"TESTS_SOURCES   = $(wildcard tests/**/*%s.c tests/*%s.c)"                      TESTRUN_LINEEND
+"TESTS_TARGET    = $(patsubst %%.c,%%%s,$(TESTS_SOURCES))"                      TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# (2) TESTRUN MAKE RULES ---------------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ALL IN ONE CALL (compile source, test and run test)"                         TESTRUN_LINEEND
+"tested:\ttests_build all testrun done"                                         TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ensure the build folder are available"                                       TESTRUN_LINEEND
+"tests_build:"                                                                  TESTRUN_LINEEND
+"\t@mkdir -p build/test"                                                        TESTRUN_LINEEND
+"\t@mkdir -p build/test/omp"                                                    TESTRUN_LINEEND
+"\t@mkdir -p build/test/omp/unit"                                               TESTRUN_LINEEND
+"\t@mkdir -p build/test/omp/acceptance"                                         TESTRUN_LINEEND
+"\t@mkdir -p build/test/unit"                                                   TESTRUN_LINEEND
+"\t@mkdir -p build/test/acceptance"                                             TESTRUN_LINEEND
+"\t@mkdir -p build/test/log"                                                    TESTRUN_LINEEND
+"\t@echo \" (MK)    directories for test under build\""                         TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# compile tests only"                                                          TESTRUN_LINEEND
+"tests:\ttests-resources $(TESTS_TARGET)"                                       TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# compile omp_tests only"                                                      TESTRUN_LINEEND
+"tests_omp:\ttests-resources $(TESTS_OMP_TARGET)"                               TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# copy test resources to build"                                                TESTRUN_LINEEND
+"tests-resources:"                                                              TESTRUN_LINEEND
+"\t@echo \" (CP)    tests/resources\""                                          TESTRUN_LINEEND
+"\t@cp -r tests/resources build/test"                                           TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# build all executable tests under build/tests"                                TESTRUN_LINEEND
+"$(TESTS_TARGET): $(TESTS_SOURCES)"                                             TESTRUN_LINEEND
+"\t@echo \" (CC)    $(@)\""                                                     TESTRUN_LINEEND
+"\t@$(CC) $(MODCFLAGS) $(patsubst %%%s,%%.c,$(@)) \\"                           TESTRUN_LINEEND
+"\t\t-ldl $(STATIC) -Wl,-rpath=$(RPATH) \\"                                     TESTRUN_LINEEND
+"\t\t-g -o $(subst tests/,build/test/,$(@)) $(LIBS)"                            TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# build all parallel executable tests under build/tests"                       TESTRUN_LINEEND
+"$(TESTS_OMP_TARGET): $(TESTS_OMP_SRC)"                                         TESTRUN_LINEEND
+"\t@echo \" (CC)    $(@)\""                                                     TESTRUN_LINEEND
+"\t@$(CC) $(MODCFLAGS) -fopenmp $(patsubst %%%s,%%.c,$(@)) \\"                  TESTRUN_LINEEND
+"\t\t-ldl $(STATIC) -Wl,-rpath=$(RPATH) \\"                                     TESTRUN_LINEEND
+"\t\t-g -o $(subst tests/,build/test/omp/,$(@)) $(LIBS)"                        TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# build a specific executable test (testname) under build/tests"               TESTRUN_LINEEND
+"# NOTE: May be usefull for module development in large projects"               TESTRUN_LINEEND
+"test:"                                                                         TESTRUN_LINEEND
+"\t@echo \" (CC)    $(testname)\""                                              TESTRUN_LINEEND
+"\t@$(CC) $(MODCFLAGS) $(patsubst build/test/%%%s, \\"                          TESTRUN_LINEEND
+"\t\ttests/%%.c,$(testname)) -ldl $(STATIC) -Wl,-rpath=$(RPATH) -g -o\\"        TESTRUN_LINEEND
+"\t\t$(patsubst tests/%%.c,build/test/%%%s,$(testname)) $(LIBS)"                TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# (3) TESTRUN runners ------------------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ACCEPTANCE TEST script invocation"                                           TESTRUN_LINEEND
+".PHONY: testrun-acceptance"                                                    TESTRUN_LINEEND
+"testrun-acceptance:"                                                           TESTRUN_LINEEND
+"\tsh %s"                                                                       TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# UNIT TEST script invocation"                                                 TESTRUN_LINEEND
+".PHONY: testrun-unit"                                                          TESTRUN_LINEEND
+"testrun-unit:"                                                                 TESTRUN_LINEEND
+"\tsh %s"                                                                       TESTRUN_LINEEND
+TESTRUN_LINEEND
+ "# COVERAGE TEST script invocation"                                            TESTRUN_LINEEND
+".PHONY: testrun-coverage"                                                      TESTRUN_LINEEND
+"testrun-coverage:"                                                             TESTRUN_LINEEND
+"\tsh %s $(PROJECTPATH)"                                                        TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# LOC TEST script invocation"                                                  TESTRUN_LINEEND
+".PHONY: testrun-loc"                                                           TESTRUN_LINEEND
+"testrun-loc:"TESTRUN_LINEEND
+"\tsh %s $(PROJECTPATH)"                                                        TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# TESTRUN all scripts"                                                         TESTRUN_LINEEND
+".PHONY: testrun"TESTRUN_LINEEND
+"testrun: $(TESTS_EXEC)"TESTRUN_LINEEND
+"\t@echo \" (HINT)  $(PROJECT) \\t\\t\\t==> running tests\\n\""                 TESTRUN_LINEEND
+"\tsh %s"                                                                       TESTRUN_LINEEND
+"\tsh %s"                                                                       TESTRUN_LINEEND
+"\tsh %s $(PROJECTPATH)"                                                        TESTRUN_LINEEND
+"\tsh %s $(PROJECTPATH)"                                                        TESTRUN_LINEEND
+,date,
+config.project.name,
+date,
+config.format.suffix.tests_source_omp,
+config.format.suffix.tests_source_omp,
+config.format.extensions.testexec,
+config.format.suffix.tests_source,
+config.format.suffix.tests_source,
+config.format.extensions.testexec,
+
+config.format.extensions.testexec,
+config.format.extensions.testexec,
+config.format.extensions.testexec, config.format.extensions.testexec,
+
+script_acceptance,
+script_unit,
+script_coverage,
+script_loc,
+script_unit,
+script_acceptance,
+script_coverage,
+script_loc
+);
+
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", result, strlen(result));
+
+        testrun(strlen(result) == strlen(expect));
+        testrun(strncmp(result, expect, strlen(expect))== 0);
+
+        date   = testrun_string_free(date);
+        result = testrun_string_free(result);
+        return testrun_log_success();
+}
+
 /*
  *      ------------------------------------------------------------------------
  *
@@ -1430,6 +2625,10 @@ int all_tests() {
        testrun_test(test_testrun_lib_script_coverage_tests_content);
        testrun_test(test_testrun_lib_script_loc_tests_content);
        testrun_test(test_testrun_lib_c_file_content);
+
+       testrun_test(test_testrun_lib_makefile_content);
+       testrun_test(test_testrun_lib_makefile_main_content);
+       testrun_test(test_testrun_lib_makefile_test_content);
 
        return 1;
 }

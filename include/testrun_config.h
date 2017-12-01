@@ -49,6 +49,7 @@
 #define TESTRUN_FOLDER_COPYRIGHT                "copyright"
 #define TESTRUN_FOLDER_INCLUDE                  "include"
 #define TESTRUN_FOLDER_SOURCE                   "src"
+#define TESTRUN_FOLDER_INSTALL                  "install"
 #define TESTRUN_FOLDER_TESTS                    "tests"
 #define TESTRUN_FOLDER_TESTS_UNIT               "unit"
 #define TESTRUN_FOLDER_TESTS_ACCEPTANCE         "acceptance"
@@ -58,6 +59,9 @@
 #define TESTRUN_FILE_CHANGELOG                  "CHANGELOG.MD"
 #define TESTRUN_FILE_README                     "README.MD"
 #define TESTRUN_FILE_COPYRIGHT                  "copyright"
+
+#define TESTRUN_FILE_SERVICE_INSTALL            "install.sh"
+#define TESTRUN_FILE_SERVICE_UNINSTALL          "uninstall.sh"
 
 #define TESTRUN_FILE_MAKEFILE                   "makefile"
 #define TESTRUN_FILE_MAKEFILE_SOURCE            "makefile.source"
@@ -99,6 +103,12 @@ typedef enum testrun_extension {
         TESTRUN_MAKE,
         TESTRUN_MARKDOWN,
         TESTRUN_CONFIG } testrun_extension_t;
+
+typedef enum testrun_project_type {
+        TESTRUN_LIB,
+        TESTRUN_EXEC,
+        TESTRUN_SERVICE} testrun_project_t;
+
 /*
  *      ------------------------------------------------------------------------
  *
@@ -119,6 +129,8 @@ struct testrun_config_file_extensions{
         char *markdown;
         char *config;
         char *testexec;
+        char *service;
+        char *socket;
 };
 
 
@@ -133,7 +145,8 @@ struct testrun_config_prefix{
 
 struct testrun_config_suffix{
 
-        char *test_source;
+        char *tests_source;
+        char *tests_source_omp;
 };
 
 /*----------------------------------------------------------------------------*/
@@ -225,14 +238,27 @@ struct testrun_config_path{
 
 };
 
+struct testrun_config_service{
+
+        char *folder;
+        char *install_script;
+        char *uninstall_script;
+        char *config_data;
+
+        char *listenStream;
+        char *listenData;
+};
+
 /*----------------------------------------------------------------------------*/
 
 struct testrun_config_project{
 
         char *name;
+        testrun_project_t type;
 
         struct testrun_config_path path;
         struct testrun_config_doxygen doxygen;
+        struct testrun_config_service service;
 
 };
 

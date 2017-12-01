@@ -398,6 +398,62 @@ bool testrun_path_project_to_docs(
 
 /*----------------------------------------------------------------------------*/
 
+bool testrun_path_project_to_doxygen(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        /**
+         *      default LINUX   "./docs"
+         */
+
+        if (max < (     strlen(config->project.path.to_doxygen) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.doxygen.foldername)  +
+                        1 ))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s",
+                config->project.path.to_doxygen,
+                config->format.path_split,
+                config->project.doxygen.foldername) < 0)
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_project_to_tests(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        /**
+         *      default LINUX   "./tests"
+         */
+
+        if (max < (     strlen(config->project.path.to_tests) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.tests.name)  +
+                        1 ))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s",
+                config->project.path.to_tests,
+                config->format.path_split,
+                config->project.path.tests.name) < 0)
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
 bool testrun_path_project_to_copyright(
         char *buffer, size_t max,
         struct testrun_config const * const config){
@@ -516,3 +572,213 @@ bool testrun_path_project_to_acceptance_tests(
         return true;
 }
 
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_script_unit_tests(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        char temp[max];
+        bzero(temp, max);
+
+        if (!testrun_path_project_to_tools(temp, max, config))
+                return false;
+
+        if (max <  1 +  strlen(temp) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.tests.tools.unit_script))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s",
+                temp,
+                config->format.path_split,
+                config->project.path.tests.tools.unit_script) < 0)
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_script_acceptance_tests(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        char temp[max];
+        bzero(temp, max);
+
+        if (!testrun_path_project_to_tools(temp, max, config))
+                return false;
+
+        if (max <  1 +  strlen(temp) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.tests.tools.acceptance_script))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s",
+                temp,
+                config->format.path_split,
+                config->project.path.tests.tools.acceptance_script) < 0)
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_script_coverage_tests(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        char temp[max];
+        bzero(temp, max);
+
+        if (!testrun_path_project_to_tools(temp, max, config))
+                return false;
+
+        if (max <  1 +  strlen(temp) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.tests.tools.coverage_script))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s",
+                temp,
+                config->format.path_split,
+                config->project.path.tests.tools.coverage_script) < 0)
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_script_loc_tests(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        char temp[max];
+        bzero(temp, max);
+
+        if (!testrun_path_project_to_tools(temp, max, config))
+                return false;
+
+        if (max <  1 +  strlen(temp) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.path.tests.tools.loc_script))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s",
+                temp,
+                config->format.path_split,
+                config->project.path.tests.tools.loc_script) < 0)
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_script_service_install(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        char temp[max];
+        bzero(temp, max);
+
+        if (!testrun_path_project_to_config(temp, max, config))
+                return false;
+
+        if (max <  1 +  strlen(temp) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.service.folder) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.service.install_script))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s%s%s",
+                temp,
+                config->format.path_split,
+                config->project.service.folder,
+                config->format.path_split,
+                config->project.service.install_script) < 0)
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_script_service_uninstall(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        char temp[max];
+        bzero(temp, max);
+
+        if (!testrun_path_project_to_config(temp, max, config))
+                return false;
+
+        if (max <  1 +  strlen(temp) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.service.folder) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.service.uninstall_script))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s%s%s",
+                temp,
+                config->format.path_split,
+                config->project.service.folder,
+                config->format.path_split,
+                config->project.service.uninstall_script) < 0)
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_doxygen_config(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        char temp[max];
+        bzero(temp, max);
+
+        if (!testrun_path_project_to_doxygen(temp, max, config))
+                return false;
+
+        if (max <  1 +  strlen(temp) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.doxygen.filename))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s",
+                temp,
+                config->format.path_split,
+                config->project.doxygen.filename) < 0)
+                return false;
+
+        return true;
+}

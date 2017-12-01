@@ -1,0 +1,140 @@
+#       ------------------------------------------------------------------------
+#
+#       Copyright 2017 Markus Toepfer
+#
+#       Licensed under the Apache License, Version 2.0 (the "License");
+#       you may not use this file except in compliance with the License.
+#       You may obtain a copy of the License at
+#
+#               http://www.apache.org/licenses/LICENSE-2.0
+#
+#       Unless required by applicable law or agreed to in writing, software
+#       distributed under the License is distributed on an "AS IS" BASIS,
+#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#       See the License for the specific language governing permissions and
+#       limitations under the License.
+#
+#       ------------------------------------------------------------------------
+#
+#       File            testrun_makefile.test
+#       Authors         Markus Toepfer
+#       Date            2017-12-01
+#
+#       Project         [PROJECT]
+#
+#       Description     Makefile extension for the testrun enabled projects.
+#
+#                       The following part contains all required functionality
+#                       to use the testrun tools via a makefile. It may be
+#                       seen as a makefile integrated testrunner framework.
+#
+#                       in particular:
+#
+#                            "make clean && make tested"
+#
+#                       may be used to build all sources as well as tests from
+#                       scratch and perform an integrated testrun over all after
+#                       compilation.
+#
+#                       Following folder structure is required
+#
+#                            tests MUST be located at tests/
+#                            build MUST be located at build/
+#
+#                       ALL TEST SCRIPTS MAY BE EXCHANGED WITH CUSTOM RUNNERS
+#
+#
+#       Usage           SHOULD be used included by parent makefile
+#
+#       Dependencies    testrun scripts, lib for OpenMP (if used for testing)
+#
+#       Last changed    2017-12-01
+#       ------------------------------------------------------------------------
+
+# (1) TESTRUN SOURCE DEFINITION --------------------------------------------
+
+TESTS_OMP_SRC	= $(wildcard tests/**/*_tests_omp.c tests/*_tests_omp.c)
+TESTS_OMP_TARGET= $(patsubst %.c,%.test,$(TESTS_OMP_SRC))
+TESTS_SOURCES   = $(wildcard tests/**/*_tests.c tests/*_tests.c)
+TESTS_TARGET    = $(patsubst %.c,%.test,$(TESTS_SOURCES))
+
+# (2) TESTRUN MAKE RULES ---------------------------------------------------
+
+# ALL IN ONE CALL (compile source, test and run test)
+tested:	tests_build all testrun done
+
+# ensure the build folder are available
+tests_build:
+	@mkdir -p build/test
+	@mkdir -p build/test/omp
+	@mkdir -p build/test/omp/unit
+	@mkdir -p build/test/omp/acceptance
+	@mkdir -p build/test/unit
+	@mkdir -p build/test/acceptance
+	@mkdir -p build/test/log
+	@echo " (MK)    directories for test under build"
+
+# compile tests only
+tests:	tests-resources $(TESTS_TARGET)
+
+# compile omp_tests only
+tests_omp:	tests-resources $(TESTS_OMP_TARGET)
+
+# copy test resources to build
+tests-resources:
+	@echo " (CP)    tests/resources"
+	@cp -r tests/resources build/test
+
+# build all executable tests under build/tests
+$(TESTS_TARGET): $(TESTS_SOURCES)
+	@echo " (CC)    $(@)"
+	@$(CC) $(MODCFLAGS) $(patsubst %.test,%.c,$(@)) \
+		-ldl $(STATIC) -Wl,-rpath=$(RPATH) \
+		-g -o $(subst tests/,build/test/,$(@)) $(LIBS)
+
+# build all parallel executable tests under build/tests
+$(TESTS_OMP_TARGET): $(TESTS_OMP_SRC)
+	@echo " (CC)    $(@)"
+	@$(CC) $(MODCFLAGS) -fopenmp $(patsubst %.test,%.c,$(@)) \
+		-ldl $(STATIC) -Wl,-rpath=$(RPATH) \
+		-g -o $(subst tests/,build/test/omp/,$(@)) $(LIBS)
+
+# build a specific executable test (testname) under build/tests
+# NOTE: May be usefull for module development in large projects
+test:
+	@echo " (CC)    $(testname)"
+	@$(CC) $(MODCFLAGS) $(patsubst build/test/%.test, \
+		tests/%.c,$(testname)) -ldl $(STATIC) -Wl,-rpath=$(RPATH) -g -o\
+		$(patsubst tests/%.c,build/test/%.test,$(testname)) $(LIBS)
+
+
+# (3) TESTRUN runners ------------------------------------------------------
+
+# ACCEPTANCE TEST script invocation
+.PHONY: testrun-acceptance
+testrun-acceptance:
+	sh ./tests/./tools/testrun_simple_acceptance_tests.sh
+
+# UNIT TEST script invocation
+.PHONY: testrun-unit
+testrun-unit:
+	sh ./tests/./tools/testrun_simple_unit_tests.sh
+
+# COVERAGE TEST script invocation
+.PHONY: testrun-coverage
+testrun-coverage:
+	sh ./tests/./tools/testrun_simple_coverage_tests.sh $(PROJECTPATH)
+
+# LOC TEST script invocation
+.PHONY: testrun-loc
+testrun-loc:
+	sh ./tests/./tools/testrun_simple_loc.sh $(PROJECTPATH)
+
+# TESTRUN all scripts
+.PHONY: testrun
+testrun: $(TESTS_EXEC)
+	@echo " (HINT)  $(PROJECT) \t\t\t==> running tests\n"
+	sh ./tests/./tools/testrun_simple_unit_tests.sh
+	sh ./tests/./tools/testrun_simple_acceptance_tests.sh
+	sh ./tests/./tools/testrun_simple_coverage_tests.sh $(PROJECTPATH)
+	sh ./tests/./tools/testrun_simple_loc.sh $(PROJECTPATH)

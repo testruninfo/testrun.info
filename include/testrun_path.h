@@ -196,6 +196,34 @@ bool testrun_path_project_to_docs(
 /*----------------------------------------------------------------------------*/
 
 /**
+        Get the path from project to doxygen.
+
+        @param buffer           buffer to write to
+        @param max              max open buffer
+        @param config           current config
+        @returns                true if path was written to buffer
+*/
+bool testrun_path_project_to_doxygen(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Get the path from project to tests.
+
+        @param buffer           buffer to write to
+        @param max              max open buffer
+        @param config           current config
+        @returns                true if path was written to buffer
+*/
+bool testrun_path_project_to_tests(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
         Get the path from project to config.
 
         @param buffer           buffer to write to
@@ -238,7 +266,7 @@ bool testrun_path_project_to_unit_tests(
 /*----------------------------------------------------------------------------*/
 
 /**
-        Get the path from project to acceptance tests.
+        Get the path from project to acceptance tests
 
         @param buffer           buffer to write to
         @param max              max open buffer
@@ -246,6 +274,104 @@ bool testrun_path_project_to_unit_tests(
         @returns                true if path was written to buffer
 */
 bool testrun_path_project_to_acceptance_tests(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Get the full path for the unit test script
+
+        @param buffer           buffer to write to
+        @param max              max open buffer
+        @param config           current config
+        @returns                true if path was written to buffer
+*/
+bool testrun_path_script_unit_tests(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Get the full path for the acceptance test script
+
+        @param buffer           buffer to write to
+        @param max              max open buffer
+        @param config           current config
+        @returns                true if path was written to buffer
+*/
+bool testrun_path_script_acceptance_tests(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Get the full path for the coverage test script
+
+        @param buffer           buffer to write to
+        @param max              max open buffer
+        @param config           current config
+        @returns                true if path was written to buffer
+*/
+bool testrun_path_script_coverage_tests(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Get the full path for the loc test script
+
+        @param buffer           buffer to write to
+        @param max              max open buffer
+        @param config           current config
+        @returns                true if path was written to buffer
+*/
+bool testrun_path_script_loc_tests(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Get the full path for the service install script
+
+        @param buffer           buffer to write to
+        @param max              max open buffer
+        @param config           current config
+        @returns                true if path was written to buffer
+*/
+bool testrun_path_script_service_install(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Get the full path for the service uninstall script
+
+        @param buffer           buffer to write to
+        @param max              max open buffer
+        @param config           current config
+        @returns                true if path was written to buffer
+*/
+bool testrun_path_script_service_uninstall(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Get the full path for the doxygen config
+
+        @param buffer           buffer to write to
+        @param max              max open buffer
+        @param config           current config
+        @returns                true if path was written to buffer
+*/
+bool testrun_path_doxygen_config(
         char *buffer, size_t max,
         struct testrun_config const * const config);
 

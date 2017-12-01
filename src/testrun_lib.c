@@ -924,3 +924,758 @@ error:
         body = testrun_string_free(body);
         return NULL;
 }
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_lib_makefile_content(testrun_config config){
+
+        char *author = "Markus Toepfer";
+
+        testrun_copyright copyright = testrun_copyright_apache_version_2(
+                "2017", author, NULL);
+
+        config.copyright       = copyright;
+        config.author          = author;
+
+        char *step1 = NULL;
+        char *step2 = NULL;
+        char *step3 = NULL;
+        char *wrong = "#!/usr/bin/env bash";
+        char *line  = testrun_text_block_splitline(8, 81, false);
+        line[0]     = '#';
+
+        size_t size1 = 0;
+        size_t size2 = 0;
+        size_t size3 = 0;
+
+        size_t c_size = 10000;
+        size_t d_size = 5000;
+
+        char content[c_size];
+        char description[d_size];
+        char usage[d_size];
+        char dependencies[d_size];
+
+        bzero(content,          c_size);
+        bzero(description,      d_size);
+        bzero(usage,            d_size);
+        bzero(dependencies,     d_size);
+
+        bzero(content,          c_size);
+        bzero(description,      d_size);
+        bzero(usage,            d_size);
+        bzero(dependencies,     d_size);
+
+
+        snprintf(description, d_size,
+        "This makefile defines project specific parameter."                     TESTRUN_TAG_END
+        "#"                                                                     TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"These parameter are:"                                TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"(1) used compiler and special flags"                 TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"(2) name and version"                                TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"(3) installation prefix"                             TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"(4) used libraries"                                  TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"(5) general makefiles used"
+        );
+
+        snprintf(usage, d_size, "make");
+        snprintf(dependencies, d_size, "make & compiler");
+
+        snprintf(content, c_size,
+        "CC = gcc"                                                              TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "PROJECT         := %s"                                                 TESTRUN_TAG_END
+        "VERSION         := 0.0.1"                                              TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# project path recalculation (if used included from parent make)"      TESTRUN_TAG_END
+        "PROJECTMK       := $(abspath $(lastword $(MAKEFILE_LIST)))"            TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# base directory for installation"                                     TESTRUN_TAG_END
+        "PREFIX          := /usr/local"                                         TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# LIBS USED (uncommented example includes)"                            TESTRUN_TAG_END
+        "#LIBS           += `pkg-config --libs libsystemd`"                     TESTRUN_TAG_END
+        "#LIBS           += `pkg-config --libs uuid`"                           TESTRUN_TAG_END
+        "#LIBS           += `pkg-config --libs openssl`"                        TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# EXTRA CFLAGS (example)"                                              TESTRUN_TAG_END
+        "MODCFLAGS       += -std=gnu11"                                         TESTRUN_TAG_END
+        "#MODCFLAGS      += -fopenmp"                                           TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "#GCC only flags (example)"                                             TESTRUN_TAG_END
+        "#MODCFLAGS      += -rdynamic"                                          TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "#TMP FILE DEFINITION"                                                  TESTRUN_TAG_END
+        "TESTS_TMP_FILES = $(wildcard /tmp/test_*)"                             TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# INCLUDE BASE MAKEFILE"                                               TESTRUN_TAG_END
+        "include testrun_makefile.main"                                         TESTRUN_TAG_END
+        "include testrun_makefile.test"                                         TESTRUN_TAG_END
+        ,config.project.name);
+
+        step1 = testrun_text_block_script(&config,
+                description, usage, dependencies, content);
+
+        if (!step1)
+                goto error;
+
+        size1 = strlen(step1);
+
+        if (!testrun_string_replace_first(
+                &step2, &size2,
+                step1,  size1,
+                wrong, strlen(wrong),
+                line, strlen(line)))
+                goto error;
+
+        /*
+         *      NOTE The next part replaces File [PROJECT], which is set
+         *      based on the configuraion with File makefile.
+         *      This will only work, as long as the indent used in
+         *      shell headers is fixed 8 spaces.
+         *      (20171201: Currently not configuable and fixed to 8 spaces)
+         *
+         *      Using this strategy we generate something like:
+         *
+         *      #       File            makefile
+         *      #       Authors         Markus Toepfer
+         *      #       Date            2017-12-01
+         *      #
+         *      #       Project         [PROJECT]
+         *
+         *      Project is set correct everywhere in the makefile,
+         *      based on the configuration. File is overriden with
+         *      correct filename.
+         */
+
+        snprintf(description, d_size, "%s%s#       Authors",
+                config.project.name, config.format.line_end);
+
+        snprintf(usage, d_size, "makefile%s#       Authors",
+                config.format.line_end);
+
+        if (!testrun_string_replace_first(
+                &step3, &size3,
+                step2,  size2,
+                description, strlen(description),
+                usage, strlen(usage)))
+                goto error;
+
+        line  = testrun_string_free(line);
+        step1 = testrun_string_free(step1);
+        step2 = testrun_string_free(step2);
+        return step3;
+error:
+        line  = testrun_string_free(line);
+        step1 = testrun_string_free(step1);
+        step2 = testrun_string_free(step2);
+        step3 = testrun_string_free(step3);
+        return NULL;
+}
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_lib_makefile_main_content(testrun_config config){
+
+        char *author = "Markus Toepfer";
+
+        testrun_copyright copyright = testrun_copyright_apache_version_2(
+                "2017", author, NULL);
+
+        config.copyright       = copyright;
+        config.author          = author;
+
+        char *step1 = NULL;
+        char *step2 = NULL;
+        char *step3 = NULL;
+        char *wrong = "#!/usr/bin/env bash";
+        char *line  = testrun_text_block_splitline(8, 81, false);
+        line[0]     = '#';
+
+        size_t size1 = 0;
+        size_t size2 = 0;
+        size_t size3 = 0;
+
+        size_t c_size = 10000;
+        size_t d_size = 5000;
+
+        char content[c_size];
+        char description[d_size];
+        char usage[d_size];
+        char dependencies[d_size];
+
+        bzero(content,          c_size);
+        bzero(description,      d_size);
+        bzero(usage,            d_size);
+        bzero(dependencies,     d_size);
+
+        bzero(content,          c_size);
+        bzero(description,      d_size);
+        bzero(usage,            d_size);
+        bzero(dependencies,     d_size);
+
+        char *all_target = NULL;
+        char *install    = NULL;
+        char *uninstall  = NULL;
+
+        switch (config.project.type){
+
+                case TESTRUN_LIB:
+                        all_target = "all_lib";
+                        install    = "install_lib";
+                        uninstall  = "uinstall_lib";
+                        break;
+                case TESTRUN_EXEC:
+                        all_target = "all_exec";
+                        install    = "install_exec";
+                        uninstall  = "uinstall_exec";
+                        break;
+                case TESTRUN_SERVICE:
+                        all_target = "all_exec";
+                        install    = "install_service";
+                        uninstall  = "uinstall_service";
+                        break;
+                default:
+                        goto error;
+        }
+
+        char path_src[PATH_MAX];
+        char script_install[PATH_MAX];
+        char script_uninstall[PATH_MAX];
+        char doxygen_config[PATH_MAX];
+
+        bzero(path_src, PATH_MAX);
+        bzero(script_install, PATH_MAX);
+        bzero(script_uninstall, PATH_MAX);
+        bzero(doxygen_config, PATH_MAX);
+
+        if (!testrun_path_project_to_source(
+                path_src, PATH_MAX, &config))
+                goto error;
+
+        if (!testrun_path_script_service_install(
+                script_install, PATH_MAX, &config))
+                goto error;
+
+        if (!testrun_path_script_service_uninstall(
+                script_uninstall, PATH_MAX, &config))
+                goto error;
+
+        if (!testrun_path_doxygen_config(
+                doxygen_config, PATH_MAX, &config))
+                goto error;
+
+
+        snprintf(description, d_size,
+        "Generic makefile for testrun based projects."                          TESTRUN_TAG_END
+        "#"                                                                     TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"Target of this makefile is an independent library"   TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"or executable to be installed at either PREFIX/lib " TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"or PREFIX/bin."
+        );
+
+        snprintf(usage, d_size, "SHOULD be used included by parent makefile");
+        snprintf(dependencies, d_size, "testrun (makefile & service scripts), doxygen (if used)");
+
+        snprintf(content, c_size,
+        "# Switch on colors"                                                    TESTRUN_TAG_END
+        "GCC_COLORS ?= 'gcc colors available, use them!'"                       TESTRUN_TAG_END
+        "export GCC_COLORS"                                                     TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# ----- PARAMETER DEFINITION --------------------------------------------------" TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# CFLAGS"                                                              TESTRUN_TAG_END
+        "# -g            enable Debugging symbols"                              TESTRUN_TAG_END
+        "# -Ox           code optimization"                                     TESTRUN_TAG_END
+        "# -Wall         enable Warnings"                                       TESTRUN_TAG_END
+        "# -Wextra       additional Warnings"                                   TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "CFLAGS\t\t= -c -Wall -Wextra -fPIC"                                    TESTRUN_TAG_END
+        "CFLAGS\t\t+= $(EXTRAHEADER)"                                           TESTRUN_TAG_END
+        "CFLAGS\t\t+= $(MODCFLAGS)"                                             TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "PROJECTPATH\t:= $(abspath $(dir $(PROJECTMK)))"                        TESTRUN_TAG_END
+        "DIRNAME\t\t:= $(notdir $(patsubst %%/,%%,$(dir $(PROJECTMK))))"        TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "LIBNAME\t\t:= lib$(DIRNAME)"                                           TESTRUN_TAG_END
+        "LIBNAMEPC\t:= $(LIBNAME).pc"                                           TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "INSTALL\t\t:= install"                                                 TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "INCDIR\t\t:= $(PREFIX)/include/$(DIRNAME)"                             TESTRUN_TAG_END
+        "LIBDIR\t\t:= $(PREFIX)/lib"                                            TESTRUN_TAG_END
+        "EXECDIR\t\t:= $(PREFIX)/bin"                                           TESTRUN_TAG_END
+        "PRODIR\t\t:= $(LIBDIR)/$(DIRNAME)"                                     TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "EXECUTABLE\t= bin/$(DIRNAME)"                                          TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "CFLAGS\t\t+= -Iinclude"                                                TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "MODMAKE\t\t:= $(patsubst %%,%s/%%/mod.mk,$(MODULES))"                  TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "STATIC\t\t= build/lib$(DIRNAME).a"                                     TESTRUN_TAG_END
+        "SHARED\t\t= $(patsubst %%.a,%%.so,$(STATIC))"                          TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# Source and object files to compile"                                  TESTRUN_TAG_END
+        "SOURCES\t\t= $(wildcard %s/**/*.c %s/*.c)"                             TESTRUN_TAG_END
+        "OBJECTS\t\t= $(patsubst %%.c,%%.o,$(SOURCES))"                         TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# ----- DEFAULT MAKE RULES ----------------------------------------------------"TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "%%.o : %%.c"                                                           TESTRUN_TAG_END
+        "\t@echo \" (CC)    $@\""                                               TESTRUN_TAG_END
+        "\t@$(CC) $(CFLAGS) -g -o $@ -c $< $(LIBS)"                             TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "all:\t\t%s"                                                            TESTRUN_TAG_END
+        "install:\t%s"                                                          TESTRUN_TAG_END
+        "uninstall:\t%s"                                                        TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "all_lib:\tstart lib tests pkgconfig done"                              TESTRUN_TAG_END
+        "all_exec:\tstart lib tests $(EXECUTABLE) done"                         TESTRUN_TAG_END
+        "all_service:\tall_exec"                                                TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "lib:\t\tbuild sources"                                                 TESTRUN_TAG_END
+        "sources:\tbuild $(STATIC) $(SHARED)"                                   TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "$(STATIC):  $(OBJECTS)"                                                TESTRUN_TAG_END
+        "\t@echo \" (AR)    $@ $(OBJECTS)\""                                    TESTRUN_TAG_END
+        "\t@ar rcs $@ $(OBJECTS)"TESTRUN_TAG_END
+        "\t@ranlib $@"TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "$(SHARED): $(STATIC) $(OBJECTS)"                                       TESTRUN_TAG_END
+        "\t@echo \" (CC)    $@ $(OBJECTS)\""                                    TESTRUN_TAG_END
+        "\t@$(CC) -shared -o $@ $(OBJECTS) $(LIBS)"                             TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "$(EXECUTABLE): $(OBJECTS)"                                             TESTRUN_TAG_END
+        "\t@echo \" (CC)    $@ $(OBJECTS)\""                                    TESTRUN_TAG_END
+        "\t$(CC) -o $@ $(STATIC) $(LIBS)"                                       TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# ----- BUILD & CLEANUP -----------------------------------------------------"TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "build:"                                                                TESTRUN_TAG_END
+        "\t@mkdir -p bin"                                                       TESTRUN_TAG_END
+        "\t@mkdir -p build"                                                     TESTRUN_TAG_END
+        "\t@mkdir -p build/test"                                                TESTRUN_TAG_END
+        "\t@mkdir -p build/test/omp"                                            TESTRUN_TAG_END
+        "\t@mkdir -p build/test/omp/unit"                                       TESTRUN_TAG_END
+        "\t@mkdir -p build/test/omp/acceptance"                                 TESTRUN_TAG_END
+        "\t@mkdir -p build/test/unit"                                           TESTRUN_TAG_END
+        "\t@mkdir -p build/test/acceptance"                                     TESTRUN_TAG_END
+        "\t@mkdir -p build/test/log"                                            TESTRUN_TAG_END
+        "\t@echo \" (MK)    directories for build\""                            TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        ".PHONY: clean"                                                         TESTRUN_TAG_END
+        "clean:"TESTRUN_TAG_END
+        "\t@echo \" (CLEAN) $(LIBNAME)\""                                       TESTRUN_TAG_END
+        "\t@rm -rf build bin doxygen/documentation $(OBJECTS) $(TESTS_OBJECTS) \\"TESTRUN_TAG_END
+        "\t\t$(LIBNAMEPC) $(TESTS_TMP_FILES)"                                   TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# ----- DOCUMENATION -------------------------------------------------------"TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "#NOTE requires doxygen"
+        ".PHONY: documentation"                                                 TESTRUN_TAG_END
+        "documentation:"                                                        TESTRUN_TAG_END
+        "\tdoxygen %s"                                                          TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# ----- PKGCONFIG LIBRARY BUILD --------------------------------------------"TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        ".PHONY: pkgconfig"                                                     TESTRUN_TAG_END
+        "pkgconfig:"                                                            TESTRUN_TAG_END
+        "\t@echo 'prefix='$(PREFIX)                     >  $(LIBNAMEPC)"        TESTRUN_TAG_END
+        "\t@echo 'exec_prefix=$${prefix}'               >> $(LIBNAMEPC)"        TESTRUN_TAG_END
+        "\t@echo 'libdir=$${prefix}/lib'                >> $(LIBNAMEPC)"        TESTRUN_TAG_END
+        "\t@echo 'includedir=$${prefix}/include'        >> $(LIBNAMEPC)"        TESTRUN_TAG_END
+        "\t@echo ''                                     >> $(LIBNAMEPC)"        TESTRUN_TAG_END
+        "\t@echo 'Name: '$(LIBNAME)                     >> $(LIBNAMEPC)"        TESTRUN_TAG_END
+        "\t@echo 'Description: '                        >> $(LIBNAMEPC)"        TESTRUN_TAG_END
+        "\t@echo 'Version: '$(VERSION)                  >> $(LIBNAMEPC)"        TESTRUN_TAG_END
+        "\t@echo 'URL: '$(PROJECT_URL)                  >> $(LIBNAMEPC)"        TESTRUN_TAG_END
+        "\t@echo 'Libs: -L$${libdir} -l'$(DIRNAME)      >> $(LIBNAMEPC)"        TESTRUN_TAG_END
+        "\t@echo 'Cflags: -I$${includedir}'             >> $(LIBNAMEPC)"        TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# ----- INSTALLATION -------------------------------------------------------"TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# Installation as a library ------------------------------------------------"TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "install_lib: $(SHARED) $(STATIC)"                                      TESTRUN_TAG_END
+        "\t@echo \" (OK)    installed $(LIBNAME) to $(LIBDIR)\""                TESTRUN_TAG_END
+        "\t@mkdir -p $(PRODIR)"                                                 TESTRUN_TAG_END
+        "\t@mkdir -p $(LIBDIR)/pkgconfig"                                       TESTRUN_TAG_END
+        "\t@mkdir -p $(INCDIR)"                                                 TESTRUN_TAG_END
+        "\t@$(INSTALL) -m 0644 -t $(INCDIR) $(shell find include -name \"*.h\")"TESTRUN_TAG_END
+        "\t@$(INSTALL) -m 0755 $(SHARED) $(PRODIR)"                             TESTRUN_TAG_END
+        "\t@$(INSTALL) -m 0755 $(STATIC) $(PRODIR)"                             TESTRUN_TAG_END
+        "\t@$(INSTALL) -m 0644 $(LIBNAMEPC) $(LIBDIR)/pkgconfig"                TESTRUN_TAG_END
+        "\t@ldconfig $(PRODIR)"                                                 TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "uninstall_lib:"                                                        TESTRUN_TAG_END
+        "\t@echo \" (OK)    uninstalled $(LIBNAME) from $(LIBDIR)\""            TESTRUN_TAG_END
+        "\t@rm -rf $(INCDIR)"                                                   TESTRUN_TAG_END
+        "\t@rm -rf $(PRODIR)"                                                   TESTRUN_TAG_END
+        "\t@rm -rf $(PRODIR)/$(LIBNAME).a"                                      TESTRUN_TAG_END
+        "\t@rm -rf $(PRODIR)/$(LIBNAME).so"                                     TESTRUN_TAG_END
+        "\t@rm -rf $(LIBDIR)/pkgconfig/$(LIBNAMEPC)"                            TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# Installation as an executable --------------------------------------------"TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "install_exec: $(SHARED) $(STATIC)"                                     TESTRUN_TAG_END
+        "\t@echo \" (OK)    installed $(DIRNAME) to $(EXECDIR)\""               TESTRUN_TAG_END
+        "\t@$(INSTALL) -m 0755 bin/$(DIRNAME) $(EXECDIR)"                       TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "uninstall_exec:"                                                       TESTRUN_TAG_END
+        "\t@echo \" (OK)    uninstalled $(DIRNAME) from $(EXECDIR)\""           TESTRUN_TAG_END
+        "\t@rm -rf $(EXECDIR)/$(DIRNAME)"                                       TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# Installation as a service (outsourced to script)--------------------------"TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "install_service: $(EXECUTABLE)"                                        TESTRUN_TAG_END
+        "\t%s"                                                                  TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "uninstall_service:"                                                    TESTRUN_TAG_END
+        "\t%s"                                                                  TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# ----- INFORMATION PRINTING -----------------------------------------------"TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# print out a variable of the make file (e.g. \"make print-PROJECTPATH\")"TESTRUN_TAG_END
+        ".PHONY: print"                                                         TESTRUN_TAG_END
+        "print-%%  : ; @echo $* = $($*)"                                        TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        ".PHONY: start"                                                         TESTRUN_TAG_END
+        "start:"                                                                TESTRUN_TAG_END
+        "\t@echo \"\\n (HINT)    $(PROJECT) \\t\\t ==> running make\\n\""       TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        ".PHONY: done"                                                          TESTRUN_TAG_END
+        "done:"                                                                 TESTRUN_TAG_END
+        "\t@echo"                                                               TESTRUN_TAG_END
+        "\t@echo \" (DONE)  make $(PROJECT)\""                                  TESTRUN_TAG_END
+        "\t@echo \" (HINT)  with unit testing      ==> 'make tested'\""         TESTRUN_TAG_END
+        "\t@echo \" (HINT)  perform installation   ==> 'sudo make install\\n\"" TESTRUN_TAG_END
+        "\t@echo \" (HINT)  generate documentation ==> 'make documentation\\n\""TESTRUN_TAG_END
+        ,path_src, path_src, path_src, all_target, install, uninstall, doxygen_config,
+        script_install, script_uninstall );
+
+        step1 = testrun_text_block_script(&config,
+                description, usage, dependencies, content);
+
+        if (!step1)
+                goto error;
+
+        size1 = strlen(step1);
+
+        if (!testrun_string_replace_first(
+                &step2, &size2,
+                step1,  size1,
+                wrong, strlen(wrong),
+                line, strlen(line)))
+                goto error;
+
+        /*
+         *      NOTE The next part replaces File [PROJECT], which is set
+         *      based on the configuraion with File makefile.
+         *      This will only work, as long as the indent used in
+         *      shell headers is fixed 8 spaces.
+         *      (20171201: Currently not configuable and fixed to 8 spaces)
+         *
+         *      Using this strategy we generate something like:
+         *
+         *      #       File            makefile
+         *      #       Authors         Markus Toepfer
+         *      #       Date            2017-12-01
+         *      #
+         *      #       Project         [PROJECT]
+         *
+         *      Project is set correct everywhere in the makefile,
+         *      based on the configuration. File is overriden with
+         *      correct filename.
+         */
+
+        snprintf(description, d_size, "%s%s#       Authors",
+                config.project.name, config.format.line_end);
+
+        snprintf(usage, d_size, "testrun_makefile.main%s#       Authors",
+                config.format.line_end);
+
+        if (!testrun_string_replace_first(
+                &step3, &size3,
+                step2,  size2,
+                description, strlen(description),
+                usage, strlen(usage)))
+                goto error;
+
+        line  = testrun_string_free(line);
+        step1 = testrun_string_free(step1);
+        step2 = testrun_string_free(step2);
+        return step3;
+error:
+        line  = testrun_string_free(line);
+        step1 = testrun_string_free(step1);
+        step2 = testrun_string_free(step2);
+        step3 = testrun_string_free(step3);
+        return NULL;
+}
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_lib_makefile_test_content(testrun_config config){
+
+        char *author = "Markus Toepfer";
+
+        testrun_copyright copyright = testrun_copyright_apache_version_2(
+                "2017", author, NULL);
+
+        config.copyright       = copyright;
+        config.author          = author;
+
+        char *step1 = NULL;
+        char *step2 = NULL;
+        char *step3 = NULL;
+        char *wrong = "#!/usr/bin/env bash";
+        char *line  = testrun_text_block_splitline(8, 81, false);
+        line[0]     = '#';
+
+        size_t size1 = 0;
+        size_t size2 = 0;
+        size_t size3 = 0;
+
+        size_t c_size = 10000;
+        size_t d_size = 6000;
+
+        char content[c_size];
+        char description[d_size];
+        char usage[d_size];
+        char dependencies[d_size];
+
+        char script_unit[PATH_MAX];
+        char script_acceptance[PATH_MAX];
+        char script_coverage[PATH_MAX];
+        char script_loc[PATH_MAX];
+
+        bzero(script_unit,      PATH_MAX);
+        bzero(script_acceptance,PATH_MAX);
+        bzero(script_coverage,  PATH_MAX);
+        bzero(script_loc,       PATH_MAX);
+
+        bzero(content,          c_size);
+        bzero(description,      d_size);
+        bzero(usage,            d_size);
+        bzero(dependencies,     d_size);
+
+        // load script pathes out of config
+        if (!testrun_path_script_unit_tests(
+                script_unit, PATH_MAX, &config))
+                goto error;
+
+        if (!testrun_path_script_acceptance_tests(
+                script_acceptance, PATH_MAX, &config))
+                goto error;
+
+        if (!testrun_path_script_coverage_tests(
+                script_coverage, PATH_MAX, &config))
+                goto error;
+
+        if (!testrun_path_script_loc_tests(
+                script_loc, PATH_MAX, &config))
+                goto error;
+
+
+        snprintf(description, d_size,
+        "Makefile extension for the testrun enabled projects."                  TESTRUN_TAG_END
+        "#"                                                                     TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"The following part contains all required functionality"TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"to use the testrun tools via a makefile. It may be " TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"seen as a makefile integrated testrunner framework." TESTRUN_TAG_END
+        "#"                                                                     TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"in particular:"                                      TESTRUN_TAG_END
+        "#"                                                                     TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"     \"make clean && make tested\""                  TESTRUN_TAG_END
+        "#"                                                                     TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"may be used to build all sources as well as tests from " TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"scratch and perform an integrated testrun over all after" TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"compilation."                                        TESTRUN_TAG_END
+        "#"                                                                     TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"Following folder structure is required"              TESTRUN_TAG_END
+        "#"                                                                     TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"     tests MUST be located at tests/"                 TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"     build MUST be located at build/"                 TESTRUN_TAG_END
+        "#"                                                                     TESTRUN_TAG_END
+        TESTRUN_TAG_OFFSET"ALL TEST SCRIPTS MAY BE EXCHANGED WITH CUSTOM RUNNERS"TESTRUN_TAG_END
+        "#");
+
+        snprintf(usage, d_size, "SHOULD be used included by parent makefile");
+        snprintf(dependencies, d_size, "testrun scripts, lib for OpenMP (if used for testing)");
+
+        snprintf(content, c_size,
+        TESTRUN_TAG_END
+        "# (1) TESTRUN SOURCE DEFINITION --------------------------------------------"TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "TESTS_OMP_SRC\t= $(wildcard tests/**/*%s.c tests/*%s.c)"               TESTRUN_TAG_END
+        "TESTS_OMP_TARGET= $(patsubst %%.c,%%%s,$(TESTS_OMP_SRC))"              TESTRUN_TAG_END
+        "TESTS_SOURCES   = $(wildcard tests/**/*%s.c tests/*%s.c)"              TESTRUN_TAG_END
+        "TESTS_TARGET    = $(patsubst %%.c,%%%s,$(TESTS_SOURCES))"              TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# (2) TESTRUN MAKE RULES ---------------------------------------------------"TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# ALL IN ONE CALL (compile source, test and run test)"                 TESTRUN_TAG_END
+        "tested:\ttests_build all testrun done"                                 TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# ensure the build folder are available"                               TESTRUN_TAG_END
+        "tests_build:"                                                          TESTRUN_TAG_END
+        "\t@mkdir -p build/test"                                                TESTRUN_TAG_END
+        "\t@mkdir -p build/test/omp"                                            TESTRUN_TAG_END
+        "\t@mkdir -p build/test/omp/unit"                                       TESTRUN_TAG_END
+        "\t@mkdir -p build/test/omp/acceptance"                                 TESTRUN_TAG_END
+        "\t@mkdir -p build/test/unit"                                           TESTRUN_TAG_END
+        "\t@mkdir -p build/test/acceptance"                                     TESTRUN_TAG_END
+        "\t@mkdir -p build/test/log"                                            TESTRUN_TAG_END
+        "\t@echo \" (MK)    directories for test under build\""                 TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# compile tests only"                                                  TESTRUN_TAG_END
+        "tests:\ttests-resources $(TESTS_TARGET)"                               TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# compile omp_tests only"                                              TESTRUN_TAG_END
+        "tests_omp:\ttests-resources $(TESTS_OMP_TARGET)"                       TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# copy test resources to build"                                        TESTRUN_TAG_END
+        "tests-resources:"                                                      TESTRUN_TAG_END
+        "\t@echo \" (CP)    tests/resources\""                                  TESTRUN_TAG_END
+        "\t@cp -r tests/resources build/test"                                   TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# build all executable tests under build/tests"                        TESTRUN_TAG_END
+        "$(TESTS_TARGET): $(TESTS_SOURCES)"                                     TESTRUN_TAG_END
+        "\t@echo \" (CC)    $(@)\""                                             TESTRUN_TAG_END
+        "\t@$(CC) $(MODCFLAGS) $(patsubst %%%s,%%.c,$(@)) \\"                   TESTRUN_TAG_END
+        "\t\t-ldl $(STATIC) -Wl,-rpath=$(RPATH) \\"                             TESTRUN_TAG_END
+        "\t\t-g -o $(subst tests/,build/test/,$(@)) $(LIBS)"                    TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# build all parallel executable tests under build/tests"               TESTRUN_TAG_END
+        "$(TESTS_OMP_TARGET): $(TESTS_OMP_SRC)"                                 TESTRUN_TAG_END
+        "\t@echo \" (CC)    $(@)\""                                             TESTRUN_TAG_END
+        "\t@$(CC) $(MODCFLAGS) -fopenmp $(patsubst %%%s,%%.c,$(@)) \\"          TESTRUN_TAG_END
+        "\t\t-ldl $(STATIC) -Wl,-rpath=$(RPATH) \\"                             TESTRUN_TAG_END
+        "\t\t-g -o $(subst tests/,build/test/omp/,$(@)) $(LIBS)"                TESTRUN_TAG_END
+        TESTRUN_TAG_END
+       "# build a specific executable test (testname) under build/tests"        TESTRUN_TAG_END
+        "# NOTE: May be usefull for module development in large projects"       TESTRUN_TAG_END
+        "test:"                                                                 TESTRUN_TAG_END
+        "\t@echo \" (CC)    $(testname)\""                                      TESTRUN_TAG_END
+        "\t@$(CC) $(MODCFLAGS) $(patsubst build/test/%%%s, \\"                  TESTRUN_TAG_END
+        "\t\ttests/%%.c,$(testname)) -ldl $(STATIC) -Wl,-rpath=$(RPATH) -g -o\\"TESTRUN_TAG_END
+        "\t\t$(patsubst tests/%%.c,build/test/%%%s,$(testname)) $(LIBS)"        TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# (3) TESTRUN runners ------------------------------------------------------"TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# ACCEPTANCE TEST script invocation"                                   TESTRUN_TAG_END
+        ".PHONY: testrun-acceptance"                                            TESTRUN_TAG_END
+        "testrun-acceptance:"                                                   TESTRUN_TAG_END
+        "\tsh %s"                                                               TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# UNIT TEST script invocation"                                         TESTRUN_TAG_END
+        ".PHONY: testrun-unit"                                                  TESTRUN_TAG_END
+        "testrun-unit:"                                                         TESTRUN_TAG_END
+        "\tsh %s"                                                               TESTRUN_TAG_END
+        TESTRUN_TAG_END
+         "# COVERAGE TEST script invocation"                                    TESTRUN_TAG_END
+        ".PHONY: testrun-coverage"                                              TESTRUN_TAG_END
+        "testrun-coverage:"                                                     TESTRUN_TAG_END
+        "\tsh %s $(PROJECTPATH)"                                                TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# LOC TEST script invocation"                                          TESTRUN_TAG_END
+        ".PHONY: testrun-loc"                                                   TESTRUN_TAG_END
+        "testrun-loc:"TESTRUN_TAG_END
+        "\tsh %s $(PROJECTPATH)"                                                TESTRUN_TAG_END
+        TESTRUN_TAG_END
+        "# TESTRUN all scripts"                                                 TESTRUN_TAG_END
+        ".PHONY: testrun"TESTRUN_TAG_END
+        "testrun: $(TESTS_EXEC)"TESTRUN_TAG_END
+        "\t@echo \" (HINT)  $(PROJECT) \\t\\t\\t==> running tests\\n\""         TESTRUN_TAG_END
+        "\tsh %s"                                                               TESTRUN_TAG_END
+        "\tsh %s"                                                               TESTRUN_TAG_END
+        "\tsh %s $(PROJECTPATH)"                                                TESTRUN_TAG_END
+        "\tsh %s $(PROJECTPATH)"                                                TESTRUN_TAG_END
+        ,config.format.suffix.tests_source_omp,
+        config.format.suffix.tests_source_omp,
+        config.format.extensions.testexec,
+        config.format.suffix.tests_source,
+        config.format.suffix.tests_source,
+        config.format.extensions.testexec,
+
+        config.format.extensions.testexec,
+        config.format.extensions.testexec,
+        config.format.extensions.testexec, config.format.extensions.testexec,
+
+        script_acceptance,
+        script_unit,
+        script_coverage,
+        script_loc,
+        script_unit,
+        script_acceptance,
+        script_coverage,
+        script_loc
+        );
+
+        step1 = testrun_text_block_script(&config,
+                description, usage, dependencies, content);
+
+        if (!step1)
+                goto error;
+
+        size1 = strlen(step1);
+
+        if (!testrun_string_replace_first(
+                &step2, &size2,
+                step1,  size1,
+                wrong, strlen(wrong),
+                line, strlen(line)))
+                goto error;
+
+        /*
+         *      NOTE The next part replaces File [PROJECT], which is set
+         *      based on the configuraion with File makefile.
+         *      This will only work, as long as the indent used in
+         *      shell headers is fixed 8 spaces.
+         *      (20171201: Currently not configuable and fixed to 8 spaces)
+         *
+         *      Using this strategy we generate something like:
+         *
+         *      #       File            makefile
+         *      #       Authors         Markus Toepfer
+         *      #       Date            2017-12-01
+         *      #
+         *      #       Project         [PROJECT]
+         *
+         *      Project is set correct everywhere in the makefile,
+         *      based on the configuration. File is overriden with
+         *      correct filename.
+         */
+
+        snprintf(description, d_size, "%s%s#       Authors",
+                config.project.name, config.format.line_end);
+
+        snprintf(usage, d_size, "testrun_makefile.test%s#       Authors",
+                config.format.line_end);
+
+        if (!testrun_string_replace_first(
+                &step3, &size3,
+                step2,  size2,
+                description, strlen(description),
+                usage, strlen(usage)))
+                goto error;
+
+        line  = testrun_string_free(line);
+        step1 = testrun_string_free(step1);
+        step2 = testrun_string_free(step2);
+        return step3;
+error:
+        line  = testrun_string_free(line);
+        step1 = testrun_string_free(step1);
+        step2 = testrun_string_free(step2);
+        step3 = testrun_string_free(step3);
+        return NULL;
+}

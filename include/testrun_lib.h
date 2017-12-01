@@ -148,7 +148,15 @@ char *testrun_lib_script_coverage_tests_content(testrun_config config);
 */
 char *testrun_lib_script_loc_tests_content(testrun_config config);
 
+/*----------------------------------------------------------------------------*/
 
+/**
+        Generate the central makefile of the project.
 
+        @param config           an input config, which is used as a base.
+        @returns                allocated string with script content or NULL
+                                (MUST be freed)
+*/
+char *testrun_lib_makefile_content(testrun_config config);
 
 #endif /* testrun_lib_h */

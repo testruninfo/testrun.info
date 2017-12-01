@@ -43,6 +43,7 @@ testrun_config testrun_config_default(){
                 .project =
                 {
                         .name = TESTRUN_TAG_DEFAULT_PROJECT,
+                        .type = TESTRUN_LIB,
                         .path =
                         {
                                 .name           = TESTRUN_PATH_DUMMY,
@@ -90,6 +91,14 @@ testrun_config testrun_config_default(){
                                         }
                                 }
                         },
+                        .service = {
+                                .folder           = TESTRUN_FOLDER_INSTALL,
+                                .install_script   = TESTRUN_FILE_SERVICE_INSTALL,
+                                .uninstall_script = TESTRUN_FILE_SERVICE_UNINSTALL,
+                                .config_data      = NULL,
+                                .listenStream     = NULL,
+                                .listenData       = NULL
+                        },
                         .doxygen =
                         {
                                 .foldername = TESTRUN_FOLDER_DOXYGEN,
@@ -123,7 +132,8 @@ testrun_config testrun_config_default(){
                         },
                         .suffix         =
                         {
-                                .test_source = "_test"
+                                .tests_source      = "_tests",
+                                .tests_source_omp  = "_tests_omp"
                         },
                         .extensions =
                         {
@@ -134,7 +144,9 @@ testrun_config testrun_config_default(){
                                 .make     = ".mk",
                                 .markdown = ".md",
                                 .config   = ".config",
-                                .testexec = ".test"
+                                .testexec = ".test",
+                                .service  = ".service",
+                                .socket   = ".socket"
                         }
                 }
         };
