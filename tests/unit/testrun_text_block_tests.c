@@ -1449,6 +1449,406 @@ int test_testrun_text_block_script(){
         return testrun_log_success();
 }
 
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_text_block_readme(){
+
+        size_t size = 10000;
+        char expect[size];
+        bzero(expect, size);
+
+        char *result = NULL;
+        char *module = "test";
+        testrun_config config = testrun_config_default();
+
+        testrun(!testrun_text_block_readme(NULL, NULL, NULL, NULL));
+
+        result = testrun_text_block_readme(&config, NULL, NULL, NULL);
+        testrun(result);
+
+        char *description = "123";
+        char *usage       = "456";
+        char *install     = "789";
+        char *copyright   = config.copyright.to_string(&config.copyright);
+
+snprintf(expect, size,
+"# Project %s"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"This module is self supported and may be build, tested, installed and"TESTRUN_LINEEND
+"run independently."TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"## Overview"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"* [Description](#description)"TESTRUN_LINEEND
+"* [Usage](#usage)"TESTRUN_LINEEND
+"* [Installation](#installation)"TESTRUN_LINEEND
+"* [Requirements](#requirements)"TESTRUN_LINEEND
+"* [Structure](#structure)"TESTRUN_LINEEND
+"* [Tests](#tests)"TESTRUN_LINEEND
+"* [Tips](#tips)"TESTRUN_LINEEND
+"* [Copyright](#copyright)"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"## Description"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"[TAG_DESCRIPTION]"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"## Usage"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"[TAG_USAGE]"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"## Installation"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"[TAG_INSTALL]"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"### build sources"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"\\`\\`\\`bash"TESTRUN_LINEEND
+"make"TESTRUN_LINEEND
+"\\`\\`\\`"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"### build documentation"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"\\`\\`\\`bash"TESTRUN_LINEEND
+"make documentation"TESTRUN_LINEEND
+"\\`\\`\\`"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"### test sources"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"\\`\\`\\`bash"TESTRUN_LINEEND
+"make tested"TESTRUN_LINEEND
+"\\`\\`\\`"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"### install binaries"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"\\`\\`\\`bash"TESTRUN_LINEEND
+"sudo make install"TESTRUN_LINEEND
+"\\`\\`\\`"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"### uninstall binaries"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"\\`\\`\\`bash"TESTRUN_LINEEND
+"sudo make uninstall"TESTRUN_LINEEND
+"\\`\\`\\`"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"## Requirements"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"## Structure"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"### Default structure of the folder:"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"\\`\\`\\`"TESTRUN_LINEEND
+"<pre>"TESTRUN_LINEEND
+"."TESTRUN_LINEEND
+"├── COPYRIGHT"TESTRUN_LINEEND
+"├── README.MD"TESTRUN_LINEEND
+"├── makefile"TESTRUN_LINEEND
+"├── testrun_makefile.main"TESTRUN_LINEEND
+"├── testrun_makefile.test"TESTRUN_LINEEND
+"│"TESTRUN_LINEEND
+"├── doxygen"TESTRUN_LINEEND
+"│   ├── documentation"TESTRUN_LINEEND
+"│   └── doxygen.config"TESTRUN_LINEEND
+"│"TESTRUN_LINEEND
+"├── docs"TESTRUN_LINEEND
+"│   ├── CHANGELOG.MD"TESTRUN_LINEEND
+"│   └── ..."TESTRUN_LINEEND
+"│"TESTRUN_LINEEND
+"├── include"TESTRUN_LINEEND
+"│   ├── %s.h"TESTRUN_LINEEND
+"│   └── ..."TESTRUN_LINEEND
+"│"TESTRUN_LINEEND
+"├── src"TESTRUN_LINEEND
+"│   ├── %s.c"TESTRUN_LINEEND
+"│   └── ..."TESTRUN_LINEEND
+"│"TESTRUN_LINEEND
+"└── tests"TESTRUN_LINEEND
+"    ├── resources"TESTRUN_LINEEND
+"    ├── tools"TESTRUN_LINEEND
+"    │   ├── testrun_runner.h"TESTRUN_LINEEND
+"    │   ├── testrun_simple_coverage_tests.sh"TESTRUN_LINEEND
+"    │   ├── testrun_simple_unit_tests.sh"TESTRUN_LINEEND
+"    │   ├── testrun_simple_acceptance_tests.sh"TESTRUN_LINEEND
+"    │   └── testrun_simple_loc.sh"TESTRUN_LINEEND
+"    ├── acceptance"TESTRUN_LINEEND
+"    │   ├── ..."TESTRUN_LINEEND
+"    │   └── ..."TESTRUN_LINEEND
+"    └── unit"TESTRUN_LINEEND
+"        ├── %s%s.c"TESTRUN_LINEEND
+"        └── ..."TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"</pre>"TESTRUN_LINEEND
+"\\`\\`\\`"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"## Tests"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"All test sources of will be recompiled on each make run. That means,"TESTRUN_LINEEND
+"all module tests will be created new on any change in any source file."TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"### Test a project (all files contained in tests/unit)"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"Test compile and run"TESTRUN_LINEEND
+"~~~"TESTRUN_LINEEND
+"make tested"TESTRUN_LINEEND
+"~~~"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"### Test a dedicated source file (single file of tests/unit)"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"To develop a test for a specific source file,"TESTRUN_LINEEND
+"it may be helpful to use a separated test run."TESTRUN_LINEEND
+"This may be done via an integrated make functionality."TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"Test compile example"TESTRUN_LINEEND
+"~~~"TESTRUN_LINEEND
+"make test testname=tests/unit/filename_tests.c"TESTRUN_LINEEND
+"~~~"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"Test compile and run in valgrind"TESTRUN_LINEEND
+"~~~"TESTRUN_LINEEND
+"make test testname=tests/unit/filename_tests.c && valgrind ./build/test/unit/filename_tests.test"TESTRUN_LINEEND
+"~~~"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"## Tips"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"## Copyright"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"%s"TESTRUN_LINEEND
+,config.project.name,
+config.project.name,
+config.project.name,
+config.project.name,
+config.format.suffix.tests_source,
+copyright);
+
+
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n",  result, strlen(result));
+
+        testrun(strlen(expect) == strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+
+        copyright = testrun_string_free(copyright);
+
+        // -------------------------------------------------------------
+        // Check parameter change
+        // -------------------------------------------------------------
+
+
+        config.copyright = testrun_copyright_MIT(
+                "2017", "owner", NULL);
+        config.project.name = "name";
+        config.format.suffix.tests_source = "_unit_test";
+        copyright = config.copyright.to_string(&config.copyright);
+        snprintf(expect, size,
+"# Project name"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"This module is self supported and may be build, tested, installed and"TESTRUN_LINEEND
+"run independently."TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"## Overview"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"* [Description](#description)"TESTRUN_LINEEND
+"* [Usage](#usage)"TESTRUN_LINEEND
+"* [Installation](#installation)"TESTRUN_LINEEND
+"* [Requirements](#requirements)"TESTRUN_LINEEND
+"* [Structure](#structure)"TESTRUN_LINEEND
+"* [Tests](#tests)"TESTRUN_LINEEND
+"* [Tips](#tips)"TESTRUN_LINEEND
+"* [Copyright](#copyright)"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"## Description"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"123"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"## Usage"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"456"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"## Installation"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"789"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"### build sources"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"\\`\\`\\`bash"TESTRUN_LINEEND
+"make"TESTRUN_LINEEND
+"\\`\\`\\`"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"### build documentation"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"\\`\\`\\`bash"TESTRUN_LINEEND
+"make documentation"TESTRUN_LINEEND
+"\\`\\`\\`"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"### test sources"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"\\`\\`\\`bash"TESTRUN_LINEEND
+"make tested"TESTRUN_LINEEND
+"\\`\\`\\`"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"### install binaries"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"\\`\\`\\`bash"TESTRUN_LINEEND
+"sudo make install"TESTRUN_LINEEND
+"\\`\\`\\`"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"### uninstall binaries"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"\\`\\`\\`bash"TESTRUN_LINEEND
+"sudo make uninstall"TESTRUN_LINEEND
+"\\`\\`\\`"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"## Requirements"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"## Structure"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"### Default structure of the folder:"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"\\`\\`\\`"TESTRUN_LINEEND
+"<pre>"TESTRUN_LINEEND
+"."TESTRUN_LINEEND
+"├── COPYRIGHT"TESTRUN_LINEEND
+"├── README.MD"TESTRUN_LINEEND
+"├── makefile"TESTRUN_LINEEND
+"├── testrun_makefile.main"TESTRUN_LINEEND
+"├── testrun_makefile.test"TESTRUN_LINEEND
+"│"TESTRUN_LINEEND
+"├── doxygen"TESTRUN_LINEEND
+"│   ├── documentation"TESTRUN_LINEEND
+"│   └── doxygen.config"TESTRUN_LINEEND
+"│"TESTRUN_LINEEND
+"├── docs"TESTRUN_LINEEND
+"│   ├── CHANGELOG.MD"TESTRUN_LINEEND
+"│   └── ..."TESTRUN_LINEEND
+"│"TESTRUN_LINEEND
+"├── include"TESTRUN_LINEEND
+"│   ├── name.h"TESTRUN_LINEEND
+"│   └── ..."TESTRUN_LINEEND
+"│"TESTRUN_LINEEND
+"├── src"TESTRUN_LINEEND
+"│   ├── name.c"TESTRUN_LINEEND
+"│   └── ..."TESTRUN_LINEEND
+"│"TESTRUN_LINEEND
+"└── tests"TESTRUN_LINEEND
+"    ├── resources"TESTRUN_LINEEND
+"    ├── tools"TESTRUN_LINEEND
+"    │   ├── testrun_runner.h"TESTRUN_LINEEND
+"    │   ├── testrun_simple_coverage_tests.sh"TESTRUN_LINEEND
+"    │   ├── testrun_simple_unit_tests.sh"TESTRUN_LINEEND
+"    │   ├── testrun_simple_acceptance_tests.sh"TESTRUN_LINEEND
+"    │   └── testrun_simple_loc.sh"TESTRUN_LINEEND
+"    ├── acceptance"TESTRUN_LINEEND
+"    │   ├── ..."TESTRUN_LINEEND
+"    │   └── ..."TESTRUN_LINEEND
+"    └── unit"TESTRUN_LINEEND
+"        ├── name_unit_test.c"TESTRUN_LINEEND
+"        └── ..."TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"</pre>"TESTRUN_LINEEND
+"\\`\\`\\`"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"## Tests"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"All test sources of will be recompiled on each make run. That means,"TESTRUN_LINEEND
+"all module tests will be created new on any change in any source file."TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"### Test a project (all files contained in tests/unit)"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"Test compile and run"TESTRUN_LINEEND
+"~~~"TESTRUN_LINEEND
+"make tested"TESTRUN_LINEEND
+"~~~"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"### Test a dedicated source file (single file of tests/unit)"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"To develop a test for a specific source file,"TESTRUN_LINEEND
+"it may be helpful to use a separated test run."TESTRUN_LINEEND
+"This may be done via an integrated make functionality."TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"Test compile example"TESTRUN_LINEEND
+"~~~"TESTRUN_LINEEND
+"make test testname=tests/unit/filename_tests.c"TESTRUN_LINEEND
+"~~~"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"Test compile and run in valgrind"TESTRUN_LINEEND
+"~~~"TESTRUN_LINEEND
+"make test testname=tests/unit/filename_tests.c && valgrind ./build/test/unit/filename_tests.test"TESTRUN_LINEEND
+"~~~"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"## Tips"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"## Copyright"TESTRUN_LINEEND
+""TESTRUN_LINEEND
+"%s"TESTRUN_LINEEND
+,copyright);
+
+
+        testrun(strlen(expect) != strlen(result));
+        result = testrun_string_free(result);
+        result = testrun_text_block_readme(
+                &config, description, usage, install);
+
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n",  result, strlen(result));
+
+        testrun(strlen(expect) == strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+
+        copyright = testrun_string_free(copyright);
+        result = testrun_string_free(result);
+
+        return testrun_log_success();
+}
+
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_text_block_doxygen_config(){
+
+        size_t size = 10000;
+        char expect[size];
+        bzero(expect, size);
+
+        char *result = NULL;
+        char *module = "test";
+        testrun_config config = testrun_config_default();
+
+        result = testrun_text_block_doxygen_config(&config);
+        snprintf(expect, size,
+        "DOXYFILE_ENCODING       = UTF-8"TESTRUN_LINEEND
+        "PROJECT_NAME            = %s"TESTRUN_LINEEND
+        "PROJECT_NUMBER          = 0.0.1"TESTRUN_LINEEND
+        "PROJECT_LOGO            = %s/%s/logo_doxygen.png"TESTRUN_LINEEND
+        "PROJECT_BRIEF           = \"%s brief\""TESTRUN_LINEEND
+        "OUTPUT_DIRECTORY        = %s/%s/documentation"TESTRUN_LINEEND
+        "CREATE_SUBDIRS          = NO"TESTRUN_LINEEND
+        "ALLOW_UNICODE_NAMES     = NO"TESTRUN_LINEEND
+        "OUTPUT_LANGUAGE         = English"TESTRUN_LINEEND
+        "MARKDOWN_SUPPORT        = YES"TESTRUN_LINEEND
+        "AUTOLINK_SUPPORT        = YES"TESTRUN_LINEEND
+        "INPUT                   = README.MD %s/%s %s/%s %s/%s"TESTRUN_LINEEND
+        "INPUT_ENCODING          = UTF-8"TESTRUN_LINEEND
+        "FILE_PATTERNS           = *.h *.c *.js *.py *.sh"TESTRUN_LINEEND
+        "RECURSIVE               = YES"TESTRUN_LINEEND
+        "EXCLUDE_SYMLINKS        = YES"TESTRUN_LINEEND
+        ,config.project.name,
+        config.project.path.to_doxygen, config.project.doxygen.foldername,
+        config.project.name,
+        config.project.path.to_doxygen, config.project.doxygen.foldername,
+        config.project.path.to_include, config.project.path.include,
+        config.project.path.to_source,  config.project.path.source,
+        config.project.path.to_tests,   config.project.path.tests.name);
+
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n",  result, strlen(result));
+
+        testrun(strlen(expect) == strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+
+        result = testrun_string_free(result);
+
+        return testrun_log_success();
+}
+
 /*
  *      ------------------------------------------------------------------------
  *
@@ -1476,6 +1876,9 @@ int all_tests() {
         testrun_test(test_testrun_text_block_sh_header_documentation);
 
         testrun_test(test_testrun_text_block_script);
+        testrun_test(test_testrun_text_block_readme);
+        testrun_test(test_testrun_text_block_doxygen_config);
+
 
         return 1;
 }

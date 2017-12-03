@@ -38,6 +38,8 @@
 #include "testrun_string.h"
 #include "testrun_config.h"
 #include "testrun_time.h"
+#include "testrun_path.h"
+
 
 /*----------------------------------------------------------------------------*/
 
@@ -240,5 +242,33 @@ char *testrun_text_block_script(
         char *usage,
         char *dependencies,
         char *content);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Create a default README.MD
+
+        @param config           configuration to be used
+        @param description      (optional) addition content for description
+        @param usage            (optional) addition content for usage
+        @param dependencies     (optional) addition content for dependencies
+        @param content          (optional) content body of the script
+        @returns                allocated string with statement or NULL
+*/
+char *testrun_text_block_readme(
+        testrun_config *config,
+        char *description,
+        char *usage,
+        char *installation);
+
+/**
+        Create a default doxygen.config
+
+        @param config           configuration to be used
+        @returns                allocated string with statement or NULL
+*/
+char *testrun_text_block_doxygen_config(
+        testrun_config *config);
+
 
 #endif /* testrun_text_block_h */

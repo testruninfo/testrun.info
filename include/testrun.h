@@ -43,7 +43,7 @@
 #include <unistd.h>     /* C89/C90 */
 #include <stdlib.h>     /* C89/C90 */
 #include <stdio.h>      /* C89/C90 */
-#include <string.h>     /* C89/C90 */
+#include <string.h>     /* qC89/C90 */
 #include <errno.h>      /* C89/C90 */
 #include <time.h>       /* C89/C90 */
 

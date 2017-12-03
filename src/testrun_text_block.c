@@ -947,3 +947,340 @@ error:
         step3 = testrun_string_free(step3);
         return NULL;
 }
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_text_block_readme(
+        testrun_config *config,
+        char *description,
+        char *usage,
+        char *installation){
+
+        if (!config)
+                return NULL;
+
+        char    *result = NULL;
+        size_t  re_size = 0;
+
+        char    *step1  = NULL;
+        char    *step2  = NULL;
+        char    *step3  = NULL;
+        char    *step4  = NULL;
+        char    *step5  = NULL;
+        size_t  size1   = 0;
+        size_t  size2   = 0;
+        size_t  size3   = 0;
+        size_t  size4   = 0;
+        size_t  size5   = 0;
+        size_t  length  = 0;
+
+        char *copyright = config->copyright.to_string(&config->copyright);
+
+        size_t  size = 10000;
+        char buffer[size];
+
+        if (!description)
+                description = "[TAG_DESCRIPTION]";
+
+        if (!usage)
+                usage = "[TAG_USAGE]";
+
+        if (!installation)
+                installation = "[TAG_INSTALL]";
+
+        snprintf(buffer, size,
+"# Project %s"                                                                  TESTRUN_TAG_END
+TESTRUN_TAG_END
+"This module is self supported and may be build, tested, installed and"         TESTRUN_TAG_END
+"run independently."                                                            TESTRUN_TAG_END
+TESTRUN_TAG_END
+"## Overview"                                                                   TESTRUN_TAG_END
+TESTRUN_TAG_END
+"* [Description](#description)"                                                 TESTRUN_TAG_END
+"* [Usage](#usage)"                                                             TESTRUN_TAG_END
+"* [Installation](#installation)"                                               TESTRUN_TAG_END
+"* [Requirements](#requirements)"                                               TESTRUN_TAG_END
+"* [Structure](#structure)"                                                     TESTRUN_TAG_END
+"* [Tests](#tests)"                                                             TESTRUN_TAG_END
+"* [Tips](#tips)"                                                               TESTRUN_TAG_END
+"* [Copyright](#copyright)   "                                                  TESTRUN_TAG_END
+TESTRUN_TAG_END
+"## Description"                                                                TESTRUN_TAG_END
+TESTRUN_TAG_END
+"[TAG_DESCRIPTION]"                                                             TESTRUN_TAG_END
+TESTRUN_TAG_END
+"## Usage"                                                                      TESTRUN_TAG_END
+TESTRUN_TAG_END
+"[TAG_USAGE]"                                                                   TESTRUN_TAG_END
+TESTRUN_TAG_END
+"## Installation"                                                               TESTRUN_TAG_END
+TESTRUN_TAG_END
+"[TAG_INSTALL]"                                                                 TESTRUN_TAG_END
+""TESTRUN_TAG_END
+"### build sources"                                                             TESTRUN_TAG_END
+TESTRUN_TAG_END
+"\\`\\`\\`bash"                                                                 TESTRUN_TAG_END
+"make"                                                                          TESTRUN_TAG_END
+"\\`\\`\\`"                                                                     TESTRUN_TAG_END
+TESTRUN_TAG_END
+"### build documentation"                                                       TESTRUN_TAG_END
+TESTRUN_TAG_END
+"\\`\\`\\`bash"                                                                 TESTRUN_TAG_END
+"make documentation"                                                            TESTRUN_TAG_END
+"\\`\\`\\`"                                                                     TESTRUN_TAG_END
+TESTRUN_TAG_END
+"### test sources"                                                              TESTRUN_TAG_END
+TESTRUN_TAG_END
+"\\`\\`\\`bash"                                                                 TESTRUN_TAG_END
+"make tested"                                                                   TESTRUN_TAG_END
+"\\`\\`\\`"                                                                     TESTRUN_TAG_END
+TESTRUN_TAG_END
+"### install binaries"                                                          TESTRUN_TAG_END
+TESTRUN_TAG_END
+"\\`\\`\\`bash"                                                                 TESTRUN_TAG_END
+"sudo make install"                                                             TESTRUN_TAG_END
+"\\`\\`\\`"                                                                     TESTRUN_TAG_END
+TESTRUN_TAG_END
+"### uninstall binaries"                                                        TESTRUN_TAG_END
+TESTRUN_TAG_END
+"\\`\\`\\`bash"                                                                 TESTRUN_TAG_END
+"sudo make uninstall"                                                           TESTRUN_TAG_END
+"\\`\\`\\`"                                                                     TESTRUN_TAG_END
+TESTRUN_TAG_END
+"## Requirements"                                                               TESTRUN_TAG_END
+TESTRUN_TAG_END
+"## Structure"                                                                  TESTRUN_TAG_END
+TESTRUN_TAG_END
+"### Default structure of the folder:"                                          TESTRUN_TAG_END
+TESTRUN_TAG_END
+"\\`\\`\\`"                                                                     TESTRUN_TAG_END
+"<pre>"                                                                         TESTRUN_TAG_END
+"."                                                                             TESTRUN_TAG_END
+"├── COPYRIGHT"                                                                 TESTRUN_TAG_END
+"├── README.MD"                                                                 TESTRUN_TAG_END
+"├── makefile"                                                                  TESTRUN_TAG_END
+"├── testrun_makefile.main"                                                     TESTRUN_TAG_END
+"├── testrun_makefile.test"                                                     TESTRUN_TAG_END
+"│"                                                                             TESTRUN_TAG_END
+"├── doxygen"                                                                   TESTRUN_TAG_END
+"│   ├── documentation"                                                         TESTRUN_TAG_END
+"│   └── doxygen.config"                                                        TESTRUN_TAG_END
+"│"                                                                             TESTRUN_TAG_END
+"├── docs"                                                                      TESTRUN_TAG_END
+"│   ├── CHANGELOG.MD"                                                          TESTRUN_TAG_END
+"│   └── ..."                                                                   TESTRUN_TAG_END
+"│"                                                                             TESTRUN_TAG_END
+"├── include"                                                                   TESTRUN_TAG_END
+"│   ├── %s.h"                                                                  TESTRUN_TAG_END
+"│   └── ..."                                                                   TESTRUN_TAG_END
+"│"                                                                             TESTRUN_TAG_END
+"├── src"                                                                       TESTRUN_TAG_END
+"│   ├── %s.c"                                                                  TESTRUN_TAG_END
+"│   └── ..."                                                                   TESTRUN_TAG_END
+"│"                                                                             TESTRUN_TAG_END
+"└── tests"                                                                     TESTRUN_TAG_END
+"    ├── resources"                                                             TESTRUN_TAG_END
+"    ├── tools"                                                                 TESTRUN_TAG_END
+"    │   ├── testrun_runner.h"                                                  TESTRUN_TAG_END
+"    │   ├── testrun_simple_coverage_tests.sh"                                  TESTRUN_TAG_END
+"    │   ├── testrun_simple_unit_tests.sh"                                      TESTRUN_TAG_END
+"    │   ├── testrun_simple_acceptance_tests.sh"                                TESTRUN_TAG_END
+"    │   └── testrun_simple_loc.sh"                                             TESTRUN_TAG_END
+"    ├── acceptance"                                                            TESTRUN_TAG_END
+"    │   ├── ..."                                                               TESTRUN_TAG_END
+"    │   └── ..."                                                               TESTRUN_TAG_END
+"    └── unit"                                                                  TESTRUN_TAG_END
+"        ├── %s%s.c"                                                            TESTRUN_TAG_END
+"        └── ..."                                                               TESTRUN_TAG_END
+TESTRUN_TAG_END
+"</pre>"                                                                        TESTRUN_TAG_END
+"\\`\\`\\`"                                                                     TESTRUN_TAG_END
+TESTRUN_TAG_END
+"## Tests"                                                                      TESTRUN_TAG_END
+TESTRUN_TAG_END
+"All test sources of will be recompiled on each make run. That means, "         TESTRUN_TAG_END
+"all module tests will be created new on any change in any source file.  "      TESTRUN_TAG_END
+TESTRUN_TAG_END
+"### Test a project (all files contained in tests/unit)"                        TESTRUN_TAG_END
+TESTRUN_TAG_END
+"Test compile and run "                                                         TESTRUN_TAG_END
+"~~~"                                                                           TESTRUN_TAG_END
+"make tested"                                                                   TESTRUN_TAG_END
+"~~~"                                                                           TESTRUN_TAG_END
+TESTRUN_TAG_END
+"### Test a dedicated source file (single file of tests/unit)"                  TESTRUN_TAG_END
+TESTRUN_TAG_END
+"To develop a test for a specific source file, "                                TESTRUN_TAG_END
+"it may be helpful to use a separated test run. "                               TESTRUN_TAG_END
+"This may be done via an integrated make functionality."                        TESTRUN_TAG_END
+TESTRUN_TAG_END
+"Test compile example"                                                          TESTRUN_TAG_END
+"~~~"                                                                           TESTRUN_TAG_END
+"make test testname=tests/unit/filename_tests.c "                               TESTRUN_TAG_END
+"~~~"                                                                           TESTRUN_TAG_END
+TESTRUN_TAG_END
+"Test compile and run in valgrind"                                              TESTRUN_TAG_END
+"~~~"                                                                           TESTRUN_TAG_END
+"make test testname=tests/unit/filename_tests.c && valgrind ./build/test/unit/filename_tests.test "TESTRUN_TAG_END
+"~~~"                                                                           TESTRUN_TAG_END
+TESTRUN_TAG_END
+"## Tips"                                                                       TESTRUN_TAG_END
+TESTRUN_TAG_END
+"## Copyright"                                                                  TESTRUN_TAG_END
+TESTRUN_TAG_END
+"[TAG_COPYRIGHT]"                                                               TESTRUN_TAG_END,
+        config->project.name,
+        config->project.name,
+        config->project.name,
+        config->project.name,
+        config->format.suffix.tests_source);
+
+
+        length = strlen(description);
+        // perform dynamic length adding of description
+        if (!testrun_string_replace_all(&step1, &size1,
+                buffer,   size,
+                "[TAG_DESCRIPTION]", strlen("[TAG_DESCRIPTION]"),
+                description, length,
+                false))
+                goto error;
+
+
+        length = strlen(usage);
+        // perform dynamic length adding of usage
+        if (!testrun_string_replace_all(&step2, &size2,
+                step1,   size1,
+                "[TAG_USAGE]", strlen("[TAG_USAGE]"),
+                usage, length,
+                false))
+                goto error;
+
+        length = strlen(installation);
+        // perform dynamic length adding of installation
+        if (!testrun_string_replace_all(&step3, &size3,
+                step2,   size2,
+                "[TAG_INSTALL]", strlen("[TAG_INSTALL]"),
+                installation, length,
+                false))
+                goto error;
+
+        length = strlen(copyright);
+        // perform dynamic length adding of copyright
+        if (!testrun_string_replace_all(&step4, &size4,
+                step3,   size3,
+                "[TAG_COPYRIGHT]", strlen("[TAG_COPYRIGHT]"),
+                copyright, length,
+                false))
+                goto error;
+
+        length = strlen(config->format.line_end);
+        // perform lineend replacement (if any)
+        if (!testrun_string_replace_all(&step5, &size5,
+                step4,   size4,
+                TESTRUN_TAG_END, strlen(TESTRUN_TAG_END),
+                config->format.line_end, length,
+                false))
+                goto error;
+
+        if (!testrun_string_clear_whitespace_before_lineend(&result, &re_size,
+                step5, size5,
+                config->format.line_end, length))
+                goto error;
+
+        copyright = testrun_string_free(copyright);
+        step1 = testrun_string_free(step1);
+        step2 = testrun_string_free(step2);
+        step3 = testrun_string_free(step3);
+        step4 = testrun_string_free(step4);
+        step5 = testrun_string_free(step5);
+
+        return result;
+
+error:
+        step1 = testrun_string_free(step1);
+        step2 = testrun_string_free(step2);
+        step3 = testrun_string_free(step3);
+        step4 = testrun_string_free(step4);
+        step5 = testrun_string_free(step5);
+        result = testrun_string_free(result);
+        return NULL;
+}
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_text_block_doxygen_config(
+        testrun_config *config){
+
+        if (!config)
+                return NULL;
+
+        char    *result = NULL;
+        size_t  re_size = 0;
+
+        char    *step1 = NULL;
+        size_t  size1  = 0;
+
+        size_t  size = 5000;
+        char buffer[size];
+
+        bzero(buffer, size);
+
+        char path_doxygen[PATH_MAX];
+        char path_include[PATH_MAX];
+        char path_src[PATH_MAX];
+        char path_tests[PATH_MAX];
+
+        if (!testrun_path_project_to_doxygen(path_doxygen, PATH_MAX, config))
+                return NULL;
+
+        if (!testrun_path_project_to_tests(path_tests, PATH_MAX, config))
+                return NULL;
+
+        if (!testrun_path_project_to_include(path_include, PATH_MAX, config))
+                return NULL;
+
+        if (!testrun_path_project_to_source(path_src, PATH_MAX, config))
+                return NULL;
+
+        if (snprintf(buffer, size,
+                "DOXYFILE_ENCODING       = UTF-8"                               TESTRUN_TAG_END
+                "PROJECT_NAME            = %s"                                  TESTRUN_TAG_END
+                "PROJECT_NUMBER          = 0.0.1"                               TESTRUN_TAG_END
+                "PROJECT_LOGO            = %s/logo_doxygen.png"                 TESTRUN_TAG_END
+                "PROJECT_BRIEF           = \"%s brief\""                        TESTRUN_TAG_END
+                "OUTPUT_DIRECTORY        = %s/documentation"                    TESTRUN_TAG_END
+                "CREATE_SUBDIRS          = NO"                                  TESTRUN_TAG_END
+                "ALLOW_UNICODE_NAMES     = NO"                                  TESTRUN_TAG_END
+                "OUTPUT_LANGUAGE         = English"                             TESTRUN_TAG_END
+                "MARKDOWN_SUPPORT        = YES"                                 TESTRUN_TAG_END
+                "AUTOLINK_SUPPORT        = YES"                                 TESTRUN_TAG_END
+                "INPUT                   = README.MD %s %s %s"                  TESTRUN_TAG_END
+                "INPUT_ENCODING          = UTF-8"                               TESTRUN_TAG_END
+                "FILE_PATTERNS           = *.h *.c *.js *.py *.sh"              TESTRUN_TAG_END
+                "RECURSIVE               = YES"                                 TESTRUN_TAG_END
+                "EXCLUDE_SYMLINKS        = YES"                                 TESTRUN_TAG_END,
+                config->project.name,  path_doxygen, config->project.name,
+                path_doxygen, path_include, path_src, path_tests
+        )< 0)
+                return NULL;
+
+
+        if (!testrun_string_replace_all(&step1, &size1,
+                buffer,   size,
+                TESTRUN_TAG_END, strlen(TESTRUN_TAG_END),
+                config->format.line_end, strlen(config->format.line_end),
+                false))
+                goto error;
+
+        if (!testrun_string_clear_whitespace_before_lineend(&result, &re_size,
+                step1, size1,
+                config->format.line_end, strlen(config->format.line_end)))
+                goto error;
+
+        step1 = testrun_string_free(step1);
+        return result;
+error:
+        step1 = testrun_string_free(step1);
+        result = testrun_string_free(result);
+        return NULL;
+}
