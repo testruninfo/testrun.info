@@ -34,7 +34,7 @@ thumbs.db
 **/gen/
 **/build/
 **/docs/doxygen/
-**/doxygen/documentations
+**/doxygen/documentation/
 
 
 ## generated packages
