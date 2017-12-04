@@ -350,6 +350,34 @@ bool testrun_path_script_service_install(
 /*----------------------------------------------------------------------------*/
 
 /**
+        Get the full path for the service.service configuration file.
+
+        @param buffer           buffer to write to
+        @param max              max open buffer
+        @param config           current config
+        @returns                true if path was written to buffer
+*/
+bool testrun_path_script_service_service_definition(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Get the full path for the service.socket configuration file.
+
+        @param buffer           buffer to write to
+        @param max              max open buffer
+        @param config           current config
+        @returns                true if path was written to buffer
+*/
+bool testrun_path_script_service_socket_definition(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
         Get the full path for the service uninstall script
 
         @param buffer           buffer to write to

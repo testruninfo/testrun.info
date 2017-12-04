@@ -723,6 +723,76 @@ bool testrun_path_script_service_install(
 
 /*----------------------------------------------------------------------------*/
 
+bool testrun_path_script_service_service_definition(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        char temp[max];
+        bzero(temp, max);
+
+        if (!testrun_path_project_to_config(temp, max, config))
+                return false;
+
+        if (max <  1 +  strlen(temp) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.service.folder) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.name) +
+                        strlen(".service"))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s%s%s%s",
+                temp,
+                config->format.path_split,
+                config->project.service.folder,
+                config->format.path_split,
+                config->project.name,
+                ".service") < 0)
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_path_script_service_socket_definition(
+        char *buffer, size_t max,
+        struct testrun_config const * const config){
+
+        if (!buffer || !config )
+                return false;
+
+        char temp[max];
+        bzero(temp, max);
+
+        if (!testrun_path_project_to_config(temp, max, config))
+                return false;
+
+        if (max <  1 +  strlen(temp) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.service.folder) +
+                        strlen(config->format.path_split) +
+                        strlen(config->project.name) +
+                        strlen(".socket"))
+                return false;
+
+        if (snprintf(buffer, max, "%s%s%s%s%s%s",
+                temp,
+                config->format.path_split,
+                config->project.service.folder,
+                config->format.path_split,
+                config->project.name,
+                ".socket") < 0)
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
 bool testrun_path_script_service_uninstall(
         char *buffer, size_t max,
         struct testrun_config const * const config){

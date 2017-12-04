@@ -1737,6 +1737,106 @@ int test_testrun_path_script_service_uninstall() {
 
 /*----------------------------------------------------------------------------*/
 
+int test_testrun_path_script_service_service_definition() {
+
+        char buffer[PATH_MAX];
+        bzero(buffer, PATH_MAX);
+
+        char expect[PATH_MAX];
+        bzero(expect, PATH_MAX);
+
+        testrun_config config = testrun_config_default();
+
+        testrun(!testrun_path_script_service_service_definition(
+                NULL, 0, NULL));
+        testrun(!testrun_path_script_service_service_definition(
+                buffer, PATH_MAX, NULL));
+        testrun(!testrun_path_script_service_service_definition(
+                buffer, 0, &config));
+        testrun(!testrun_path_script_service_service_definition(
+                NULL, PATH_MAX, &config));
+
+        testrun(testrun_path_script_service_service_definition(
+                buffer, PATH_MAX, &config));
+
+        snprintf(expect, PATH_MAX,
+                "./config/install/[PROJECT].service");
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", buffer, strlen(buffer));
+        testrun(strlen(expect) == strlen(buffer));
+        testrun(strncmp(expect, buffer, strlen(expect)) == 0);
+
+        config.project.name = "1";
+        config.project.service.folder = "B";
+        config.project.path.config = "A";
+        config.project.path.to_config = "../..";
+
+        snprintf(expect, PATH_MAX,
+                "../../A/B/1.service");
+
+        testrun(testrun_path_script_service_service_definition(
+                buffer, PATH_MAX, &config));
+
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", buffer, strlen(buffer));
+        testrun(strlen(expect) == strlen(buffer));
+        testrun(strncmp(expect, buffer, strlen(expect)) == 0);
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_path_script_service_socket_definition() {
+
+        char buffer[PATH_MAX];
+        bzero(buffer, PATH_MAX);
+
+        char expect[PATH_MAX];
+        bzero(expect, PATH_MAX);
+
+        testrun_config config = testrun_config_default();
+
+        testrun(!testrun_path_script_service_socket_definition(
+                NULL, 0, NULL));
+        testrun(!testrun_path_script_service_socket_definition(
+                buffer, PATH_MAX, NULL));
+        testrun(!testrun_path_script_service_socket_definition(
+                buffer, 0, &config));
+        testrun(!testrun_path_script_service_socket_definition(
+                NULL, PATH_MAX, &config));
+
+        testrun(testrun_path_script_service_socket_definition(
+                buffer, PATH_MAX, &config));
+
+        snprintf(expect, PATH_MAX,
+                "./config/install/[PROJECT].socket");
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", buffer, strlen(buffer));
+        testrun(strlen(expect) == strlen(buffer));
+        testrun(strncmp(expect, buffer, strlen(expect)) == 0);
+
+        config.project.name = "1";
+        config.project.service.folder = "B";
+        config.project.path.config = "A";
+        config.project.path.to_config = "../..";
+
+        snprintf(expect, PATH_MAX,
+                "../../A/B/1.socket");
+
+        testrun(testrun_path_script_service_socket_definition(
+                buffer, PATH_MAX, &config));
+
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", buffer, strlen(buffer));
+        testrun(strlen(expect) == strlen(buffer));
+        testrun(strncmp(expect, buffer, strlen(expect)) == 0);
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
 int test_testrun_path_doxygen_config() {
 
         char buffer[PATH_MAX];
@@ -1821,6 +1921,8 @@ int all_tests() {
         testrun_test(test_testrun_path_script_loc_tests);
         testrun_test(test_testrun_path_script_service_install);
         testrun_test(test_testrun_path_script_service_uninstall);
+        testrun_test(test_testrun_path_script_service_service_definition);
+        testrun_test(test_testrun_path_script_service_socket_definition);
         testrun_test(test_testrun_path_doxygen_config);
 
         return 1;

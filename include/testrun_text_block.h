@@ -271,4 +271,5 @@ char *testrun_text_block_doxygen_config(
         testrun_config *config);
 
 
+
 #endif /* testrun_text_block_h */

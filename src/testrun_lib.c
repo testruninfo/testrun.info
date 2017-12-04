@@ -276,34 +276,34 @@ char *testrun_lib_script_folder_runner_content(
         bzero(dependencies,     d_size);
 
         snprintf(description, d_size,
-        "Run each test.test of a folder and log Ok or NOK"                              TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"for each executed testfile of the folder."                   TESTRUN_TAG_END
-        "#"                                                                             TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"EXAMPLE OUTPUT"                                              TESTRUN_TAG_END
-        "#"                                                                             TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"[OK]  1/5 filename1.test"                                    TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"[NOK] 2/5 filename2.test"                                    TESTRUN_TAG_END
-        "#"                                                                             TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"MODES"                                                       TESTRUN_TAG_END
-        "#"                                                                             TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"(1) RUN ALL TESTS (log but ignore errors)"                   TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"    use script with 2 parameters "                           TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"    e.g. ./%s logfile /path"                                 TESTRUN_TAG_END
-        "#"                                                                             TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"    This mode will not return a test failure and"            TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"    may be used to run all tests and return success"         TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"    if all tests was run. (test results are logged)"         TESTRUN_TAG_END
-        "#"                                                                             TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"(2) FAIL ON ERROR (Fail on first error)"                     TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"    use script with 3 parameters"                            TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"    e.g. ./%s logfile /path 1"                               TESTRUN_TAG_END
-        "#"                                                                             TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"    This mode returns -1 on the first test failure."         TESTRUN_TAG_END
-        "#"                                                                             TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"PARAMETER"                                                   TESTRUN_TAG_END
-        "#"                                                                             TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"(1) path to logfile destination"                             TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"(2) path to folder with test cases"                          TESTRUN_TAG_END
+        "Run each test.test of a folder and log Ok or NOK\n"
+        TESTRUN_TAG_OFFSET"for each executed testfile of the folder.\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"EXAMPLE OUTPUT\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"[OK]  1/5 filename1.test\n"
+        TESTRUN_TAG_OFFSET"[NOK] 2/5 filename2.test\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"MODES\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"(1) RUN ALL TESTS (log but ignore errors)\n"
+        TESTRUN_TAG_OFFSET"    use script with 2 parameters\n"
+        TESTRUN_TAG_OFFSET"    e.g. ./%s logfile /path\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"    This mode will not return a test failure and\n"
+        TESTRUN_TAG_OFFSET"    may be used to run all tests and return success\n"
+        TESTRUN_TAG_OFFSET"    if all tests was run. (test results are logged)\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"(2) FAIL ON ERROR (Fail on first error)\n"
+        TESTRUN_TAG_OFFSET"    use script with 3 parameters\n"
+        TESTRUN_TAG_OFFSET"    e.g. ./%s logfile /path 1\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"    This mode returns -1 on the first test failure.\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"PARAMETER\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"(1) path to logfile destination\n"
+        TESTRUN_TAG_OFFSET"(2) path to folder with test cases\n"
         "#"
         ,config.project.name, config.project.name);
 
@@ -315,69 +315,69 @@ char *testrun_lib_script_folder_runner_content(
 
 
         snprintf(content, c_size,
-        TESTRUN_TAG_END
-        "#       ------------------------------------------------------------------------"     TESTRUN_TAG_END
-        "#       CONFIGURE SCRIPT BASED ON PRESET VARIBALES OR ON INPUT"                      TESTRUN_TAG_END
-        "#       ------------------------------------------------------------------------"     TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "if [ -z $1 ]; then"                                                                            TESTRUN_TAG_END
-        "        echo \"ERROR ... NO LOGFILE INPUT TO SRCIPT\""                                         TESTRUN_TAG_END
-        "        exit 1"                                                                                TESTRUN_TAG_END
-        "fi"                                                                                            TESTRUN_TAG_END
-        "LOGFILE=$1"                                                                                    TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "if [ -z $2 ]; then"                                                                            TESTRUN_TAG_END
-        "        echo \"ERROR ... FOLDER INPUT TO SRCIPT\""                                             TESTRUN_TAG_END
-        "        exit 1"                                                                                TESTRUN_TAG_END
-        "fi"                                                                                            TESTRUN_TAG_END
-        "FOLDER=$2"                                                                                     TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "FAIL_ON_ERROR=0"                                                                               TESTRUN_TAG_END
-        "if [ ! -z $3 ]; then"                                                                          TESTRUN_TAG_END
-        "        FAIL_ON_ERROR=1  "                                                                     TESTRUN_TAG_END
-        "fi"                                                                                            TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "if [ ! -w $LOGFILE ]; then"                                                                    TESTRUN_TAG_END
-        "        echo \"ERROR ... LOGFILE NOT WRITABLE\""                                               TESTRUN_TAG_END
-        "        exit 1"                                                                                TESTRUN_TAG_END
-        "fi"                                                                                            TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "#       ------------------------------------------------------------------------"              TESTRUN_TAG_END
-        "#       PERFORM TESTRUN"TESTRUN_TAG_END
-        "#       ------------------------------------------------------------------------"              TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "FILES=`ls  $FOLDER/ | grep \"\\.test\" | wc -l`"                                               TESTRUN_TAG_END
-        "if [ $? -ne 0 ]; then"                                                                         TESTRUN_TAG_END
-        "        echo \"ERROR ... could not count files of $FOLDER\""                                   TESTRUN_TAG_END
-        "        exit 1"                                                                                TESTRUN_TAG_END
-        "fi"                                                                                            TESTRUN_TAG_END
-        "c=0"                                                                                           TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "if [ $FILES -eq 0 ]; then"                                                                     TESTRUN_TAG_END
-        "        exit 0"                                                                                TESTRUN_TAG_END
-        "fi"                                                                                            TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "for i in $FOLDER/*%s"                                                                          TESTRUN_TAG_END
-        "do"                                                                                            TESTRUN_TAG_END
-        "        c=$((c+1))"                                                                            TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "        # RUN EXECUTABLE"                                                                      TESTRUN_TAG_END
-        "        $i 2>&1 >> $LOGFILE"                                                                   TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "        # CHECK RETURN OF EXECUTABLE"                                                          TESTRUN_TAG_END
-        "        if [ $? -ne 0 ]; then"                                                                 TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "                echo \"NOK\\t(\"$c\"/\"$FILES\")\\t\"$i"                                       TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "                if [ $FAIL_ON_ERROR -eq 1 ]; then"                                             TESTRUN_TAG_END
-        "                        exit 1"                                                                TESTRUN_TAG_END
-        "                fi"                                                                            TESTRUN_TAG_END
-        "        else"                                                                                  TESTRUN_TAG_END
-        "                echo \"OK\\t(\"$c\"/\"$FILES\")\\t\"$i"                                        TESTRUN_TAG_END
-        "        fi"                                                                                    TESTRUN_TAG_END
-        "done"                                                                                          TESTRUN_TAG_END
-        "exit 0"                                                                                        TESTRUN_TAG_END
-        ,config.format.extensions.testexec);
+        "\n"
+        "#       ------------------------------------------------------------------------\n"
+        "#       CONFIGURE SCRIPT BASED ON PRESET VARIBALES OR ON INPUT\n"
+        "#       ------------------------------------------------------------------------\n"
+        "\n"
+        "if [ -z $1 ]; then\n"
+        "        echo \"ERROR ... NO LOGFILE INPUT TO SRCIPT\"\n"
+        "        exit 1\n"
+        "fi\n"
+        "LOGFILE=$1\n"
+        "\n"
+        "if [ -z $2 ]; then\n"
+        "        echo \"ERROR ... FOLDER INPUT TO SRCIPT\"\n"
+        "        exit 1\n"
+        "fi\n"
+        "FOLDER=$2\n"
+        "\n"
+        "FAIL_ON_ERROR=0\n"
+        "if [ ! -z $3 ]; then\n"
+        "        FAIL_ON_ERROR=1  \n"
+        "fi\n"
+        "\n"
+        "if [ ! -w $LOGFILE ]; then\n"
+        "        echo \"ERROR ... LOGFILE NOT WRITABLE\"\n"
+        "        exit 1\n"
+        "fi\n"
+        "\n"
+        "#       ------------------------------------------------------------------------\n"
+        "#       PERFORM TESTRUN\n"
+        "#       ------------------------------------------------------------------------\n"
+        "\n"
+        "FILES=`ls  $FOLDER/ | grep \"\\%s\" | wc -l`\n"
+        "if [ $? -ne 0 ]; then\n"
+        "        echo \"ERROR ... could not count files of $FOLDER\"\n"
+        "        exit 1\n"
+        "fi\n"
+        "c=0\n"
+        "\n"
+        "if [ $FILES -eq 0 ]; then\n"
+        "        exit 0\n"
+        "fi\n"
+        "\n"
+        "for i in $FOLDER/*%s\n"
+        "do\n"
+        "        c=$((c+1))\n"
+        "\n"
+        "        # RUN EXECUTABLE\n"
+        "        $i 2>&1 >> $LOGFILE\n"
+        "\n"
+        "        # CHECK RETURN OF EXECUTABLE\n"
+        "        if [ $? -ne 0 ]; then\n"
+        "\n"
+        "                echo \"NOK\\t(\"$c\"/\"$FILES\")\\t\"$i\n"
+        "\n"
+        "                if [ $FAIL_ON_ERROR -eq 1 ]; then\n"
+        "                        exit 1\n"
+        "                fi\n"
+        "        else\n"
+        "                echo \"OK\\t(\"$c\"/\"$FILES\")\\t\"$i\n"
+        "        fi\n"
+        "done\n"
+        "exit 0\n"
+        ,config.format.extensions.testexec, config.format.extensions.testexec);
 
         return testrun_text_block_script(&config,
                 description, usage, dependencies, content);
@@ -425,12 +425,12 @@ char *testrun_lib_script_acceptance_tests_content(
                 return NULL;
 
         snprintf(description, d_size,
-        "Run all test executables build/test/acceptance/*.test"                         TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"Run the whole folder, until an error occurs."                TESTRUN_TAG_END
-        "#"                                                                             TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"MODE         FAIL ON ERROR (Fail on first test error)"       TESTRUN_TAG_END
-        "#"                                                                             TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"LOGFILE      build/test/log/acceptancetest.<time>.log"       TESTRUN_TAG_END
+        "Run all test executables build/test/acceptance/*.test\n"
+        TESTRUN_TAG_OFFSET"Run the whole folder, until an error occurs.\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"MODE         FAIL ON ERROR (Fail on first test error)\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"LOGFILE      build/test/log/acceptancetest.<time>.log\n"
         "#"
         );
 
@@ -442,47 +442,47 @@ char *testrun_lib_script_acceptance_tests_content(
 
 
         snprintf(content, c_size,
-        "echo \"-------------------------------------------------------\""      TESTRUN_TAG_END
-        "echo \"               SIMPLE ACCEPTANCE TESTING\""                     TESTRUN_TAG_END
-        "echo \"-------------------------------------------------------\""      TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "start_time=$(date \"+%%Y.%%m.%%d-%%H.%%M.%%S.%%N\")"                   TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# SET A LOGFILE"                                                       TESTRUN_TAG_END
-        "LOGFILE=\"build/test/log/acceptance_\".$start_time.\"log\""            TESTRUN_TAG_END
-        "echo \" (log)   $start_time\" > $LOGFILE"                              TESTRUN_TAG_END
-        "touch $LOGFILE"                                                        TESTRUN_TAG_END
-        "chmod a+w $LOGFILE"                                                    TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# SET THE FOLDER"                                                      TESTRUN_TAG_END
-        "FOLDER=\"build/test/acceptance\""                                      TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "echo \"-------------------------------------------------------\" >> $LOGFILE" TESTRUN_TAG_END
-        "echo \"               REPORT ACCEPTANCE TESTING\"                >> $LOGFILE" TESTRUN_TAG_END
-        "echo \"-------------------------------------------------------\" >> $LOGFILE"  TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# RUN THE RUNNER"                                                      TESTRUN_TAG_END
-        "sh %s  $LOGFILE $FOLDER FAIL_ON_ERROR"                                 TESTRUN_TAG_END
-        "RESULT=$?"                                                             TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "end_time=$(date \"+%%Y.%%m.%%d-%%H.%%M.%%S.%%N\")"                     TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# FINISH THE REPORT"                                                   TESTRUN_TAG_END
-        "echo \"-------------------------------------------------------\">> $LOGFILE"  TESTRUN_TAG_END
-        "echo \"DONE \\t ACCEPTANCE TEST RUN\"  >> $LOGFILE"                    TESTRUN_TAG_END
-        "if [ $RESULT -eq 0 ]; then"                                            TESTRUN_TAG_END
-        "        echo \"RESULT\\t SUCCESS\"  >> $LOGFILE"                       TESTRUN_TAG_END
-        "else"                                                                  TESTRUN_TAG_END
-        "        echo \"RESULT\\t FAILURE\"  >> $LOGFILE"                       TESTRUN_TAG_END
-        "fi"                                                                    TESTRUN_TAG_END
-        "echo \"START \\t $start_time\" >> $LOGFILE"                            TESTRUN_TAG_END
-        "echo \"END   \\t $end_time\" >> $LOGFILE"                              TESTRUN_TAG_END
-        "echo \"-------------------------------------------------------\">> $LOGFILE"      TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# DUMP THE REPORT"                                                   TESTRUN_TAG_END
-        "cat $LOGFILE"                                                          TESTRUN_TAG_END
-        "echo \"\""                                                             TESTRUN_TAG_END
-        "exit $RESULT"                                                          TESTRUN_TAG_END
+        "echo \"-------------------------------------------------------\"\n"
+        "echo \"               SIMPLE ACCEPTANCE TESTING\"\n"
+        "echo \"-------------------------------------------------------\"\n"
+        "\n"
+        "start_time=$(date \"+%%Y.%%m.%%d-%%H.%%M.%%S.%%N\")\n"
+        "\n"
+        "# SET A LOGFILE\n"
+        "LOGFILE=\"build/test/log/acceptance_\".$start_time.\"log\"\n"
+        "echo \" (log)   $start_time\" > $LOGFILE\n"
+        "touch $LOGFILE\n"
+        "chmod a+w $LOGFILE\n"
+        "\n"
+        "# SET THE FOLDER\n"
+        "FOLDER=\"build/test/acceptance\"\n"
+        "\n"
+        "echo \"-------------------------------------------------------\" >> $LOGFILE\n"
+        "echo \"               REPORT ACCEPTANCE TESTING\"                >> $LOGFILE\n"
+        "echo \"-------------------------------------------------------\" >> $LOGFILE\n"
+        "\n"
+        "# RUN THE RUNNER\n"
+        "sh %s  $LOGFILE $FOLDER FAIL_ON_ERROR\n"
+        "RESULT=$?\n"
+        "\n"
+        "end_time=$(date \"+%%Y.%%m.%%d-%%H.%%M.%%S.%%N\")\n"
+        "\n"
+        "# FINISH THE REPORT\n"
+        "echo \"-------------------------------------------------------\">> $LOGFILE\n"
+        "echo \"DONE \\t ACCEPTANCE TEST RUN\"  >> $LOGFILE\n"
+        "if [ $RESULT -eq 0 ]; then\n"
+        "        echo \"RESULT\\t SUCCESS\"  >> $LOGFILE\n"
+        "else\n"
+        "        echo \"RESULT\\t FAILURE\"  >> $LOGFILE\n"
+        "fi\n"
+        "echo \"START \\t $start_time\" >> $LOGFILE\n"
+        "echo \"END   \\t $end_time\" >> $LOGFILE\n"
+        "echo \"-------------------------------------------------------\">> $LOGFILE\n"
+        "\n"
+        "# DUMP THE REPORT\n"
+        "cat $LOGFILE\n"
+        "echo \"\"\n"
+        "exit $RESULT\n"
         ,
         testrunner);
 
@@ -532,12 +532,12 @@ char *testrun_lib_script_unit_tests_content(
                 return NULL;
 
         snprintf(description, d_size,
-        "Run all test executables build/test/unit/*.test"                         TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"Run the whole folder, until an error occurs."          TESTRUN_TAG_END
-        "#"                                                                       TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"MODE         FAIL ON ERROR (Fail on first test error)" TESTRUN_TAG_END
-        "#"                                                                       TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"LOGFILE      build/test/log/unittest.<time>.log"       TESTRUN_TAG_END
+        "Run all test executables build/test/unit/*.test\n"
+        TESTRUN_TAG_OFFSET"Run the whole folder, until an error occurs.\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"MODE         FAIL ON ERROR (Fail on first test error)\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"LOGFILE      build/test/log/unittest.<time>.log\n"
         "#"
         );
 
@@ -549,47 +549,47 @@ char *testrun_lib_script_unit_tests_content(
 
 
         snprintf(content, c_size,
-        "echo \"-------------------------------------------------------\""      TESTRUN_TAG_END
-        "echo \"               SIMPLE UNIT TESTING\""                           TESTRUN_TAG_END
-        "echo \"-------------------------------------------------------\""      TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "start_time=$(date \"+%%Y.%%m.%%d-%%H.%%M.%%S.%%N\")"                   TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# SET A LOGFILE"                                                       TESTRUN_TAG_END
-        "LOGFILE=\"build/test/log/unit_\".$start_time.\"log\""                  TESTRUN_TAG_END
-        "echo \" (log)   $start_time\" > $LOGFILE"                              TESTRUN_TAG_END
-        "touch $LOGFILE"                                                        TESTRUN_TAG_END
-        "chmod a+w $LOGFILE"                                                    TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# SET THE FOLDER"                                                      TESTRUN_TAG_END
-        "FOLDER=\"build/test/unit\""                                            TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "echo \"-------------------------------------------------------\" >> $LOGFILE" TESTRUN_TAG_END
-        "echo \"               REPORT UNIT TESTING\"                      >> $LOGFILE" TESTRUN_TAG_END
-        "echo \"-------------------------------------------------------\" >> $LOGFILE" TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# RUN THE RUNNER"                                                      TESTRUN_TAG_END
-        "sh %s  $LOGFILE $FOLDER FAIL_ON_ERROR"                                 TESTRUN_TAG_END
-        "RESULT=$?"                                                             TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "end_time=$(date \"+%%Y.%%m.%%d-%%H.%%M.%%S.%%N\")"                     TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# FINISH THE REPORT"                                                   TESTRUN_TAG_END
-        "echo \"-------------------------------------------------------\">> $LOGFILE"  TESTRUN_TAG_END
-        "echo \"DONE \\t UNIT TEST RUN\"  >> $LOGFILE"                          TESTRUN_TAG_END
-        "if [ $RESULT -eq 0 ]; then"                                            TESTRUN_TAG_END
-        "        echo \"RESULT\\t SUCCESS\"  >> $LOGFILE"                       TESTRUN_TAG_END
-        "else"                                                                  TESTRUN_TAG_END
-        "        echo \"RESULT\\t FAILURE\"  >> $LOGFILE"                       TESTRUN_TAG_END
-        "fi"                                                                    TESTRUN_TAG_END
-        "echo \"START \\t $start_time\" >> $LOGFILE"                            TESTRUN_TAG_END
-        "echo \"END   \\t $end_time\" >> $LOGFILE"                              TESTRUN_TAG_END
-        "echo \"-------------------------------------------------------\">> $LOGFILE" TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# DUMP THE REPORT"                                                     TESTRUN_TAG_END
-        "cat $LOGFILE"                                                          TESTRUN_TAG_END
-        "echo \"\""                                                             TESTRUN_TAG_END
-        "exit $RESULT"                                                          TESTRUN_TAG_END
+        "echo \"-------------------------------------------------------\"\n"
+        "echo \"               SIMPLE UNIT TESTING\"\n"
+        "echo \"-------------------------------------------------------\"\n"
+        "\n"
+        "start_time=$(date \"+%%Y.%%m.%%d-%%H.%%M.%%S.%%N\")\n"
+        "\n"
+        "# SET A LOGFILE\n"
+        "LOGFILE=\"build/test/log/unit_\".$start_time.\"log\"\n"
+        "echo \" (log)   $start_time\" > $LOGFILE\n"
+        "touch $LOGFILE\n"
+        "chmod a+w $LOGFILE\n"
+        "\n"
+        "# SET THE FOLDER\n"
+        "FOLDER=\"build/test/unit\"\n"
+        "\n"
+        "echo \"-------------------------------------------------------\" >> $LOGFILE\n"
+        "echo \"               REPORT UNIT TESTING\"                      >> $LOGFILE\n"
+        "echo \"-------------------------------------------------------\" >> $LOGFILE\n"
+        "\n"
+        "# RUN THE RUNNER\n"
+        "sh %s  $LOGFILE $FOLDER FAIL_ON_ERROR\n"
+        "RESULT=$?\n"
+        "\n"
+        "end_time=$(date \"+%%Y.%%m.%%d-%%H.%%M.%%S.%%N\")\n"
+        "\n"
+        "# FINISH THE REPORT\n"
+        "echo \"-------------------------------------------------------\">> $LOGFILE\n"
+        "echo \"DONE \\t UNIT TEST RUN\"  >> $LOGFILE\n"
+        "if [ $RESULT -eq 0 ]; then\n"
+        "        echo \"RESULT\\t SUCCESS\"  >> $LOGFILE\n"
+        "else\n"
+        "        echo \"RESULT\\t FAILURE\"  >> $LOGFILE\n"
+        "fi\n"
+        "echo \"START \\t $start_time\" >> $LOGFILE\n"
+        "echo \"END   \\t $end_time\" >> $LOGFILE\n"
+        "echo \"-------------------------------------------------------\">> $LOGFILE\n"
+        "\n"
+        "# DUMP THE REPORT\n"
+        "cat $LOGFILE\n"
+        "echo \"\"\n"
+        "exit $RESULT\n"
         ,
         testrunner);
 
@@ -639,23 +639,23 @@ char *testrun_lib_script_coverage_tests_content(
                 return NULL;
 
         snprintf(description, d_size,
-        "Count functions of folder src against their counterparts"              TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"in the unit test folder."                            TESTRUN_TAG_END
-        "#"                                                                     TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"CONVENTION"                                          TESTRUN_TAG_END
-        "#"                                                                     TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"Each function in any file of the source folder located"TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"\"%s\""                                              TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"will have a corresponding test function using the same "TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"name in any other file of the unit test folder located"TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"\"%s\","                                             TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"with a function name prefix of"                      TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"\"%s\"."                                             TESTRUN_TAG_END
-        "#"                                                                     TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"EXAMPLE      function | %sfunction"                  TESTRUN_TAG_END
-        "#"                                                                     TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"NOTE         This simple coverage test just covers the"TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"             observance of the given coding convention."   TESTRUN_TAG_END
+        "Count functions of folder src against their counterparts\n"
+        TESTRUN_TAG_OFFSET"in the unit test folder.\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"CONVENTION\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"Each function in any file of the source folder located\n"
+        TESTRUN_TAG_OFFSET"\"%s\"\n"
+        TESTRUN_TAG_OFFSET"will have a corresponding test function using the same\n"
+        TESTRUN_TAG_OFFSET"name in any other file of the unit test folder located\n"
+        TESTRUN_TAG_OFFSET"\"%s\",\n"
+        TESTRUN_TAG_OFFSET"with a function name prefix of\n"
+        TESTRUN_TAG_OFFSET"\"%s\".\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"EXAMPLE      function | %sfunction\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"NOTE         This simple coverage test just covers the\n"
+        TESTRUN_TAG_OFFSET"             observance of the given coding convention.\n"
         "#"
         ,path_src, path_unit, config.format.prefix.unit_test,config.format.prefix.unit_test);
 
@@ -667,80 +667,80 @@ char *testrun_lib_script_coverage_tests_content(
 
 
         snprintf(content, c_size,
-        TESTRUN_TAG_END
-        "start_time=$(date \"+%%Y.%%m.%%d-%%H.%%M.%%S\")"                       TESTRUN_TAG_END
-        "PREFIX=\"%s\""                                                         TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "LIBDIR=$1"                                                             TESTRUN_TAG_END
-        "SRCDIR=$1/%s"                                                          TESTRUN_TAG_END
-        "TESTDIR=$1/%s"                                                         TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# SET A LOGFILE"                                                       TESTRUN_TAG_END
-        "LOGFILE=\"$LIBDIR/build/test/log/coverage_\".$start_time.\"log\""      TESTRUN_TAG_END
-        "touch $LOGFILE"                                                        TESTRUN_TAG_END
-        "chmod a+w $LOGFILE"                                                    TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "echo \"-------------------------------------------------------\" >> $LOGFILE" TESTRUN_TAG_END
-        "echo \"               REPORT COVERAGE TESTING\"                  >> $LOGFILE" TESTRUN_TAG_END
-        "echo \"-------------------------------------------------------\" >> $LOGFILE" TESTRUN_TAG_END
-        "echo \"   TIME \\t $start_time\" >> $LOGFILE"                          TESTRUN_TAG_END
-        "echo \"\" >> $LOGFILE"                                                 TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# GENERATE CTAGS SOURCE"                                               TESTRUN_TAG_END
-        "cd $SRCDIR"                                                            TESTRUN_TAG_END
-        "if [ $? -ne 0 ]; then"                                                 TESTRUN_TAG_END
-        "        exit 1"                                                        TESTRUN_TAG_END
-        "fi"                                                                    TESTRUN_TAG_END
-        "ctags --c-types=f -R"                                                  TESTRUN_TAG_END
-        "# remove the ctags stuff, to leave just the function lines"            TESTRUN_TAG_END
-        "sed -e '/[ ]*m$/d' -e '/TAG/d' <tags>functions"                        TESTRUN_TAG_END
-        "# remove anything but the function names"                              TESTRUN_TAG_END
-        "awk '{print $1 }' $SRCDIR/functions > \\"                              TESTRUN_TAG_END
-        "        $SRCDIR/functionNames"                                         TESTRUN_TAG_END
-        "# count the lines"                                                     TESTRUN_TAG_END
-        "sourceFkt=\"$(cat functions | wc -l)\""                                TESTRUN_TAG_END
-        "echo \"   count source\\t\" $sourceFkt >> $LOGFILE"                     TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# GENERATE CTAGS TESTS"                                                TESTRUN_TAG_END
-        "cd $TESTDIR"                                                           TESTRUN_TAG_END
-        "if [ $? -ne 0 ]; then"                                                 TESTRUN_TAG_END
-        "        exit 1"                                                        TESTRUN_TAG_END
-        "fi"                                                                    TESTRUN_TAG_END
-        "ctags --c-types=f -R"                                                  TESTRUN_TAG_END
-        "# remove the ctags stuff, to leave just the function lines"            TESTRUN_TAG_END
-        "sed -e '/[ ]*m$/d' -e '/TAG/d' <tags>functions"                        TESTRUN_TAG_END
-        "# remove anything but the function names"                              TESTRUN_TAG_END
-        "awk '{print $1 }' $TESTDIR/functions > \\"                             TESTRUN_TAG_END
-        "        $TESTDIR/functionNames"                                        TESTRUN_TAG_END
-        "# count the lines"                                                     TESTRUN_TAG_END
-        "testFkt=\"$(cat functions | grep -i ^$PREFIX | wc -l)\""               TESTRUN_TAG_END
-        "echo \"   count tests\\t\" $testFkt >> $LOGFILE"                       TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "echo \"\\nUNTESTED: \" >> $LOGFILE"                                    TESTRUN_TAG_END
-        "# Found functions:"                                                    TESTRUN_TAG_END
-        "while read line;"                                                      TESTRUN_TAG_END
-        "do"                                                                    TESTRUN_TAG_END
-        "        grep -n '^test_'$line'$' $TESTDIR/functionNames > \\"          TESTRUN_TAG_END
-        "        /dev/null || echo $line >> $LOGFILE"                           TESTRUN_TAG_END
-        "done < $SRCDIR/functionNames"                                          TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "if [ $sourceFkt != 0 ]; then"                                          TESTRUN_TAG_END
-        "        echo \"............................................\"  >> $LOGFILE"TESTRUN_TAG_END
-        "        echo \"COVERAGE: $sourceFkt $testFkt\" | \\"                   TESTRUN_TAG_END
-        "        awk '{ printf $1 \" %%.2f %%%% \\n\", $3/$2*100}' >> $LOGFILE" TESTRUN_TAG_END
-        "fi"                                                                    TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "cat $LOGFILE"                                                          TESTRUN_TAG_END
-        "echo \"-------------------------------------------------------\""      TESTRUN_TAG_END
-        "echo \"\""TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# cleanup remove the files we created"TESTRUN_TAG_END
-        "rm $SRCDIR/tags"TESTRUN_TAG_END
-        "rm $SRCDIR/functions"TESTRUN_TAG_END
-        "rm $SRCDIR/functionNames"TESTRUN_TAG_END
-        "rm $TESTDIR/tags"TESTRUN_TAG_END
-        "rm $TESTDIR/functions"TESTRUN_TAG_END
-        "rm $TESTDIR/functionNames"TESTRUN_TAG_END
+        "\n"
+        "start_time=$(date \"+%%Y.%%m.%%d-%%H.%%M.%%S\")\n"
+        "PREFIX=\"%s\"\n"
+        "\n"
+        "LIBDIR=$1\n"
+        "SRCDIR=$1/%s\n"
+        "TESTDIR=$1/%s\n"
+        "\n"
+        "# SET A LOGFILE\n"
+        "LOGFILE=\"$LIBDIR/build/test/log/coverage_\".$start_time.\"log\"\n"
+        "touch $LOGFILE\n"
+        "chmod a+w $LOGFILE\n"
+        "\n"
+        "echo \"-------------------------------------------------------\" >> $LOGFILE\n"
+        "echo \"               REPORT COVERAGE TESTING\"                  >> $LOGFILE\n"
+        "echo \"-------------------------------------------------------\" >> $LOGFILE\n"
+        "echo \"   TIME \\t $start_time\" >> $LOGFILE\n"
+        "echo \"\" >> $LOGFILE\n"
+        "\n"
+        "# GENERATE CTAGS SOURCE\n"
+        "cd $SRCDIR\n"
+        "if [ $? -ne 0 ]; then\n"
+        "        exit 1\n"
+        "fi\n"
+        "ctags --c-types=f -R\n"
+        "# remove the ctags stuff, to leave just the function lines\n"
+        "sed -e '/[ ]*m$/d' -e '/TAG/d' <tags>functions\n"
+        "# remove anything but the function names\n"
+        "awk '{print $1 }' $SRCDIR/functions > \\\n"
+        "        $SRCDIR/functionNames\n"
+        "# count the lines\n"
+        "sourceFkt=\"$(cat functions | wc -l)\"\n"
+        "echo \"   count source\\t\" $sourceFkt >> $LOGFILE\n"
+        "\n"
+        "# GENERATE CTAGS TESTS\n"
+        "cd $TESTDIR\n"
+        "if [ $? -ne 0 ]; then\n"
+        "        exit 1\n"
+        "fi\n"
+        "ctags --c-types=f -R\n"
+        "# remove the ctags stuff, to leave just the function lines\n"
+        "sed -e '/[ ]*m$/d' -e '/TAG/d' <tags>functions\n"
+        "# remove anything but the function names\n"
+        "awk '{print $1 }' $TESTDIR/functions > \\\n"
+        "        $TESTDIR/functionNames\n"
+        "# count the lines\n"
+        "testFkt=\"$(cat functions | grep -i ^$PREFIX | wc -l)\"\n"
+        "echo \"   count tests\\t\" $testFkt >> $LOGFILE\n"
+        "\n"
+        "echo \"\\nUNTESTED: \" >> $LOGFILE\n"
+        "# Found functions:\n"
+        "while read line;\n"
+        "do\n"
+        "        grep -n '^test_'$line'$' $TESTDIR/functionNames > \\\n"
+        "        /dev/null || echo $line >> $LOGFILE\n"
+        "done < $SRCDIR/functionNames\n"
+        "\n"
+        "if [ $sourceFkt != 0 ]; then\n"
+        "        echo \"............................................\"  >> $LOGFILE\n"
+        "        echo \"COVERAGE: $sourceFkt $testFkt\" | \\\n"
+        "        awk '{ printf $1 \" %%.2f %%%% \\n\", $3/$2*100}' >> $LOGFILE\n"
+        "fi\n"
+        "\n"
+        "cat $LOGFILE\n"
+        "echo \"-------------------------------------------------------\"\n"
+        "echo \"\"\n"
+        "\n"
+        "# cleanup remove the files we created\n"
+        "rm $SRCDIR/tags\n"
+        "rm $SRCDIR/functions\n"
+        "rm $SRCDIR/functionNames\n"
+        "rm $TESTDIR/tags\n"
+        "rm $TESTDIR/functions\n"
+        "rm $TESTDIR/functionNames\n"
         ,config.format.prefix.unit_test, path_src, path_unit);
 
         return testrun_text_block_script(&config,
@@ -801,7 +801,7 @@ char *testrun_lib_script_loc_tests_content(
                 return NULL;
 
         snprintf(description, d_size,
-        "Count the lines of src and unit | acceptance tests."                   TESTRUN_TAG_END
+        "Count the lines of src and unit | acceptance tests.\n"
         TESTRUN_TAG_OFFSET"This file uses no error checking.");
 
         snprintf(usage, d_size,
@@ -811,17 +811,17 @@ char *testrun_lib_script_loc_tests_content(
         snprintf(dependencies, d_size, "bash, find, xargs, wc");
 
         snprintf(content, c_size,
-        "echo \"-------------------------------------------------------\""      TESTRUN_TAG_END
-        "echo \"               SIMPLE LOC COUNTER\""                            TESTRUN_TAG_END
-        "echo \"-------------------------------------------------------\""      TESTRUN_TAG_END
-        "echo \"(LOC) src\""                                                    TESTRUN_TAG_END
-        "find $1/%s -name '*.c' | xargs wc -l"                                  TESTRUN_TAG_END
-        "echo \"(LOC) tests/unit\""                                             TESTRUN_TAG_END
-        "find $1/%s -name '*.c' | xargs wc -l"                                  TESTRUN_TAG_END
-        "echo \"(LOC) tests/acceptance\""                                       TESTRUN_TAG_END
-        "find $1/%s -name '*.c' | xargs wc -l"                                  TESTRUN_TAG_END
-        "echo \"-------------------------------------------------------\""      TESTRUN_TAG_END
-        "echo \"\""                                                             TESTRUN_TAG_END
+        "echo \"-------------------------------------------------------\"\n"
+        "echo \"               SIMPLE LOC COUNTER\"\n"
+        "echo \"-------------------------------------------------------\"\n"
+        "echo \"(LOC) src\"\n"
+        "find $1/%s -name '*.c' | xargs wc -l\n"
+        "echo \"(LOC) tests/unit\"\n"
+        "find $1/%s -name '*.c' | xargs wc -l\n"
+        "echo \"(LOC) tests/acceptance\"\n"
+        "find $1/%s -name '*.c' | xargs wc -l\n"
+        "echo \"-------------------------------------------------------\"\n"
+        "echo \"\"\n"
         , path_src, path_unit, path_acceptance);
 
         return testrun_text_block_script(&config,
@@ -968,13 +968,13 @@ char *testrun_lib_makefile_content(testrun_config config){
 
 
         snprintf(description, d_size,
-        "This makefile defines project specific parameter."                     TESTRUN_TAG_END
-        "#"                                                                     TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"These parameter are:"                                TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"(1) used compiler and special flags"                 TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"(2) name and version"                                TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"(3) installation prefix"                             TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"(4) used libraries"                                  TESTRUN_TAG_END
+        "This makefile defines project specific parameter.\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"These parameter are:\n"
+        TESTRUN_TAG_OFFSET"(1) used compiler and special flags\n"
+        TESTRUN_TAG_OFFSET"(2) name and version\n"
+        TESTRUN_TAG_OFFSET"(3) installation prefix\n"
+        TESTRUN_TAG_OFFSET"(4) used libraries\n"
         TESTRUN_TAG_OFFSET"(5) general makefiles used"
         );
 
@@ -982,35 +982,35 @@ char *testrun_lib_makefile_content(testrun_config config){
         snprintf(dependencies, d_size, "make & compiler");
 
         snprintf(content, c_size,
-        "CC = gcc"                                                              TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "PROJECT         := %s"                                                 TESTRUN_TAG_END
-        "VERSION         := 0.0.1"                                              TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# project path recalculation (if used included from parent make)"      TESTRUN_TAG_END
-        "PROJECTMK       := $(abspath $(lastword $(MAKEFILE_LIST)))"            TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# base directory for installation"                                     TESTRUN_TAG_END
-        "PREFIX          := /usr/local"                                         TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# LIBS USED (uncommented example includes)"                            TESTRUN_TAG_END
-        "#LIBS           += `pkg-config --libs libsystemd`"                     TESTRUN_TAG_END
-        "#LIBS           += `pkg-config --libs uuid`"                           TESTRUN_TAG_END
-        "#LIBS           += `pkg-config --libs openssl`"                        TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# EXTRA CFLAGS (example)"                                              TESTRUN_TAG_END
-        "MODCFLAGS       += -std=gnu11"                                         TESTRUN_TAG_END
-        "#MODCFLAGS      += -fopenmp"                                           TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "#GCC only flags (example)"                                             TESTRUN_TAG_END
-        "#MODCFLAGS      += -rdynamic"                                          TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "#TMP FILE DEFINITION"                                                  TESTRUN_TAG_END
-        "TESTS_TMP_FILES = $(wildcard /tmp/test_*)"                             TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# INCLUDE BASE MAKEFILE"                                               TESTRUN_TAG_END
-        "include testrun_makefile.main"                                         TESTRUN_TAG_END
-        "include testrun_makefile.test"                                         TESTRUN_TAG_END
+        "CC = gcc\n"
+        "\n"
+        "PROJECT         := %s\n"
+        "VERSION         := 0.0.1\n"
+        "\n"
+        "# project path recalculation (if used included from parent make)\n"
+        "PROJECTMK       := $(abspath $(lastword $(MAKEFILE_LIST)))\n"
+        "\n"
+        "# base directory for installation\n"
+        "PREFIX          := /usr/local\n"
+        "\n"
+        "# LIBS USED (uncommented example includes)\n"
+        "#LIBS           += `pkg-config --libs libsystemd`\n"
+        "#LIBS           += `pkg-config --libs uuid`\n"
+        "#LIBS           += `pkg-config --libs openssl`\n"
+        "\n"
+        "# EXTRA CFLAGS (example)\n"
+        "MODCFLAGS       += -std=gnu11\n"
+        "#MODCFLAGS      += -fopenmp\n"
+        "\n"
+        "#GCC only flags (example)\n"
+        "#MODCFLAGS      += -rdynamic\n"
+        "\n"
+        "#TMP FILE DEFINITION\n"
+        "TESTS_TMP_FILES = $(wildcard /tmp/test_*)\n"
+        "\n"
+        "# INCLUDE BASE MAKEFILE\n"
+        "include testrun_makefile.main\n"
+        "include testrun_makefile.test\n"
         ,config.project.name);
 
         step1 = testrun_text_block_script(&config,
@@ -1167,10 +1167,10 @@ char *testrun_lib_makefile_main_content(testrun_config config){
 
 
         snprintf(description, d_size,
-        "Generic makefile for testrun based projects."                          TESTRUN_TAG_END
-        "#"                                                                     TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"Target of this makefile is an independent library"   TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"or executable to be installed at either PREFIX/lib " TESTRUN_TAG_END
+        "Generic makefile for testrun based projects.\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"Target of this makefile is an independent library\n"
+        TESTRUN_TAG_OFFSET"or executable to be installed at either PREFIX/lib\n"
         TESTRUN_TAG_OFFSET"or PREFIX/bin."
         );
 
@@ -1178,185 +1178,185 @@ char *testrun_lib_makefile_main_content(testrun_config config){
         snprintf(dependencies, d_size, "testrun (makefile & service scripts), doxygen (if used)");
 
         snprintf(content, c_size,
-        "# Switch on colors"                                                    TESTRUN_TAG_END
-        "GCC_COLORS ?= 'gcc colors available, use them!'"                       TESTRUN_TAG_END
-        "export GCC_COLORS"                                                     TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# ----- PARAMETER DEFINITION --------------------------------------------------" TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# CFLAGS"                                                              TESTRUN_TAG_END
-        "# -g            enable Debugging symbols"                              TESTRUN_TAG_END
-        "# -Ox           code optimization"                                     TESTRUN_TAG_END
-        "# -Wall         enable Warnings"                                       TESTRUN_TAG_END
-        "# -Wextra       additional Warnings"                                   TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "CFLAGS\t\t= -c -Wall -Wextra -fPIC"                                    TESTRUN_TAG_END
-        "CFLAGS\t\t+= $(EXTRAHEADER)"                                           TESTRUN_TAG_END
-        "CFLAGS\t\t+= $(MODCFLAGS)"                                             TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "PROJECTPATH\t:= $(abspath $(dir $(PROJECTMK)))"                        TESTRUN_TAG_END
-        "DIRNAME\t\t:= $(notdir $(patsubst %%/,%%,$(dir $(PROJECTMK))))"        TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "LIBNAME\t\t:= lib$(DIRNAME)"                                           TESTRUN_TAG_END
-        "LIBNAMEPC\t:= $(LIBNAME).pc"                                           TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "INSTALL\t\t:= install"                                                 TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "INCDIR\t\t:= $(PREFIX)/include/$(DIRNAME)"                             TESTRUN_TAG_END
-        "LIBDIR\t\t:= $(PREFIX)/lib"                                            TESTRUN_TAG_END
-        "EXECDIR\t\t:= $(PREFIX)/bin"                                           TESTRUN_TAG_END
-        "PRODIR\t\t:= $(LIBDIR)/$(DIRNAME)"                                     TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "EXECUTABLE\t= bin/$(DIRNAME)"                                          TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "CFLAGS\t\t+= -Iinclude"                                                TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "MODMAKE\t\t:= $(patsubst %%,%s/%%/mod.mk,$(MODULES))"                  TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "STATIC\t\t= build/lib$(DIRNAME).a"                                     TESTRUN_TAG_END
-        "SHARED\t\t= $(patsubst %%.a,%%.so,$(STATIC))"                          TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# Source and object files to compile"                                  TESTRUN_TAG_END
-        "SOURCES\t\t= $(wildcard %s/**/*.c %s/*.c)"                             TESTRUN_TAG_END
-        "OBJECTS\t\t= $(patsubst %%.c,%%.o,$(SOURCES))"                         TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# ----- DEFAULT MAKE RULES ----------------------------------------------------"TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "%%.o : %%.c"                                                           TESTRUN_TAG_END
-        "\t@echo \" (CC)    $@\""                                               TESTRUN_TAG_END
-        "\t@$(CC) $(CFLAGS) -g -o $@ -c $< $(LIBS)"                             TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "all:\t\t%s"                                                            TESTRUN_TAG_END
-        "install:\t%s"                                                          TESTRUN_TAG_END
-        "uninstall:\t%s"                                                        TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "all_lib:\tstart lib tests pkgconfig done"                              TESTRUN_TAG_END
-        "all_exec:\tstart lib tests $(EXECUTABLE) done"                         TESTRUN_TAG_END
-        "all_service:\tall_exec"                                                TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "lib:\t\tbuild sources"                                                 TESTRUN_TAG_END
-        "sources:\tbuild $(STATIC) $(SHARED)"                                   TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "$(STATIC):  $(OBJECTS)"                                                TESTRUN_TAG_END
-        "\t@echo \" (AR)    $@ $(OBJECTS)\""                                    TESTRUN_TAG_END
-        "\t@ar rcs $@ $(OBJECTS)"TESTRUN_TAG_END
-        "\t@ranlib $@"TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "$(SHARED): $(STATIC) $(OBJECTS)"                                       TESTRUN_TAG_END
-        "\t@echo \" (CC)    $@ $(OBJECTS)\""                                    TESTRUN_TAG_END
-        "\t@$(CC) -shared -o $@ $(OBJECTS) $(LIBS)"                             TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "$(EXECUTABLE): $(OBJECTS)"                                             TESTRUN_TAG_END
-        "\t@echo \" (CC)    $@ $(OBJECTS)\""                                    TESTRUN_TAG_END
-        "\t$(CC) -o $@ $(STATIC) $(LIBS)"                                       TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# ----- BUILD & CLEANUP -----------------------------------------------------"TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "build:"                                                                TESTRUN_TAG_END
-        "\t@mkdir -p bin"                                                       TESTRUN_TAG_END
-        "\t@mkdir -p build"                                                     TESTRUN_TAG_END
-        "\t@mkdir -p build/test"                                                TESTRUN_TAG_END
-        "\t@mkdir -p build/test/omp"                                            TESTRUN_TAG_END
-        "\t@mkdir -p build/test/omp/unit"                                       TESTRUN_TAG_END
-        "\t@mkdir -p build/test/omp/acceptance"                                 TESTRUN_TAG_END
-        "\t@mkdir -p build/test/unit"                                           TESTRUN_TAG_END
-        "\t@mkdir -p build/test/acceptance"                                     TESTRUN_TAG_END
-        "\t@mkdir -p build/test/log"                                            TESTRUN_TAG_END
-        "\t@echo \" (MK)    directories for build\""                            TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        ".PHONY: clean"                                                         TESTRUN_TAG_END
-        "clean:"TESTRUN_TAG_END
-        "\t@echo \" (CLEAN) $(LIBNAME)\""                                       TESTRUN_TAG_END
-        "\t@rm -rf build bin doxygen/documentation $(OBJECTS) $(TESTS_OBJECTS) \\"TESTRUN_TAG_END
-        "\t\t$(LIBNAMEPC) $(TESTS_TMP_FILES)"                                   TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# ----- DOCUMENATION -------------------------------------------------------"TESTRUN_TAG_END
-        TESTRUN_TAG_END
+        "# Switch on colors\n"
+        "GCC_COLORS ?= 'gcc colors available, use them!'\n"
+        "export GCC_COLORS\n"
+        "\n"
+        "# ----- PARAMETER DEFINITION --------------------------------------------------\n"
+        "\n"
+        "# CFLAGS\n"
+        "# -g            enable Debugging symbols\n"
+        "# -Ox           code optimization\n"
+        "# -Wall         enable Warnings\n"
+        "# -Wextra       additional Warnings\n"
+        "\n"
+        "CFLAGS\t\t= -c -Wall -Wextra -fPIC\n"
+        "CFLAGS\t\t+= $(EXTRAHEADER)\n"
+        "CFLAGS\t\t+= $(MODCFLAGS)\n"
+        "\n"
+        "PROJECTPATH\t:= $(abspath $(dir $(PROJECTMK)))\n"
+        "DIRNAME\t\t:= $(notdir $(patsubst %%/,%%,$(dir $(PROJECTMK))))\n"
+        "\n"
+        "LIBNAME\t\t:= lib$(DIRNAME)\n"
+        "LIBNAMEPC\t:= $(LIBNAME).pc\n"
+        "\n"
+        "INSTALL\t\t:= install\n"
+        "\n"
+        "INCDIR\t\t:= $(PREFIX)/include/$(DIRNAME)\n"
+        "LIBDIR\t\t:= $(PREFIX)/lib\n"
+        "EXECDIR\t\t:= $(PREFIX)/bin\n"
+        "PRODIR\t\t:= $(LIBDIR)/$(DIRNAME)\n"
+        "\n"
+        "EXECUTABLE\t= bin/$(DIRNAME)\n"
+        "\n"
+        "CFLAGS\t\t+= -Iinclude\n"
+        "\n"
+        "MODMAKE\t\t:= $(patsubst %%,%s/%%/mod.mk,$(MODULES))\n"
+        "\n"
+        "STATIC\t\t= build/lib$(DIRNAME).a\n"
+        "SHARED\t\t= $(patsubst %%.a,%%.so,$(STATIC))\n"
+        "\n"
+        "# Source and object files to compile\n"
+        "SOURCES\t\t= $(wildcard %s/**/*.c %s/*.c)\n"
+        "OBJECTS\t\t= $(patsubst %%.c,%%.o,$(SOURCES))\n"
+        "\n"
+        "\n"
+        "# ----- DEFAULT MAKE RULES ----------------------------------------------------\n"
+        "\n"
+        "%%.o : %%.c\n"
+        "\t@echo \" (CC)    $@\"\n"
+        "\t@$(CC) $(CFLAGS) -g -o $@ -c $< $(LIBS)\n"
+        "\n"
+        "all:\t\t%s\n"
+        "install:\t%s\n"
+        "uninstall:\t%s\n"
+        "\n"
+        "all_lib:\tstart lib tests pkgconfig done\n"
+        "all_exec:\tstart lib tests $(EXECUTABLE) done\n"
+        "all_service:\tall_exec\n"
+        "\n"
+        "lib:\t\tbuild sources\n"
+        "sources:\tbuild $(STATIC) $(SHARED)\n"
+        "\n"
+        "$(STATIC):  $(OBJECTS)\n"
+        "\t@echo \" (AR)    $@ $(OBJECTS)\"\n"
+        "\t@ar rcs $@ $(OBJECTS)""\n"
+        "\t@ranlib $@""\n"
+        "\n"
+        "$(SHARED): $(STATIC) $(OBJECTS)\n"
+        "\t@echo \" (CC)    $@ $(OBJECTS)\"\n"
+        "\t@$(CC) -shared -o $@ $(OBJECTS) $(LIBS)\n"
+        "\n"
+        "$(EXECUTABLE): $(OBJECTS)\n"
+        "\t@echo \" (CC)    $@ $(OBJECTS)\"\n"
+        "\t$(CC) -o $@ $(STATIC) $(LIBS)\n"
+        "\n"
+        "\n"
+        "# ----- BUILD & CLEANUP -----------------------------------------------------\n"
+        "\n"
+        "build:\n"
+        "\t@mkdir -p bin\n"
+        "\t@mkdir -p build\n"
+        "\t@mkdir -p build/test\n"
+        "\t@mkdir -p build/test/omp\n"
+        "\t@mkdir -p build/test/omp/unit\n"
+        "\t@mkdir -p build/test/omp/acceptance\n"
+        "\t@mkdir -p build/test/unit\n"
+        "\t@mkdir -p build/test/acceptance\n"
+        "\t@mkdir -p build/test/log\n"
+        "\t@echo \" (MK)    directories for build\"\n"
+        "\n"
+        ".PHONY: clean\n"
+        "clean:\n"
+        "\t@echo \" (CLEAN) $(LIBNAME)\"\n"
+        "\t@rm -rf build bin doxygen/documentation $(OBJECTS) $(TESTS_OBJECTS) \\\n"
+        "\t\t$(LIBNAMEPC) $(TESTS_TMP_FILES)\n"
+        "\n"
+        "\n"
+        "# ----- DOCUMENATION -------------------------------------------------------\n"
+        "\n"
         "#NOTE requires doxygen"
-        ".PHONY: documentation"                                                 TESTRUN_TAG_END
-        "documentation:"                                                        TESTRUN_TAG_END
-        "\tdoxygen %s"                                                          TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# ----- PKGCONFIG LIBRARY BUILD --------------------------------------------"TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        ".PHONY: pkgconfig"                                                     TESTRUN_TAG_END
-        "pkgconfig:"                                                            TESTRUN_TAG_END
-        "\t@echo 'prefix='$(PREFIX)                     >  $(LIBNAMEPC)"        TESTRUN_TAG_END
-        "\t@echo 'exec_prefix=$${prefix}'               >> $(LIBNAMEPC)"        TESTRUN_TAG_END
-        "\t@echo 'libdir=$${prefix}/lib'                >> $(LIBNAMEPC)"        TESTRUN_TAG_END
-        "\t@echo 'includedir=$${prefix}/include'        >> $(LIBNAMEPC)"        TESTRUN_TAG_END
-        "\t@echo ''                                     >> $(LIBNAMEPC)"        TESTRUN_TAG_END
-        "\t@echo 'Name: '$(LIBNAME)                     >> $(LIBNAMEPC)"        TESTRUN_TAG_END
-        "\t@echo 'Description: '                        >> $(LIBNAMEPC)"        TESTRUN_TAG_END
-        "\t@echo 'Version: '$(VERSION)                  >> $(LIBNAMEPC)"        TESTRUN_TAG_END
-        "\t@echo 'URL: '$(PROJECT_URL)                  >> $(LIBNAMEPC)"        TESTRUN_TAG_END
-        "\t@echo 'Libs: -L$${libdir} -l'$(DIRNAME)      >> $(LIBNAMEPC)"        TESTRUN_TAG_END
-        "\t@echo 'Cflags: -I$${includedir}'             >> $(LIBNAMEPC)"        TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# ----- INSTALLATION -------------------------------------------------------"TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# Installation as a library ------------------------------------------------"TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "install_lib: $(SHARED) $(STATIC)"                                      TESTRUN_TAG_END
-        "\t@echo \" (OK)    installed $(LIBNAME) to $(LIBDIR)\""                TESTRUN_TAG_END
-        "\t@mkdir -p $(PRODIR)"                                                 TESTRUN_TAG_END
-        "\t@mkdir -p $(LIBDIR)/pkgconfig"                                       TESTRUN_TAG_END
-        "\t@mkdir -p $(INCDIR)"                                                 TESTRUN_TAG_END
-        "\t@$(INSTALL) -m 0644 -t $(INCDIR) $(shell find include -name \"*.h\")"TESTRUN_TAG_END
-        "\t@$(INSTALL) -m 0755 $(SHARED) $(PRODIR)"                             TESTRUN_TAG_END
-        "\t@$(INSTALL) -m 0755 $(STATIC) $(PRODIR)"                             TESTRUN_TAG_END
-        "\t@$(INSTALL) -m 0644 $(LIBNAMEPC) $(LIBDIR)/pkgconfig"                TESTRUN_TAG_END
-        "\t@ldconfig $(PRODIR)"                                                 TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "uninstall_lib:"                                                        TESTRUN_TAG_END
-        "\t@echo \" (OK)    uninstalled $(LIBNAME) from $(LIBDIR)\""            TESTRUN_TAG_END
-        "\t@rm -rf $(INCDIR)"                                                   TESTRUN_TAG_END
-        "\t@rm -rf $(PRODIR)"                                                   TESTRUN_TAG_END
-        "\t@rm -rf $(PRODIR)/$(LIBNAME).a"                                      TESTRUN_TAG_END
-        "\t@rm -rf $(PRODIR)/$(LIBNAME).so"                                     TESTRUN_TAG_END
-        "\t@rm -rf $(LIBDIR)/pkgconfig/$(LIBNAMEPC)"                            TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# Installation as an executable --------------------------------------------"TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "install_exec: $(SHARED) $(STATIC)"                                     TESTRUN_TAG_END
-        "\t@echo \" (OK)    installed $(DIRNAME) to $(EXECDIR)\""               TESTRUN_TAG_END
-        "\t@$(INSTALL) -m 0755 bin/$(DIRNAME) $(EXECDIR)"                       TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "uninstall_exec:"                                                       TESTRUN_TAG_END
-        "\t@echo \" (OK)    uninstalled $(DIRNAME) from $(EXECDIR)\""           TESTRUN_TAG_END
-        "\t@rm -rf $(EXECDIR)/$(DIRNAME)"                                       TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# Installation as a service (outsourced to script)--------------------------"TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "install_service: $(EXECUTABLE)"                                        TESTRUN_TAG_END
-        "\t%s"                                                                  TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "uninstall_service:"                                                    TESTRUN_TAG_END
-        "\t%s"                                                                  TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# ----- INFORMATION PRINTING -----------------------------------------------"TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# print out a variable of the make file (e.g. \"make print-PROJECTPATH\")"TESTRUN_TAG_END
-        ".PHONY: print"                                                         TESTRUN_TAG_END
-        "print-%%  : ; @echo $* = $($*)"                                        TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        ".PHONY: start"                                                         TESTRUN_TAG_END
-        "start:"                                                                TESTRUN_TAG_END
-        "\t@echo \"\\n (HINT)    $(PROJECT) \\t\\t ==> running make\\n\""       TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        ".PHONY: done"                                                          TESTRUN_TAG_END
-        "done:"                                                                 TESTRUN_TAG_END
-        "\t@echo"                                                               TESTRUN_TAG_END
-        "\t@echo \" (DONE)  make $(PROJECT)\""                                  TESTRUN_TAG_END
-        "\t@echo \" (HINT)  with unit testing      ==> 'make tested'\""         TESTRUN_TAG_END
-        "\t@echo \" (HINT)  perform installation   ==> 'sudo make install\\n\"" TESTRUN_TAG_END
-        "\t@echo \" (HINT)  generate documentation ==> 'make documentation\\n\""TESTRUN_TAG_END
+        ".PHONY: documentation\n"
+        "documentation:\n"
+        "\tdoxygen %s\n"
+        "\n"
+        "\n"
+        "# ----- PKGCONFIG LIBRARY BUILD --------------------------------------------\n"
+        "\n"
+        ".PHONY: pkgconfig\n"
+        "pkgconfig:\n"
+        "\t@echo 'prefix='$(PREFIX)                     >  $(LIBNAMEPC)\n"
+        "\t@echo 'exec_prefix=$${prefix}'               >> $(LIBNAMEPC)\n"
+        "\t@echo 'libdir=$${prefix}/lib'                >> $(LIBNAMEPC)\n"
+        "\t@echo 'includedir=$${prefix}/include'        >> $(LIBNAMEPC)\n"
+        "\t@echo ''                                     >> $(LIBNAMEPC)\n"
+        "\t@echo 'Name: '$(LIBNAME)                     >> $(LIBNAMEPC)\n"
+        "\t@echo 'Description: '                        >> $(LIBNAMEPC)\n"
+        "\t@echo 'Version: '$(VERSION)                  >> $(LIBNAMEPC)\n"
+        "\t@echo 'URL: '$(PROJECT_URL)                  >> $(LIBNAMEPC)\n"
+        "\t@echo 'Libs: -L$${libdir} -l'$(DIRNAME)      >> $(LIBNAMEPC)\n"
+        "\t@echo 'Cflags: -I$${includedir}'             >> $(LIBNAMEPC)\n"
+        "\n"
+        "\n"
+        "# ----- INSTALLATION -------------------------------------------------------\n"
+        "\n"
+        "# Installation as a library ------------------------------------------------\n"
+        "\n"
+        "install_lib: $(SHARED) $(STATIC)\n"
+        "\t@echo \" (OK)    installed $(LIBNAME) to $(LIBDIR)\"\n"
+        "\t@mkdir -p $(PRODIR)\n"
+        "\t@mkdir -p $(LIBDIR)/pkgconfig\n"
+        "\t@mkdir -p $(INCDIR)\n"
+        "\t@$(INSTALL) -m 0644 -t $(INCDIR) $(shell find include -name \"*.h\")\n"
+        "\t@$(INSTALL) -m 0755 $(SHARED) $(PRODIR)\n"
+        "\t@$(INSTALL) -m 0755 $(STATIC) $(PRODIR)\n"
+        "\t@$(INSTALL) -m 0644 $(LIBNAMEPC) $(LIBDIR)/pkgconfig\n"
+        "\t@ldconfig $(PRODIR)\n"
+        "\n"
+        "uninstall_lib:\n"
+        "\t@echo \" (OK)    uninstalled $(LIBNAME) from $(LIBDIR)\"\n"
+        "\t@rm -rf $(INCDIR)\n"
+        "\t@rm -rf $(PRODIR)\n"
+        "\t@rm -rf $(PRODIR)/$(LIBNAME).a\n"
+        "\t@rm -rf $(PRODIR)/$(LIBNAME).so\n"
+        "\t@rm -rf $(LIBDIR)/pkgconfig/$(LIBNAMEPC)\n"
+        "\n"
+        "# Installation as an executable --------------------------------------------\n"
+        "\n"
+        "install_exec: $(SHARED) $(STATIC)\n"
+        "\t@echo \" (OK)    installed $(DIRNAME) to $(EXECDIR)\"\n"
+        "\t@$(INSTALL) -m 0755 bin/$(DIRNAME) $(EXECDIR)\n"
+        "\n"
+        "uninstall_exec:\n"
+        "\t@echo \" (OK)    uninstalled $(DIRNAME) from $(EXECDIR)\"\n"
+        "\t@rm -rf $(EXECDIR)/$(DIRNAME)\n"
+        "\n"
+        "# Installation as a service (outsourced to script)--------------------------\n"
+        "\n"
+        "install_service: $(EXECUTABLE)\n"
+        "\t%s\n"
+        "\n"
+        "uninstall_service:\n"
+        "\t%s\n"
+        "\n"
+        "\n"
+        "# ----- INFORMATION PRINTING -----------------------------------------------\n"
+        "\n"
+        "# print out a variable of the make file (e.g. \"make print-PROJECTPATH\")\n"
+        ".PHONY: print\n"
+        "print-%%  : ; @echo $* = $($*)\n"
+        "\n"
+        ".PHONY: start\n"
+        "start:\n"
+        "\t@echo \"\\n (HINT)    $(PROJECT) \\t\\t ==> running make\\n\"\n"
+        "\n"
+        ".PHONY: done\n"
+        "done:\n"
+        "\t@echo\n"
+        "\t@echo \" (DONE)  make $(PROJECT)\"\n"
+        "\t@echo \" (HINT)  with unit testing      ==> 'make tested'\"\n"
+        "\t@echo \" (HINT)  perform installation   ==> 'sudo make install\\n\"\n"
+        "\t@echo \" (HINT)  generate documentation ==> 'make documentation\\n\"\n"
         ,path_src, path_src, path_src, all_target, install, uninstall, doxygen_config,
         script_install, script_uninstall );
 
@@ -1485,120 +1485,120 @@ char *testrun_lib_makefile_test_content(testrun_config config){
 
 
         snprintf(description, d_size,
-        "Makefile extension for the testrun enabled projects."                  TESTRUN_TAG_END
-        "#"                                                                     TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"The following part contains all required functionality"TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"to use the testrun tools via a makefile. It may be " TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"seen as a makefile integrated testrunner framework." TESTRUN_TAG_END
-        "#"                                                                     TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"in particular:"                                      TESTRUN_TAG_END
-        "#"                                                                     TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"     \"make clean && make tested\""                  TESTRUN_TAG_END
-        "#"                                                                     TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"may be used to build all sources as well as tests from " TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"scratch and perform an integrated testrun over all after" TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"compilation."                                        TESTRUN_TAG_END
-        "#"                                                                     TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"Following folder structure is required"              TESTRUN_TAG_END
-        "#"                                                                     TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"     tests MUST be located at tests/"                 TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"     build MUST be located at build/"                 TESTRUN_TAG_END
-        "#"                                                                     TESTRUN_TAG_END
-        TESTRUN_TAG_OFFSET"ALL TEST SCRIPTS MAY BE EXCHANGED WITH CUSTOM RUNNERS"TESTRUN_TAG_END
+        "Makefile extension for the testrun enabled projects.\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"The following part contains all required functionality\n"
+        TESTRUN_TAG_OFFSET"to use the testrun tools via a makefile. It may be\n"
+        TESTRUN_TAG_OFFSET"seen as a makefile integrated testrunner framework.\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"in particular:\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"     \"make clean && make tested\"\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"may be used to build all sources as well as tests from\n"
+        TESTRUN_TAG_OFFSET"scratch and perform an integrated testrun over all after\n"
+        TESTRUN_TAG_OFFSET"compilation.\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"Following folder structure is required\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"     tests MUST be located at tests/\n"
+        TESTRUN_TAG_OFFSET"     build MUST be located at build/\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"ALL TEST SCRIPTS MAY BE EXCHANGED WITH CUSTOM RUNNERS\n"
         "#");
 
         snprintf(usage, d_size, "SHOULD be used included by parent makefile");
         snprintf(dependencies, d_size, "testrun scripts, lib for OpenMP (if used for testing)");
 
         snprintf(content, c_size,
-        TESTRUN_TAG_END
-        "# (1) TESTRUN SOURCE DEFINITION --------------------------------------------"TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "TESTS_OMP_SRC\t= $(wildcard tests/**/*%s.c tests/*%s.c)"               TESTRUN_TAG_END
-        "TESTS_OMP_TARGET= $(patsubst %%.c,%%%s,$(TESTS_OMP_SRC))"              TESTRUN_TAG_END
-        "TESTS_SOURCES   = $(wildcard tests/**/*%s.c tests/*%s.c)"              TESTRUN_TAG_END
-        "TESTS_TARGET    = $(patsubst %%.c,%%%s,$(TESTS_SOURCES))"              TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# (2) TESTRUN MAKE RULES ---------------------------------------------------"TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# ALL IN ONE CALL (compile source, test and run test)"                 TESTRUN_TAG_END
-        "tested:\ttests_build all testrun done"                                 TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# ensure the build folder are available"                               TESTRUN_TAG_END
-        "tests_build:"                                                          TESTRUN_TAG_END
-        "\t@mkdir -p build/test"                                                TESTRUN_TAG_END
-        "\t@mkdir -p build/test/omp"                                            TESTRUN_TAG_END
-        "\t@mkdir -p build/test/omp/unit"                                       TESTRUN_TAG_END
-        "\t@mkdir -p build/test/omp/acceptance"                                 TESTRUN_TAG_END
-        "\t@mkdir -p build/test/unit"                                           TESTRUN_TAG_END
-        "\t@mkdir -p build/test/acceptance"                                     TESTRUN_TAG_END
-        "\t@mkdir -p build/test/log"                                            TESTRUN_TAG_END
-        "\t@echo \" (MK)    directories for test under build\""                 TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# compile tests only"                                                  TESTRUN_TAG_END
-        "tests:\ttests-resources $(TESTS_TARGET)"                               TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# compile omp_tests only"                                              TESTRUN_TAG_END
-        "tests_omp:\ttests-resources $(TESTS_OMP_TARGET)"                       TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# copy test resources to build"                                        TESTRUN_TAG_END
-        "tests-resources:"                                                      TESTRUN_TAG_END
-        "\t@echo \" (CP)    tests/resources\""                                  TESTRUN_TAG_END
-        "\t@cp -r tests/resources build/test"                                   TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# build all executable tests under build/tests"                        TESTRUN_TAG_END
-        "$(TESTS_TARGET): $(TESTS_SOURCES)"                                     TESTRUN_TAG_END
-        "\t@echo \" (CC)    $(@)\""                                             TESTRUN_TAG_END
-        "\t@$(CC) $(MODCFLAGS) $(patsubst %%%s,%%.c,$(@)) \\"                   TESTRUN_TAG_END
-        "\t\t-ldl $(STATIC) -Wl,-rpath=$(RPATH) \\"                             TESTRUN_TAG_END
-        "\t\t-g -o $(subst tests/,build/test/,$(@)) $(LIBS)"                    TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# build all parallel executable tests under build/tests"               TESTRUN_TAG_END
-        "$(TESTS_OMP_TARGET): $(TESTS_OMP_SRC)"                                 TESTRUN_TAG_END
-        "\t@echo \" (CC)    $(@)\""                                             TESTRUN_TAG_END
-        "\t@$(CC) $(MODCFLAGS) -fopenmp $(patsubst %%%s,%%.c,$(@)) \\"          TESTRUN_TAG_END
-        "\t\t-ldl $(STATIC) -Wl,-rpath=$(RPATH) \\"                             TESTRUN_TAG_END
-        "\t\t-g -o $(subst tests/,build/test/omp/,$(@)) $(LIBS)"                TESTRUN_TAG_END
-        TESTRUN_TAG_END
-       "# build a specific executable test (testname) under build/tests"        TESTRUN_TAG_END
-        "# NOTE: May be usefull for module development in large projects"       TESTRUN_TAG_END
-        "test:"                                                                 TESTRUN_TAG_END
-        "\t@echo \" (CC)    $(testname)\""                                      TESTRUN_TAG_END
-        "\t@$(CC) $(MODCFLAGS) $(patsubst build/test/%%%s, \\"                  TESTRUN_TAG_END
-        "\t\ttests/%%.c,$(testname)) -ldl $(STATIC) -Wl,-rpath=$(RPATH) -g -o\\"TESTRUN_TAG_END
-        "\t\t$(patsubst tests/%%.c,build/test/%%%s,$(testname)) $(LIBS)"        TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# (3) TESTRUN runners ------------------------------------------------------"TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# ACCEPTANCE TEST script invocation"                                   TESTRUN_TAG_END
-        ".PHONY: testrun-acceptance"                                            TESTRUN_TAG_END
-        "testrun-acceptance:"                                                   TESTRUN_TAG_END
-        "\tsh %s"                                                               TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# UNIT TEST script invocation"                                         TESTRUN_TAG_END
-        ".PHONY: testrun-unit"                                                  TESTRUN_TAG_END
-        "testrun-unit:"                                                         TESTRUN_TAG_END
-        "\tsh %s"                                                               TESTRUN_TAG_END
-        TESTRUN_TAG_END
-         "# COVERAGE TEST script invocation"                                    TESTRUN_TAG_END
-        ".PHONY: testrun-coverage"                                              TESTRUN_TAG_END
-        "testrun-coverage:"                                                     TESTRUN_TAG_END
-        "\tsh %s $(PROJECTPATH)"                                                TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# LOC TEST script invocation"                                          TESTRUN_TAG_END
-        ".PHONY: testrun-loc"                                                   TESTRUN_TAG_END
-        "testrun-loc:"TESTRUN_TAG_END
-        "\tsh %s $(PROJECTPATH)"                                                TESTRUN_TAG_END
-        TESTRUN_TAG_END
-        "# TESTRUN all scripts"                                                 TESTRUN_TAG_END
-        ".PHONY: testrun"TESTRUN_TAG_END
-        "testrun: $(TESTS_EXEC)"TESTRUN_TAG_END
-        "\t@echo \" (HINT)  $(PROJECT) \\t\\t\\t==> running tests\\n\""         TESTRUN_TAG_END
-        "\tsh %s"                                                               TESTRUN_TAG_END
-        "\tsh %s"                                                               TESTRUN_TAG_END
-        "\tsh %s $(PROJECTPATH)"                                                TESTRUN_TAG_END
-        "\tsh %s $(PROJECTPATH)"                                                TESTRUN_TAG_END
+        "\n"
+        "# (1) TESTRUN SOURCE DEFINITION --------------------------------------------\n"
+        "\n"
+        "TESTS_OMP_SRC\t= $(wildcard tests/**/*%s.c tests/*%s.c)\n"
+        "TESTS_OMP_TARGET= $(patsubst %%.c,%%%s,$(TESTS_OMP_SRC))\n"
+        "TESTS_SOURCES   = $(wildcard tests/**/*%s.c tests/*%s.c)\n"
+        "TESTS_TARGET    = $(patsubst %%.c,%%%s,$(TESTS_SOURCES))\n"
+        "\n"
+        "# (2) TESTRUN MAKE RULES ---------------------------------------------------\n"
+        "\n"
+        "# ALL IN ONE CALL (compile source, test and run test)\n"
+        "tested:\ttests_build all testrun done\n"
+        "\n"
+        "# ensure the build folder are available\n"
+        "tests_build:\n"
+        "\t@mkdir -p build/test\n"
+        "\t@mkdir -p build/test/omp\n"
+        "\t@mkdir -p build/test/omp/unit\n"
+        "\t@mkdir -p build/test/omp/acceptance\n"
+        "\t@mkdir -p build/test/unit\n"
+        "\t@mkdir -p build/test/acceptance\n"
+        "\t@mkdir -p build/test/log\n"
+        "\t@echo \" (MK)    directories for test under build\"\n"
+        "\n"
+        "# compile tests only\n"
+        "tests:\ttests-resources $(TESTS_TARGET)\n"
+        "\n"
+        "# compile omp_tests only\n"
+        "tests_omp:\ttests-resources $(TESTS_OMP_TARGET)\n"
+        "\n"
+        "# copy test resources to build\n"
+        "tests-resources:\n"
+        "\t@echo \" (CP)    tests/resources\"\n"
+        "\t@cp -r tests/resources build/test\n"
+        "\n"
+        "# build all executable tests under build/tests\n"
+        "$(TESTS_TARGET): $(TESTS_SOURCES)\n"
+        "\t@echo \" (CC)    $(@)\"\n"
+        "\t@$(CC) $(MODCFLAGS) $(patsubst %%%s,%%.c,$(@)) \\\n"
+        "\t\t-ldl $(STATIC) -Wl,-rpath=$(RPATH) \\\n"
+        "\t\t-g -o $(subst tests/,build/test/,$(@)) $(LIBS)\n"
+        "\n"
+        "# build all parallel executable tests under build/tests\n"
+        "$(TESTS_OMP_TARGET): $(TESTS_OMP_SRC)\n"
+        "\t@echo \" (CC)    $(@)\"\n"
+        "\t@$(CC) $(MODCFLAGS) -fopenmp $(patsubst %%%s,%%.c,$(@)) \\\n"
+        "\t\t-ldl $(STATIC) -Wl,-rpath=$(RPATH) \\\n"
+        "\t\t-g -o $(subst tests/,build/test/omp/,$(@)) $(LIBS)\n"
+        "\n"
+       "# build a specific executable test (testname) under build/tests\n"
+        "# NOTE: May be usefull for module development in large projects\n"
+        "test:\n"
+        "\t@echo \" (CC)    $(testname)\"\n"
+        "\t@$(CC) $(MODCFLAGS) $(patsubst build/test/%%%s, \\\n"
+        "\t\ttests/%%.c,$(testname)) -ldl $(STATIC) -Wl,-rpath=$(RPATH) -g -o\\\n"
+        "\t\t$(patsubst tests/%%.c,build/test/%%%s,$(testname)) $(LIBS)\n"
+        "\n"
+        "\n"
+        "# (3) TESTRUN runners ------------------------------------------------------\n"
+        "\n"
+        "# ACCEPTANCE TEST script invocation\n"
+        ".PHONY: testrun-acceptance\n"
+        "testrun-acceptance:\n"
+        "\tsh %s\n"
+        "\n"
+        "# UNIT TEST script invocation\n"
+        ".PHONY: testrun-unit\n"
+        "testrun-unit:\n"
+        "\tsh %s\n"
+        "\n"
+         "# COVERAGE TEST script invocation\n"
+        ".PHONY: testrun-coverage\n"
+        "testrun-coverage:\n"
+        "\tsh %s $(PROJECTPATH)\n"
+        "\n"
+        "# LOC TEST script invocation\n"
+        ".PHONY: testrun-loc\n"
+        "testrun-loc:\n"
+        "\tsh %s $(PROJECTPATH)\n"
+        "\n"
+        "# TESTRUN all scripts\n"
+        ".PHONY: testrun\n"
+        "testrun: $(TESTS_EXEC)\n"
+        "\t@echo \" (HINT)  $(PROJECT) \\t\\t\\t==> running tests\\n\"\n"
+        "\tsh %s\n"
+        "\tsh %s\n"
+        "\tsh %s $(PROJECTPATH)\n"
+        "\tsh %s $(PROJECTPATH)\n"
         ,config.format.suffix.tests_source_omp,
         config.format.suffix.tests_source_omp,
         config.format.extensions.testexec,

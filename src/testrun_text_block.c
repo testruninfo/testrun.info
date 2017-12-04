@@ -63,7 +63,7 @@ char *testrun_text_block_header_body(char *name){
         return snipped;
 }
 
-/*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------------------------*/
 
 char *testrun_text_block_source_body(char *name){
 
@@ -123,44 +123,44 @@ char *testrun_text_block_test_body(
                 goto error;
 
         sprintf(snipped,
-                TESTRUN_LINEEND
-                "#include \"%s\""                       TESTRUN_LINEEND
-                "#include \"%s\""                       TESTRUN_LINEEND
-                TESTRUN_LINEEND
-                "%s"                                    // #HELPER
-                TESTRUN_LINEEND
-                "%s"                                    // splitline
-                TESTRUN_LINEEND
-                TESTRUN_LINEEND
-                "%s"                                    // #CASES
-                TESTRUN_LINEEND
-                "%s"                                    // splitline
-                TESTRUN_LINEEND
-                TESTRUN_LINEEND
-                "/**"                                   TESTRUN_LINEEND
-                "int test_ ... (){"                     TESTRUN_LINEEND
-                "        testrun(true);"                TESTRUN_LINEEND
-                TESTRUN_LINEEND
-                "        return testrun_log_success();" TESTRUN_LINEEND
-                "}"                                     TESTRUN_LINEEND
-                "*/"                                    TESTRUN_LINEEND
-                TESTRUN_LINEEND
-                "%s"                                    // splitline
-                TESTRUN_LINEEND
-                TESTRUN_LINEEND
-                "%s"                                    // #CLUSTER
-                TESTRUN_LINEEND
-                "int all_tests() {"                     TESTRUN_LINEEND
-                TESTRUN_LINEEND
-                "        testrun_init();"               TESTRUN_LINEEND
-                "        //testrun_test(test_);"        TESTRUN_LINEEND
-                TESTRUN_LINEEND
-                "        return testrun_counter;"       TESTRUN_LINEEND
-                "}"TESTRUN_LINEEND
-                TESTRUN_LINEEND
-                "%s"                                    // #EXEC
-                TESTRUN_LINEEND
-                "testrun_run(all_tests);"               TESTRUN_LINEEND,
+                "\n"
+                "#include \"%s\"\n"
+                "#include \"%s\"\n"
+                "\n"
+                "%s"    // #HELPER
+                "\n"
+                "%s"    // splitline
+                "\n"
+                "\n"
+                "%s"    // #CASES
+                "\n"
+                "%s"    // splitline
+                "\n"
+                "\n"
+                "/**\n"
+                "int test_ ... (){\n"
+                "        testrun(true);\n"
+                "\n"
+                "        return testrun_log_success();\n"
+                "}\n"
+                "*/\n"
+                "\n"
+                "%s"    // splitline
+                "\n"
+                "\n"
+                "%s"    // #CLUSTER
+                "\n"
+                "int all_tests() {\n"
+                "\n"
+                "        testrun_init();\n"
+                "        //testrun_test(test_);\n"
+                "\n"
+                "        return testrun_counter;\n"
+                "}""\n"
+                "\n"
+                "%s"    // #EXEC
+                "\n"
+                "testrun_run(all_tests);\n",
                 path_testrun, path_src,
                 helper,
                 splitline,
@@ -921,7 +921,7 @@ char *testrun_text_block_script(
         // perform lineend replacement (if any)
         if (!testrun_string_replace_all(&step3, &size3,
                 step2,   size2,
-                TESTRUN_TAG_END, strlen(TESTRUN_TAG_END),
+                "\n", 1,
                 config->format.line_end, length,
                 false))
                 goto error;
@@ -989,146 +989,146 @@ char *testrun_text_block_readme(
                 installation = "[TAG_INSTALL]";
 
         snprintf(buffer, size,
-"# Project %s"                                                                  TESTRUN_TAG_END
-TESTRUN_TAG_END
-"This module is self supported and may be build, tested, installed and"         TESTRUN_TAG_END
-"run independently."                                                            TESTRUN_TAG_END
-TESTRUN_TAG_END
-"## Overview"                                                                   TESTRUN_TAG_END
-TESTRUN_TAG_END
-"* [Description](#description)"                                                 TESTRUN_TAG_END
-"* [Usage](#usage)"                                                             TESTRUN_TAG_END
-"* [Installation](#installation)"                                               TESTRUN_TAG_END
-"* [Requirements](#requirements)"                                               TESTRUN_TAG_END
-"* [Structure](#structure)"                                                     TESTRUN_TAG_END
-"* [Tests](#tests)"                                                             TESTRUN_TAG_END
-"* [Tips](#tips)"                                                               TESTRUN_TAG_END
-"* [Copyright](#copyright)   "                                                  TESTRUN_TAG_END
-TESTRUN_TAG_END
-"## Description"                                                                TESTRUN_TAG_END
-TESTRUN_TAG_END
-"[TAG_DESCRIPTION]"                                                             TESTRUN_TAG_END
-TESTRUN_TAG_END
-"## Usage"                                                                      TESTRUN_TAG_END
-TESTRUN_TAG_END
-"[TAG_USAGE]"                                                                   TESTRUN_TAG_END
-TESTRUN_TAG_END
-"## Installation"                                                               TESTRUN_TAG_END
-TESTRUN_TAG_END
-"[TAG_INSTALL]"                                                                 TESTRUN_TAG_END
-""TESTRUN_TAG_END
-"### build sources"                                                             TESTRUN_TAG_END
-TESTRUN_TAG_END
-"\\`\\`\\`bash"                                                                 TESTRUN_TAG_END
-"make"                                                                          TESTRUN_TAG_END
-"\\`\\`\\`"                                                                     TESTRUN_TAG_END
-TESTRUN_TAG_END
-"### build documentation"                                                       TESTRUN_TAG_END
-TESTRUN_TAG_END
-"\\`\\`\\`bash"                                                                 TESTRUN_TAG_END
-"make documentation"                                                            TESTRUN_TAG_END
-"\\`\\`\\`"                                                                     TESTRUN_TAG_END
-TESTRUN_TAG_END
-"### test sources"                                                              TESTRUN_TAG_END
-TESTRUN_TAG_END
-"\\`\\`\\`bash"                                                                 TESTRUN_TAG_END
-"make tested"                                                                   TESTRUN_TAG_END
-"\\`\\`\\`"                                                                     TESTRUN_TAG_END
-TESTRUN_TAG_END
-"### install binaries"                                                          TESTRUN_TAG_END
-TESTRUN_TAG_END
-"\\`\\`\\`bash"                                                                 TESTRUN_TAG_END
-"sudo make install"                                                             TESTRUN_TAG_END
-"\\`\\`\\`"                                                                     TESTRUN_TAG_END
-TESTRUN_TAG_END
-"### uninstall binaries"                                                        TESTRUN_TAG_END
-TESTRUN_TAG_END
-"\\`\\`\\`bash"                                                                 TESTRUN_TAG_END
-"sudo make uninstall"                                                           TESTRUN_TAG_END
-"\\`\\`\\`"                                                                     TESTRUN_TAG_END
-TESTRUN_TAG_END
-"## Requirements"                                                               TESTRUN_TAG_END
-TESTRUN_TAG_END
-"## Structure"                                                                  TESTRUN_TAG_END
-TESTRUN_TAG_END
-"### Default structure of the folder:"                                          TESTRUN_TAG_END
-TESTRUN_TAG_END
-"\\`\\`\\`"                                                                     TESTRUN_TAG_END
-"<pre>"                                                                         TESTRUN_TAG_END
-"."                                                                             TESTRUN_TAG_END
-"├── COPYRIGHT"                                                                 TESTRUN_TAG_END
-"├── README.MD"                                                                 TESTRUN_TAG_END
-"├── makefile"                                                                  TESTRUN_TAG_END
-"├── testrun_makefile.main"                                                     TESTRUN_TAG_END
-"├── testrun_makefile.test"                                                     TESTRUN_TAG_END
-"│"                                                                             TESTRUN_TAG_END
-"├── doxygen"                                                                   TESTRUN_TAG_END
-"│   ├── documentation"                                                         TESTRUN_TAG_END
-"│   └── doxygen.config"                                                        TESTRUN_TAG_END
-"│"                                                                             TESTRUN_TAG_END
-"├── docs"                                                                      TESTRUN_TAG_END
-"│   ├── CHANGELOG.MD"                                                          TESTRUN_TAG_END
-"│   └── ..."                                                                   TESTRUN_TAG_END
-"│"                                                                             TESTRUN_TAG_END
-"├── include"                                                                   TESTRUN_TAG_END
-"│   ├── %s.h"                                                                  TESTRUN_TAG_END
-"│   └── ..."                                                                   TESTRUN_TAG_END
-"│"                                                                             TESTRUN_TAG_END
-"├── src"                                                                       TESTRUN_TAG_END
-"│   ├── %s.c"                                                                  TESTRUN_TAG_END
-"│   └── ..."                                                                   TESTRUN_TAG_END
-"│"                                                                             TESTRUN_TAG_END
-"└── tests"                                                                     TESTRUN_TAG_END
-"    ├── resources"                                                             TESTRUN_TAG_END
-"    ├── tools"                                                                 TESTRUN_TAG_END
-"    │   ├── testrun_runner.h"                                                  TESTRUN_TAG_END
-"    │   ├── testrun_simple_coverage_tests.sh"                                  TESTRUN_TAG_END
-"    │   ├── testrun_simple_unit_tests.sh"                                      TESTRUN_TAG_END
-"    │   ├── testrun_simple_acceptance_tests.sh"                                TESTRUN_TAG_END
-"    │   └── testrun_simple_loc.sh"                                             TESTRUN_TAG_END
-"    ├── acceptance"                                                            TESTRUN_TAG_END
-"    │   ├── ..."                                                               TESTRUN_TAG_END
-"    │   └── ..."                                                               TESTRUN_TAG_END
-"    └── unit"                                                                  TESTRUN_TAG_END
-"        ├── %s%s.c"                                                            TESTRUN_TAG_END
-"        └── ..."                                                               TESTRUN_TAG_END
-TESTRUN_TAG_END
-"</pre>"                                                                        TESTRUN_TAG_END
-"\\`\\`\\`"                                                                     TESTRUN_TAG_END
-TESTRUN_TAG_END
-"## Tests"                                                                      TESTRUN_TAG_END
-TESTRUN_TAG_END
-"All test sources of will be recompiled on each make run. That means, "         TESTRUN_TAG_END
-"all module tests will be created new on any change in any source file.  "      TESTRUN_TAG_END
-TESTRUN_TAG_END
-"### Test a project (all files contained in tests/unit)"                        TESTRUN_TAG_END
-TESTRUN_TAG_END
-"Test compile and run "                                                         TESTRUN_TAG_END
-"~~~"                                                                           TESTRUN_TAG_END
-"make tested"                                                                   TESTRUN_TAG_END
-"~~~"                                                                           TESTRUN_TAG_END
-TESTRUN_TAG_END
-"### Test a dedicated source file (single file of tests/unit)"                  TESTRUN_TAG_END
-TESTRUN_TAG_END
-"To develop a test for a specific source file, "                                TESTRUN_TAG_END
-"it may be helpful to use a separated test run. "                               TESTRUN_TAG_END
-"This may be done via an integrated make functionality."                        TESTRUN_TAG_END
-TESTRUN_TAG_END
-"Test compile example"                                                          TESTRUN_TAG_END
-"~~~"                                                                           TESTRUN_TAG_END
-"make test testname=tests/unit/filename_tests.c "                               TESTRUN_TAG_END
-"~~~"                                                                           TESTRUN_TAG_END
-TESTRUN_TAG_END
-"Test compile and run in valgrind"                                              TESTRUN_TAG_END
-"~~~"                                                                           TESTRUN_TAG_END
-"make test testname=tests/unit/filename_tests.c && valgrind ./build/test/unit/filename_tests.test "TESTRUN_TAG_END
-"~~~"                                                                           TESTRUN_TAG_END
-TESTRUN_TAG_END
-"## Tips"                                                                       TESTRUN_TAG_END
-TESTRUN_TAG_END
-"## Copyright"                                                                  TESTRUN_TAG_END
-TESTRUN_TAG_END
-"[TAG_COPYRIGHT]"                                                               TESTRUN_TAG_END,
+        "# Project %s\n"
+        "\n"
+        "This module is self supported and may be build, tested, installed and\n"
+        "run independently.\n"
+        "\n"
+        "## Overview\n"
+        "\n"
+        "* [Description](#description)\n"
+        "* [Usage](#usage)\n"
+        "* [Installation](#installation)\n"
+        "* [Requirements](#requirements)\n"
+        "* [Structure](#structure)\n"
+        "* [Tests](#tests)\n"
+        "* [Tips](#tips)\n"
+        "* [Copyright](#copyright)\n"
+        "\n"
+        "## Description\n"
+        "\n"
+        "[TAG_DESCRIPTION]\n"
+        "\n"
+        "## Usage\n"
+        "\n"
+        "[TAG_USAGE]\n"
+        "\n"
+        "## Installation\n"
+        "\n"
+        "[TAG_INSTALL]\n"
+        """\n"
+        "### build sources\n"
+        "\n"
+        "\\`\\`\\`bash\n"
+        "make\n"
+        "\\`\\`\\`\n"
+        "\n"
+        "### build documentation\n"
+        "\n"
+        "\\`\\`\\`bash\n"
+        "make documentation\n"
+        "\\`\\`\\`\n"
+        "\n"
+        "### test sources\n"
+        "\n"
+        "\\`\\`\\`bash\n"
+        "make tested\n"
+        "\\`\\`\\`\n"
+        "\n"
+        "### install binaries\n"
+        "\n"
+        "\\`\\`\\`bash\n"
+        "sudo make install\n"
+        "\\`\\`\\`\n"
+        "\n"
+        "### uninstall binaries\n"
+        "\n"
+        "\\`\\`\\`bash\n"
+        "sudo make uninstall\n"
+        "\\`\\`\\`\n"
+        "\n"
+        "## Requirements\n"
+        "\n"
+        "## Structure\n"
+        "\n"
+        "### Default structure of the folder:\n"
+        "\n"
+        "\\`\\`\\`\n"
+        "<pre>\n"
+        ".\n"
+        "├── COPYRIGHT\n"
+        "├── README.MD\n"
+        "├── makefile\n"
+        "├── testrun_makefile.main\n"
+        "├── testrun_makefile.test\n"
+        "│\n"
+        "├── doxygen\n"
+        "│   ├── documentation\n"
+        "│   └── doxygen.config\n"
+        "│\n"
+        "├── docs\n"
+        "│   ├── CHANGELOG.MD\n"
+        "│   └── ...\n"
+        "│\n"
+        "├── include\n"
+        "│   ├── %s.h\n"
+        "│   └── ...\n"
+        "│\n"
+        "├── src\n"
+        "│   ├── %s.c\n"
+        "│   └── ...\n"
+        "│\n"
+        "└── tests\n"
+        "    ├── resources\n"
+        "    ├── tools\n"
+        "    │   ├── testrun_runner.h\n"
+        "    │   ├── testrun_simple_coverage_tests.sh\n"
+        "    │   ├── testrun_simple_unit_tests.sh\n"
+        "    │   ├── testrun_simple_acceptance_tests.sh\n"
+        "    │   └── testrun_simple_loc.sh\n"
+        "    ├── acceptance\n"
+        "    │   ├── ...\n"
+        "    │   └── ...\n"
+        "    └── unit\n"
+        "        ├── %s%s.c\n"
+        "        └── ...\n"
+        "\n"
+        "</pre>\n"
+        "\\`\\`\\`\n"
+        "\n"
+        "## Tests\n"
+        "\n"
+        "All test sources of will be recompiled on each make run. That means,\n"
+        "all module tests will be created new on any change in any source file.\n"
+        "\n"
+        "### Test a project (all files contained in tests/unit)\n"
+        "\n"
+        "Test compile and run\n"
+        "~~~\n"
+        "make tested\n"
+        "~~~\n"
+        "\n"
+        "### Test a dedicated source file (single file of tests/unit)\n"
+        "\n"
+        "To develop a test for a specific source file,\n"
+        "it may be helpful to use a separated test run.\n"
+        "This may be done via an integrated make functionality.\n"
+        "\n"
+        "Test compile example\n"
+        "~~~\n"
+        "make test testname=tests/unit/filename_tests.c\n"
+        "~~~\n"
+        "\n"
+        "Test compile and run in valgrind\n"
+        "~~~\n"
+        "make test testname=tests/unit/filename_tests.c && valgrind ./build/test/unit/filename_tests.test\n"
+        "~~~\n"
+        "\n"
+        "## Tips\n"
+        "\n"
+        "## Copyright\n"
+        "\n"
+        "[TAG_COPYRIGHT]\n",
         config->project.name,
         config->project.name,
         config->project.name,
@@ -1177,7 +1177,7 @@ TESTRUN_TAG_END
         // perform lineend replacement (if any)
         if (!testrun_string_replace_all(&step5, &size5,
                 step4,   size4,
-                TESTRUN_TAG_END, strlen(TESTRUN_TAG_END),
+                "\n", 1,
                 config->format.line_end, length,
                 false))
                 goto error;
@@ -1217,9 +1217,6 @@ char *testrun_text_block_doxygen_config(
         char    *result = NULL;
         size_t  re_size = 0;
 
-        char    *step1 = NULL;
-        size_t  size1  = 0;
-
         size_t  size = 5000;
         char buffer[size];
 
@@ -1243,44 +1240,293 @@ char *testrun_text_block_doxygen_config(
                 return NULL;
 
         if (snprintf(buffer, size,
-                "DOXYFILE_ENCODING       = UTF-8"                               TESTRUN_TAG_END
-                "PROJECT_NAME            = %s"                                  TESTRUN_TAG_END
-                "PROJECT_NUMBER          = 0.0.1"                               TESTRUN_TAG_END
-                "PROJECT_LOGO            = %s/logo_doxygen.png"                 TESTRUN_TAG_END
-                "PROJECT_BRIEF           = \"%s brief\""                        TESTRUN_TAG_END
-                "OUTPUT_DIRECTORY        = %s/documentation"                    TESTRUN_TAG_END
-                "CREATE_SUBDIRS          = NO"                                  TESTRUN_TAG_END
-                "ALLOW_UNICODE_NAMES     = NO"                                  TESTRUN_TAG_END
-                "OUTPUT_LANGUAGE         = English"                             TESTRUN_TAG_END
-                "MARKDOWN_SUPPORT        = YES"                                 TESTRUN_TAG_END
-                "AUTOLINK_SUPPORT        = YES"                                 TESTRUN_TAG_END
-                "INPUT                   = README.MD %s %s %s"                  TESTRUN_TAG_END
-                "INPUT_ENCODING          = UTF-8"                               TESTRUN_TAG_END
-                "FILE_PATTERNS           = *.h *.c *.js *.py *.sh"              TESTRUN_TAG_END
-                "RECURSIVE               = YES"                                 TESTRUN_TAG_END
-                "EXCLUDE_SYMLINKS        = YES"                                 TESTRUN_TAG_END,
+                "DOXYFILE_ENCODING       = UTF-8\n"
+                "PROJECT_NAME            = %s\n"
+                "PROJECT_NUMBER          = 0.0.1\n"
+                "PROJECT_LOGO            = %s/logo_doxygen.png\n"
+                "PROJECT_BRIEF           = \"%s brief\"\n"
+                "OUTPUT_DIRECTORY        = %s/documentation\n"
+                "CREATE_SUBDIRS          = NO\n"
+                "ALLOW_UNICODE_NAMES     = NO\n"
+                "OUTPUT_LANGUAGE         = English\n"
+                "MARKDOWN_SUPPORT        = YES\n"
+                "AUTOLINK_SUPPORT        = YES\n"
+                "INPUT                   = README.MD %s %s %s\n"
+                "INPUT_ENCODING          = UTF-8\n"
+                "FILE_PATTERNS           = *.h *.c *.js *.py *.sh\n"
+                "RECURSIVE               = YES\n"
+                "EXCLUDE_SYMLINKS        = YES\n",
                 config->project.name,  path_doxygen, config->project.name,
                 path_doxygen, path_include, path_src, path_tests
         )< 0)
                 return NULL;
 
-
-        if (!testrun_string_replace_all(&step1, &size1,
-                buffer,   size,
-                TESTRUN_TAG_END, strlen(TESTRUN_TAG_END),
-                config->format.line_end, strlen(config->format.line_end),
-                false))
-                goto error;
-
         if (!testrun_string_clear_whitespace_before_lineend(&result, &re_size,
-                step1, size1,
-                config->format.line_end, strlen(config->format.line_end)))
+                buffer, size,
+                "\n", 1))
                 goto error;
 
-        step1 = testrun_string_free(step1);
         return result;
 error:
-        step1 = testrun_string_free(step1);
+        result = testrun_string_free(result);
+        return NULL;
+}
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_text_block_service_file(
+        testrun_config *config){
+
+        if (!config)
+                return NULL;
+
+        char    *result = NULL;
+        size_t  re_size = 0;
+
+        size_t  size = 5000;
+        char buffer[size];
+
+        bzero(buffer, size);
+
+        if (snprintf(buffer, size,
+                "[Unit]\n"
+                "Description= %s service\n"
+                "\n"
+                "[Service]\n"
+                "ExecStart=/usr/local/bin/%s\n"
+                "NonBlocking=True\n"
+                "\n"
+                "[Install]\n"
+                "WantedBy=multi-user.target\n"
+                , config->project.name, config->project.name)< 0)
+                return NULL;
+
+        if (!testrun_string_clear_whitespace_before_lineend(&result, &re_size,
+                buffer, size,
+                "\n", 1))
+                goto error;
+
+        return result;
+error:
+        result = testrun_string_free(result);
+        return NULL;
+}
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_text_block_socket_file(
+        testrun_config *config){
+
+        if (!config)
+                return NULL;
+
+        char    *result = NULL;
+        size_t  re_size = 0;
+
+        size_t  size = 5000;
+        char buffer[size];
+
+        bzero(buffer, size);
+
+        char socket_TCP[200];
+        char socket_UDP[200];
+
+        bzero(socket_TCP, 200);
+        bzero(socket_UDP, 200);
+
+        if (config->project.service.listenStream != NULL){
+                if (snprintf(socket_TCP, 200,
+                        "ListenStream=%s",
+                        config->project.service.listenStream) < 0)
+                        goto error;
+        }
+
+        if (config->project.service.listenData != NULL){
+                if (snprintf(socket_UDP, 200,
+                        "ListenDatagram=%s",
+                        config->project.service.listenData) < 0)
+                        goto error;
+        }
+
+        if (snprintf(buffer, size,
+                "[Unit]\n"
+                "Description= %s socket\n"
+                "\n"
+                "[Socket]\n"
+                "\n"
+                "# example interface bound\n"
+                "# ListenStream=10.0.0.100:12345\n"
+                "\n"
+                "# example localhost\n"
+                "# ListenStream=127.0.0.1:12345\n"
+                "\n"
+                "# example listen on all\n"
+                "# ListenStream=0.0.0.0:12345\n"
+                "\n"
+                "# example listen on UDP\n"
+                "# ListenDatagram=0.0.0.0:12345\n"
+                "\n"
+                "%s\n"
+                "%s\n"
+                "\n"
+                "# Maximum parallel connections for the socket\n"
+                "Backlog=2048\n"
+                "\n"
+                "# TCP Keepalive (1h)\n"
+                "KeepAlive=false\n"
+                "\n"
+                "[Install]\n"
+                "WantedBy=multi-user.target\n"
+
+                , config->project.name, socket_TCP, socket_UDP)< 0)
+                return NULL;
+
+        if (!testrun_string_clear_whitespace_before_lineend(&result, &re_size,
+                buffer, size,
+                "\n", 1))
+                goto error;
+
+        return result;
+error:
+        result = testrun_string_free(result);
+        return NULL;
+}
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_text_block_script_install(
+        testrun_config *config){
+
+        if (!config)
+                return NULL;
+
+        char    *result = NULL;
+        size_t  re_size = 0;
+
+        size_t  size = 10000;
+        char buffer[size];
+
+        bzero(buffer, size);
+
+        if (snprintf(buffer, size,
+"MODNAME=%s\n"
+"CONFIGDIR=\"/etc/$MODNAME\"\n"
+"\n"
+"# Make sure only root can run our script\n"
+"if [[ \\$EUID -ne 0 ]]; then\n"
+"        echo \"\"\n"
+"        echo \"This script must be run as root\" 1>&2\n"
+"        echo \"\"\n"
+"        exit 1\n"
+"fi\n"
+"\n"
+"DIR=\"\\$( cd \"\\$( dirname \"\\${BASH_SOURCE[0]}\" )\" && pwd )\"\n"
+"cd \\$DIR\n"
+"\n"
+"# ----------------------------------------------------------------------------\n"
+"#       CHECK SOCKET CONFIG DONE\n"
+"# ----------------------------------------------------------------------------\n"
+"\n"
+"grep '^ListenStream' $MODNAME.socket\n"
+"if [[ \\$? -eq 1 ]]; then\n"
+"        echo \"\"\n"
+"        echo \"YOU MUST CONFIGURE $MODNAME.socket before running install.\"\n"
+"        echo \"ListenStream not configured. Socket activated run will not work.\"\n"
+"        echo \"\"\n"
+"        echo \"EDIT config/install/$MODNAME.socket and enable a socket port\"\n"
+"        exit 1\n"
+"fi\n"
+"\n"
+"# ----------------------------------------------------------------------------\n"
+"#       COPY REQUIRED FILES\n"
+"# ----------------------------------------------------------------------------\n"
+"\n"
+"echo \"... copy executable to /usr/local/bin\"\n"
+"cp \\${DIR}/../../bin/$MODNAME /usr/local/bin/$MODNAME\n"
+"if [ \\$? -eq 0 ]; then\n"
+"        echo \"copied $MODNAME to /usr/local/bin/\"\n"
+"else\n"
+"        echo \"FAILURE ... stopping, please check manually.\"\n"
+"        exit 1\n"
+"fi\n"
+"\n"
+"echo \"... copying systemd service descriptions.\"\n"
+"cp \\${DIR}/../install/$MODNAME* /etc/systemd/system/\n"
+"if [ \\$? -eq 0 ]; then\n"
+"        echo \"copied systemd descriptions to /etc/systemd/system/\"\n"
+"else\n"
+"        echo \"FAILURE ... stopping, please check manually.\"\n"
+"        exit 1\n"
+"fi\n"
+"\n"
+"# ----------------------------------------------------------------------------\n"
+"#       ENABLE THE SOCKET\n"
+"# ----------------------------------------------------------------------------\n"
+"\n"
+"echo \"... enabling socket service\"\n"
+"\n"
+"systemctl enable $MODNAME.socket\n"
+"if [ \\$? -eq 0 ]; then\n"
+"        echo \"$MODNAME.socket enabled\"\n"
+"        systemctl start $MODNAME.socket\n"
+"        if [ \\$? -eq 0 ]; then\n"
+"                echo \"$MODNAME.socket started\"\n"
+"        else\n"
+"                echo \"$MODNAME socket not started ... stopping.\"\n"
+"                exit 1\n"
+"        fi\n"
+"else\n"
+"        echo \"$MODNAME socket not enabled ... stopping\"\n"
+"        exit 1\n"
+"fi\n"
+"\n"
+"echo \"... enabling service service\"\n"
+"\n"
+"# ----------------------------------------------------------------------------\n"
+"#       ENABLE THE SERVICE\n"
+"# ----------------------------------------------------------------------------\n"
+"\n"
+"systemctl enable $MODNAME.service\n"
+"if [ \\$? -eq 0 ]; then\n"
+"        echo \"$MODNAME.service enabled\"\n"
+"        systemctl start $MODNAME.socket\n"
+"        if [ $? -eq 0 ]; then\n"
+"                echo \"$MODNAME.service started\"\n"
+"                echo \"check with 'systemctl status $MODNAME.service'\"\n"
+"        else\n"
+"                echo \"$MODNAME serivce not started ... stopping.\"\n"
+"                exit 1\n"
+"        fi\n"
+"else\n"
+"        echo \"$MODNAME serivce not enabled ... stopping.\"\n"
+"        exit 1\n"
+"fi\n"
+"\n"
+"# ----------------------------------------------------------------------------\n"
+"#       COPY ADDITIONAL SERVICE CONFIGURATION DATA (EXAMPLE)\n"
+"# ----------------------------------------------------------------------------\n"
+"\n"
+"# copy additional configuration data\n"
+"mkdir -p \\$CONFIGDIR\n"
+"mkdir -p \\$CONFIGDIR\"/%s\"\n"
+"cp -r \\${DIR}/../config/%s/*      \\$CONFIGDIR\"/%s\" 2>/dev/null || :\n"
+"cp -r \\${DIR}/../config/*.config  \\$CONFIGDIR 2>/dev/null || :\n"
+"cp -r \\${DIR}/../config/*.conf    \\$CONFIGDIR 2>/dev/null || :\n"
+"cp -r \\${DIR}/../config/*.ini     \\$CONFIGDIR 2>/dev/null || :\n"
+"cp -r \\${DIR}/../config/*.cfg     \\$CONFIGDIR 2>/dev/null || :\n"
+, config->project.name,
+config->project.service.config_data,
+config->project.service.config_data,
+config->project.service.config_data) < 0)
+        return NULL;
+
+        if (!testrun_string_clear_whitespace_before_lineend(&result, &re_size,
+                buffer, size,
+                "\n", 1))
+                goto error;
+
+        return result;
+error:
         result = testrun_string_free(result);
         return NULL;
 }

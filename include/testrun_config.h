@@ -90,9 +90,6 @@
 #define TESTRUN_TAG_DEFAULT_OWNER               "[OWNER]"
 
 #define TESTRUN_TAG_OFFSET                      "[OFFSET]"
-#define TESTRUN_TAG_END                         "[END]"
-
-
 #define TESTRUN_PATH_SPLIT                      "/"
 
 typedef enum testrun_extension {

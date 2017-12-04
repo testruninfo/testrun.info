@@ -256,6 +256,8 @@ int test_testrun_lib_script_folder_runner_content(){
 
         char *date   = testrun_time_string(TESTRUN_SCOPE_DAY);
 
+        testrun_config config = testrun_config_default();
+
         snprintf(expect, size,
 "#!/usr/bin/env bash"                                                           TESTRUN_LINEEND
 "#"                                                                             TESTRUN_LINEEND
@@ -348,7 +350,7 @@ TESTRUN_LINEEND
 "#       PERFORM TESTRUN"                                                       TESTRUN_LINEEND
 "#       ------------------------------------------------------------------------"TESTRUN_LINEEND
 ""                                                                              TESTRUN_LINEEND
-"FILES=`ls  $FOLDER/ | grep \"\\.test\" | wc -l`"                               TESTRUN_LINEEND
+"FILES=`ls  $FOLDER/ | grep \"\\%s\" | wc -l`"                                  TESTRUN_LINEEND
 "if [ $? -ne 0 ]; then"                                                         TESTRUN_LINEEND
 "        echo \"ERROR ... could not count files of $FOLDER\""                   TESTRUN_LINEEND
 "        exit 1"                                                                TESTRUN_LINEEND
@@ -359,7 +361,7 @@ TESTRUN_LINEEND
 "        exit 0"                                                                TESTRUN_LINEEND
 "fi"                                                                            TESTRUN_LINEEND
 ""                                                                              TESTRUN_LINEEND
-"for i in $FOLDER/*.test"                                                       TESTRUN_LINEEND
+"for i in $FOLDER/*%s"                                                          TESTRUN_LINEEND
 "do"                                                                            TESTRUN_LINEEND
 "        c=$((c+1))"                                                            TESTRUN_LINEEND
 ""                                                                              TESTRUN_LINEEND
@@ -379,7 +381,7 @@ TESTRUN_LINEEND
 "        fi"                                                                    TESTRUN_LINEEND
 "done"                                                                          TESTRUN_LINEEND
 "exit 0"                                                                        TESTRUN_LINEEND
-, date, date);
+, date, date, config.format.extensions.testexec, config.format.extensions.testexec);
 
         //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
         //log("START|\n%s|END|%jd\n", result, strlen(result));
