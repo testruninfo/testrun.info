@@ -54,6 +54,8 @@
 #define TESTRUN_FOLDER_TESTS_UNIT               "unit"
 #define TESTRUN_FOLDER_TESTS_ACCEPTANCE         "acceptance"
 #define TESTRUN_FOLDER_TESTS_TOOLS              "tools"
+#define TESTRUN_FOLDER_RESOURCES                "resources"
+#define TESTRUN_FOLDER_SERVICE_DATA             "data"
 
 #define TESTRUN_FILE_DOXYGEN                    "doxygen.config"
 #define TESTRUN_FILE_CHANGELOG                  "CHANGELOG.MD"
@@ -63,9 +65,12 @@
 #define TESTRUN_FILE_SERVICE_INSTALL            "install.sh"
 #define TESTRUN_FILE_SERVICE_UNINSTALL          "uninstall.sh"
 
+#define TESTRUN_SERVICE_EXTENSION               ".service"
+#define TESTRUN_SOCKET_EXTENSION                ".socket"
+
 #define TESTRUN_FILE_MAKEFILE                   "makefile"
-#define TESTRUN_FILE_MAKEFILE_SOURCE            "makefile.source"
-#define TESTRUN_FILE_MAKEFILE_TESTRUN           "makefile.testrun"
+#define TESTRUN_FILE_MAKEFILE_MAIN              "makefile.main"
+#define TESTRUN_FILE_MAKEFILE_TEST              "makefile.test"
 
 #define TESTRUN_FILE_TESTRUN_HEADER             "testrun.h"
 #define TESTRUN_SCRIPT_RUNNER                   "testrun_runner.sh"
@@ -167,8 +172,8 @@ struct testrun_config_format{
 
 struct testrun_config_doxygen{
 
-        char *foldername;
-        char *filename;
+        char *folder;
+        char *file;
 
 };
 
@@ -176,7 +181,7 @@ struct testrun_config_doxygen{
 
 struct testrun_config_test_tools{
 
-        char *name;
+        char *folder;
         char *to_tests;
 
         char *header;
@@ -191,7 +196,7 @@ struct testrun_config_test_tools{
 
 struct testrun_config_path_tests{
 
-        char *name;
+        char *folder;
         char *unit;
         char *acceptance;
 

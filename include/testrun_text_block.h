@@ -60,7 +60,7 @@
         @return         body for the file name.h
  */
 char *testrun_text_block_header_body(
-        char *name);
+        char const * const name);
 
 /*----------------------------------------------------------------------------*/
 
@@ -71,7 +71,7 @@ char *testrun_text_block_header_body(
         @return         body for the file name.c
  */
 char *testrun_text_block_source_body(
-        char *name);
+        char const * const name);
 
 /*----------------------------------------------------------------------------*/
 
@@ -83,8 +83,8 @@ char *testrun_text_block_source_body(
         @return         body for the file name_tests.c
  */
 char *testrun_text_block_test_body(
-        char *path_src,
-        char *path_run);
+        char const * const path_src,
+        char const * const path_run);
 
 /*----------------------------------------------------------------------------*/
 
@@ -129,7 +129,7 @@ char *testrun_text_block_test_body(
         @returns                allocated string with statement or NULL
 */
 char *testrun_text_block_c_header_documentation(
-        char *module_name,
+        char const * const module_name,
         testrun_extension_t extension,
         struct testrun_config const * const config,
         bool docu_open,
@@ -237,7 +237,7 @@ char *testrun_text_block_splitline(
         @returns                allocated string with statement or NULL
 */
 char *testrun_text_block_script(
-        testrun_config *config,
+        testrun_config const * const config,
         char *description,
         char *usage,
         char *dependencies,
@@ -256,10 +256,12 @@ char *testrun_text_block_script(
         @returns                allocated string with statement or NULL
 */
 char *testrun_text_block_readme(
-        testrun_config *config,
+        testrun_config const * const config,
         char *description,
         char *usage,
         char *installation);
+
+/*----------------------------------------------------------------------------*/
 
 /**
         Create a default doxygen.config
@@ -268,8 +270,64 @@ char *testrun_text_block_readme(
         @returns                allocated string with statement or NULL
 */
 char *testrun_text_block_doxygen_config(
-        testrun_config *config);
+        testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Create the script content for an install script.
+
+        @param config           configuration to be used
+        @returns                allocated string with statement or NULL
+*/
+char *testrun_text_block_script_install(
+        testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Create the script content for an uninstall script.
+
+        @param config           configuration to be used
+        @returns                allocated string with statement or NULL
+*/
+char *testrun_text_block_script_uninstall(
+        testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Create the script content for a standard service file
+
+        @param config           configuration to be used
+        @returns                allocated string with statement or NULL
+*/
+char *testrun_text_block_service_file(
+        testrun_config const * const config);
 
 
+/*----------------------------------------------------------------------------*/
+
+/**
+        Create the script content for a standard service socket
+
+        @param config           configuration to be used
+        @returns                allocated string with statement or NULL
+*/
+char *testrun_text_block_socket_file(
+        testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Create the content for a changelog file.
+
+        @param config           configuration to be used
+        @returns                allocated string with statement or NULL
+*/
+char *testrun_text_block_changelog_file(
+        testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
 
 #endif /* testrun_text_block_h */

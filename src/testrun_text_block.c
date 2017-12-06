@@ -44,7 +44,7 @@
  *      ------------------------------------------------------------------------
  */
 
-char *testrun_text_block_header_body(char *name){
+char *testrun_text_block_header_body(char const * const name){
 
         if (!name)
                 return NULL;
@@ -65,7 +65,7 @@ char *testrun_text_block_header_body(char *name){
 
 /*-------------------------------------------------------------------------------------------*/
 
-char *testrun_text_block_source_body(char *name){
+char *testrun_text_block_source_body(char const * const name){
 
         if (!name)
                 return NULL;
@@ -83,8 +83,8 @@ char *testrun_text_block_source_body(char *name){
 /*----------------------------------------------------------------------------*/
 
 char *testrun_text_block_test_body(
-        char *path_src,
-        char *path_testrun){
+        char const * const path_src,
+        char const * const path_testrun){
 
         if (!path_src || !path_testrun)
                 return NULL;
@@ -332,7 +332,7 @@ static bool testrun_text_block_write_shell_commented(
 /*----------------------------------------------------------------------------*/
 
 char *testrun_text_block_c_header_documentation(
-        char *module_name,
+        char const * const module_name,
         testrun_extension_t extension,
         struct testrun_config const * const config,
         bool documentation_tag_open,
@@ -852,7 +852,7 @@ char *testrun_text_block_splitline(
 /*----------------------------------------------------------------------------*/
 
 char *testrun_text_block_script(
-        testrun_config *config,
+        testrun_config const * const config,
         char *description,
         char *usage,
         char *dependencies,
@@ -951,7 +951,7 @@ error:
 /*----------------------------------------------------------------------------*/
 
 char *testrun_text_block_readme(
-        testrun_config *config,
+        testrun_config const * const config,
         char *description,
         char *usage,
         char *installation){
@@ -1209,7 +1209,7 @@ error:
 /*----------------------------------------------------------------------------*/
 
 char *testrun_text_block_doxygen_config(
-        testrun_config *config){
+        testrun_config const * const config){
 
         if (!config)
                 return NULL;
@@ -1275,7 +1275,7 @@ error:
 /*----------------------------------------------------------------------------*/
 
 char *testrun_text_block_service_file(
-        testrun_config *config){
+        testrun_config const * const config){
 
         if (!config)
                 return NULL;
@@ -1315,7 +1315,7 @@ error:
 /*----------------------------------------------------------------------------*/
 
 char *testrun_text_block_socket_file(
-        testrun_config *config){
+        testrun_config const * const config){
 
         if (!config)
                 return NULL;
@@ -1395,7 +1395,7 @@ error:
 /*----------------------------------------------------------------------------*/
 
 char *testrun_text_block_script_install(
-        testrun_config *config){
+        testrun_config const * const config){
 
         if (!config)
                 return NULL;
@@ -1527,6 +1527,159 @@ config->project.service.config_data) < 0)
 
         return result;
 error:
+        result = testrun_string_free(result);
+        return NULL;
+}
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_text_block_script_uninstall(
+        testrun_config const * const config){
+
+        if (!config)
+                return NULL;
+
+        char    *result = NULL;
+        size_t  re_size = 0;
+
+        size_t  size = 10000;
+        char buffer[size];
+
+        bzero(buffer, size);
+
+        if (snprintf(buffer, size,
+"MODNAME=%s\n"
+"CONFIGDIR=\"/etc/$MODNAME\"\n"
+"\n"
+"# Make sure only root can run our script\n"
+"if [[ \\$EUID -ne 0 ]]; then\n"
+"        echo \"This script must be run as root\" 1>&2\n"
+"        exit 1\n"
+"fi\n"
+"\n"
+"# ----------------------------------------------------------------------------\n"
+"#       SERVICE SHUTDOWN\n"
+"# ----------------------------------------------------------------------------\n"
+"\n"
+"echo \"Stopping $MODNAME.service\"\n"
+"systemctl stop $MODNAME.service\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... service stopped.\";\n"
+"else\n"
+"        echo \"... service was not running.\"\n"
+"fi\n"
+"\n"
+"echo \"Disabling $MODNAME.service\"\n"
+"systemctl disable $MODNAME.service\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... service disabled.\";\n"
+"else\n"
+"        echo \"... service was not enabled.\"\n"
+"fi\n"
+"\n"
+"# ----------------------------------------------------------------------------\n"
+"#       SOCKET SHUTDOWN\n"
+"# ----------------------------------------------------------------------------\n"
+"\n"
+"echo \"Stopping $MODNAME.socket\"\n"
+"systemctl stop $MODNAME.socket\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... socket stopped.\";\n"
+"else\n"
+"        echo \"... socket was not running.\"\n"
+"fi\n"
+"\n"
+"echo \"Disabling $MODNAME.socket\"\n"
+"systemctl disable $MODNAME.socket\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... socket disabled.\";\n"
+"else\n"
+"        echo \"... socket was not enabled.\"\n"
+"fi\n"
+"\n"
+"# ----------------------------------------------------------------------------\n"
+"#       REMOVE CONFIG\n"
+"# ----------------------------------------------------------------------------\n"
+"\n"
+"echo \"Removing systemd files\"\n"
+"rm -rf /etc/systemd/system/$MODNAME*\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... removed /etc/systemd/system/$MODNAME*\";\n"
+"else\n"
+"        echo \"... WARN check and remove /etc/systemd/system/$MODNAME*\";\n"
+"fi\n"
+"echo \"uninstall done.\"\n"
+"\n"
+"echo \"Removing executable files\"\n"
+"rm -rf /usr/local/bin/$MODNAME\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... removed /usr/local/bin/$MODNAME\";\n"
+"else\n"
+"        echo \"... WARN check and remove /usr/local/bin/$MODNAME\";\n"
+"fi\n"
+"echo \"uninstall done.\"\n"
+"\n"
+"echo \"Removing config files\"\n"
+"rm -rf /etc/$MODNAME*\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... removed /etc/$MODNAME*\";\n"
+"else\n"
+"        echo \"... WARN check and remove /etc/$MODNAME*\";\n"
+"fi\n"
+"echo \"uninstall done.\"\n"
+"\n"
+"# ----------------------------------------------------------------------------\n"
+"#       RELOAD SYSTEMCTL DAEMON\n"
+"# ----------------------------------------------------------------------------\n"
+"\n"
+"systemctl daemon-reload\n"
+"echo \"Systemd daemon reload performed.\"\n"
+, config->project.name) < 0)
+        return NULL;
+
+        if (!testrun_string_clear_whitespace_before_lineend(&result, &re_size,
+                buffer, size,
+                "\n", 1))
+                goto error;
+
+        return result;
+error:
+        result = testrun_string_free(result);
+        return NULL;
+}
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_text_block_changelog_file(
+        testrun_config const * const config){
+
+        if (!config)
+                return NULL;
+
+        char    *date   = testrun_time_string(TESTRUN_SCOPE_DAY);
+
+        char    *result = NULL;
+        size_t  re_size = 0;
+
+        size_t  size = 10000;
+        char buffer[size];
+
+        bzero(buffer, size);
+
+        if (snprintf(buffer, size,
+                "Changelog for project %s created %s\n",
+                config->project.name, date) < 0)
+                goto error;
+
+        if (!testrun_string_clear_whitespace_before_lineend(&result, &re_size,
+                buffer, size,
+                "\n", 1))
+                goto error;
+
+        date = testrun_string_free(date);
+        return result;
+error:
+        date = testrun_string_free(date);
         result = testrun_string_free(result);
         return NULL;
 }

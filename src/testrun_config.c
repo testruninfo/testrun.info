@@ -70,7 +70,7 @@ testrun_config testrun_config_default(){
                                 .from_tests     = TESTRUN_PATH_LEVEL_UP,
                                 .tests          =
                                 {
-                                        .name       = TESTRUN_FOLDER_TESTS,
+                                        .folder     = TESTRUN_FOLDER_TESTS,
                                         .unit       = TESTRUN_FOLDER_TESTS_UNIT,
                                         .acceptance = TESTRUN_FOLDER_TESTS_ACCEPTANCE,
 
@@ -79,7 +79,7 @@ testrun_config testrun_config_default(){
 
                                         .tools =
                                         {
-                                                .name     = TESTRUN_FOLDER_TESTS_TOOLS,
+                                                .folder   = TESTRUN_FOLDER_TESTS_TOOLS,
                                                 .to_tests = TESTRUN_PATH_LEVEL_UP,
 
                                                 .header            = TESTRUN_FILE_TESTRUN_HEADER,
@@ -95,14 +95,14 @@ testrun_config testrun_config_default(){
                                 .folder           = TESTRUN_FOLDER_INSTALL,
                                 .install_script   = TESTRUN_FILE_SERVICE_INSTALL,
                                 .uninstall_script = TESTRUN_FILE_SERVICE_UNINSTALL,
-                                .config_data      = NULL,
+                                .config_data      = TESTRUN_FOLDER_SERVICE_DATA,
                                 .listenStream     = NULL,
                                 .listenData       = NULL
                         },
                         .doxygen =
                         {
-                                .foldername = TESTRUN_FOLDER_DOXYGEN,
-                                .filename   = TESTRUN_FILE_DOXYGEN
+                                .folder = TESTRUN_FOLDER_DOXYGEN,
+                                .file   = TESTRUN_FILE_DOXYGEN
                         }
                 },
                 .copyright =

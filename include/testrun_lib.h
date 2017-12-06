@@ -49,6 +49,76 @@
 #include "testrun_time.h"
 #include "testrun_vector.h"
 
+
+/*
+ *      ------------------------------------------------------------------------
+ *
+ *      General functions to create a testrun project or a new module within
+ *      an existing testrun project.
+ *
+ *      ------------------------------------------------------------------------
+ */
+
+/**
+        Create a project based on the config. This function will create all
+        PATHS and FILES for the project, based on the input config.
+
+        This function SHALL be used to create a new project structure.
+
+        @param config           an input config, which is used as a base.
+        @param readme           (optional) content for the project readme.
+        @returns                allocated string with script content or NULL
+                                (MUST be freed)
+*/
+bool testrun_lib_create_project(
+        testrun_config const * const config,
+        char const * const readme);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Generate the files name.h, name.c and name_test.c within their
+        respective folders for header, source and unit test folder. All
+        path and dynamic data will be generated out of the config.
+
+        @param name             name for the new module file within the project
+        @param config           an input config, which is used as a base.
+        @returns                allocated string with script content or NULL
+                                (MUST be freed)
+*/
+bool testrun_lib_create_module_files(
+        char const * const name,
+        testrun_config const * const config);
+
+/*
+ *      ------------------------------------------------------------------------
+ *
+ *      Additonal functions, which may be used in an external program to
+ *      advance an existing project to a testrun project.
+ *
+ *      ------------------------------------------------------------------------
+ */
+
+/**
+        Generate all test tool files and write the tools to the PATH defined
+        within the config.
+
+        E.g. config.project.path.tests.to_tools = "/home/user/project/tools"
+        will write all test scripts to "/home/user/project/tools"
+
+        NOTE: This function will not create any type of makefile, just all test
+        scripts as well as the general testrun.h header, and write the files to
+        the given tools destination, which PATH MUST exist.
+
+        This function MAY be used to add the test tools to an existing project.
+
+        @param config           an input config, which is used as a base.
+        @returns                allocated string with script content or NULL
+                                (MUST be freed)
+*/
+bool testrun_lib_create_test_tools(
+        testrun_config const * const config);
+
 /*----------------------------------------------------------------------------*/
 
 /**
@@ -74,7 +144,7 @@ char *testrun_lib_testrun_header_content();
                                 (MUST be freed)
 */
 char * testrun_lib_c_file_content(
-        char * name,
+        char const * const name,
         testrun_extension_t filetype,
         struct testrun_config const * const config);
 
@@ -158,5 +228,54 @@ char *testrun_lib_script_loc_tests_content(testrun_config config);
                                 (MUST be freed)
 */
 char *testrun_lib_makefile_content(testrun_config config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Generate the main makefile of the project.
+
+        @param config           an input config, which is used as a base.
+        @returns                allocated string with script content or NULL
+                                (MUST be freed)
+*/
+char *testrun_lib_makefile_main_content(testrun_config config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Generate the test makefile of the project.
+
+        @param config           an input config, which is used as a base.
+        @returns                allocated string with script content or NULL
+                                (MUST be freed)
+*/
+char *testrun_lib_makefile_test_content(testrun_config config);
+
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Generate the content of the script for the service installation.
+        This script will autogenerate the default testrun script and set
+        Copyright, Author and Year accordingly.
+
+        @param config           an input config, which is used as a base.
+        @returns                allocated string with script content or NULL
+                                (MUST be freed)
+*/
+char *testrun_lib_script_service_install_content(testrun_config config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Generate the content of the script for the service deinstallation.
+        This script will autogenerate the default testrun script and set
+        Copyright, Author and Year accordingly.
+
+        @param config           an input config, which is used as a base.
+        @returns                allocated string with script content or NULL
+                                (MUST be freed)
+*/
+char *testrun_lib_script_service_uninstall_content(testrun_config config);
 
 #endif /* testrun_lib_h */

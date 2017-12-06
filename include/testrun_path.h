@@ -48,6 +48,8 @@
 
 #include "testrun_config.h"
 
+#include <sys/types.h>
+#include <sys/stat.h>
 
 /*----------------------------------------------------------------------------*/
 
@@ -65,7 +67,7 @@
         @returns                true if path is project root
 */
 bool testrun_path_is_project_top_dir(
-        char *path);
+        char const * const path);
 
 /*----------------------------------------------------------------------------*/
 
@@ -76,7 +78,7 @@ bool testrun_path_is_project_top_dir(
         @returns                path to project root or NULL on error
 */
 char *testrun_path_search_project_path(
-        char *path);
+        char const * const path);
 
 /*----------------------------------------------------------------------------*/
 
@@ -106,7 +108,7 @@ bool testrun_path_add_element(
 bool testrun_path_source_to_include(
         char *buffer, size_t max,
         struct testrun_config const * const config,
-        char * module_name);
+        char const * const module_name);
 
 /*----------------------------------------------------------------------------*/
 
@@ -121,7 +123,7 @@ bool testrun_path_source_to_include(
 bool testrun_path_test_to_source(
         char *buffer, size_t max,
         struct testrun_config const * const config,
-        char * module_name);
+        char const * const module_name);
 
 /*----------------------------------------------------------------------------*/
 
@@ -238,6 +240,20 @@ bool testrun_path_project_to_config(
 /*----------------------------------------------------------------------------*/
 
 /**
+        Get the path from project to config.
+
+        @param buffer           buffer to write to
+        @param max              max open buffer
+        @param config           current config
+        @returns                true if path was written to buffer
+*/
+bool testrun_path_project_to_config_data(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
         Get the path from project to copyright.
 
         @param buffer           buffer to write to
@@ -274,6 +290,20 @@ bool testrun_path_project_to_unit_tests(
         @returns                true if path was written to buffer
 */
 bool testrun_path_project_to_acceptance_tests(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Get the path from project to unit tests.
+
+        @param buffer           buffer to write to
+        @param max              max open buffer
+        @param config           current config
+        @returns                true if path was written to buffer
+*/
+bool testrun_path_project_to_test_resources(
         char *buffer, size_t max,
         struct testrun_config const * const config);
 
@@ -336,6 +366,20 @@ bool testrun_path_script_loc_tests(
 /*----------------------------------------------------------------------------*/
 
 /**
+        Get the full path for the service config folder
+
+        @param buffer           buffer to write to
+        @param max              max open buffer
+        @param config           current config
+        @returns                true if path was written to buffer
+*/
+bool testrun_path_project_to_service_config(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
         Get the full path for the service install script
 
         @param buffer           buffer to write to
@@ -343,7 +387,7 @@ bool testrun_path_script_loc_tests(
         @param config           current config
         @returns                true if path was written to buffer
 */
-bool testrun_path_script_service_install(
+bool testrun_path_project_to_service_install(
         char *buffer, size_t max,
         struct testrun_config const * const config);
 
@@ -378,6 +422,20 @@ bool testrun_path_script_service_socket_definition(
 /*----------------------------------------------------------------------------*/
 
 /**
+        Get the full path for the service install script
+
+        @param buffer           buffer to write to
+        @param max              max open buffer
+        @param config           current config
+        @returns                true if path was written to buffer
+*/
+bool testrun_path_script_service_install(
+        char *buffer, size_t max,
+        struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
         Get the full path for the service uninstall script
 
         @param buffer           buffer to write to
@@ -402,5 +460,17 @@ bool testrun_path_script_service_uninstall(
 bool testrun_path_doxygen_config(
         char *buffer, size_t max,
         struct testrun_config const * const config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Create a path.
+
+        @param path             path to create
+        @param max              max open buffer
+        @returns                true if path was written to buffer
+*/
+bool testrun_path_create(char *path, size_t max);
+
 
 #endif /* testrun_path_h */

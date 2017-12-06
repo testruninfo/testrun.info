@@ -2140,7 +2140,7 @@ doxygen_config, script_install, script_uninstall);
 
         config.project.path.to_source = "../../..";
         config.project.path.source = "123";
-        config.project.doxygen.filename = "AAA";
+        config.project.doxygen.file = "AAA";
 
         config.project.service.install_script = "XXX";
         config.project.service.uninstall_script = "YYY";
@@ -2391,6 +2391,239 @@ uninstall);
         testrun(strlen(result) == strlen(expect));
         testrun(strncmp(result, expect, strlen(expect))== 0);
 
+        config.project.service.folder = NULL;
+
+                snprintf(expect, size,
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Copyright 2017 Markus Toepfer"                                         TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Licensed under the Apache License, Version 2.0 (the \"License\");"     TESTRUN_LINEEND
+"#       you may not use this file except in compliance with the License."      TESTRUN_LINEEND
+"#       You may obtain a copy of the License at"                               TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#               http://www.apache.org/licenses/LICENSE-2.0"                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Unless required by applicable law or agreed to in writing, software"   TESTRUN_LINEEND
+"#       distributed under the License is distributed on an \"AS IS\" BASIS,"   TESTRUN_LINEEND
+"#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."TESTRUN_LINEEND
+"#       See the License for the specific language governing permissions and"   TESTRUN_LINEEND
+"#       limitations under the License."                                        TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       File            testrun_makefile.main"                                 TESTRUN_LINEEND
+"#       Authors         Markus Toepfer"                                        TESTRUN_LINEEND
+"#       Date            %s"                                                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Project         %s"                                                    TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Description     Generic makefile for testrun based projects."          TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#                       Target of this makefile is an independent library"     TESTRUN_LINEEND
+"#                       or executable to be installed at either PREFIX/lib"    TESTRUN_LINEEND
+"#                       or PREFIX/bin."                                        TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Usage           SHOULD be used included by parent makefile"            TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Dependencies    testrun (makefile & service scripts), doxygen (if used)"TESTRUN_LINEEND
+"#"                                                                             TESTRUN_LINEEND
+"#       Last changed    %s"                                                    TESTRUN_LINEEND
+"#       ------------------------------------------------------------------------"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Switch on colors"                                                            TESTRUN_LINEEND
+"GCC_COLORS ?= 'gcc colors available, use them!'"                               TESTRUN_LINEEND
+"export GCC_COLORS"                                                             TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- PARAMETER DEFINITION --------------------------------------------------"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# CFLAGS"                                                                      TESTRUN_LINEEND
+"# -g            enable Debugging symbols"                                      TESTRUN_LINEEND
+"# -Ox           code optimization"                                             TESTRUN_LINEEND
+"# -Wall         enable Warnings"                                               TESTRUN_LINEEND
+"# -Wextra       additional Warnings"                                           TESTRUN_LINEEND
+TESTRUN_LINEEND
+"CFLAGS\t\t= -c -Wall -Wextra -fPIC"                                            TESTRUN_LINEEND
+"CFLAGS\t\t+= $(EXTRAHEADER)"                                                   TESTRUN_LINEEND
+"CFLAGS\t\t+= $(MODCFLAGS)"                                                     TESTRUN_LINEEND
+TESTRUN_LINEEND
+"PROJECTPATH\t:= $(abspath $(dir $(PROJECTMK)))"                                TESTRUN_LINEEND
+"DIRNAME\t\t:= $(notdir $(patsubst %%/,%%,$(dir $(PROJECTMK))))"                TESTRUN_LINEEND
+TESTRUN_LINEEND
+"LIBNAME\t\t:= lib$(DIRNAME)"                                                   TESTRUN_LINEEND
+"LIBNAMEPC\t:= $(LIBNAME).pc"                                                   TESTRUN_LINEEND
+TESTRUN_LINEEND
+"INSTALL\t\t:= install"                                                         TESTRUN_LINEEND
+TESTRUN_LINEEND
+"INCDIR\t\t:= $(PREFIX)/include/$(DIRNAME)"                                     TESTRUN_LINEEND
+"LIBDIR\t\t:= $(PREFIX)/lib"                                                    TESTRUN_LINEEND
+"EXECDIR\t\t:= $(PREFIX)/bin"                                                   TESTRUN_LINEEND
+"PRODIR\t\t:= $(LIBDIR)/$(DIRNAME)"                                             TESTRUN_LINEEND
+TESTRUN_LINEEND
+"EXECUTABLE\t= bin/$(DIRNAME)"                                                  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"CFLAGS\t\t+= -Iinclude"                                                        TESTRUN_LINEEND
+TESTRUN_LINEEND
+"MODMAKE\t\t:= $(patsubst %%,../../../123/%%/mod.mk,$(MODULES))"                 TESTRUN_LINEEND
+TESTRUN_LINEEND
+"STATIC\t\t= build/lib$(DIRNAME).a"                                             TESTRUN_LINEEND
+"SHARED\t\t= $(patsubst %%.a,%%.so,$(STATIC))"                                  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Source and object files to compile"                                          TESTRUN_LINEEND
+"SOURCES\t\t= $(wildcard ../../../123/**/*.c ../../../123/*.c)"                   TESTRUN_LINEEND
+"OBJECTS\t\t= $(patsubst %%.c,%%.o,$(SOURCES))"                                 TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- DEFAULT MAKE RULES ----------------------------------------------------"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"%%.o : %%.c"                                                                   TESTRUN_LINEEND
+"\t@echo \" (CC)    $@\""                                                       TESTRUN_LINEEND
+"\t@$(CC) $(CFLAGS) -g -o $@ -c $< $(LIBS)"                                     TESTRUN_LINEEND
+TESTRUN_LINEEND
+"all:\t\t%s"                                                                    TESTRUN_LINEEND
+"install:\t%s"                                                                  TESTRUN_LINEEND
+"uninstall:\t%s"                                                                TESTRUN_LINEEND
+TESTRUN_LINEEND
+"all_lib:\tstart lib tests pkgconfig done"                                      TESTRUN_LINEEND
+"all_exec:\tstart lib tests $(EXECUTABLE) done"                                 TESTRUN_LINEEND
+"all_service:\tall_exec"                                                        TESTRUN_LINEEND
+TESTRUN_LINEEND
+"lib:\t\tbuild sources"                                                         TESTRUN_LINEEND
+"sources:\tbuild $(STATIC) $(SHARED)"                                           TESTRUN_LINEEND
+TESTRUN_LINEEND
+"$(STATIC):  $(OBJECTS)"                                                        TESTRUN_LINEEND
+"\t@echo \" (AR)    $@ $(OBJECTS)\""                                            TESTRUN_LINEEND
+"\t@ar rcs $@ $(OBJECTS)"TESTRUN_LINEEND
+"\t@ranlib $@"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"$(SHARED): $(STATIC) $(OBJECTS)"                                               TESTRUN_LINEEND
+"\t@echo \" (CC)    $@ $(OBJECTS)\""                                            TESTRUN_LINEEND
+"\t@$(CC) -shared -o $@ $(OBJECTS) $(LIBS)"                                     TESTRUN_LINEEND
+TESTRUN_LINEEND
+"$(EXECUTABLE): $(OBJECTS)"                                                     TESTRUN_LINEEND
+"\t@echo \" (CC)    $@ $(OBJECTS)\""                                            TESTRUN_LINEEND
+"\t$(CC) -o $@ $(STATIC) $(LIBS)"                                               TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- BUILD & CLEANUP -----------------------------------------------------" TESTRUN_LINEEND
+TESTRUN_LINEEND
+"build:"                                                                        TESTRUN_LINEEND
+"\t@mkdir -p bin"                                                               TESTRUN_LINEEND
+"\t@mkdir -p build"                                                             TESTRUN_LINEEND
+"\t@mkdir -p build/test"                                                        TESTRUN_LINEEND
+"\t@mkdir -p build/test/omp"                                                    TESTRUN_LINEEND
+"\t@mkdir -p build/test/omp/unit"                                               TESTRUN_LINEEND
+"\t@mkdir -p build/test/omp/acceptance"                                         TESTRUN_LINEEND
+"\t@mkdir -p build/test/unit"                                                   TESTRUN_LINEEND
+"\t@mkdir -p build/test/acceptance"                                             TESTRUN_LINEEND
+"\t@mkdir -p build/test/log"                                                    TESTRUN_LINEEND
+"\t@echo \" (MK)    directories for build\""                                    TESTRUN_LINEEND
+TESTRUN_LINEEND
+".PHONY: clean"                                                                 TESTRUN_LINEEND
+"clean:"TESTRUN_LINEEND
+"\t@echo \" (CLEAN) $(LIBNAME)\""                                               TESTRUN_LINEEND
+"\t@rm -rf build bin doxygen/documentation $(OBJECTS) $(TESTS_OBJECTS) \\"      TESTRUN_LINEEND
+"\t\t$(LIBNAMEPC) $(TESTS_TMP_FILES)"                                           TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- DOCUMENATION -------------------------------------------------------"TESTRUN_LINEEND
+TESTRUN_LINEEND
+"#NOTE requires doxygen"
+".PHONY: documentation"                                                         TESTRUN_LINEEND
+"documentation:"                                                                TESTRUN_LINEEND
+"\tdoxygen ./doxygen/AAA"                                                       TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- PKGCONFIG LIBRARY BUILD --------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+".PHONY: pkgconfig"                                                             TESTRUN_LINEEND
+"pkgconfig:"                                                                    TESTRUN_LINEEND
+"\t@echo 'prefix='$(PREFIX)                     >  $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'exec_prefix=$${prefix}'               >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'libdir=$${prefix}/lib'                >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'includedir=$${prefix}/include'        >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo ''                                     >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Name: '$(LIBNAME)                     >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Description: '                        >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Version: '$(VERSION)                  >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'URL: '$(PROJECT_URL)                  >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Libs: -L$${libdir} -l'$(DIRNAME)      >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+"\t@echo 'Cflags: -I$${includedir}'             >> $(LIBNAMEPC)"                TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- INSTALLATION -------------------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Installation as a library ------------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"install_lib: $(SHARED) $(STATIC)"                                              TESTRUN_LINEEND
+"\t@echo \" (OK)    installed $(LIBNAME) to $(LIBDIR)\""                        TESTRUN_LINEEND
+"\t@mkdir -p $(PRODIR)"                                                         TESTRUN_LINEEND
+"\t@mkdir -p $(LIBDIR)/pkgconfig"                                               TESTRUN_LINEEND
+"\t@mkdir -p $(INCDIR)"                                                         TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0644 -t $(INCDIR) $(shell find include -name \"*.h\")"        TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0755 $(SHARED) $(PRODIR)"                                     TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0755 $(STATIC) $(PRODIR)"                                     TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0644 $(LIBNAMEPC) $(LIBDIR)/pkgconfig"                        TESTRUN_LINEEND
+"\t@ldconfig $(PRODIR)"                                                         TESTRUN_LINEEND
+TESTRUN_LINEEND
+"uninstall_lib:"                                                                TESTRUN_LINEEND
+"\t@echo \" (OK)    uninstalled $(LIBNAME) from $(LIBDIR)\""                    TESTRUN_LINEEND
+"\t@rm -rf $(INCDIR)"                                                           TESTRUN_LINEEND
+"\t@rm -rf $(PRODIR)"                                                           TESTRUN_LINEEND
+"\t@rm -rf $(PRODIR)/$(LIBNAME).a"                                              TESTRUN_LINEEND
+"\t@rm -rf $(PRODIR)/$(LIBNAME).so"                                             TESTRUN_LINEEND
+"\t@rm -rf $(LIBDIR)/pkgconfig/$(LIBNAMEPC)"                                    TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Installation as an executable --------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"install_exec: $(SHARED) $(STATIC)"                                             TESTRUN_LINEEND
+"\t@echo \" (OK)    installed $(DIRNAME) to $(EXECDIR)\""                       TESTRUN_LINEEND
+"\t@$(INSTALL) -m 0755 bin/$(DIRNAME) $(EXECDIR)"                               TESTRUN_LINEEND
+TESTRUN_LINEEND
+"uninstall_exec:"                                                               TESTRUN_LINEEND
+"\t@echo \" (OK)    uninstalled $(DIRNAME) from $(EXECDIR)\""                   TESTRUN_LINEEND
+"\t@rm -rf $(EXECDIR)/$(DIRNAME)"                                               TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# Installation as a service (outsourced to script)--------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"install_service: $(EXECUTABLE)"                                                TESTRUN_LINEEND
+""                                                                            TESTRUN_LINEEND
+TESTRUN_LINEEND
+"uninstall_service:"                                                            TESTRUN_LINEEND
+""                                                                            TESTRUN_LINEEND
+TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# ----- INFORMATION PRINTING -----------------------------------------------"  TESTRUN_LINEEND
+TESTRUN_LINEEND
+"# print out a variable of the make file (e.g. \"make print-PROJECTPATH\")"     TESTRUN_LINEEND
+".PHONY: print"                                                                 TESTRUN_LINEEND
+"print-%%  : ; @echo $* = $($*)"                                                TESTRUN_LINEEND
+TESTRUN_LINEEND
+".PHONY: start"                                                                 TESTRUN_LINEEND
+"start:"                                                                        TESTRUN_LINEEND
+"\t@echo \"\\n (HINT)    $(PROJECT) \\t\\t ==> running make\\n\""               TESTRUN_LINEEND
+TESTRUN_LINEEND
+".PHONY: done"                                                                  TESTRUN_LINEEND
+"done:"                                                                         TESTRUN_LINEEND
+"\t@echo"                                                                       TESTRUN_LINEEND
+"\t@echo \" (DONE)  make $(PROJECT)\""                                          TESTRUN_LINEEND
+"\t@echo \" (HINT)  with unit testing      ==> 'make tested'\""                 TESTRUN_LINEEND
+"\t@echo \" (HINT)  perform installation   ==> 'sudo make install\\n\""         TESTRUN_LINEEND
+"\t@echo \" (HINT)  generate documentation ==> 'make documentation\\n\""        TESTRUN_LINEEND
+,date,
+config.project.name,
+date,
+all_target,
+install,
+uninstall);
+        result = testrun_string_free(result);
+        result = testrun_lib_makefile_main_content(config);
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", result, strlen(result));
+        testrun(strlen(result) == strlen(expect));
+        testrun(strncmp(result, expect, strlen(expect))== 0);
+
+
         date   = testrun_string_free(date);
         result = testrun_string_free(result);
         return testrun_log_success();
@@ -2608,6 +2841,1760 @@ script_loc
         return testrun_log_success();
 }
 
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_script_service_install_content(){
+
+        size_t size = 10000;
+        char expect[size];
+        bzero(expect, size);
+
+        testrun_config config = testrun_config_default();
+
+        char *result = testrun_lib_script_service_install_content(config);
+        char *date   = testrun_time_string(TESTRUN_SCOPE_DAY);
+
+        snprintf(expect, size,
+        "#!/usr/bin/env bash\n"
+        "#\n"
+        "#       Copyright 2017 Markus Toepfer\n"
+        "#\n"
+        "#       Licensed under the Apache License, Version 2.0 (the \"License\");\n"
+        "#       you may not use this file except in compliance with the License.\n"
+        "#       You may obtain a copy of the License at\n"
+        "#\n"
+        "#               http://www.apache.org/licenses/LICENSE-2.0\n"
+        "#\n"
+        "#       Unless required by applicable law or agreed to in writing, software\n"
+        "#       distributed under the License is distributed on an \"AS IS\" BASIS,\n"
+        "#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
+        "#       See the License for the specific language governing permissions and\n"
+        "#       limitations under the License.\n"
+        "#\n"
+        "#       ------------------------------------------------------------------------\n"
+        "#\n"
+        "#       File            %s\n"
+        "#       Authors         Markus Toepfer\n"
+        "#       Date            %s\n"
+        "#\n"
+        "#       Project         %s\n"
+        "#\n"
+        "#       Description     Install and enable the service.\n"
+        "#\n"
+        "#                       CONVENTION\n"
+        "#\n"
+        "#                       (1) Installation will be done at:\n"
+        "#                           /usr/local/bin\n"
+        "#\n"
+        "#                       (2) Configuration files will be placed at\n"
+        "#                           /etc/%s\n"
+        "#\n"
+        "#                       (3) Service definition will be placed at\n"
+        "#                           /etc/systemd/system/%s.service\n"
+        "#\n"
+        "#                       (4) Service socket definition will be placed at\n"
+        "#                           /etc/systemd/system/%s.socket\n"
+        "#\n"
+        "#                       THIS SCRIPT MUST BE RUN AS ROOT.\n"
+        "#\n"
+        "#       Usage           ./%s /path/to/project\n"
+        "#\n"
+        "#       Dependencies    bash systemctl grep cp\n"
+        "#\n"
+        "#       Last changed    %s\n"
+        "#       ------------------------------------------------------------------------\n"
+        "MODNAME=%s\n"
+        "CONFIGDIR=\"/etc/$MODNAME\"\n"
+        "\n"
+        "# Make sure only root can run our script\n"
+        "if [[ \\$EUID -ne 0 ]]; then\n"
+        "        echo \"\"\n"
+        "        echo \"This script must be run as root\" 1>&2\n"
+        "        echo \"\"\n"
+        "        exit 1\n"
+        "fi\n"
+        "\n"
+        "DIR=\"\\$( cd \"\\$( dirname \"\\${BASH_SOURCE[0]}\" )\" && pwd )\"\n"
+        "cd \\$DIR\n"
+        "\n"
+        "# ----------------------------------------------------------------------------\n"
+        "#       CHECK SOCKET CONFIG DONE\n"
+        "# ----------------------------------------------------------------------------\n"
+        "\n"
+        "grep '^ListenStream' $MODNAME.socket\n"
+        "if [[ \\$? -eq 1 ]]; then\n"
+        "        echo \"\"\n"
+        "        echo \"YOU MUST CONFIGURE $MODNAME.socket before running install.\"\n"
+        "        echo \"ListenStream not configured. Socket activated run will not work.\"\n"
+        "        echo \"\"\n"
+        "        echo \"EDIT config/install/$MODNAME.socket and enable a socket port\"\n"
+        "        exit 1\n"
+        "fi\n"
+        "\n"
+        "# ----------------------------------------------------------------------------\n"
+        "#       COPY REQUIRED FILES\n"
+        "# ----------------------------------------------------------------------------\n"
+        "\n"
+        "echo \"... copy executable to /usr/local/bin\"\n"
+        "cp \\${DIR}/../../bin/$MODNAME /usr/local/bin/$MODNAME\n"
+        "if [ \\$? -eq 0 ]; then\n"
+        "        echo \"copied $MODNAME to /usr/local/bin/\"\n"
+        "else\n"
+        "        echo \"FAILURE ... stopping, please check manually.\"\n"
+        "        exit 1\n"
+        "fi\n"
+        "\n"
+        "echo \"... copying systemd service descriptions.\"\n"
+        "cp \\${DIR}/../install/$MODNAME* /etc/systemd/system/\n"
+        "if [ \\$? -eq 0 ]; then\n"
+        "        echo \"copied systemd descriptions to /etc/systemd/system/\"\n"
+        "else\n"
+        "        echo \"FAILURE ... stopping, please check manually.\"\n"
+        "        exit 1\n"
+        "fi\n"
+        "\n"
+        "# ----------------------------------------------------------------------------\n"
+        "#       ENABLE THE SOCKET\n"
+        "# ----------------------------------------------------------------------------\n"
+        "\n"
+        "echo \"... enabling socket service\"\n"
+        "\n"
+        "systemctl enable $MODNAME.socket\n"
+        "if [ \\$? -eq 0 ]; then\n"
+        "        echo \"$MODNAME.socket enabled\"\n"
+        "        systemctl start $MODNAME.socket\n"
+        "        if [ \\$? -eq 0 ]; then\n"
+        "                echo \"$MODNAME.socket started\"\n"
+        "        else\n"
+        "                echo \"$MODNAME socket not started ... stopping.\"\n"
+        "                exit 1\n"
+        "        fi\n"
+        "else\n"
+        "        echo \"$MODNAME socket not enabled ... stopping\"\n"
+        "        exit 1\n"
+        "fi\n"
+        "\n"
+        "echo \"... enabling service service\"\n"
+        "\n"
+        "# ----------------------------------------------------------------------------\n"
+        "#       ENABLE THE SERVICE\n"
+        "# ----------------------------------------------------------------------------\n"
+        "\n"
+        "systemctl enable $MODNAME.service\n"
+        "if [ \\$? -eq 0 ]; then\n"
+        "        echo \"$MODNAME.service enabled\"\n"
+        "        systemctl start $MODNAME.socket\n"
+        "        if [ $? -eq 0 ]; then\n"
+        "                echo \"$MODNAME.service started\"\n"
+        "                echo \"check with 'systemctl status $MODNAME.service'\"\n"
+        "        else\n"
+        "                echo \"$MODNAME serivce not started ... stopping.\"\n"
+        "                exit 1\n"
+        "        fi\n"
+        "else\n"
+        "        echo \"$MODNAME serivce not enabled ... stopping.\"\n"
+        "        exit 1\n"
+        "fi\n"
+        "\n"
+        "# ----------------------------------------------------------------------------\n"
+        "#       COPY ADDITIONAL SERVICE CONFIGURATION DATA (EXAMPLE)\n"
+        "# ----------------------------------------------------------------------------\n"
+        "\n"
+        "# copy additional configuration data\n"
+        "mkdir -p \\$CONFIGDIR\n"
+        "mkdir -p \\$CONFIGDIR\"/data\"\n"
+        "cp -r \\${DIR}/../config/data/*      \\$CONFIGDIR\"/data\" 2>/dev/null || :\n"
+        "cp -r \\${DIR}/../config/*.config  \\$CONFIGDIR 2>/dev/null || :\n"
+        "cp -r \\${DIR}/../config/*.conf    \\$CONFIGDIR 2>/dev/null || :\n"
+        "cp -r \\${DIR}/../config/*.ini     \\$CONFIGDIR 2>/dev/null || :\n"
+        "cp -r \\${DIR}/../config/*.cfg     \\$CONFIGDIR 2>/dev/null || :\n"
+        , config.project.service.install_script,
+        date,
+        config.project.name,
+        config.project.name,
+        config.project.name,
+        config.project.name,
+        config.project.service.install_script,
+        date,
+        config.project.name
+        );
+
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", result, strlen(result));
+
+        testrun(strlen(result) == strlen(expect));
+        testrun(strncmp(result, expect, strlen(expect))== 0);
+
+        config.project.service.install_script = "XXX";
+        config.project.name = "YYY";
+
+        snprintf(expect, size,
+        "#!/usr/bin/env bash\n"
+        "#\n"
+        "#       Copyright 2017 Markus Toepfer\n"
+        "#\n"
+        "#       Licensed under the Apache License, Version 2.0 (the \"License\");\n"
+        "#       you may not use this file except in compliance with the License.\n"
+        "#       You may obtain a copy of the License at\n"
+        "#\n"
+        "#               http://www.apache.org/licenses/LICENSE-2.0\n"
+        "#\n"
+        "#       Unless required by applicable law or agreed to in writing, software\n"
+        "#       distributed under the License is distributed on an \"AS IS\" BASIS,\n"
+        "#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
+        "#       See the License for the specific language governing permissions and\n"
+        "#       limitations under the License.\n"
+        "#\n"
+        "#       ------------------------------------------------------------------------\n"
+        "#\n"
+        "#       File            XXX\n"
+        "#       Authors         Markus Toepfer\n"
+        "#       Date            %s\n"
+        "#\n"
+        "#       Project         YYY\n"
+        "#\n"
+        "#       Description     Install and enable the service.\n"
+        "#\n"
+        "#                       CONVENTION\n"
+        "#\n"
+        "#                       (1) Installation will be done at:\n"
+        "#                           /usr/local/bin\n"
+        "#\n"
+        "#                       (2) Configuration files will be placed at\n"
+        "#                           /etc/YYY\n"
+        "#\n"
+        "#                       (3) Service definition will be placed at\n"
+        "#                           /etc/systemd/system/YYY.service\n"
+        "#\n"
+        "#                       (4) Service socket definition will be placed at\n"
+        "#                           /etc/systemd/system/YYY.socket\n"
+        "#\n"
+        "#                       THIS SCRIPT MUST BE RUN AS ROOT.\n"
+        "#\n"
+        "#       Usage           ./XXX /path/to/project\n"
+        "#\n"
+        "#       Dependencies    bash systemctl grep cp\n"
+        "#\n"
+        "#       Last changed    %s\n"
+        "#       ------------------------------------------------------------------------\n"
+        "MODNAME=YYY\n"
+        "CONFIGDIR=\"/etc/$MODNAME\"\n"
+        "\n"
+        "# Make sure only root can run our script\n"
+        "if [[ \\$EUID -ne 0 ]]; then\n"
+        "        echo \"\"\n"
+        "        echo \"This script must be run as root\" 1>&2\n"
+        "        echo \"\"\n"
+        "        exit 1\n"
+        "fi\n"
+        "\n"
+        "DIR=\"\\$( cd \"\\$( dirname \"\\${BASH_SOURCE[0]}\" )\" && pwd )\"\n"
+        "cd \\$DIR\n"
+        "\n"
+        "# ----------------------------------------------------------------------------\n"
+        "#       CHECK SOCKET CONFIG DONE\n"
+        "# ----------------------------------------------------------------------------\n"
+        "\n"
+        "grep '^ListenStream' $MODNAME.socket\n"
+        "if [[ \\$? -eq 1 ]]; then\n"
+        "        echo \"\"\n"
+        "        echo \"YOU MUST CONFIGURE $MODNAME.socket before running install.\"\n"
+        "        echo \"ListenStream not configured. Socket activated run will not work.\"\n"
+        "        echo \"\"\n"
+        "        echo \"EDIT config/install/$MODNAME.socket and enable a socket port\"\n"
+        "        exit 1\n"
+        "fi\n"
+        "\n"
+        "# ----------------------------------------------------------------------------\n"
+        "#       COPY REQUIRED FILES\n"
+        "# ----------------------------------------------------------------------------\n"
+        "\n"
+        "echo \"... copy executable to /usr/local/bin\"\n"
+        "cp \\${DIR}/../../bin/$MODNAME /usr/local/bin/$MODNAME\n"
+        "if [ \\$? -eq 0 ]; then\n"
+        "        echo \"copied $MODNAME to /usr/local/bin/\"\n"
+        "else\n"
+        "        echo \"FAILURE ... stopping, please check manually.\"\n"
+        "        exit 1\n"
+        "fi\n"
+        "\n"
+        "echo \"... copying systemd service descriptions.\"\n"
+        "cp \\${DIR}/../install/$MODNAME* /etc/systemd/system/\n"
+        "if [ \\$? -eq 0 ]; then\n"
+        "        echo \"copied systemd descriptions to /etc/systemd/system/\"\n"
+        "else\n"
+        "        echo \"FAILURE ... stopping, please check manually.\"\n"
+        "        exit 1\n"
+        "fi\n"
+        "\n"
+        "# ----------------------------------------------------------------------------\n"
+        "#       ENABLE THE SOCKET\n"
+        "# ----------------------------------------------------------------------------\n"
+        "\n"
+        "echo \"... enabling socket service\"\n"
+        "\n"
+        "systemctl enable $MODNAME.socket\n"
+        "if [ \\$? -eq 0 ]; then\n"
+        "        echo \"$MODNAME.socket enabled\"\n"
+        "        systemctl start $MODNAME.socket\n"
+        "        if [ \\$? -eq 0 ]; then\n"
+        "                echo \"$MODNAME.socket started\"\n"
+        "        else\n"
+        "                echo \"$MODNAME socket not started ... stopping.\"\n"
+        "                exit 1\n"
+        "        fi\n"
+        "else\n"
+        "        echo \"$MODNAME socket not enabled ... stopping\"\n"
+        "        exit 1\n"
+        "fi\n"
+        "\n"
+        "echo \"... enabling service service\"\n"
+        "\n"
+        "# ----------------------------------------------------------------------------\n"
+        "#       ENABLE THE SERVICE\n"
+        "# ----------------------------------------------------------------------------\n"
+        "\n"
+        "systemctl enable $MODNAME.service\n"
+        "if [ \\$? -eq 0 ]; then\n"
+        "        echo \"$MODNAME.service enabled\"\n"
+        "        systemctl start $MODNAME.socket\n"
+        "        if [ $? -eq 0 ]; then\n"
+        "                echo \"$MODNAME.service started\"\n"
+        "                echo \"check with 'systemctl status $MODNAME.service'\"\n"
+        "        else\n"
+        "                echo \"$MODNAME serivce not started ... stopping.\"\n"
+        "                exit 1\n"
+        "        fi\n"
+        "else\n"
+        "        echo \"$MODNAME serivce not enabled ... stopping.\"\n"
+        "        exit 1\n"
+        "fi\n"
+        "\n"
+        "# ----------------------------------------------------------------------------\n"
+        "#       COPY ADDITIONAL SERVICE CONFIGURATION DATA (EXAMPLE)\n"
+        "# ----------------------------------------------------------------------------\n"
+        "\n"
+        "# copy additional configuration data\n"
+        "mkdir -p \\$CONFIGDIR\n"
+        "mkdir -p \\$CONFIGDIR\"/data\"\n"
+        "cp -r \\${DIR}/../config/data/*      \\$CONFIGDIR\"/data\" 2>/dev/null || :\n"
+        "cp -r \\${DIR}/../config/*.config  \\$CONFIGDIR 2>/dev/null || :\n"
+        "cp -r \\${DIR}/../config/*.conf    \\$CONFIGDIR 2>/dev/null || :\n"
+        "cp -r \\${DIR}/../config/*.ini     \\$CONFIGDIR 2>/dev/null || :\n"
+        "cp -r \\${DIR}/../config/*.cfg     \\$CONFIGDIR 2>/dev/null || :\n"
+        ,
+        date,
+        date
+        );
+
+        result = testrun_string_free(result);
+        result = testrun_lib_script_service_install_content(config);
+
+        testrun(strlen(result) == strlen(expect));
+        testrun(strncmp(result, expect, strlen(expect))== 0);
+
+        date   = testrun_string_free(date);
+        result = testrun_string_free(result);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_script_service_uninstall_content(){
+
+        size_t size = 10000;
+        char expect[size];
+        bzero(expect, size);
+
+        testrun_config config = testrun_config_default();
+
+        char *result = testrun_lib_script_service_uninstall_content(config);
+        char *date   = testrun_time_string(TESTRUN_SCOPE_DAY);
+
+        snprintf(expect, size,
+        "#!/usr/bin/env bash\n"
+        "#\n"
+        "#       Copyright 2017 Markus Toepfer\n"
+        "#\n"
+        "#       Licensed under the Apache License, Version 2.0 (the \"License\");\n"
+        "#       you may not use this file except in compliance with the License.\n"
+        "#       You may obtain a copy of the License at\n"
+        "#\n"
+        "#               http://www.apache.org/licenses/LICENSE-2.0\n"
+        "#\n"
+        "#       Unless required by applicable law or agreed to in writing, software\n"
+        "#       distributed under the License is distributed on an \"AS IS\" BASIS,\n"
+        "#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
+        "#       See the License for the specific language governing permissions and\n"
+        "#       limitations under the License.\n"
+        "#\n"
+        "#       ------------------------------------------------------------------------\n"
+        "#\n"
+        "#       File            %s\n"
+        "#       Authors         Markus Toepfer\n"
+        "#       Date            %s\n"
+        "#\n"
+        "#       Project         %s\n"
+        "#\n"
+        "#       Description     Disable and deinstall the service.\n"
+        "#\n"
+        "#                       THIS SCRIPT MUST BE RUN AS ROOT.\n"
+        "#\n"
+        "#       Usage           ./%s /path/to/project\n"
+        "#\n"
+        "#       Dependencies    bash systemctl grep cp\n"
+        "#\n"
+        "#       Last changed    %s\n"
+        "#       ------------------------------------------------------------------------\n"
+        "\n"
+        "MODNAME=%s\n"
+        "CONFIGDIR=\"/etc/$MODNAME\"\n"
+        "\n"
+        "# Make sure only root can run our script\n"
+        "if [[ \\$EUID -ne 0 ]]; then\n"
+        "        echo \"This script must be run as root\" 1>&2\n"
+        "        exit 1\n"
+        "fi\n"
+        "\n"
+        "# ----------------------------------------------------------------------------\n"
+        "#       SERVICE SHUTDOWN\n"
+        "# ----------------------------------------------------------------------------\n"
+        "\n"
+        "echo \"Stopping $MODNAME.service\"\n"
+        "systemctl stop $MODNAME.service\n"
+        "if [ $? -eq 0 ]; then\n"
+        "        echo \"... service stopped.\";\n"
+        "else\n"
+        "        echo \"... service was not running.\"\n"
+        "fi\n"
+        "\n"
+        "echo \"Disabling $MODNAME.service\"\n"
+        "systemctl disable $MODNAME.service\n"
+        "if [ $? -eq 0 ]; then\n"
+        "        echo \"... service disabled.\";\n"
+        "else\n"
+        "        echo \"... service was not enabled.\"\n"
+        "fi\n"
+        "\n"
+        "# ----------------------------------------------------------------------------\n"
+        "#       SOCKET SHUTDOWN\n"
+        "# ----------------------------------------------------------------------------\n"
+        "\n"
+        "echo \"Stopping $MODNAME.socket\"\n"
+        "systemctl stop $MODNAME.socket\n"
+        "if [ $? -eq 0 ]; then\n"
+        "        echo \"... socket stopped.\";\n"
+        "else\n"
+        "        echo \"... socket was not running.\"\n"
+        "fi\n"
+        "\n"
+        "echo \"Disabling $MODNAME.socket\"\n"
+        "systemctl disable $MODNAME.socket\n"
+        "if [ $? -eq 0 ]; then\n"
+        "        echo \"... socket disabled.\";\n"
+        "else\n"
+        "        echo \"... socket was not enabled.\"\n"
+        "fi\n"
+        "\n"
+        "# ----------------------------------------------------------------------------\n"
+        "#       REMOVE CONFIG\n"
+        "# ----------------------------------------------------------------------------\n"
+        "\n"
+        "echo \"Removing systemd files\"\n"
+        "rm -rf /etc/systemd/system/$MODNAME*\n"
+        "if [ $? -eq 0 ]; then\n"
+        "        echo \"... removed /etc/systemd/system/$MODNAME*\";\n"
+        "else\n"
+        "        echo \"... WARN check and remove /etc/systemd/system/$MODNAME*\";\n"
+        "fi\n"
+        "echo \"uninstall done.\"\n"
+        "\n"
+        "echo \"Removing executable files\"\n"
+        "rm -rf /usr/local/bin/$MODNAME\n"
+        "if [ $? -eq 0 ]; then\n"
+        "        echo \"... removed /usr/local/bin/$MODNAME\";\n"
+        "else\n"
+        "        echo \"... WARN check and remove /usr/local/bin/$MODNAME\";\n"
+        "fi\n"
+        "echo \"uninstall done.\"\n"
+        "\n"
+        "echo \"Removing config files\"\n"
+        "rm -rf /etc/$MODNAME*\n"
+        "if [ $? -eq 0 ]; then\n"
+        "        echo \"... removed /etc/$MODNAME*\";\n"
+        "else\n"
+        "        echo \"... WARN check and remove /etc/$MODNAME*\";\n"
+        "fi\n"
+        "echo \"uninstall done.\"\n"
+        "\n"
+        "# ----------------------------------------------------------------------------\n"
+        "#       RELOAD SYSTEMCTL DAEMON\n"
+        "# ----------------------------------------------------------------------------\n"
+        "\n"
+        "systemctl daemon-reload\n"
+        "echo \"Systemd daemon reload performed.\"\n"
+        , config.project.service.uninstall_script,
+        date,
+        config.project.name,
+        config.project.service.uninstall_script,
+        date,
+        config.project.name);
+
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n", result, strlen(result));
+
+        testrun(strlen(result) == strlen(expect));
+        testrun(strncmp(result, expect, strlen(expect))== 0);
+
+        config.project.service.uninstall_script = "XXX";
+        config.project.name = "YYY";
+
+                snprintf(expect, size,
+        "#!/usr/bin/env bash\n"
+        "#\n"
+        "#       Copyright 2017 Markus Toepfer\n"
+        "#\n"
+        "#       Licensed under the Apache License, Version 2.0 (the \"License\");\n"
+        "#       you may not use this file except in compliance with the License.\n"
+        "#       You may obtain a copy of the License at\n"
+        "#\n"
+        "#               http://www.apache.org/licenses/LICENSE-2.0\n"
+        "#\n"
+        "#       Unless required by applicable law or agreed to in writing, software\n"
+        "#       distributed under the License is distributed on an \"AS IS\" BASIS,\n"
+        "#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
+        "#       See the License for the specific language governing permissions and\n"
+        "#       limitations under the License.\n"
+        "#\n"
+        "#       ------------------------------------------------------------------------\n"
+        "#\n"
+        "#       File            XXX\n"
+        "#       Authors         Markus Toepfer\n"
+        "#       Date            %s\n"
+        "#\n"
+        "#       Project         YYY\n"
+        "#\n"
+        "#       Description     Disable and deinstall the service.\n"
+        "#\n"
+        "#                       THIS SCRIPT MUST BE RUN AS ROOT.\n"
+        "#\n"
+        "#       Usage           ./XXX /path/to/project\n"
+        "#\n"
+        "#       Dependencies    bash systemctl grep cp\n"
+        "#\n"
+        "#       Last changed    %s\n"
+        "#       ------------------------------------------------------------------------\n"
+        "\n"
+        "MODNAME=YYY\n"
+        "CONFIGDIR=\"/etc/$MODNAME\"\n"
+        "\n"
+        "# Make sure only root can run our script\n"
+        "if [[ \\$EUID -ne 0 ]]; then\n"
+        "        echo \"This script must be run as root\" 1>&2\n"
+        "        exit 1\n"
+        "fi\n"
+        "\n"
+        "# ----------------------------------------------------------------------------\n"
+        "#       SERVICE SHUTDOWN\n"
+        "# ----------------------------------------------------------------------------\n"
+        "\n"
+        "echo \"Stopping $MODNAME.service\"\n"
+        "systemctl stop $MODNAME.service\n"
+        "if [ $? -eq 0 ]; then\n"
+        "        echo \"... service stopped.\";\n"
+        "else\n"
+        "        echo \"... service was not running.\"\n"
+        "fi\n"
+        "\n"
+        "echo \"Disabling $MODNAME.service\"\n"
+        "systemctl disable $MODNAME.service\n"
+        "if [ $? -eq 0 ]; then\n"
+        "        echo \"... service disabled.\";\n"
+        "else\n"
+        "        echo \"... service was not enabled.\"\n"
+        "fi\n"
+        "\n"
+        "# ----------------------------------------------------------------------------\n"
+        "#       SOCKET SHUTDOWN\n"
+        "# ----------------------------------------------------------------------------\n"
+        "\n"
+        "echo \"Stopping $MODNAME.socket\"\n"
+        "systemctl stop $MODNAME.socket\n"
+        "if [ $? -eq 0 ]; then\n"
+        "        echo \"... socket stopped.\";\n"
+        "else\n"
+        "        echo \"... socket was not running.\"\n"
+        "fi\n"
+        "\n"
+        "echo \"Disabling $MODNAME.socket\"\n"
+        "systemctl disable $MODNAME.socket\n"
+        "if [ $? -eq 0 ]; then\n"
+        "        echo \"... socket disabled.\";\n"
+        "else\n"
+        "        echo \"... socket was not enabled.\"\n"
+        "fi\n"
+        "\n"
+        "# ----------------------------------------------------------------------------\n"
+        "#       REMOVE CONFIG\n"
+        "# ----------------------------------------------------------------------------\n"
+        "\n"
+        "echo \"Removing systemd files\"\n"
+        "rm -rf /etc/systemd/system/$MODNAME*\n"
+        "if [ $? -eq 0 ]; then\n"
+        "        echo \"... removed /etc/systemd/system/$MODNAME*\";\n"
+        "else\n"
+        "        echo \"... WARN check and remove /etc/systemd/system/$MODNAME*\";\n"
+        "fi\n"
+        "echo \"uninstall done.\"\n"
+        "\n"
+        "echo \"Removing executable files\"\n"
+        "rm -rf /usr/local/bin/$MODNAME\n"
+        "if [ $? -eq 0 ]; then\n"
+        "        echo \"... removed /usr/local/bin/$MODNAME\";\n"
+        "else\n"
+        "        echo \"... WARN check and remove /usr/local/bin/$MODNAME\";\n"
+        "fi\n"
+        "echo \"uninstall done.\"\n"
+        "\n"
+        "echo \"Removing config files\"\n"
+        "rm -rf /etc/$MODNAME*\n"
+        "if [ $? -eq 0 ]; then\n"
+        "        echo \"... removed /etc/$MODNAME*\";\n"
+        "else\n"
+        "        echo \"... WARN check and remove /etc/$MODNAME*\";\n"
+        "fi\n"
+        "echo \"uninstall done.\"\n"
+        "\n"
+        "# ----------------------------------------------------------------------------\n"
+        "#       RELOAD SYSTEMCTL DAEMON\n"
+        "# ----------------------------------------------------------------------------\n"
+        "\n"
+        "systemctl daemon-reload\n"
+        "echo \"Systemd daemon reload performed.\"\n"
+        ,
+        date,
+        date);
+
+
+        result = testrun_string_free(result);
+        result = testrun_lib_script_service_uninstall_content(config);
+
+        testrun(strlen(result) == strlen(expect));
+        testrun(strncmp(result, expect, strlen(expect))== 0);
+
+        date   = testrun_string_free(date);
+        result = testrun_string_free(result);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_path(){
+
+        char buffer[PATH_MAX];
+        bzero(buffer, PATH_MAX);
+
+        DIR *dp;
+
+        testrun_config config = testrun_config_default();
+        config.project.path.name = "./build/test/check";
+
+        testrun(!testrun_lib_create_path(NULL, 0, NULL, NULL));
+        testrun(!testrun_lib_create_path(
+                NULL, PATH_MAX, &config, testrun_path_project_to_config));
+        testrun(!testrun_lib_create_path(
+                buffer, PATH_MAX, NULL, testrun_path_project_to_config));
+        testrun(!testrun_lib_create_path(
+                buffer, PATH_MAX, &config, NULL));
+        testrun(!testrun_lib_create_path(
+                buffer, 0, &config, testrun_path_project_to_config));
+
+        dp = opendir("./build/test/check/");
+        testrun(!dp);
+
+        dp = opendir("./build/test/check/config/");
+        testrun(!dp);
+
+        dp = opendir("./build/test/check/docs/");
+        testrun(!dp);
+
+        testrun(testrun_lib_create_path(
+                buffer, PATH_MAX, &config, testrun_path_project_to_config));
+
+        dp = opendir("./build/test/check/");
+        testrun(dp);
+        (void) closedir (dp);
+
+        dp = opendir("./build/test/check/config/");
+        testrun(dp);
+        (void) closedir (dp);
+
+        dp = opendir("./build/test/check/docs/");
+        testrun(!dp);
+
+
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_folder_structure(){
+
+        DIR *dp;
+
+        testrun_config config = testrun_config_default();
+        config.project.path.name = "./build/test/check";
+
+        testrun(testrun_lib_create_folder_structure(&config));
+        dp = opendir("./build/test/check/config/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/config/data");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/copyright/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/docs/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/doxygen/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/include/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/src/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/tests/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/tests/acceptance");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/tests/resources");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/tests/tools");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/tests/unit");
+        testrun(dp);
+        (void) closedir (dp);
+        testrun(system("rm -rf ./build/test/check") == 0);
+
+        // check with different config
+        config.project.path.name        = "/tmp/test_project";
+        config.project.path.include     = "header";
+        config.project.path.to_include  = "./src";
+        config.project.path.source      = "src";
+        config.project.path.tests.folder  = "t";
+        config.project.path.to_tests    = "./src";
+        config.project.path.docs        = "documents";
+        config.project.path.to_copyright= "documents";
+
+        testrun(testrun_lib_create_folder_structure(&config));
+        dp = opendir("/tmp/test_project/config/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("/tmp/test_project/documents/copyright/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("/tmp/test_project/documents/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("/tmp/test_project/doxygen/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("/tmp/test_project/src/header/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("/tmp/test_project/src/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("/tmp/test_project/src/t/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("/tmp/test_project/src/t/acceptance");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("/tmp/test_project/src/t/resources");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("/tmp/test_project/src/t/tools");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("/tmp/test_project/src/t/unit");
+        testrun(dp);
+        (void) closedir (dp);
+        testrun(system("rm -rf /tmp/test_project/") == 0);
+
+
+        config.project.path.name = "./build/test/check";
+        testrun(0 == chmod("./build/test/", 000));
+        testrun(!testrun_lib_create_folder_structure(&config), "no access");
+        testrun(0 == chmod("./build/test/",
+                        S_IRUSR | S_IWUSR | S_IXUSR |
+                        S_IRGRP | S_IXGRP |
+                        S_IROTH | S_IXOTH));
+
+        dp = opendir("./build/test/check");
+        testrun(!dp);
+
+        testrun(testrun_lib_create_folder_structure(&config));
+        dp = opendir("./build/test/check/config/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/documents/copyright/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/documents/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/doxygen/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/src/header/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/src/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/src/t/");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/src/t/acceptance");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/src/t/resources");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/src/t/tools");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("./build/test/check/src/t/unit");
+        testrun(dp);
+        (void) closedir (dp);
+        testrun(system("rm -rf ./build/test/check/") == 0);
+
+
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_file_content_function(){
+
+        char buffer[PATH_MAX];
+        bzero(buffer, PATH_MAX);
+
+        char *path = NULL;
+
+        testrun_config config = testrun_config_default();
+        config.project.path.name = "./build/test";
+
+        path = "./build/test/makefile.test";
+        testrun( -1 == access(path, F_OK));
+
+        testrun(testrun_lib_create_file_content_function(
+                "makefile.test", &config, NULL,
+                testrun_lib_makefile_test_content));
+
+        testrun( -1 != access(path, F_OK), "failed to access tmp file");
+        testrun(0 == unlink(path), "failed to delete tmp file");
+
+
+        testrun(!testrun_lib_create_file_content_function(
+                NULL, &config, NULL,
+                testrun_lib_makefile_test_content));
+        testrun(!testrun_lib_create_file_content_function(
+                "makefile.test", NULL, NULL,
+                testrun_lib_makefile_test_content));
+        testrun(!testrun_lib_create_file_content_function(
+                "makefile.test", &config, NULL,
+                NULL));
+
+        config.project.path.name = "./build/test/nodir";
+        testrun(!testrun_lib_create_file_content_function(
+                "makefile.test", &config, NULL,
+                testrun_lib_makefile_test_content), "path not existing");
+
+        config.project.path.name = "./build/test";
+        testrun(testrun_lib_create_file_content_function(
+                "makefile.test", &config, NULL,
+                testrun_lib_makefile_test_content));
+
+        testrun( -1 != access(path, F_OK), "failed to access tmp file");
+
+        testrun(!testrun_lib_create_file_content_function(
+                "makefile.test", &config, NULL,
+                testrun_lib_makefile_test_content), "file extists");
+
+        testrun(0 == unlink(path), "failed to delete tmp file");
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_file(){
+
+        char buffer[PATH_MAX];
+        bzero(buffer, PATH_MAX);
+
+        char *content = "TESTCONTENT";
+        char reread[1000];
+        bzero(reread, 1000);
+
+        char *path = NULL;
+        FILE *file;
+
+        testrun_config config = testrun_config_default();
+        config.project.path.name = "./build/test";
+
+        path = "./build/test/testfile";
+        testrun( -1 == access(path, F_OK));
+
+        testrun(testrun_lib_create_file(
+                "testfile", content, &config, NULL));
+
+        testrun( -1 != access(path, F_OK), "failed to access tmp file");
+
+        testrun(!testrun_lib_create_file(
+                "testfile", content, &config, NULL), "file exists");
+
+        // reread the content
+        file = fopen(path, "r");
+        testrun(file);
+        testrun(fgets(reread, 1000, file));
+        fclose(file);
+
+        testrun(strncmp(reread, content, strlen(content)) == 0);
+        testrun(strlen(reread) == strlen(content));
+
+        testrun(0 == unlink(path), "failed to delete tmp file");
+
+
+        testrun(!testrun_lib_create_file(
+                NULL, content, &config, NULL));
+        testrun(!testrun_lib_create_file(
+                "testfile", NULL, &config, NULL));
+        testrun(!testrun_lib_create_file(
+                "testfile", content, NULL, NULL));
+
+        config.project.path.name = "./build/test/nodir";
+        testrun(!testrun_lib_create_file(
+                "testfile", content, &config, NULL), "path not existing");
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_test_tools(){
+
+        char *path = "./build/test/x";
+        testrun_config config = testrun_config_default();
+
+        DIR *dp;
+        FILE *file;
+
+        config.project.path.name = path;
+
+        testrun(system("rm -rf ./build/test/x") == 0);
+
+        testrun(testrun_lib_create_folder_structure(&config));
+        dp = opendir("./build/test/x/tests/");
+        testrun(dp, "check directory for test tools exists");
+        (void) closedir (dp);
+
+
+        testrun(!testrun_lib_create_test_tools(NULL));
+
+        testrun( -1 == access(
+                "./build/test/x/tests/tools/testrun.h",
+                F_OK));
+        testrun( -1 == access(
+                "./build/test/x/tests/tools/testrun_runner.sh",
+                F_OK));
+        testrun( -1 == access(
+                "./build/test/x/tests/tools/testrun_simple_acceptance_tests.sh",
+                F_OK));
+        testrun( -1 == access(
+                "./build/test/x/tests/tools/testrun_simple_unit_tests.sh",
+                F_OK));
+        testrun( -1 == access(
+                "./build/test/x/tests/tools/testrun_simple_coverage_tests.sh",
+                F_OK));
+        testrun( -1 == access(
+                "./build/test/x/tests/tools/testrun_simple_loc.sh",
+                F_OK));
+
+        testrun(testrun_lib_create_test_tools(&config));
+
+        testrun( -1 != access(
+                "./build/test/x/tests/tools/testrun.h",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/tests/tools/testrun_runner.sh",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/tests/tools/testrun_simple_acceptance_tests.sh",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/tests/tools/testrun_simple_unit_tests.sh",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/tests/tools/testrun_simple_coverage_tests.sh",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/tests/tools/testrun_simple_loc.sh",
+                F_OK));
+
+        testrun(!testrun_lib_create_test_tools(&config), "files exist");
+
+        testrun(system("rm -rf ./build/test/x") == 0);
+
+        testrun(!testrun_lib_create_test_tools(&config), "folder does not exist");
+
+        // check config
+        config.project.path.tests.folder = "t0";
+        config.project.path.tests.tools.folder = "t1";
+        config.project.path.tests.tools.header                  = "1";
+        config.project.path.tests.tools.runner_script           = "2";
+        config.project.path.tests.tools.acceptance_script       = "3";
+        config.project.path.tests.tools.unit_script             = "4";
+        config.project.path.tests.tools.coverage_script         = "5";
+        config.project.path.tests.tools.loc_script              = "6";
+
+         testrun(testrun_lib_create_folder_structure(&config));
+        dp = opendir("./build/test/x/t0/");
+        testrun(dp, "check directory for test tools exists");
+        (void) closedir (dp);
+
+        testrun(testrun_lib_create_test_tools(&config));
+
+        testrun( -1 != access(
+                "./build/test/x/t0/t1/1",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/t0/t1/2",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/t0/t1/3",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/t0/t1/4",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/t0/t1/5",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/t0/t1/6",
+                F_OK));
+
+        testrun(system("rm -rf ./build/test/x") == 0);
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_module_files(){
+
+        char *path = "./build/test/x";
+        testrun_config config = testrun_config_default();
+
+        DIR *dp;
+        FILE *file;
+
+        config.project.path.name = path;
+
+        testrun(system("rm -rf ./build/test/x") == 0);
+
+        testrun(testrun_lib_create_folder_structure(&config));
+        dp = opendir("./build/test/x/tests/unit");
+        testrun(dp, "check directory unit tests");
+        (void) closedir (dp);
+        dp = opendir("./build/test/x/include/");
+        testrun(dp, "check directory include");
+        (void) closedir (dp);
+        dp = opendir("./build/test/x/src/");
+        testrun(dp, "check directory src");
+        (void) closedir (dp);
+
+
+        testrun(!testrun_lib_create_module_files(NULL,   NULL));
+        testrun(!testrun_lib_create_module_files("test", NULL));
+        testrun(!testrun_lib_create_module_files(NULL,   &config));
+
+        testrun( -1 == access(
+                "./build/test/x/include/test.h",
+                F_OK));
+        testrun( -1 == access(
+                "./build/test/x/src/test.c",
+                F_OK));
+        testrun( -1 == access(
+                "./build/test/x/tests/unit/test_test.c",
+                F_OK));
+
+        testrun(testrun_lib_create_module_files("test", &config));
+
+        testrun( -1 != access(
+                "./build/test/x/include/test.h",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/src/test.c",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/tests/unit/test_test.c",
+                F_OK));
+
+        testrun(!testrun_lib_create_module_files("test", &config),
+                "files exist");
+
+        testrun(system("rm -rf ./build/test/x") == 0);
+
+        testrun(!testrun_lib_create_module_files("test", &config),
+                "folder does not exist");
+
+        // check config
+        config.project.path.include     = "i";
+        config.project.path.source      = "s";
+        config.project.path.tests.folder  = "t";
+        config.project.path.to_include  = "s";
+        config.project.path.to_tests    = "s";
+        config.format.extensions.c_test = "_ut.c";
+
+        testrun(testrun_lib_create_folder_structure(&config));
+
+        dp = opendir("./build/test/x/s/t/unit");
+        testrun(dp, "check directory unit tests");
+        (void) closedir (dp);
+        dp = opendir("./build/test/x/s/i/");
+        testrun(dp, "check directory include");
+        (void) closedir (dp);
+        dp = opendir("./build/test/x/s/");
+        testrun(dp, "check directory src");
+        (void) closedir (dp);
+
+        testrun( -1 == access(
+                "./build/test/x/s/i/test.h",
+                F_OK));
+        testrun( -1 == access(
+                "./build/test/x/s/test.c",
+                F_OK));
+        testrun( -1 == access(
+                "./build/test/x/s/t/unit/test_ut.c",
+                F_OK));
+
+        testrun(testrun_lib_create_module_files("test", &config));
+
+        testrun( -1 != access(
+                "./build/test/x/s/i/test.h",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/s/test.c",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/s/t/unit/test_ut.c",
+                F_OK));
+
+        testrun(system("rm -rf ./build/test/x") == 0);
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_config_files(){
+
+        char *path = "./build/test/x";
+        testrun_config config = testrun_config_default();
+        config.project.name = "project";
+
+        DIR *dp;
+        FILE *file;
+
+        config.project.path.name = path;
+
+        testrun(system("rm -rf ./build/test/x") == 0);
+
+        testrun(testrun_lib_create_folder_structure(&config));
+        dp = opendir("./build/test/x/config");
+        testrun(dp, "check directory config");
+        (void) closedir (dp);
+        dp = opendir("./build/test/x/config/data");
+        testrun(dp, "check directory config data");
+        (void) closedir (dp);
+
+        // test with project service folder
+
+        testrun(!testrun_lib_create_config_files(NULL));
+
+        testrun( -1 == access(
+                "./build/test/x/config/install/install.sh",
+                F_OK));
+        testrun( -1 == access(
+                "./build/test/x/config/install/uninstall.sh",
+                F_OK));
+        testrun( -1 == access(
+                "./build/test/x/config/install/project.service",
+                F_OK));
+        testrun( -1 == access(
+                "./build/test/x/config/install/project.socket",
+                F_OK));
+
+        testrun(testrun_lib_create_config_files(&config));
+
+        testrun( -1 != access(
+                "./build/test/x/config/install/install.sh",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/config/install/uninstall.sh",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/config/install/project.service",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/config/install/project.socket",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/config/data/README.MD",
+                F_OK));
+
+        testrun(!testrun_lib_create_config_files(&config),
+                "files exist");
+
+        testrun(system("rm -rf ./build/test/x") == 0);
+
+        testrun(!testrun_lib_create_config_files(&config),
+                "folder does not exist");
+
+        testrun(system("rm -rf ./build/test/x") == 0);
+
+        config.project.service.folder = NULL;
+
+        testrun(testrun_lib_create_folder_structure(&config));
+        dp = opendir("./build/test/x/config");
+        testrun(dp, "check directory config");
+        (void) closedir (dp);
+        dp = opendir("./build/test/x/config/data");
+        testrun(!dp, "check directory config data");
+
+        testrun(testrun_lib_create_config_files(&config));
+
+        testrun( -1 == access(
+                "./build/test/x/config/install/install.sh",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/config/README.MD",
+                F_OK));
+
+        testrun(system("rm -rf ./build/test/x") == 0);
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_files(){
+
+        char reread[1000];
+        bzero(reread, 1000);
+
+        char *path = "./build/test/x";
+        testrun_config config = testrun_config_default();
+
+        DIR *dp;
+        FILE *file;
+
+        config.project.path.name = path;
+
+        testrun(system("rm -rf ./build/test/x") == 0);
+
+        testrun(testrun_lib_create_folder_structure(&config));
+        dp = opendir("./build/test/x/config");
+        testrun(dp, "check directory config");
+        (void) closedir (dp);
+        dp = opendir("./build/test/x/config/data");
+        testrun(dp, "check directory config data");
+        (void) closedir (dp);
+
+        testrun(!testrun_lib_create_files(NULL, NULL));
+        testrun(!testrun_lib_create_files(NULL, "readme"));
+
+        testrun(testrun_lib_create_files(&config, NULL));
+
+        // makefiles
+        testrun( -1 != access(
+                "./build/test/x/makefile",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/makefile.test",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/makefile.main",
+                F_OK));
+
+        // readme
+        testrun( -1 != access(
+                "./build/test/x/README.MD",
+                F_OK));
+
+        // copyright
+        testrun( -1 != access(
+                "./build/test/x/copyright/copyright",
+                F_OK));
+
+        // changelog
+        testrun( -1 != access(
+                "./build/test/x/docs/CHANGELOG.MD",
+                F_OK));
+
+        // doxygen
+        testrun( -1 != access(
+                "./build/test/x/doxygen/doxygen.config",
+                F_OK));
+
+        // config files
+        testrun( -1 != access(
+                "./build/test/x/config/README.MD",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/config/data/README.MD",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/config/install/install.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/config/install/uninstall.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/config/install/[PROJECT].socket",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/config/install/[PROJECT].service",
+                F_OK));
+
+        // tools
+
+        testrun( -1 != access(
+                "./build/test/x/tests/tools/testrun.h",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/tests/tools/testrun_runner.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/tests/tools/testrun_simple_acceptance_tests.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/tests/tools/testrun_simple_unit_tests.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/tests/tools/testrun_simple_coverage_tests.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/tests/tools/testrun_simple_loc.sh",
+                F_OK));
+
+        // module files
+
+        testrun( -1 != access(
+                "./build/test/x/include/[PROJECT].h",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/src/[PROJECT].c",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/tests/unit/[PROJECT]_test.c",
+                F_OK));
+
+        testrun(system("rm -rf ./build/test/x") == 0);
+
+        // check config
+
+
+        config.project.name                     = "project";
+        config.project.type                     = TESTRUN_LIB;
+        config.project.path.include             = "i";
+        config.project.path.source              = "s";
+        config.project.path.tests.folder        = "t";
+        config.project.path.tests.tools.folder  = "tt";
+        config.project.path.config              = "c";
+        config.project.path.docs                = "d";
+        config.project.service.folder           = NULL;
+        config.project.doxygen.folder           = NULL;
+
+        // all project folder under source (test only)
+        config.project.path.to_include   = "s";
+        config.project.path.to_docs      = "s";
+        config.project.path.to_copyright = "s";
+        config.project.path.to_config    = "s";
+        config.project.path.to_tests     = "s";
+
+        testrun(!testrun_lib_create_files(&config, "readme"));
+        testrun(testrun_lib_create_folder_structure(&config));
+        testrun(testrun_lib_create_files(&config, "readme"));
+
+        // check readme content
+        file = fopen("./build/test/x/README.MD", "r");
+        testrun(file);
+        testrun(fgets(reread, 1000, file));
+        fclose(file);
+        testrun(strncmp(reread, "readme", 6) == 0);
+        testrun(strlen(reread) == 6);
+
+        // makefiles
+        testrun( -1 != access(
+                "./build/test/x/makefile",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/makefile.test",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/makefile.main",
+                F_OK));
+
+        // readme
+        testrun( -1 != access(
+                "./build/test/x/README.MD",
+                F_OK));
+
+        // copyright
+        testrun( -1 != access(
+                "./build/test/x/s/copyright/copyright",
+                F_OK));
+
+        // changelog
+        testrun( -1 != access(
+                "./build/test/x/s/d/CHANGELOG.MD",
+                F_OK));
+
+        // config files
+        testrun( -1 != access(
+                "./build/test/x/s/c/README.MD",
+                F_OK));
+
+        testrun( -1 == access(
+                "./build/test/x/s/c/data",
+                F_OK), "no data folder expected");
+
+        testrun( -1 == access(
+                "./build/test/x/s/c/install",
+                F_OK), "no install folder expected");
+
+
+        // tools
+
+        testrun( -1 != access(
+                "./build/test/x/s/t/tt/testrun.h",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/s/t/tt/testrun_runner.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/s/t/tt/testrun_simple_acceptance_tests.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/s/t/tt/testrun_simple_unit_tests.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/s/t/tt/testrun_simple_coverage_tests.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/s/t/tt/testrun_simple_loc.sh",
+                F_OK));
+
+        // module files
+
+        testrun( -1 != access(
+                "./build/test/x/s/i/project.h",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/s/project.c",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/s/t/unit/project_test.c",
+                F_OK));
+
+        testrun(system("rm -rf ./build/test/x") == 0);
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_project(){
+
+        char reread[1000];
+        bzero(reread, 1000);
+
+        char *path = "./build/test/x";
+        testrun_config config = testrun_config_default();
+
+        DIR *dp;
+        FILE *file;
+
+        config.project.path.name = path;
+
+        testrun(system("rm -rf ./build/test/x") == 0);
+
+        testrun(!testrun_lib_create_project(NULL, NULL));
+        testrun(!testrun_lib_create_project(NULL, "readme"));
+
+        testrun(testrun_lib_create_project(&config, "readme"));
+        dp = opendir("./build/test/x/config");
+        testrun(dp, "check directory config");
+        (void) closedir (dp);
+        dp = opendir("./build/test/x/config/data");
+        testrun(dp, "check directory config data");
+        (void) closedir (dp);
+
+        // makefiles
+        testrun( -1 != access(
+                "./build/test/x/makefile",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/makefile.test",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/makefile.main",
+                F_OK));
+
+        // readme
+        testrun( -1 != access(
+                "./build/test/x/README.MD",
+                F_OK));
+
+        // copyright
+        testrun( -1 != access(
+                "./build/test/x/copyright/copyright",
+                F_OK));
+
+        // changelog
+        testrun( -1 != access(
+                "./build/test/x/docs/CHANGELOG.MD",
+                F_OK));
+
+        // doxygen
+        testrun( -1 != access(
+                "./build/test/x/doxygen/doxygen.config",
+                F_OK));
+
+        // config files
+        testrun( -1 != access(
+                "./build/test/x/config/README.MD",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/config/data/README.MD",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/config/install/install.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/config/install/uninstall.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/config/install/[PROJECT].socket",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/config/install/[PROJECT].service",
+                F_OK));
+
+        // tools
+
+        testrun( -1 != access(
+                "./build/test/x/tests/tools/testrun.h",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/tests/tools/testrun_runner.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/tests/tools/testrun_simple_acceptance_tests.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/tests/tools/testrun_simple_unit_tests.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/tests/tools/testrun_simple_coverage_tests.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/tests/tools/testrun_simple_loc.sh",
+                F_OK));
+
+        // module files
+
+        testrun( -1 != access(
+                "./build/test/x/include/[PROJECT].h",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/src/[PROJECT].c",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/tests/unit/[PROJECT]_test.c",
+                F_OK));
+
+        // check readme content
+        file = fopen("./build/test/x/README.MD", "r");
+        testrun(file);
+        testrun(fgets(reread, 1000, file));
+        fclose(file);
+        testrun(strncmp(reread, "readme", 6) == 0);
+        testrun(strlen(reread) == 6);
+
+        testrun(system("rm -rf ./build/test/x") == 0);
+
+        // check config
+
+        config.project.name                     = "project";
+        config.project.type                     = TESTRUN_SERVICE;
+
+        // all project folder under source (test only)
+        config.project.path.to_include   = config.project.path.source;
+        config.project.path.to_docs      = config.project.path.source;
+        config.project.path.to_copyright = config.project.path.source;
+        config.project.path.to_config    = config.project.path.source;
+        config.project.path.to_tests     = config.project.path.source;
+        config.project.path.tests.to_tools = "..";
+
+        testrun(testrun_lib_create_project(&config, NULL));
+
+        // check readme content
+        file = fopen("./build/test/x/README.MD", "r");
+        testrun(file);
+        testrun(fgets(reread, 1000, file));
+        fclose(file);
+        testrun(strncmp(reread, "readme", 6) != 0);
+        testrun(strlen(reread) != 6);
+
+        // makefiles
+        testrun( -1 != access(
+                "./build/test/x/makefile",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/makefile.test",
+                F_OK));
+        testrun( -1 != access(
+                "./build/test/x/makefile.main",
+                F_OK));
+
+        // readme
+        testrun( -1 != access(
+                "./build/test/x/README.MD",
+                F_OK));
+
+        // copyright
+        testrun( -1 != access(
+                "./build/test/x/src/copyright/copyright",
+                F_OK));
+
+        // changelog
+        testrun( -1 != access(
+                "./build/test/x/src/docs/CHANGELOG.MD",
+                F_OK));
+
+        // config files
+        testrun( -1 != access(
+                "./build/test/x/src/config/README.MD",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/src/config/data",
+                F_OK), "no data folder expected");
+
+        testrun( -1 != access(
+                "./build/test/x/src/config/install",
+                F_OK), "no install folder expected");
+
+
+        // tools
+
+        testrun( -1 != access(
+                "./build/test/x/src/tools/testrun.h",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/src/tools/testrun_runner.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/src/tools/testrun_simple_acceptance_tests.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/src/tools/testrun_simple_unit_tests.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/src/tools/testrun_simple_coverage_tests.sh",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/src/tools/testrun_simple_loc.sh",
+                F_OK));
+
+        // module files
+
+        testrun( -1 != access(
+                "./build/test/x/src/include/project.h",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/src/project.c",
+                F_OK));
+
+        testrun( -1 != access(
+                "./build/test/x/src/tests/unit/project_test.c",
+                F_OK));
+
+         // doxygen
+
+        testrun( -1 != access(
+                "./build/test/x/doxygen/doxygen.config",
+                F_OK));
+
+
+        testrun(system("rm -rf ./build/test/x") == 0);
+
+        return testrun_log_success();
+}
+
 /*
  *      ------------------------------------------------------------------------
  *
@@ -2618,21 +4605,38 @@ script_loc
 
 int all_tests() {
 
-       testrun_init();
+        testrun_init();
 
-       testrun_test(test_testrun_lib_testrun_header_content);
-       testrun_test(test_testrun_lib_script_folder_runner_content);
-       testrun_test(test_testrun_lib_script_acceptance_tests_content);
-       testrun_test(test_testrun_lib_script_unit_tests_content);
-       testrun_test(test_testrun_lib_script_coverage_tests_content);
-       testrun_test(test_testrun_lib_script_loc_tests_content);
-       testrun_test(test_testrun_lib_c_file_content);
+        testrun_test(test_testrun_lib_testrun_header_content);
+        testrun_test(test_testrun_lib_script_folder_runner_content);
+        testrun_test(test_testrun_lib_script_acceptance_tests_content);
+        testrun_test(test_testrun_lib_script_unit_tests_content);
+        testrun_test(test_testrun_lib_script_coverage_tests_content);
+        testrun_test(test_testrun_lib_script_loc_tests_content);
+        testrun_test(test_testrun_lib_c_file_content);
 
-       testrun_test(test_testrun_lib_makefile_content);
-       testrun_test(test_testrun_lib_makefile_main_content);
-       testrun_test(test_testrun_lib_makefile_test_content);
+        testrun_test(test_testrun_lib_makefile_content);
+        testrun_test(test_testrun_lib_makefile_main_content);
+        testrun_test(test_testrun_lib_makefile_test_content);
 
-       return 1;
+        testrun_test(test_testrun_lib_script_service_install_content);
+        testrun_test(test_testrun_lib_script_service_uninstall_content);
+
+        testrun_test(test_testrun_lib_create_path);
+        testrun_test(test_testrun_lib_create_folder_structure);
+
+        testrun_test(test_testrun_lib_create_file_content_function);
+        testrun_test(test_testrun_lib_create_file);
+
+        testrun_test(test_testrun_lib_create_test_tools);
+        testrun_test(test_testrun_lib_create_module_files);
+        testrun_test(test_testrun_lib_create_config_files);
+
+        testrun_test(test_testrun_lib_create_files);
+        testrun_test(test_testrun_lib_create_project);
+
+
+        return 1;
 }
 
 /*

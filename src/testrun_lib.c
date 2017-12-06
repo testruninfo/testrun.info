@@ -36,6 +36,578 @@
 
 /*----------------------------------------------------------------------------*/
 
+static bool testrun_lib_create_path(
+        char *buffer, size_t size,
+        testrun_config const * const config,
+        bool (*function) (char *, size_t, struct testrun_config const * const)){
+
+        if (!buffer || !config || !function || size < 1)
+                return false;
+
+        char relative[PATH_MAX];
+        bzero(relative, PATH_MAX);
+
+        if (!function(relative, size, config)){
+                log_error("Failed to get PATH");
+                return false;
+        }
+
+        if (snprintf(buffer, size, "%s/%s",
+                config->project.path.name, relative) < 0)
+                return false;
+
+        if (!testrun_path_create(buffer, PATH_MAX)){
+                log_error("Failed to create %s", buffer);
+                return false;
+        }
+
+        log_info("Project %s ... created PATH %s", config->project.name, buffer);
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+static bool testrun_lib_create_file(
+        char *filename,
+        char *content,
+        testrun_config const * const config,
+        bool (*path) (char *, size_t, struct testrun_config const * const)){
+
+        if (!filename || !config || !content)
+                return false;
+
+        FILE *file;
+
+        int r;
+
+        char path_absolute[PATH_MAX];
+        bzero(path_absolute, PATH_MAX);
+
+        char path_relative[PATH_MAX];
+        bzero(path_relative, PATH_MAX);
+
+        if (path) {
+
+                if (!path(path_relative, PATH_MAX, config)){
+                        log_error("Failed to get PATH");
+                        return false;
+                }
+
+                if (snprintf(path_absolute, PATH_MAX, "%s/%s/%s",
+                        config->project.path.name, path_relative, filename) < 0)
+                        return false;
+        } else {
+
+                if (snprintf(path_absolute, PATH_MAX, "%s/%s",
+                        config->project.path.name, filename) < 0)
+                        return false;
+        }
+
+        if (access(path_absolute, F_OK) != -1){
+                log_error("File exists %s\n", path_absolute);
+                return false;
+        }
+
+        file = fopen(path_absolute, "w");
+        if (!file) {
+                log_error("Could not create/open file %s\n", path_absolute);
+                return false;
+        }
+
+        r = fputs(content, file);
+        if (r < 0)
+                return false;
+
+        fclose(file);
+
+        log_info("Wrote file %s\n", path_absolute);
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+static bool testrun_lib_create_file_content_function(
+        char *filename,
+        testrun_config const * const config,
+        bool (*function_path) (char *, size_t, struct testrun_config const * const),
+        char *(*function_content)(struct testrun_config)){
+
+        if (!filename || !config || !function_content)
+                return false;
+
+        bool r = false;
+
+        char *content = function_content(*config);
+        if (!content)
+                return false;
+
+        r = testrun_lib_create_file(filename, content, config, function_path);
+        content = testrun_string_free(content);
+
+        return r;
+}
+
+/*----------------------------------------------------------------------------*/
+
+static bool testrun_lib_create_folder_structure(
+        testrun_config const * const config){
+
+        if (!config)
+                return false;
+
+        // PROJECT ROOT
+        if (!testrun_path_create(config->project.path.name, PATH_MAX))
+                return false;
+
+        char path[PATH_MAX];
+        bzero(path, PATH_MAX);
+
+        if (!testrun_lib_create_path(path, PATH_MAX, config,
+                testrun_path_project_to_copyright))
+                return false;
+
+        if (!testrun_lib_create_path(path, PATH_MAX, config,
+                testrun_path_project_to_config))
+                return false;
+
+        if (!testrun_lib_create_path(path, PATH_MAX, config,
+                testrun_path_project_to_docs))
+                return false;
+
+
+        if (config->project.doxygen.folder != NULL)
+                if (!testrun_lib_create_path(path, PATH_MAX, config,
+                        testrun_path_project_to_doxygen))
+                        return false;
+
+        if (config->project.service.folder != NULL)
+                if (!testrun_lib_create_path(path, PATH_MAX, config,
+                        testrun_path_project_to_service_install))
+                        return false;
+
+        if (config->project.service.folder != NULL)
+                if (config->project.service.config_data != NULL)
+                        if (!testrun_lib_create_path(path, PATH_MAX, config,
+                                testrun_path_project_to_config_data))
+                                return false;
+
+        if (!testrun_lib_create_path(path, PATH_MAX, config,
+                testrun_path_project_to_include))
+                return false;
+
+        if (!testrun_lib_create_path(path, PATH_MAX, config,
+                testrun_path_project_to_source))
+                return false;
+
+        if (!testrun_lib_create_path(path, PATH_MAX, config,
+                testrun_path_project_to_tests))
+                return false;
+
+        if (!testrun_lib_create_path(path, PATH_MAX, config,
+                testrun_path_project_to_tools))
+                return false;
+
+        if (!testrun_lib_create_path(path, PATH_MAX, config,
+                testrun_path_project_to_unit_tests))
+                return false;
+
+        if (!testrun_lib_create_path(path, PATH_MAX, config,
+                testrun_path_project_to_acceptance_tests))
+                return false;
+
+        if (!testrun_lib_create_path(path, PATH_MAX, config,
+                testrun_path_project_to_test_resources))
+                return false;
+
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+static bool testrun_lib_create_config_files(
+        testrun_config const * const config){
+
+        if (!config)
+                return false;
+
+        char *content = NULL;
+
+        char path[PATH_MAX];
+        bzero(path, PATH_MAX);
+
+        if (config->project.service.folder != NULL){
+
+                content = testrun_text_block_script_install(config);
+
+                if (!content)
+                        goto error;
+
+                if (!testrun_lib_create_file(
+                        config->project.service.install_script,
+                        content, config,
+                        testrun_path_project_to_service_install))
+                        goto error;
+
+                content = testrun_string_free(content);
+                content = testrun_text_block_script_uninstall(config);
+
+                if (!content)
+                        goto error;
+
+                if (!testrun_lib_create_file(
+                        config->project.service.uninstall_script,
+                        content, config,
+                        testrun_path_project_to_service_install))
+                        goto error;
+
+                content = testrun_string_free(content);
+                content = testrun_text_block_service_file(config);
+
+                if (!content)
+                        goto error;
+
+                if (snprintf(path, PATH_MAX, "%s%s",
+                        config->project.name, TESTRUN_SERVICE_EXTENSION) < 0)
+                        goto error;
+
+                if (!testrun_lib_create_file(path, content, config,
+                        testrun_path_project_to_service_install))
+                        goto error;
+
+                content = testrun_string_free(content);
+                content = testrun_text_block_socket_file(config);
+
+                if (!content)
+                        goto error;
+
+                if (snprintf(path, PATH_MAX, "%s%s",
+                        config->project.name, TESTRUN_SOCKET_EXTENSION) < 0)
+                        goto error;
+
+                if (!testrun_lib_create_file(path, content, config,
+                        testrun_path_project_to_service_install))
+                        goto error;
+
+                content = testrun_string_free(content);
+
+                content = "THIS FOLDER WILL BE COPIED TO /etc/config";
+                if (!testrun_lib_create_file(TESTRUN_FILE_README,
+                        content, config,
+                        testrun_path_project_to_config_data))
+                        goto error;
+
+        }
+
+        content = "ADD YOUR CONFIGURATION IN THIS FOLDER";
+        if (!testrun_lib_create_file(TESTRUN_FILE_README,
+                content, config,
+                testrun_path_project_to_config))
+                goto error;
+
+        return true;
+error:
+        testrun_string_free(content);
+        return false;
+}
+
+/*----------------------------------------------------------------------------*/
+
+static bool testrun_lib_create_files(
+        testrun_config const * const config,
+        char const * const readme){
+
+        if (!config)
+                return false;
+
+        char path[PATH_MAX];
+        bzero(path, PATH_MAX);
+
+        char *content = NULL;
+
+        // MAKEFILES
+        content = testrun_lib_makefile_content(*config);
+        if (!content)
+                goto error;
+
+        if (!testrun_lib_create_file(TESTRUN_FILE_MAKEFILE,
+                content, config, NULL))
+                goto error;
+
+        content = testrun_string_free(content);
+        content = testrun_lib_makefile_main_content(*config);
+
+        if (!content)
+                goto error;
+
+        if (!testrun_lib_create_file(TESTRUN_FILE_MAKEFILE_MAIN,
+                content, config, NULL))
+                goto error;
+
+        content = testrun_string_free(content);
+        content = testrun_lib_makefile_test_content(*config);
+
+        if (!content)
+                goto error;
+
+        if (!testrun_lib_create_file(TESTRUN_FILE_MAKEFILE_TEST,
+                content, config, NULL))
+                goto error;
+
+        content = testrun_string_free(content);
+
+        // README
+        if (readme) {
+
+                if (!testrun_lib_create_file(TESTRUN_FILE_README,
+                        (char*) readme, config, NULL))
+                        goto error;
+
+        } else {
+
+                content = testrun_text_block_readme(config, NULL, NULL, NULL);
+                if (!content)
+                        goto error;
+
+                if (!testrun_lib_create_file(TESTRUN_FILE_README,
+                        content, config, NULL))
+                        goto error;
+
+        }
+
+        content = testrun_string_free(content);
+
+        // COPYRIGHT
+        content = testrun_copyright_to_string(&config->copyright);
+        if (!content)
+                goto error;
+
+        if (!testrun_lib_create_file(TESTRUN_FILE_COPYRIGHT, content, config,
+                testrun_path_project_to_copyright))
+                goto error;
+
+        content = testrun_string_free(content);
+
+        // CHANGELOG
+        content = testrun_text_block_changelog_file(config);
+        if (!content)
+                goto error;
+
+        if (!testrun_lib_create_file(TESTRUN_FILE_CHANGELOG, content, config,
+                testrun_path_project_to_docs))
+                goto error;
+
+        content = testrun_string_free(content);
+
+        // DOXYGEN
+        if (config->project.doxygen.folder != NULL){
+                content = testrun_text_block_doxygen_config(config);
+                if (!content)
+                        goto error;
+
+                if (!testrun_lib_create_file(config->project.doxygen.file,
+                        content, config,
+                        testrun_path_project_to_doxygen))
+                        goto error;
+
+        }
+
+        content = testrun_string_free(content);
+
+        if (!testrun_lib_create_config_files(config))
+                goto error;
+
+        if (!testrun_lib_create_test_tools(config))
+                goto error;
+
+        if (!testrun_lib_create_module_files(config->project.name, config))
+                goto error;
+
+        return true;
+error:
+        content = testrun_string_free(content);
+        return false;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_lib_create_project(
+        testrun_config const * const config,
+        char const * const readme){
+
+        if (!config)
+                return false;
+
+        if (!testrun_lib_create_folder_structure(config)){
+                log_error("Failed to create a project folder structure for: %s",
+                        config->project.name);
+        }
+
+        if (!testrun_lib_create_files(config, readme)){
+                log_error("Failed to create the files for project: %s",
+                        config->project.name);
+        }
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_lib_create_test_tools(
+        testrun_config const * const config){
+
+        if (!config)
+                return false;
+
+        char *content = NULL;
+
+        // TESTRUN.H
+        content = testrun_lib_testrun_header_content();
+        if (!content)
+                return false;
+
+        if (!testrun_lib_create_file(
+                config->project.path.tests.tools.header,
+                content, config, testrun_path_project_to_tools)){
+                content = testrun_string_free(content);
+                return false;
+        }
+
+        content = testrun_string_free(content);
+
+        // RUNNER
+        if (!testrun_lib_create_file_content_function(
+                config->project.path.tests.tools.runner_script,
+                config,
+                testrun_path_project_to_tools,
+                testrun_lib_script_folder_runner_content))
+                return false;
+
+        // ACCEPTANCE
+        if (!testrun_lib_create_file_content_function(
+                config->project.path.tests.tools.acceptance_script,
+                config,
+                testrun_path_project_to_tools,
+                testrun_lib_script_acceptance_tests_content))
+                return false;
+
+
+        // UNIT
+        if (!testrun_lib_create_file_content_function(
+                config->project.path.tests.tools.unit_script,
+                config,
+                testrun_path_project_to_tools,
+                testrun_lib_script_unit_tests_content))
+                return false;
+
+
+        // COVERAGE
+        if (!testrun_lib_create_file_content_function(
+                config->project.path.tests.tools.coverage_script,
+                config,
+                testrun_path_project_to_tools,
+                testrun_lib_script_coverage_tests_content))
+                return false;
+
+        // LOC
+        if (!testrun_lib_create_file_content_function(
+                config->project.path.tests.tools.loc_script,
+                config,
+                testrun_path_project_to_tools,
+                testrun_lib_script_loc_tests_content))
+                return false;
+
+        // initialize folders (e.ǵ. for GIT checkout)
+        content = "USE THIS FOLDER FOR UNIT TESTS";
+        if (!testrun_lib_create_file(TESTRUN_FILE_README,
+                content, config,
+                testrun_path_project_to_unit_tests))
+                return false;
+
+        content = "USE THIS FOLDER FOR ACCEPTANCE TESTS";
+        if (!testrun_lib_create_file(TESTRUN_FILE_README,
+                content, config,
+                testrun_path_project_to_acceptance_tests))
+                return false;
+
+        content = "USE THIS FOLDER FOR TEST RESOURCES";
+        if (!testrun_lib_create_file(TESTRUN_FILE_README,
+                content, config,
+                testrun_path_project_to_test_resources))
+                return false;
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_lib_create_module_files(
+        char const * const name,
+        testrun_config const * const config){
+
+        if (!name || !config)
+                return false;
+
+        char filename[PATH_MAX];
+        bzero(filename, PATH_MAX);
+
+        char *content = NULL;
+
+        // MODULE HEADER
+        if (snprintf(filename, PATH_MAX, "%s%s",
+                name, config->format.extensions.c_header) < 0)
+                goto error;
+
+        content = testrun_lib_c_file_content(name, TESTRUN_HEADER, config);
+        if (!content)
+                goto error;
+
+        if (!testrun_lib_create_file(filename, content, config,
+                testrun_path_project_to_include))
+                goto error;
+
+        content = testrun_string_free(content);
+
+        // MODULE SOURCE
+        if (snprintf(filename, PATH_MAX, "%s%s",
+                name, config->format.extensions.c_source) < 0)
+                goto error;
+
+        content = testrun_lib_c_file_content(name, TESTRUN_SOURCE, config);
+        if (!content)
+                goto error;
+
+        if (!testrun_lib_create_file(filename, content, config,
+                testrun_path_project_to_source))
+                goto error;
+
+        content = testrun_string_free(content);
+
+        // MODULE UNIT TEST
+        if (snprintf(filename, PATH_MAX, "%s%s",
+                name, config->format.extensions.c_test) < 0)
+                goto error;
+
+        content = testrun_lib_c_file_content(name, TESTRUN_TEST, config);
+        if (!content)
+                goto error;
+
+        if (!testrun_lib_create_file(filename, content, config,
+                testrun_path_project_to_unit_tests))
+                goto error;
+
+        content = testrun_string_free(content);
+
+        return true;
+error:
+        content = testrun_string_free(content);
+        return false;
+}
+
+/*----------------------------------------------------------------------------*/
+
 char *testrun_lib_testrun_header_content(){
 
         char    *result = NULL;
@@ -831,7 +1403,7 @@ char *testrun_lib_script_loc_tests_content(
 /*----------------------------------------------------------------------------*/
 
 char * testrun_lib_c_file_content(
-        char * module_name,
+        char const * const module_name,
         testrun_extension_t filetype,
         struct testrun_config const * const config){
 
@@ -1155,15 +1727,18 @@ char *testrun_lib_makefile_main_content(testrun_config config){
 
         if (!testrun_path_script_service_install(
                 script_install, PATH_MAX, &config))
-                goto error;
+                if (config.project.type == TESTRUN_SERVICE)
+                        goto error;
 
         if (!testrun_path_script_service_uninstall(
                 script_uninstall, PATH_MAX, &config))
-                goto error;
+                if (config.project.type == TESTRUN_SERVICE)
+                        goto error;
 
-        if (!testrun_path_doxygen_config(
-                doxygen_config, PATH_MAX, &config))
-                goto error;
+        if (config.project.doxygen.folder != NULL)
+                if (!testrun_path_doxygen_config(
+                        doxygen_config, PATH_MAX, &config))
+                        goto error;
 
 
         snprintf(description, d_size,
@@ -1677,5 +2252,209 @@ error:
         step1 = testrun_string_free(step1);
         step2 = testrun_string_free(step2);
         step3 = testrun_string_free(step3);
+        return NULL;
+}
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_lib_script_service_install_content(
+        testrun_config config){
+
+        char *author = "Markus Toepfer";
+
+        testrun_copyright copyright = testrun_copyright_apache_version_2(
+                "2017", author, NULL);
+
+        //config.project.name    = config.project.service.install_script;
+        config.copyright       = copyright;
+        config.author          = author;
+
+        size_t d_size = 5000;
+
+        char description[d_size];
+        char usage[d_size];
+        char dependencies[d_size];
+
+        bzero(description,      d_size);
+        bzero(usage,            d_size);
+        bzero(dependencies,     d_size);
+
+        char * content = NULL;
+        char * step1   = NULL;
+        char * step2   = NULL;
+
+        size_t size2 = 0;
+
+        snprintf(description, d_size,
+        "Install and enable the service.\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"CONVENTION\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"(1) Installation will be done at:\n"
+        TESTRUN_TAG_OFFSET"    /usr/local/bin\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"(2) Configuration files will be placed at\n"
+        TESTRUN_TAG_OFFSET"    /etc/%s\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"(3) Service definition will be placed at \n"
+        TESTRUN_TAG_OFFSET"    /etc/systemd/system/%s.service\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"(4) Service socket definition will be placed at \n"
+        TESTRUN_TAG_OFFSET"    /etc/systemd/system/%s.socket\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"THIS SCRIPT MUST BE RUN AS ROOT."
+        ,config.project.name, config.project.name, config.project.name);
+
+        snprintf(usage, d_size,
+                "./%s /path/to/project",
+                config.project.service.install_script);
+
+        snprintf(dependencies, d_size, "bash systemctl grep cp ");
+
+        content = testrun_text_block_script_install(&config);
+        if (!content)
+                goto error;
+
+        step1   = testrun_text_block_script(&config,
+                description, usage, dependencies, content);
+        if (!step1)
+                goto error;
+
+        /*
+         *      NOTE The next part replaces File [PROJECT], which is set
+         *      based on the configuraion with File install.sh.
+         *      This will only work, as long as the indent used in
+         *      shell headers is fixed 8 spaces.
+         *      (20171201: Currently not configuable and fixed to 8 spaces)
+         *
+         *      Using this strategy we generate something like:
+         *
+         *      #       File            install.sh
+         *      #       Authors         Markus Toepfer
+         *      #       Date            2017-12-01
+         *      #
+         *      #       Project         [PROJECT]
+         *
+         *      Project is set correct everywhere in the makefile,
+         *      based on the configuration. File is overriden with
+         *      correct filename.
+         */
+
+        snprintf(description, d_size, "%s\n#       Authors",
+                config.project.name);
+
+        snprintf(usage, d_size, "%s\n#       Authors",
+                config.project.service.install_script);
+
+        if (!testrun_string_replace_first(
+                &step2, &size2,
+                step1,  strlen(step1),
+                description, strlen(description),
+                usage, strlen(usage)))
+                goto error;
+
+        content = testrun_string_free(content);
+        step1   = testrun_string_free(step1);
+        return step2;
+
+error:
+        content = testrun_string_free(content);
+        step1   = testrun_string_free(step1);
+        step2   = testrun_string_free(step2);
+        return NULL;
+}
+
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_lib_script_service_uninstall_content(
+        testrun_config config){
+
+        char *author = "Markus Toepfer";
+
+        testrun_copyright copyright = testrun_copyright_apache_version_2(
+                "2017", author, NULL);
+
+        //config.project.name    = config.project.service.install_script;
+        config.copyright       = copyright;
+        config.author          = author;
+
+        size_t d_size = 5000;
+
+        char description[d_size];
+        char usage[d_size];
+        char dependencies[d_size];
+
+        bzero(description,      d_size);
+        bzero(usage,            d_size);
+        bzero(dependencies,     d_size);
+
+        char * content = NULL;
+        char * step1   = NULL;
+        char * step2   = NULL;
+
+        size_t size2 = 0;
+
+        snprintf(description, d_size,
+        "Disable and deinstall the service.\n"
+        "#\n"
+        TESTRUN_TAG_OFFSET"THIS SCRIPT MUST BE RUN AS ROOT.");
+
+        snprintf(usage, d_size,
+                "./%s /path/to/project",
+                config.project.service.uninstall_script);
+
+        snprintf(dependencies, d_size, "bash systemctl grep cp ");
+
+        content = testrun_text_block_script_uninstall(&config);
+        if (!content)
+                goto error;
+
+        step1   = testrun_text_block_script(&config,
+                description, usage, dependencies, content);
+        if (!step1)
+                goto error;
+
+        /*
+         *      NOTE The next part replaces File [PROJECT], which is set
+         *      based on the configuraion with File install.sh.
+         *      This will only work, as long as the indent used in
+         *      shell headers is fixed 8 spaces.
+         *      (20171201: Currently not configuable and fixed to 8 spaces)
+         *
+         *      Using this strategy we generate something like:
+         *
+         *      #       File            uninstall.sh
+         *      #       Authors         Markus Toepfer
+         *      #       Date            2017-12-01
+         *      #
+         *      #       Project         [PROJECT]
+         *
+         *      Project is set correct everywhere in the makefile,
+         *      based on the configuration. File is overriden with
+         *      correct filename.
+         */
+
+        snprintf(description, d_size, "%s\n#       Authors",
+                config.project.name);
+
+        snprintf(usage, d_size, "%s\n#       Authors",
+                config.project.service.uninstall_script);
+
+        if (!testrun_string_replace_first(
+                &step2, &size2,
+                step1,  strlen(step1),
+                description, strlen(description),
+                usage, strlen(usage)))
+                goto error;
+
+        content = testrun_string_free(content);
+        step1   = testrun_string_free(step1);
+        return step2;
+
+error:
+        content = testrun_string_free(content);
+        step1   = testrun_string_free(step1);
+        step2   = testrun_string_free(step2);
         return NULL;
 }

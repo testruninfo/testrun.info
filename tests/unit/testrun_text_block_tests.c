@@ -1831,12 +1831,12 @@ int test_testrun_text_block_doxygen_config(){
         "RECURSIVE               = YES"TESTRUN_LINEEND
         "EXCLUDE_SYMLINKS        = YES"TESTRUN_LINEEND
         ,config.project.name,
-        config.project.path.to_doxygen, config.project.doxygen.foldername,
+        config.project.path.to_doxygen, config.project.doxygen.folder,
         config.project.name,
-        config.project.path.to_doxygen, config.project.doxygen.foldername,
+        config.project.path.to_doxygen, config.project.doxygen.folder,
         config.project.path.to_include, config.project.path.include,
         config.project.path.to_source,  config.project.path.source,
-        config.project.path.to_tests,   config.project.path.tests.name);
+        config.project.path.to_tests,   config.project.path.tests.folder);
 
         //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
         //log("START|\n%s|END|%jd\n",  result, strlen(result));
@@ -2300,6 +2300,257 @@ config.project.service.config_data);
         return testrun_log_success();
 }
 
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_text_block_script_uninstall(){
+
+        size_t size = 10000;
+        char expect[size];
+        bzero(expect, size);
+
+        char *result = NULL;
+        char *module = "test";
+        testrun_config config = testrun_config_default();
+
+        char socket_TCP[200];
+        char socket_UDP[200];
+
+        bzero(socket_TCP, 200);
+        bzero(socket_UDP, 200);
+
+        result = testrun_text_block_script_uninstall(&config);
+        snprintf(expect, size,
+"MODNAME=%s\n"
+"CONFIGDIR=\"/etc/$MODNAME\"\n"
+"\n"
+"# Make sure only root can run our script\n"
+"if [[ \\$EUID -ne 0 ]]; then\n"
+"        echo \"This script must be run as root\" 1>&2\n"
+"        exit 1\n"
+"fi\n"
+"\n"
+"# ----------------------------------------------------------------------------\n"
+"#       SERVICE SHUTDOWN\n"
+"# ----------------------------------------------------------------------------\n"
+"\n"
+"echo \"Stopping $MODNAME.service\"\n"
+"systemctl stop $MODNAME.service\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... service stopped.\";\n"
+"else\n"
+"        echo \"... service was not running.\"\n"
+"fi\n"
+"\n"
+"echo \"Disabling $MODNAME.service\"\n"
+"systemctl disable $MODNAME.service\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... service disabled.\";\n"
+"else\n"
+"        echo \"... service was not enabled.\"\n"
+"fi\n"
+"\n"
+"# ----------------------------------------------------------------------------\n"
+"#       SOCKET SHUTDOWN\n"
+"# ----------------------------------------------------------------------------\n"
+"\n"
+"echo \"Stopping $MODNAME.socket\"\n"
+"systemctl stop $MODNAME.socket\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... socket stopped.\";\n"
+"else\n"
+"        echo \"... socket was not running.\"\n"
+"fi\n"
+"\n"
+"echo \"Disabling $MODNAME.socket\"\n"
+"systemctl disable $MODNAME.socket\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... socket disabled.\";\n"
+"else\n"
+"        echo \"... socket was not enabled.\"\n"
+"fi\n"
+"\n"
+"# ----------------------------------------------------------------------------\n"
+"#       REMOVE CONFIG\n"
+"# ----------------------------------------------------------------------------\n"
+"\n"
+"echo \"Removing systemd files\"\n"
+"rm -rf /etc/systemd/system/$MODNAME*\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... removed /etc/systemd/system/$MODNAME*\";\n"
+"else\n"
+"        echo \"... WARN check and remove /etc/systemd/system/$MODNAME*\";\n"
+"fi\n"
+"echo \"uninstall done.\"\n"
+"\n"
+"echo \"Removing executable files\"\n"
+"rm -rf /usr/local/bin/$MODNAME\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... removed /usr/local/bin/$MODNAME\";\n"
+"else\n"
+"        echo \"... WARN check and remove /usr/local/bin/$MODNAME\";\n"
+"fi\n"
+"echo \"uninstall done.\"\n"
+"\n"
+"echo \"Removing config files\"\n"
+"rm -rf /etc/$MODNAME*\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... removed /etc/$MODNAME*\";\n"
+"else\n"
+"        echo \"... WARN check and remove /etc/$MODNAME*\";\n"
+"fi\n"
+"echo \"uninstall done.\"\n"
+"\n"
+"# ----------------------------------------------------------------------------\n"
+"#       RELOAD SYSTEMCTL DAEMON\n"
+"# ----------------------------------------------------------------------------\n"
+"\n"
+"systemctl daemon-reload\n"
+"echo \"Systemd daemon reload performed.\"\n"
+, config.project.name);
+
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n",  result, strlen(result));
+
+        testrun(strlen(expect) == strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+
+        // -------------------------------------------------------------
+        // Check parameter change
+        // -------------------------------------------------------------
+
+        config.project.name = "test";
+        config.project.service.config_data = "xxxx";
+        snprintf(expect, size,
+"MODNAME=test\n"
+"CONFIGDIR=\"/etc/$MODNAME\"\n"
+"\n"
+"# Make sure only root can run our script\n"
+"if [[ \\$EUID -ne 0 ]]; then\n"
+"        echo \"This script must be run as root\" 1>&2\n"
+"        exit 1\n"
+"fi\n"
+"\n"
+"# ----------------------------------------------------------------------------\n"
+"#       SERVICE SHUTDOWN\n"
+"# ----------------------------------------------------------------------------\n"
+"\n"
+"echo \"Stopping $MODNAME.service\"\n"
+"systemctl stop $MODNAME.service\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... service stopped.\";\n"
+"else\n"
+"        echo \"... service was not running.\"\n"
+"fi\n"
+"\n"
+"echo \"Disabling $MODNAME.service\"\n"
+"systemctl disable $MODNAME.service\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... service disabled.\";\n"
+"else\n"
+"        echo \"... service was not enabled.\"\n"
+"fi\n"
+"\n"
+"# ----------------------------------------------------------------------------\n"
+"#       SOCKET SHUTDOWN\n"
+"# ----------------------------------------------------------------------------\n"
+"\n"
+"echo \"Stopping $MODNAME.socket\"\n"
+"systemctl stop $MODNAME.socket\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... socket stopped.\";\n"
+"else\n"
+"        echo \"... socket was not running.\"\n"
+"fi\n"
+"\n"
+"echo \"Disabling $MODNAME.socket\"\n"
+"systemctl disable $MODNAME.socket\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... socket disabled.\";\n"
+"else\n"
+"        echo \"... socket was not enabled.\"\n"
+"fi\n"
+"\n"
+"# ----------------------------------------------------------------------------\n"
+"#       REMOVE CONFIG\n"
+"# ----------------------------------------------------------------------------\n"
+"\n"
+"echo \"Removing systemd files\"\n"
+"rm -rf /etc/systemd/system/$MODNAME*\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... removed /etc/systemd/system/$MODNAME*\";\n"
+"else\n"
+"        echo \"... WARN check and remove /etc/systemd/system/$MODNAME*\";\n"
+"fi\n"
+"echo \"uninstall done.\"\n"
+"\n"
+"echo \"Removing executable files\"\n"
+"rm -rf /usr/local/bin/$MODNAME\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... removed /usr/local/bin/$MODNAME\";\n"
+"else\n"
+"        echo \"... WARN check and remove /usr/local/bin/$MODNAME\";\n"
+"fi\n"
+"echo \"uninstall done.\"\n"
+"\n"
+"echo \"Removing config files\"\n"
+"rm -rf /etc/$MODNAME*\n"
+"if [ $? -eq 0 ]; then\n"
+"        echo \"... removed /etc/$MODNAME*\";\n"
+"else\n"
+"        echo \"... WARN check and remove /etc/$MODNAME*\";\n"
+"fi\n"
+"echo \"uninstall done.\"\n"
+"\n"
+"# ----------------------------------------------------------------------------\n"
+"#       RELOAD SYSTEMCTL DAEMON\n"
+"# ----------------------------------------------------------------------------\n"
+"\n"
+"systemctl daemon-reload\n"
+"echo \"Systemd daemon reload performed.\"\n");
+
+        testrun(strlen(expect) != strlen(result));
+        result = testrun_string_free(result);
+        result = testrun_text_block_script_uninstall(&config);
+
+        //log("EXPECT|\n%s|END|%jd\n", expect, strlen(expect));
+        //log("START|\n%s|END|%jd\n",  result, strlen(result));
+
+        testrun(strlen(expect) == strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        result = testrun_string_free(result);
+
+        return testrun_log_success();
+}
+
+
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_text_block_changelog_file(){
+
+        size_t size = 10000;
+        char expect[size];
+        bzero(expect, size);
+
+        char *date =  testrun_time_string(TESTRUN_SCOPE_DAY);
+
+        char *result = NULL;
+        testrun_config config = testrun_config_default();
+
+        testrun(!testrun_text_block_changelog_file(NULL));
+
+        result = testrun_text_block_changelog_file(&config);
+        snprintf(expect, size,
+                "Changelog for project %s created %s\n",
+                config.project.name, date);
+
+        testrun(strlen(expect) == strlen(result));
+        testrun(strncmp(result, expect, strlen(expect)) == 0);
+        result = testrun_string_free(result);
+        date = testrun_string_free(date);
+
+        return testrun_log_success();
+}
 
 /*
  *      ------------------------------------------------------------------------
@@ -2335,6 +2586,9 @@ int all_tests() {
         testrun_test(test_testrun_text_block_socket_file);
 
         testrun_test(test_testrun_text_block_script_install);
+        testrun_test(test_testrun_text_block_script_uninstall);
+
+        testrun_test(test_testrun_text_block_changelog_file);
 
 
         return 1;
