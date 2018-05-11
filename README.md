@@ -2,7 +2,9 @@
 
 [![LOGO](resources/images/logo_color_big.png)](https://twitter.com/testruninfo/status/927230629414043648)
 
-Testrun_lib is a toolset to create lightweight, customizable, but common makefile based C (unit) testing frameworks. All Lib functionality is realated to the central header **testrun.h** and makefile integrated testrunner scripts.
+Testrun_lib is a toolset to create lightweight, customizable, but common makefile based C (unit) testing frameworks. 
+
+All Lib functionality is related to the central header **testrun.h** and makefile integrated testrunner scripts.
 
 This lib MAY be used for own project initialization executables, OR as standalone command line tool.
 
