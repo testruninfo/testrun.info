@@ -41,7 +41,7 @@
 CC = gcc
 
 PROJECT         := testrun_lib
-VERSION         := 0.1.0
+VERSION         := 1.0.0
 
 # project path recalculation (if used included from parent make)
 PROJECTMK       := $(abspath $(lastword $(MAKEFILE_LIST)))

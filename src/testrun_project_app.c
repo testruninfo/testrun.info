@@ -102,9 +102,11 @@ static void testrun_project_app_print_usage(){
         fprintf(stdout, "\n");
         fprintf(stdout, "               (COPRIGHT)\n");
         fprintf(stdout, "\n");
+        fprintf(stdout, "               -r       --res           set copyright to all rights reserved \n");
         fprintf(stdout, "               -g       --gpl           set copyright to GPL v3 \n");
         fprintf(stdout, "               -a       --apache        set copyright to APACHE v2 \n");
         fprintf(stdout, "               -b       --bsd           set copyright to BSD 3Clause \n");
+        fprintf(stdout, "               -m       --mit           set copyright to MIT \n");
         fprintf(stdout, "\n");
         fprintf(stdout, "NOTE\n");
         fprintf(stdout, "\n");
@@ -137,6 +139,8 @@ static testrun_config testrun_project_app_create_dynamic_config(
         static int flag_gpl     = 0;
         static int flag_apache  = 0;
         static int flag_bsd3    = 0;
+        static int flag_mit     = 0;
+        static int flag_res     = 0;
 
         static int flag_lib     = 0;
         static int flag_service = 0;
@@ -176,6 +180,8 @@ static testrun_config testrun_project_app_create_dynamic_config(
                         {"gpl",     no_argument, &flag_gpl,     1},
                         {"apache",  no_argument, &flag_apache,  1},
                         {"bsd",     no_argument, &flag_bsd3,    1},
+                        {"mit",     no_argument, &flag_mit,     1},
+                        {"res",     no_argument, &flag_res,     1},
 
                         /* Type     ... only one MAY be set */
                         {"lib",     no_argument, &flag_lib,     1},
@@ -186,6 +192,10 @@ static testrun_config testrun_project_app_create_dynamic_config(
                            We distinguish them by their indices. */
                         {"help",    optional_argument, 0, 'h'},
                         {"version", optional_argument, 0, 'v'},
+                        {"owner",   required_argument, 0, 'o'},
+                        {"author",  required_argument, 0, 'u'},
+                        {"note",    required_argument, 0, 'x'},
+                        {"webpage", required_argument, 0, 'w'},
                         {"name",    required_argument, 0, 'n'},
                         {"dir",     required_argument, 0, 'd'},
                         {0, 0, 0, 0}
@@ -193,7 +203,7 @@ static testrun_config testrun_project_app_create_dynamic_config(
 
                 /* getopt_long stores the option index here. */
 
-                c = getopt_long (argc, argv, "?hvpmn:d:abg",
+                c = getopt_long (argc, argv, "?hvpnouxw:d:abgmr",
                                  long_options, &option_index);
 
                 /* Detect the end of the options. */
@@ -216,10 +226,6 @@ static testrun_config testrun_project_app_create_dynamic_config(
                                 flag_project = 1;
                                 break;
 
-                        case 'm':
-                                flag_project = 0;
-                                break;
-
                         case 'h':
                         case '?':
                                 testrun_project_app_print_usage();
@@ -237,12 +243,12 @@ static testrun_config testrun_project_app_create_dynamic_config(
                                 break;
 
                         case 'u':
-                                printf ("option -o (AUTHOR of PROJECT) `%s'\n", optarg);
+                                printf ("option -u (AUTHOR of PROJECT) `%s'\n", optarg);
                                 config.author = optarg;
                                 break;
 
                         case 'x':
-                                printf ("option -o (NOTE to PROJECT) `%s'\n", optarg);
+                                printf ("option -x (NOTE to PROJECT) `%s'\n", optarg);
                                 note = optarg;
                                 break;
 
@@ -273,6 +279,14 @@ static testrun_config testrun_project_app_create_dynamic_config(
                                 flag_gpl = 1;
                                 break;
 
+                        case 'm':
+                                flag_mit = 1;
+                                break;
+
+                        case 'r':
+                                flag_res = 1;
+                                break;
+
                         default:
                                 testrun_project_app_print_usage();
                                 goto error;
@@ -288,6 +302,8 @@ static testrun_config testrun_project_app_create_dynamic_config(
         /* ... at max 1 copyright statement is selected */
         if (   (flag_gpl +
                 flag_apache +
+                flag_mit +
+                flag_res +
                 flag_bsd3) > 1 ){
                 fprintf(stderr,"ERROR, multiple copyright statements selected\n");
                 goto error;
@@ -336,15 +352,23 @@ static testrun_config testrun_project_app_create_dynamic_config(
 
         if (flag_gpl != 0) {
 
-
-
                 config.copyright = testrun_copyright_GPL_v3(
                         date, owner, note,
-                        "[openvocs]", GENERAL);
+                        config.project.name, GENERAL);
 
         }  else if (flag_bsd3 != 0) {
 
                 config.copyright = testrun_copyright_BSD_3Clause(
+                        date, owner, note);
+
+        }  else if (flag_mit != 0) {
+
+                config.copyright = testrun_copyright_MIT(
+                        date, owner, note);
+
+        }  else if (flag_res != 0) {
+
+                config.copyright = testrun_copyright_default(
                         date, owner, note);
 
         } else {
@@ -382,7 +406,14 @@ static int testrun_project_app_create_new_project(testrun_config config){
 
         DIR *dp;
 
-        if (snprintf(path, PATH_MAX, "%s/%s",
+        if (!config.project.path) {
+
+                if (snprintf(path, PATH_MAX, "%s", config.project.name) < 0){
+                        fprintf(stderr, "ERROR, failed to concat project root path\n");
+                        goto error;
+                }
+
+        } else if (snprintf(path, PATH_MAX, "%s/%s",
                 config.project.path, config.project.name) < 0){
                 fprintf(stderr, "ERROR, failed to concat project root path\n");
                 goto error;
@@ -516,10 +547,13 @@ int testrun_project_app_run(int argc, char *argv[]){
         if (!success)
                 goto done;
 
-        if (!testrun_project_app_set_author_dynamic(buffer, size))
-                goto error;
+        if (!config.author){
 
-        config.author = buffer;
+                if (!testrun_project_app_set_author_dynamic(buffer, size))
+                        goto error;
+
+                config.author = buffer;
+        }
 
         //testrun_config_dump(stdout, config);
 

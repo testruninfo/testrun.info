@@ -179,17 +179,25 @@ bool testrun_path_create(char *in, size_t max){
 
                 element = (char*) vector->items[i];
 
-                if ((i == 0) && (element == NULL)) {
+                if (i == 0) {
 
-                        log_debug("create path starting at ROOT");
+                        if (element == NULL) {
 
-                        if (snprintf(pointer, open, "/") < 0)
-                                goto error;
+                                log_debug("create path starting at ROOT");
 
-                        pointer++;
-                        open--;
+                                if (snprintf(pointer, open, "/") < 0)
+                                        goto error;
 
-                        continue;
+                                pointer++;
+                                open--;
+
+                                continue;
+
+                        } else {
+
+                                log_debug("create relative path");
+
+                       }
 
                 } else if (element == NULL) {
                         log_error("NULL in path");
@@ -202,7 +210,7 @@ bool testrun_path_create(char *in, size_t max){
                 pointer += (strlen(element) + 1);
                 open    -= (strlen(element) + 1);
 
-                // log("PATH %jd| %s", i, path);
+                log("PATH %jd| %s", i, path);
 
                 dp = opendir(path);
                 if (dp){
