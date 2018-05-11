@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+#
+#       Copyright 2017 Markus Toepfer
+#
+#       Licensed under the Apache License, Version 2.0 (the "License");
+#       you may not use this file except in compliance with the License.
+#       You may obtain a copy of the License at
+#
+#               http://www.apache.org/licenses/LICENSE-2.0
+#
+#       Unless required by applicable law or agreed to in writing, software
+#       distributed under the License is distributed on an "AS IS" BASIS,
+#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#       See the License for the specific language governing permissions and
+#       limitations under the License.
+#
+#       ------------------------------------------------------------------------
+#
+#       File            testrun_gprof.sh
+#       Authors         Markus Toepfer, Michael Beer
+#       Date            2018-02-09
+#
+#       Project         testrun_gprof.sh
+#
+#       Description     Run gprof based analysis tests on all test cases.
+#
+#       Usage           ./testrun_gprof.sh /path/to/project
+#
+#       Dependencies    bash, gprof
+#
+#       Last changed    2018-02-09
+#       ------------------------------------------------------------------------
+
+#       ------------------------------------------------------------------------
+#       CONFIGURE SCRIPT BASED ON PRESET VARIBALES OR ON INPUT
+#       ------------------------------------------------------------------------
+
+start_time=$(date "+%Y.%m.%d-%H.%M.%S")
+
+LOGFOLDER="build/tests/log"
+
+# SET A LOGFILE
+LOGFILE=$LOGFOLDER"/gprof_".$start_time."log"
+echo " (log)   $start_time" > $LOGFILE
+touch $LOGFILE
+chmod a+w $LOGFILE
+
+# SET THE FOLDER
+FOLDER="build/tests/unit"
+SRC_FOLDER="tests/unit"
+
+echo "-------------------------------------------------------"
+echo "               GPROF RUNNER"
+echo "-------------------------------------------------------"
+
+# Execute the test once and profile the execution
+for test in $FOLDER/*.test; do
+	name=${test##*/}
+	echo "Profiling" $name
+    $test
+    gprof $test gmon.out > $name.profile
+done
+
+# move profile to build/tests/logs
+mv *.profile $LOGFOLDER
+exit 0
+
+echo "-------------------------------------------------------"
+echo ""

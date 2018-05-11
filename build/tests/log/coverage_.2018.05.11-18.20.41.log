@@ -1,0 +1,14 @@
+-------------------------------------------------------
+               REPORT COVERAGE TESTING
+-------------------------------------------------------
+   TIME 	 2018.05.11-18.20.41
+
+   count source	 112
+   count tests	 109
+
+UNTESTED: 
+main
+testrun_project_app_create_dynamic_config
+testrun_project_app_run
+............................................
+COVERAGE: 97.32 % 
