@@ -105,6 +105,14 @@ static bool testrun_lib_create_file(
 
         fclose(file);
 
+        if (0 == strncmp(filename, "install.sh", strlen("install.sh")))
+                if (chmod(path_absolute, 0555))
+                        return false;
+
+        if (0 == strncmp(filename, "uninstall.sh", strlen("uninstall.sh")))
+                if (chmod(path_absolute, 0555))
+                        return false;
+
         log_info("Wrote file %s\n", path_absolute);
 
         return true;
