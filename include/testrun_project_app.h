@@ -46,6 +46,38 @@
         fprintf(stdout, "version: %s\n", PROJECT_APP_VERSION);
 
 
+/*----------------------------------------------------------------------------*/
+
+/**
+        Try to set an author based on the environment parameter.
+        @param  buffer to store the string
+        @param  size   size of buffer
+        @return        true on success.
+*/
+bool testrun_project_app_set_author_dynamic(
+        char *buffer, size_t size);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Create a module based on a config.
+
+        @param  config for of the APP
+        @return        0 on success.
+ */
+int testrun_project_app_create_new_module(testrun_config config);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Create a new project based on a config.
+
+        @param  config for of the APP
+        @return        0 on success.
+ */
+int testrun_project_app_create_new_project(testrun_config config);
+
+/*----------------------------------------------------------------------------*/
 /**
         APP running loop. The app will be run as a process, until this runner
         returns. This functionality is used, to make the whole runner testable.

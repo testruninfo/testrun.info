@@ -35,7 +35,7 @@
 #include "../include/testrun_project_app.h"
 /*----------------------------------------------------------------------------*/
 
-static bool testrun_project_app_set_author_dynamic(
+bool testrun_project_app_set_author_dynamic(
         char *buffer, size_t size){
 
         if (!buffer || size < 1)
@@ -393,7 +393,7 @@ error:
 
 /*----------------------------------------------------------------------------*/
 
-static int testrun_project_app_create_new_project(testrun_config config){
+int testrun_project_app_create_new_project(testrun_config config){
 
         if (!config.project.name)
                 goto error;
@@ -456,7 +456,7 @@ error:
 
 /*----------------------------------------------------------------------------*/
 
-static int testrun_project_app_create_new_module(testrun_config config){
+int testrun_project_app_create_new_module(testrun_config config){
 
         if (!config.project.name)
                 goto error;
