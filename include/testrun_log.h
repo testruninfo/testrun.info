@@ -47,6 +47,7 @@
 #include <stdarg.h>
 #include <syslog.h>
 #include <sys/time.h>
+#include <inttypes.h>
 
 #include <time.h>
 

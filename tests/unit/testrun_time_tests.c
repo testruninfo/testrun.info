@@ -31,7 +31,7 @@
         ------------------------------------------------------------------------
 */
 
-#include "../../include/testrun.h"
+#include "../tests/tools/testrun.h"
 #include "../../src/testrun_time.c"
 #include <ctype.h>
 

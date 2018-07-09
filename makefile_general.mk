@@ -135,7 +135,7 @@ endif
 	@echo " (CC)    $@"
 	@$(CC) $(CFLAGS) -o $@ -c $< $(LIBS)
 
-all:			all_exec pkgconfig
+all:			all_lib pkgconfig
 install:		install_exec install_lib
 uninstall:		uninstall_exec uninstall_lib
 

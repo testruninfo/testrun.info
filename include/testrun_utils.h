@@ -17,9 +17,9 @@
 
         ------------------------------------------------------------------------
 *//**
-        @file           testrun_lib.h
+        @file           testrun_utils.h
         @author         [AUTHOR]
-        @date           2018-07-06
+        @date           2018-07-09
 
         @ingroup        testrun_lib
 
@@ -28,45 +28,33 @@
 
         ------------------------------------------------------------------------
 */
-#ifndef testrun_lib_h
-#define testrun_lib_h
+#ifndef testrun_utils_h
+#define testrun_utils_h
 
-#include "testrun_copyright.h"
-
-typedef struct testrun_lib testrun_lib;
-typedef struct testrun_config testrun_config;
-
-struct testrun_config {
-
-        char *root_path;
-        char *project_name;
-        testrun_copyright copyright;
-
-        void *custom;
-};
-
-struct testrun_lib {
-
-        struct testrun_config config;
-
-        bool (*create_folders)          (const testrun_lib *self);
-
-        bool (*generate_makefiles)      (const testrun_lib *self);
-
-        bool (*generate_test_scripts)   (const testrun_lib *self);
-
-        bool (*generate_module_files)   (const testrun_lib *self,
-                                         const char *module_name);
-
-
-};
-
-/*----------------------------------------------------------------------------*/
+#include <stdlib.h>
+#include <string.h>
 
 /**
-        Generate the testrun.h header string.
-*/
-char *testrun_generate_testrun_header(testrun_config config);
+        Create an allocated string with the content of text, 
+        where each line of text is prefixed and suffixed with
+        optional strings e.g. indentitation.
 
-#endif /* testrun_lib_h */
+        @NOTE   if the content of the line is 0, 
+                prefix and suffix will not be added.
+                e.g. \n\n will become \n\n
+        
+        @param text     source text
+        @param intro    (optional) intro to be added
+        @param outro    (optional) outro to be added
+
+        @returns        allocated string with new content or NULL
+*/
+char *testrun_utils_insert_at_each_line(
+        const char* text,
+        const char* intro,
+        const char* outro);
+
+
+
+#endif /* testrun_utils_h */
 
