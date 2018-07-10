@@ -57,8 +57,6 @@ int test_testrun_utils_insert_at_each_line(){
         char *result = NULL;
         char *expect = NULL;
         char *text   = NULL;
-        char *intro  = NULL;
-        char *outro  = NULL;
 
         testrun(!testrun_utils_insert_at_each_line(NULL, NULL, NULL));
 

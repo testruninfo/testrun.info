@@ -17,39 +17,35 @@
 
         ------------------------------------------------------------------------
 *//**
-        @file           testrun_lib.h
+        @file           testrun_tools.h
         @author         [AUTHOR]
-        @date           2018-07-06
+        @date           2018-07-10
 
         @ingroup        testrun_lib
 
-        @brief
+        @brief          Definition of the testrun tools enabled within the 
+                        library.
 
 
         ------------------------------------------------------------------------
 */
-#ifndef testrun_lib_h
-#define testrun_lib_h
+#ifndef testrun_tools_h
+#define testrun_tools_h
 
-#include "testrun_copyright.h"
+#include <stdio.h>
+#include <string.h>
 
-typedef struct testrun_lib testrun_lib;
+typedef struct testrun_tools testrun_tools;
 
-struct testrun_lib {
+struct testrun_tools {
 
-        bool (*create_folders)          (const testrun_lib *self);
+        char *(*testrun_header) ();
+        char *(*testrun_header_openmp) ();
 
-        bool (*generate_makefiles)      (const testrun_lib *self);
-
-        bool (*generate_test_scripts)   (const testrun_lib *self);
-
-        bool (*generate_module_files)   (const testrun_lib *self,
-                                         const char *module_name);
-
-
+        char *(*testrun_simple_unit_tests)      (const char *runner_script,
+                                                 const char *path_logfile, 
+                                                 const char *path_tests);
 };
 
-/*----------------------------------------------------------------------------*/
-
-#endif /* testrun_lib_h */
+#endif /* testrun_tools_h */
 
