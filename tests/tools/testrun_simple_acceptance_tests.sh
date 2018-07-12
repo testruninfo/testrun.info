@@ -20,61 +20,69 @@
 #       Authors         Markus Toepfer
 #       Date            2017-11-30
 #
-#       Project         testrun_simple_acceptance_tests.sh
+#       Project         testrun.info
 #
-#       Description     Run all test executables build/test/acceptance/*.test
+#       Description     Run all test executables [PATH_TESTS]/*.test
 #                       Run the whole folder, until an error occurs.
 #
 #                       MODE         FAIL ON ERROR (Fail on first test error)
 #
-#                       LOGFILE      build/test/log/acceptancetest.<time>.log
+#                       LOGFILE      [PATH_LOGFILE]/ACCEPTANCE.<time>.log
 #
 #
 #       Usage           ./testrun_simple_acceptance_tests.sh /path/to/project
 #
 #       Dependencies    bash, touch, chmod, ls, wc, date
 #
-#       Last changed    2017-11-30
+#       Last changed    2018-07-11
 #       ------------------------------------------------------------------------
 
+TEST_TYPE="ACCEPTANCE"
+FOLDER_LOGFILE="build/tests/log/"
+FOLDER_TESTS="build/tests/acceptance"
+RUNNER_SCRIPT="./tests/tools/testrun_runner.sh"
+
 echo "-------------------------------------------------------"
-echo "               SIMPLE ACCEPTANCE TESTING"
+echo "               SIMPLE $TEST_TYPE TESTING"
 echo "-------------------------------------------------------"
 
 start_time=$(date "+%Y.%m.%d-%H.%M.%S.%N")
 
 # SET A LOGFILE
-LOGFILE="build/tests/log/acceptance_".$start_time."log"
+LOGFILE="$FOLDER_LOGFILE/$TEST_TYPE.$start_time.log"
 echo " (log)   $start_time" > $LOGFILE
 touch $LOGFILE
 chmod a+w $LOGFILE
 
-# SET THE FOLDER
-FOLDER="build/tests/acceptance"
-
 echo "-------------------------------------------------------" >> $LOGFILE
-echo "               REPORT ACCEPTANCE TESTING"                >> $LOGFILE
+echo "               REPORT $TEST_TYPE TESTING"                >> $LOGFILE
 echo "-------------------------------------------------------" >> $LOGFILE
 
 # RUN THE RUNNER
-sh ./tests/./tools/testrun_runner.sh  $LOGFILE $FOLDER FAIL_ON_ERROR
+sh $RUNNER_SCRIPT $LOGFILE $FOLDER_TESTS FAIL_ON_ERROR
 RESULT=$?
 
 end_time=$(date "+%Y.%m.%d-%H.%M.%S.%N")
 
 # FINISH THE REPORT
-echo "-------------------------------------------------------">> $LOGFILE
-echo "DONE \t ACCEPTANCE TEST RUN"  >> $LOGFILE
+echo "-------------------------------------------------------" >> $LOGFILE
+echo "DONE \t $TEST_TYPE TEST RUN" >> $LOGFILE
 if [ $RESULT -eq 0 ]; then
-        echo "RESULT\t SUCCESS"  >> $LOGFILE
+        echo "RESULT\t SUCCESS" >> $LOGFILE
 else
-        echo "RESULT\t FAILURE"  >> $LOGFILE
+        echo "RESULT\t FAILURE" >> $LOGFILE
 fi
 echo "START \t $start_time" >> $LOGFILE
 echo "END   \t $end_time" >> $LOGFILE
-echo "-------------------------------------------------------">> $LOGFILE
+echo "-------------------------------------------------------" >> $LOGFILE
 
-# DUMP THE REPORT
-cat $LOGFILE
-echo ""
+# DUMP THE REPORT ON SUCCESS
+if [ $RESULT -eq 0 ]; then
+        cat $LOGFILE
+        echo ""
+else
+        echo ""
+        echo "$TEST_TYPE TEST FAILED"
+        echo "Logfile dump stopped to point to last error."
+fi
 exit $RESULT

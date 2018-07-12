@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#       ------------------------------------------------------------------------
 #
-#       Copyright 2017 Markus Toepfer
+#       Copyright 2017 Markus Toepfer, Michael Beer
 #
 #       Licensed under the Apache License, Version 2.0 (the "License");
 #       you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@
 #
 #       File            makefile
 #       Authors         Markus Toepfer
-#       Authors         ...
-#       Date            2018-02-18
+#       Authors         Michael Beer
+#       Date            2018-02-09
 #
 #       Project         testrun_lib
 #
@@ -30,57 +30,55 @@
 #                       (2) name and version
 #                       (3) installation prefix
 #                       (4) used libraries
-#                       (5) general makefiles used
+#                       (5) general generic makefiles used
 #
 #       Usage           make
 #
 #       Dependencies    make & compiler
 #
-#       Last changed    2018-07-12
+#       Last changed    2018-07-06
 #       ------------------------------------------------------------------------
 
 CC = gcc
 
-PROJECT			:= testrun_lib
-VERSION			:= 1.0.0
+PROJECT         := testrun_lib
+VERSION         := 1.0.1
 
-# project path recalculation (if used included from a parent make)
-PROJECTMK		:= $(abspath $(lastword $(MAKEFILE_LIST)))
+# project path recalculation (if used included from parent make)
+PROJECTMK       := $(abspath $(lastword $(MAKEFILE_LIST)))
 
-# prefix for base directory for installation (default is /)
-#PREFIX			:= some_path
+# A base directory for installation may be set using a prefix,
+# PREFIX definition may be inline within this script or may be
+# done using an external SHELL variable $PREFIX
+# The prefix MUST be an absolute PATH 
 
-# include all pkgconfig files available at PREFIX
+#PREFIX 		:= /inline/example
+
+# PREFIXED non Standard PATH package config files,
+# This implementation will force to use the prefixed 
+# version instead of a parallel installed pkg-config version.
 export PKG_CONFIG_PATH = $(PREFIX)/usr/local/lib/pkgconfig
 
 # LIBS USED (uncommented example includes)
-# ... will allow to include libs installed under PREFIX
-#LIBS			+= `pkg-config --cflags --libs libtestrun.info`
-#LIBS			+= `pkg-config --libs libsystemd`
-#LIBS			+= `pkg-config --libs uuid`
-#LIBS			+= `pkg-config --libs openssl`
+# NOTE for pkg-confdig custom libs use --cflags to include the 
+# cflags defined within the pkg-config configuration
+#LIBS           += `pkg-config --cflags --libs uuid`
 
-# MODULE BASED CFLAGS (example)
-MODCFLAGS		+= -std=c11 -D _DEFAULT_SOURCE -D _POSIX_C_SOURCE=200809
-
-# EXTRA CFLAGS (example parallel or other GCC custom flags)
-#MODCFLAGS		+= -fopenmp
-#MODCFLAGS		+= -rdynamic
+# EXTRA CFLAGS (examples)
+MODCFLAGS       += -std=c11 
+MODCFLAGS 		+= -D _DEFAULT_SOURCE 
+MODCFLAGS 		+= -D _POSIX_C_SOURCE=200809
+MODCFLAGS       += -g
+MODCFLAGS       += -fopenmp
 
 # EXTRA LFLAGS (example)
-#MODLFLAGS		+= -pthread
+#MODLFLAGS      += -pthread
 
-# PKG_CONFIG_DATA (used during LIBRARY install)
-PROJECT_URL		= "http://testrun.info"
-PROJECT_DESC	= "A small library to build testrunner frameworks."
-
-# SERVICE_CONFIG_DATA (used during SERVICE install)
-SERVICE_DATA	= "config/install"
-SERVICE_START	= "$(SERVICE_DATA)/start.sh"
-SERVICE_STOP	= "$(SERVICE_DATA)/stop.sh"
+# additional CFLAGS e.g. GCC only flags
+MODCFLAGS      	+= -rdynamic
 
 # TMP FILE DEFINITION
-TESTS_TMP_FILES	= $(wildcard /tmp/test_*)
+TESTS_TMP_FILES = $(wildcard /tmp/test_*)
 
 # INCLUDE BASE MAKEFILE
 include makefile_general.mk

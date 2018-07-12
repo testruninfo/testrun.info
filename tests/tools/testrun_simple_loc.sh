@@ -16,30 +16,37 @@
 #
 #       ------------------------------------------------------------------------
 #
-#       File            testrun_simpe_coverage_tests.sh
+#       File            testrun_simple_loc.sh
 #       Authors         Markus Toepfer
 #       Date            2017-11-30
 #
-#       Project         testrun_simpe_coverage_tests.sh
+#       Project         testrun.info
 #
-#       Description     Count the lines of src and unit | acceptance tests.
+#       Description     Count the lines of header, src and tests.
 #                       This file uses no error checking.
 #
 #       Usage           ./testrun_simple_loc.sh /path/to/project
 #
 #       Dependencies    bash, find, xargs, wc
 #
-#       Last changed    2017-11-30
+#       Last changed    2018-07-11
 #       ------------------------------------------------------------------------
 
+FOLDER_INC="include"
+FOLDER_SRC="src"
+FOLDER_TST="tests/unit"
 echo "-------------------------------------------------------"
 echo "               SIMPLE LOC COUNTER"
 echo "-------------------------------------------------------"
-echo "(LOC) src"
-find $1/./src -name '*.c' | xargs wc -l
-echo "(LOC) tests/unit"
-find $1/./tests/unit -name '*.c' | xargs wc -l
-echo "(LOC) tests/acceptance"
-find $1/./tests/acceptance -name '*.c' | xargs wc -l
+echo ""
+echo "(LOC) HEADER"
+find $1/$FOLDER_INC -name '*.h' | xargs wc -l
+echo ""
+echo "(LOC) SOURCE"
+find $1/$FOLDER_SRC -name '*.c' | xargs wc -l
+echo ""
+echo "(LOC) TESTS"
+find $1/$FOLDER_TST -name '*.c' | xargs wc -l
+echo ""
 echo "-------------------------------------------------------"
 echo ""

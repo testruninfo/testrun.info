@@ -17,10 +17,11 @@
 #       ------------------------------------------------------------------------
 #
 #       File            testrun_gcov.sh
-#       Authors         Markus Toepfer, Michael Beer
+#       Authors         Markus Toepfer
+#       Authors         Michael Beer
 #       Date            2018-02-09
 #
-#       Project         testrun_gcov.sh
+#       Project         testrun.info
 #
 #       Description     Run gcov based coverage tests on all test cases.
 #
@@ -28,42 +29,34 @@
 #
 #       Dependencies    bash, gcov
 #
-#       Last changed    2018-02-09
+#       Last changed    2018-07-11
 #       ------------------------------------------------------------------------
 
-#       ------------------------------------------------------------------------
-#       CONFIGURE SCRIPT BASED ON PRESET VARIBALES OR ON INPUT
-#       ------------------------------------------------------------------------
+start_time=$(date "+%Y.%m.%d-%H.%M.%S.%N")
 
-start_time=$(date "+%Y.%m.%d-%H.%M.%S")
-
-LOGFOLDER="build/tests/log"
+FOLDER_TEST_EXEC="build/tests/unit"
+FOLDER_TEST_SRC="tests/unit"
+FOLDER_LOGFILE="build/tests/log"
+TEST_EXEC_SUFFIX=".test"
+TEST_SRC_SUFFIX="_tests"
 
 # SET A LOGFILE
-LOGFILE=$LOGFOLDER"/gcov_".$start_time."log"
-echo " (log)   $start_time" > $LOGFILE
+LOGFILE="$FOLDER_LOGFILE/gcov.$start_time.log"
 touch $LOGFILE
 chmod a+w $LOGFILE
+echo " (log)   $start_time" > $LOGFILE
 
-# SET THE FOLDER
-FOLDER="build/tests/unit"
-SRC_FOLDER="tests/unit"
+echo "-------------------------------------------------------" >> $LOGFILE
+echo "               GCOV RUNNER" >> $LOGFILE
+echo "-------------------------------------------------------" >> $LOGFILE
 
-echo "-------------------------------------------------------"
-echo "               GCOV RUNNER"
-echo "-------------------------------------------------------"
-
-# RUN THE RUNNER
-#sh ./tests/./tools/testrun_runner.sh  $LOGFILE $FOLDER FAIL_ON_ERROR
-#RESULT=$?
-
-for test in $FOLDER/*.test; do
+for test in $FOLDER_TEST_EXEC/*$TEST_EXEC_SUFFIX; do
     $test
 done
 
-FILES=`ls  $FOLDER/ | grep ".test" | wc -l`
+FILES=`ls  $FOLDER_TEST_EXEC/ | grep $TEST_EXEC_SUFFIX | wc -l`
 if [ $? -ne 0 ]; then
-        echo "ERROR ... could not count files of $FOLDER"
+        echo "ERROR ... could not count files of $FOLDER_TEST_EXEC"
         exit 1
 fi
 c=0
@@ -72,15 +65,15 @@ if [ $FILES -eq 0 ]; then
         exit 0
 fi
 
-for i in $SRC_FOLDER/*_tests.c
+for i in $FOLDER_TEST_SRC/*$TEST_SRC_SUFFIX.c
 do
         # RUN GCOV
         echo $i
-    	gcov $i
+        gcov $i
 done
 
-# move coverage to build/tests/logs
-mv *.gcov $LOGFOLDER
+# move coverage output to log folder
+mv *.gcov $FOLDER_LOGFILE
 exit 0
 
 echo "-------------------------------------------------------"

@@ -16,22 +16,21 @@
 #
 #       ------------------------------------------------------------------------
 #
-#       File            testrun_simpe_coverage_tests.sh
+#       File            testrun_simple_coverage.sh
 #       Authors         Markus Toepfer
 #       Date            2017-11-30
 #
-#       Project         testrun_simpe_coverage_tests.sh
+#       Project         testrun.info
 #
-#       Description     Count functions of folder src against their counterparts
-#                       in the unit test folder.
+#       Description     Count functions of folder src vs unit test functions.
 #
 #                       CONVENTION
 #
 #                       Each function in any file of the source folder located
-#                       "./src"
-#                       will have a corresponding test function using the same
-#                       name in any other file of the unit test folder located
-#                       "./tests/unit",
+#                       "src"
+#                       will have a corresponding test function,
+#                       using the same name in a file of the unit tests located at
+#                       "tests/unit",
 #                       with a function name prefix of
 #                       "test_".
 #
@@ -41,29 +40,29 @@
 #                                    observance of the given coding convention.
 #
 #
-#       Usage           ./testrun_simpe_unit_tests.sh /path/to/project
+#       Usage           ./testrun_simple_coverage.sh /path/to/project
 #
 #       Dependencies    bash, ctags, awk, sed, grep
 #
-#       Last changed    2017-11-30
+#       Last changed    2018-07-11
 #       ------------------------------------------------------------------------
 
-start_time=$(date "+%Y.%m.%d-%H.%M.%S")
+start_time=$(date "+%Y.%m.%d-%H.%M.%S.%N")
 PREFIX="test_"
 
-LIBDIR=$1
-SRCDIR=$1/./src
-TESTDIR=$1/./tests/unit
+SRCDIR="$1/src"
+TESTDIR="$1/tests/unit"
+FOLDER_LOGFILE="$1/build/tests/log"
 
 # SET A LOGFILE
-LOGFILE="$LIBDIR/build/tests/log/coverage_".$start_time."log"
+LOGFILE="$FOLDER_LOGFILE/coverage.$start_time.log"
 touch $LOGFILE
 chmod a+w $LOGFILE
 
 echo "-------------------------------------------------------" >> $LOGFILE
 echo "               REPORT COVERAGE TESTING"                  >> $LOGFILE
 echo "-------------------------------------------------------" >> $LOGFILE
-echo "   TIME \t $start_time" >> $LOGFILE
+echo "   TIME 	 $start_time" >> $LOGFILE
 echo "" >> $LOGFILE
 
 # GENERATE CTAGS SOURCE
@@ -75,8 +74,7 @@ ctags --c-types=f -R
 # remove the ctags stuff, to leave just the function lines
 sed -e '/[ ]*m$/d' -e '/TAG/d' <tags>functions
 # remove anything but the function names
-awk '{print $1 }' $SRCDIR/functions > \
-        $SRCDIR/functionNames
+awk '{print $1 }' $SRCDIR/functions > $SRCDIR/functionNames
 # count the lines
 sourceFkt="$(cat functions | wc -l)"
 echo "   count source\t" $sourceFkt >> $LOGFILE
@@ -90,17 +88,17 @@ ctags --c-types=f -R
 # remove the ctags stuff, to leave just the function lines
 sed -e '/[ ]*m$/d' -e '/TAG/d' <tags>functions
 # remove anything but the function names
-awk '{print $1 }' $TESTDIR/functions > \
-        $TESTDIR/functionNames
+awk '{print $1 }' $TESTDIR/functions > $TESTDIR/functionNames
 # count the lines
 testFkt="$(cat functions | grep -i ^$PREFIX | wc -l)"
 echo "   count tests\t" $testFkt >> $LOGFILE
 
-echo "\nUNTESTED: " >> $LOGFILE
+echo "
+UNTESTED: " >> $LOGFILE
 # Found functions:
 while read line;
 do
-        grep -n '^test_'$line'$' $TESTDIR/functionNames > \
+        grep -n '^'$PREFIX$line'$' $TESTDIR/functionNames > \
         /dev/null || echo $line >> $LOGFILE
 done < $SRCDIR/functionNames
 
@@ -121,3 +119,4 @@ rm $SRCDIR/functionNames
 rm $TESTDIR/tags
 rm $TESTDIR/functions
 rm $TESTDIR/functionNames
+

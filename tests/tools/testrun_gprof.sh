@@ -16,54 +16,45 @@
 #
 #       ------------------------------------------------------------------------
 #
-#       File            testrun_gprof.sh
-#       Authors         Markus Toepfer, Michael Beer
+#       File            testrun_gcov.sh
+#       Authors         Markus Toepfer
+#       Authors         Michael Beer
 #       Date            2018-02-09
 #
-#       Project         testrun_gprof.sh
+#       Project         testrun.info
 #
 #       Description     Run gprof based analysis tests on all test cases.
 #
-#       Usage           ./testrun_gprof.sh /path/to/project
+#       Usage           ./testrun_gcov.sh /path/to/project
 #
 #       Dependencies    bash, gprof
 #
-#       Last changed    2018-02-09
+#       Last changed    2018-07-11
 #       ------------------------------------------------------------------------
 
-#       ------------------------------------------------------------------------
-#       CONFIGURE SCRIPT BASED ON PRESET VARIBALES OR ON INPUT
-#       ------------------------------------------------------------------------
+start_time=$(date "+%Y.%m.%d-%H.%M.%S.%N")
 
-start_time=$(date "+%Y.%m.%d-%H.%M.%S")
-
-LOGFOLDER="build/tests/log"
+FOLDER_TEST_EXEC="build/tests/unit"
+FOLDER_LOGFILE="build/tests/log"
+TEST_EXEC_SUFFIX=".test"
 
 # SET A LOGFILE
-LOGFILE=$LOGFOLDER"/gprof_".$start_time."log"
-echo " (log)   $start_time" > $LOGFILE
+LOGFILE="$FOLDER_LOGFILE/gprof.$start_time.log"
 touch $LOGFILE
 chmod a+w $LOGFILE
+echo " (log)   $start_time" > $LOGFILE
 
-# SET THE FOLDER
-FOLDER="build/tests/unit"
-SRC_FOLDER="tests/unit"
-
-echo "-------------------------------------------------------"
-echo "               GPROF RUNNER"
-echo "-------------------------------------------------------"
+echo "-------------------------------------------------------" >> $LOGFILE
+echo "               GPROF RUNNER" >> $LOGFILE
+echo "-------------------------------------------------------" >> $LOGFILE
 
 # Execute the test once and profile the execution
-for test in $FOLDER/*.test; do
-	name=${test##*/}
-	echo "Profiling" $name
+for test in $FOLDER_TEST_EXEC/*$TEST_EXEC_SUFFIX; do
+        name=${test##*/}        echo "Profiling" $name
     $test
     gprof $test gmon.out > $name.profile
 done
 
 # move profile to build/tests/logs
-mv *.profile $LOGFOLDER
+mv *.profile $FOLDER_LOGFILE
 exit 0
-
-echo "-------------------------------------------------------"
-echo ""

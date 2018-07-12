@@ -26,11 +26,25 @@
         @brief          Definition of the testrun tools enabled within the 
                         library.
 
+                        which are:
+
+                                (1) testrun.h     C HEADER FILE
+                                (2) testrun*.sh   BASH based FILE RUNNER
+                                (3) makefile*     testrun standard makefiles 
+
+                        All functions MUST return an allocated string, which
+                        may be written "AS IS" to a file. 
 
         ------------------------------------------------------------------------
 */
 #ifndef testrun_tools_h
 #define testrun_tools_h
+
+#define TEST_PREFIX        "test_" // usecase function      <-> test_function
+#define TEST_SUFFIX_SOURCE "_test" // usecase source.c      <-> source_test.c
+#define TEST_SUFFIX_EXEC   ".test" // usecase source_test.c <-> source.test
+
+typedef enum {LIB, EXEC, SERVICE} testrun_makefile_target;
 
 #include <stdio.h>
 #include <string.h>
@@ -42,9 +56,44 @@ struct testrun_tools {
         char *(*testrun_header) ();
         char *(*testrun_header_openmp) ();
 
-        char *(*testrun_simple_unit_tests)      (const char *runner_script,
+        char *(*testrun_simple_tests)           (const char *type,
+                                                 const char *project,
+                                                 const char *file_name,
+                                                 const char *runner_script,
                                                  const char *path_logfile, 
                                                  const char *path_tests);
+
+        char *(*testrun_runner)                 (const char *project,
+                                                 const char *file_name);
+
+        char *(*testrun_loc)                    (const char *project,
+                                                 const char *file_name,
+                                                 const char *path_header,
+                                                 const char *path_source,
+                                                 const char *path_tests);
+
+        char *(*testrun_simple_coverage)        (const char *project,
+                                                 const char *file_name,
+                                                 const char *test_prefix,
+                                                 const char *path_logfile,
+                                                 const char *path_source,
+                                                 const char *path_tests);
+
+        char *(*testrun_gcov)                   (const char *project,
+                                                 const char *file_name,
+                                                 const char *path_logfile,
+                                                 const char *path_tests_exec,
+                                                 const char *path_tests_source,
+                                                 const char *exec_suffix,
+                                                 const char *src_suffix);
+
+        char *(*testrun_gprof)                  (const char *project,
+                                                 const char *file_name,
+                                                 const char *path_logfile,
+                                                 const char *path_tests_exec,
+                                                 const char *exec_suffix);
+
+
 };
 
 #endif /* testrun_tools_h */

@@ -20,9 +20,9 @@
 #       Authors         Markus Toepfer
 #       Date            2017-11-30
 #
-#       Project         testrun_runner.sh
+#       Project         testrun.info
 #
-#       Description     Run each test.test of a folder and log Ok or NOK
+#       Description     Run each TEST.test of a folder and log Ok or NOK
 #                       for each executed testfile of the folder.
 #
 #                       EXAMPLE OUTPUT
@@ -57,10 +57,6 @@
 #       Dependencies    bash, tail, ls, grep, wc
 #
 #       Last changed    2017-11-30
-#       ------------------------------------------------------------------------
-
-#       ------------------------------------------------------------------------
-#       CONFIGURE SCRIPT BASED ON PRESET VARIBALES OR ON INPUT
 #       ------------------------------------------------------------------------
 
 if [ -z $1 ]; then

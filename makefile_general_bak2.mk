@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#       ------------------------------------------------------------------------
 #
 #       Copyright 2017 Markus Toepfer
 #
@@ -52,23 +52,21 @@
 #
 #                       Following folder structure is required
 #
-#                           bin     MUST be located at bin
-#                           build   MUST be located at build
-#                           inludes MUST be located at include
-#                           sources MUST be located at src
-#                           tests   MUST be located at tests
+#							bin     MUST be located at bin/
+#                           build   MUST be located at build/
+#                           inludes MUST be located at include/
+#                           sources MUST be located at src/
+#                           tests   MUST be located at tests/
 #
 #                       ALL TEST SCRIPTS MAY BE EXCHANGED WITH CUSTOM RUNNERS
 #
 #       Usage           SHOULD be used included by parent makefile
 #
-#       NOTE            aligned with tab width 4
-#
 #       Dependencies    testrun (makefile & service scripts), doxygen (if used)
 #
 #       Last changed    2018-07-12
 #       ------------------------------------------------------------------------
-        
+
 # Switch on colors
 GCC_COLORS ?= 'gcc colors available, use them!'
 export GCC_COLORS
@@ -100,7 +98,7 @@ SOCKDIR			:= $(PREFIX)/etc/systemd/system
 
 INSTALL			:= install
 
-EXECUTABLE			= bin/$(DIRNAME)
+EXECUTABLE		= bin/$(DIRNAME)
 
 STATIC			= build/lib$(DIRNAME).a
 SHARED			= $(patsubst %.a,%.so,$(STATIC))
@@ -111,8 +109,8 @@ SOURCES			= $(wildcard src/**/*.c src/*.c)
 OBJECTS			= $(patsubst %.c,%.o,$(SOURCES))
 
 # Test sources and targets
-TESTS_SOURCES   = $(wildcard tests/**/*_tests.c tests/*_tests.c)
-TESTS_TARGET    = $(patsubst tests/%.c, build/tests/%.test, $(TESTS_SOURCES))
+TESTS_SOURCES	= $(wildcard tests/**/*_tests.c tests/*_tests.c)
+TESTS_TARGET	= $(patsubst tests/%.c, build/tests/%.test, $(TESTS_SOURCES))
 
 # GCOV support
 GCOV_FILES		=  $(patsubst %.c,%.gcno,$(SOURCES))
@@ -135,9 +133,9 @@ endif
 TEST_SCRIPT_UNIT		= tests/tools/testrun_simple_unit_tests.sh
 TEST_SCRIPT_ACCEPTANCE	= tests/tools/testrun_simple_acceptance_tests.sh
 TEST_SCRIPT_COVERAGE	= tests/tools/testrun_simple_coverage_tests.sh
-TEST_SCRIPT_LOC			= tests/tools/testrun_simple_loc.sh
-TEST_SCRIPT_GCOV		= tests/tools/testrun_gcov.sh
-TEST_SCRIPT_GPROF		= tests/tools/testrun_gprof.sh
+TEST_SCRIPT_LOC 		= tests/tools/testrun_simple_loc.sh
+TEST_SCRIPT_GCOV 		= tests/tools/testrun_gcov.sh  
+TEST_SCRIPT_GPROF 		= tests/tools/testrun_gprof.sh  	
 
 # ----- DEFAULT MAKE RULES -------------------------------------------------
 
@@ -174,6 +172,7 @@ $(EXECUTABLE): $(OBJECTS)
 	@echo " (CC)    $@ $(OBJECTS)"
 	$(CC) -o $@ $(STATIC) $(LIBS) $(LFLAGS)
 
+
 # ----- BUILD & CLEANUP ----------------------------------------------------
 
 build:
@@ -188,7 +187,7 @@ build:
 .PHONY: clean
 clean:
 	@echo " (CLEAN) $(LIBNAME)"
-	@rm -rf bin build doxygen/documentation $(OBJECTS) $(TESTS_OBJECTS) \
+	@rm -rf build bin doxygen/documentation $(OBJECTS) $(TESTS_OBJECTS) \
 	$(LIBNAMEPC) $(TESTS_TMP_FILES) $(GCOV_FILES) *.gcov *.profile *.pc *.out
 
 
@@ -196,7 +195,7 @@ clean:
 
 #NOTE requires doxygen.PHONY: documentation
 documentation:
-	doxygen doxygen/doxygen.config
+	doxygen ./doxygen/doxygen.config
 
 # ----- INFORMATION PRINTING -----------------------------------------------
 
@@ -206,7 +205,7 @@ print-%  : ; @echo $* = $($*)
 
 .PHONY: start
 start:
-	@echo "\n (HINT)    $(PROJECT)           ==> running make\n"
+	@echo "\n (HINT)    $(PROJECT) 		 ==> running make\n"
 
 .PHONY: done
 done:
@@ -215,6 +214,7 @@ done:
 	@echo " (HINT)  with unit testing      ==> 'make tested'"
 	@echo " (HINT)  perform installation   ==> 'sudo make install"
 	@echo " (HINT)  generate documentation ==> 'make documentation"
+
 
 # ----- TESTING ------------------------------------------------------------
 
@@ -233,6 +233,14 @@ build/tests/acceptance/%_tests.test: tests/acceptance/%_tests.o
 build/tests/unit/%_tests.test: tests/unit/%_tests.o
 	@echo " (CC)    $(@)"
 	@$(CC) $(CFLAGS) $(LFLAGS) $^ -ldl $(STATIC) -Wl,-rpath=$(RPATH) -o $(@) $(LIBS)
+
+# build a specific executable test (testname) under build/tests
+# NOTE: May be usefull for module development in large projects
+test:
+	@echo " (CC)    $(testname)"
+	@$(CC) $(CFLAGS) $(LFLAGS) $(patsubst build/tests/%.test, \
+		tests/%.c,$(testname)) -ldl $(STATIC) -Wl,-rpath=$(RPATH) -g -o\
+		$(patsubst tests/%.c,build/tests/%.test,$(testname)) $(LIBS)
 
 # TESTRUN runners ----------------------------------------------------------
 
@@ -267,14 +275,12 @@ testrun:
 
 # TESTRUN gcov -------------------------------------------------------------
 
-.PHONY: testrun-gcov
 testrun-gcov: clean
 	make USE_GCOV=1 all
 	sh $(TEST_SCRIPT_GCOV) $(PROJECTPATH)
 
 # TESTRUN gprof ------------------------------------------------------------
 
-.PHONY: testrun-gprof
 testrun-gprof: clean
 	make USE_GPROF=1 all
 	sh $(TEST_SCRIPT_PROF) $(PROJECTPATH)
@@ -283,23 +289,22 @@ testrun-gprof: clean
 
 .PHONY: pkgconfig
 pkgconfig:
-	@echo 'prefix='$(PREFIX)'/usr/local/' >  $(LIBNAMEPC)
-	@echo 'exec_prefix=$${prefix}' >> $(LIBNAMEPC)
-	@echo 'libdir=$${prefix}/lib' >> $(LIBNAMEPC)
-	@echo 'includedir=$${prefix}/include' >> $(LIBNAMEPC)
-	@echo '' >> $(LIBNAMEPC)
-	@echo 'Name: '$(LIBNAME) >> $(LIBNAMEPC)
-	@echo 'Description: '$(PROJECT_DESC) >> $(LIBNAMEPC)
-	@echo 'Version: '$(VERSION) >> $(LIBNAMEPC)
-	@echo 'URL: ' $(PROJECT_URL) >> $(LIBNAMEPC)
-	@echo 'Libs: -L$${libdir} -l'$(DIRNAME) >> $(LIBNAMEPC)
-	@echo 'Cflags: -I$${includedir}' >> $(LIBNAMEPC)
+	@echo 'prefix='$(PREFIX)'/usr/local/'           >  $(LIBNAMEPC)
+	@echo 'exec_prefix=$${prefix}'                  >> $(LIBNAMEPC)
+	@echo 'libdir=$${prefix}/lib' 					>> $(LIBNAMEPC)
+	@echo 'includedir=$${prefix}/include' 			>> $(LIBNAMEPC)
+	@echo ''                                        >> $(LIBNAMEPC)
+	@echo 'Name: '$(LIBNAME)                        >> $(LIBNAMEPC)
+	@echo 'Description: '$(PROJECT_DESC)            >> $(LIBNAMEPC)
+	@echo 'Version: '$(VERSION)                     >> $(LIBNAMEPC)
+	@echo 'URL: ' $(PROJECT_URL)            		>> $(LIBNAMEPC)
+	@echo 'Libs: -L$${libdir} -l'$(DIRNAME)         >> $(LIBNAMEPC)
+	@echo 'Cflags: -I$${includedir}'                >> $(LIBNAMEPC)
 
 # ----- INSTALLATION -------------------------------------------------------
 
 # Installation as a library ------------------------------------------------
 
-.PHONY: install_lib
 install_lib: $(SHARED) $(STATIC)
 	@echo " (OK)    installed $(LIBNAME) to $(LIBDIR)"
 	@mkdir -p $(LIBDIR)/pkgconfig
@@ -310,7 +315,6 @@ install_lib: $(SHARED) $(STATIC)
 	@$(INSTALL) -m 0644 $(LIBNAMEPC) $(LIBDIR)/pkgconfig
 	@ldconfig
 
-.PHONY: uninstall_lib
 uninstall_lib:
 	@echo " (OK)    uninstalled $(LIBNAME) from $(LIBDIR)"
 	@rm -rf $(INCDIR)
@@ -320,17 +324,15 @@ uninstall_lib:
 
 # Installation as an executable --------------------------------------------
 
-.PHONY: install_exec
 install_exec: $(SHARED) $(STATIC)
 	@echo " (OK)    installed $(DIRNAME) to $(EXECDIR)"
 	@$(INSTALL) -m 0755 bin/$(DIRNAME) $(EXECDIR)
 
-.PHONY: uninstall_exec
 uninstall_exec:
 	@echo " (OK)    uninstalled $(DIRNAME) from $(EXECDIR)"
 	@rm -rf $(EXECDIR)/$(DIRNAME)
 
-# Installation as a service ------------------------------------------------
+# Installation as a service (inlined)--------------------------------------
 .PHONY: install_service
 install_service: $(EXECUTABLE)
 	@echo " (OK)    installed $(DIRNAME) to $(EXECDIR)"
@@ -339,7 +341,7 @@ install_service: $(EXECUTABLE)
 	@$(INSTALL) -m 0755 -d $(SERVICE_DATA)/etc   $(CONFDIR)
 	@$(INSTALL) -m 0755 $(SERVICE_DATA)/*.service $(SOCKDIR)
 	@$(INSTALL) -m 0755 $(SERVICE_DATA)/*.socket $(SOCKDIR)
-	@# IF INSTALLATION IS DONE UNPREFIXED TO /etc, the service will be enabled 
+	@# IF INSTALLATION IS DONE TO /etc, the service will be enabled 
 	$(shell if [ -z "$(PREFIX)" ]; then $(SERVICE_START); fi)
 
 
@@ -349,5 +351,6 @@ uninstall_service:
 	@rm -rf $(EXECDIR)/$(DIRNAME)
 	@rm -rf $(CONFDIR)
 	@rm -rf $(SOCKDIR)/$(DIRNAME)*
-	@# IF INSTALLATION WAS DONE UNPREFIXED TO /etc, the service will be disabled 
+	@# IF INSTALLATION WAS DONE TO /etc, the service will be disabled 
 	$(shell if [ -z "$(PREFIX)" ]; then $(SERVICE_STOP); fi)
+	
