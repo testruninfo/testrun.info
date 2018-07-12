@@ -40,14 +40,10 @@
 #ifndef testrun_tools_h
 #define testrun_tools_h
 
-#define TEST_PREFIX        "test_" // usecase function      <-> test_function
-#define TEST_SUFFIX_SOURCE "_test" // usecase source.c      <-> source_test.c
-#define TEST_SUFFIX_EXEC   ".test" // usecase source_test.c <-> source.test
-
-typedef enum {LIB, EXEC, SERVICE} testrun_makefile_target;
-
 #include <stdio.h>
 #include <string.h>
+
+typedef enum {LIB, EXEC, SERVICE} testrun_makefile_target;
 
 typedef struct testrun_tools testrun_tools;
 
@@ -93,8 +89,44 @@ struct testrun_tools {
                                                  const char *path_tests_exec,
                                                  const char *exec_suffix);
 
+        char *(*makefile_configurable)          (const char *project,
+                                                 const char *file_name,
+                                                 const char *version,
+                                                 const char *cflags,
+                                                 const char *project_url,
+                                                 const char *project_desc,
+                                                 const char *path_service,
+                                                 const char *makefile_general_name);
+
+        char *(*makefile_common)                (const char *project,
+                                                 const char *file_name,
+                                                 const char *path_bin,
+                                                 const char *path_build,
+                                                 const char *path_include,
+                                                 const char *path_source,
+                                                 const char *path_tests,
+                                                 const char *path_doxygen,
+                                                 const char *suffix_test_source,
+                                                 const char *suffix_test_exec,
+                                                 const char *script_unit_tests,
+                                                 const char *script_acceptance_tests,
+                                                 const char *script_coverage_tests,
+                                                 const char *script_loc,
+                                                 const char *script_gcov,
+                                                 const char *script_gprof,
+                                                 testrun_makefile_target target);
 
 };
+
+/*
+ *      ------------------------------------------------------------------------
+ *
+ *      Generate the default testrun tools
+ *
+ *      ------------------------------------------------------------------------
+ */
+
+testrun_tools testrun_tools_default();
 
 #endif /* testrun_tools_h */
 

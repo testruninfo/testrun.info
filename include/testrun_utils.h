@@ -32,7 +32,23 @@
 #define testrun_utils_h
 
 #include <stdlib.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
 #include <string.h>
+#include <ctype.h>
+
+#include <dirent.h>
+#include <unistd.h>
+#include <limits.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#include "testrun_config.h"
+#include "testrun_log.h"
 
 /**
         Create an allocated string with the content of text, 
@@ -53,6 +69,22 @@ char *testrun_utils_insert_at_each_line(
         const char* text,
         const char* intro,
         const char* outro);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Default function to search a project top level path, 
+        using the default config. 
+*/
+char* testrun_utils_search_project_path(const char *start_path);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Default function to search a project top level path, 
+        using the default config. 
+*/
+bool testrun_utils_create_paths(struct testrun_config *config);
 
 
 

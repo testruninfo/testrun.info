@@ -1271,7 +1271,7 @@ int test_testrun_generate_script_gprof(){
 
 /*----------------------------------------------------------------------------*/
 
-int test_testrun_generate_makefile_general(){
+int test_testrun_generate_makefile_common(){
 
         char *result             = NULL;
         char *project            = "project";
@@ -1294,7 +1294,7 @@ int test_testrun_generate_makefile_general(){
         size_t size = 20000;
         char buffer[size];
 
-        result = testrun_generate_makefile_general(
+        result = testrun_generate_makefile_common(
                 project,    
                 file_name,
                 path_bin,
@@ -1723,7 +1723,7 @@ int test_testrun_generate_makefile_general(){
          */
 
         project            = "testrun_lib";
-        file_name          = "makefile_general.mk";
+        file_name          = "makefile_common.mk";
         path_bin           = "bin";
         path_build         = "build";
         path_include       = "include";
@@ -1739,7 +1739,7 @@ int test_testrun_generate_makefile_general(){
         script_gcov        = "tests/tools/testrun_gcov.sh";
         script_gprof       = "tests/tools/testrun_gprof.sh";
 
-        result = testrun_generate_makefile_general(
+        result = testrun_generate_makefile_common(
                 project,    
                 file_name,
                 path_bin,
@@ -1777,7 +1777,7 @@ int test_testrun_generate_makefile(){
         char *project_url       = "project_url";
         char *project_desc      = "project_desc";
         char *path_service      = "path_service";
-        char *makefile_general  = "makefile_general";
+        char *makefile_common  = "makefile_common";
 
 
         size_t size = 10000;
@@ -1791,7 +1791,7 @@ int test_testrun_generate_makefile(){
                 project_url,
                 project_desc,
                 path_service,
-                makefile_general);
+                makefile_common);
 
         testrun(result);
 
@@ -1877,7 +1877,7 @@ int test_testrun_generate_makefile(){
                 project_url,
                 project_desc,
                 path_service,
-                makefile_general
+                makefile_common
         ));
 
         testrun(0 == strncmp(result, buffer, strlen(buffer)));
@@ -1901,7 +1901,7 @@ int test_testrun_generate_makefile(){
         project_url       = "http://testrun.info";
         project_desc      = "A small library to build testrunner frameworks.";
         path_service      = "config/install";
-        makefile_general  = "makefile_general.mk";
+        makefile_common  = "makefile_common.mk";
 
         result = testrun_generate_makefile(
                 project,    
@@ -1911,11 +1911,31 @@ int test_testrun_generate_makefile(){
                 project_url,
                 project_desc,
                 path_service,
-                makefile_general);
+                makefile_common);
 
         testrun(result);
         //testrun_log("%s", result);
         free(result);
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_tools_default(){
+
+        testrun_tools tools = testrun_tools_default();
+
+        testrun(tools.testrun_header          == testrun_generate_header);
+        testrun(tools.testrun_header_openmp   == testrun_generate_header_openmp);
+        testrun(tools.testrun_simple_tests    == testrun_generate_script_simple_tests);
+        testrun(tools.testrun_runner          == testrun_generate_script_runner);
+        testrun(tools.testrun_loc             == testrun_generate_script_loc);
+        testrun(tools.testrun_simple_coverage == testrun_generate_script_coverage);
+        testrun(tools.testrun_gcov            == testrun_generate_script_gcov);
+        testrun(tools.testrun_gprof           == testrun_generate_script_gprof);
+        testrun(tools.makefile_configurable   == testrun_generate_makefile);
+        testrun(tools.makefile_common         == testrun_generate_makefile_common);
 
         return testrun_log_success();
 }
@@ -1941,9 +1961,10 @@ int all_tests() {
         testrun_test(test_testrun_generate_script_gcov);
         testrun_test(test_testrun_generate_script_gprof);
 
-        testrun_test(test_testrun_generate_makefile_general);
+        testrun_test(test_testrun_generate_makefile_common);
         testrun_test(test_testrun_generate_makefile);
 
+        testrun_test(test_testrun_tools_default);
 
         return testrun_counter;
 }

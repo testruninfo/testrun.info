@@ -32,10 +32,14 @@
 #define testrun_lib_h
 
 #include "testrun_copyright.h"
+#include "testrun_config.h"
+#include "testrun_tools.h"
 
 typedef struct testrun_lib testrun_lib;
 
 struct testrun_lib {
+
+        struct testrun_config config;
 
         bool (*create_folders)          (const testrun_lib *self);
 

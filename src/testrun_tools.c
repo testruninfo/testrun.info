@@ -1930,7 +1930,7 @@ char *testrun_generate_script_gprof(
 
 /*----------------------------------------------------------------------------*/
 
-char *testrun_generate_makefile_general(
+char *testrun_generate_makefile_common(
         const char *project,
         const char *file_name,
         const char *path_bin,
@@ -1950,8 +1950,22 @@ char *testrun_generate_makefile_general(
         testrun_makefile_target target
         ){
 
-        if (    !project           || 
-                !file_name         )
+        if (    !project                        ||      
+                !file_name                      ||      
+                !path_bin                       ||      
+                !path_build                     ||      
+                !path_include                   ||      
+                !path_source                    ||      
+                !path_tests                     ||      
+                !path_doxygen                   ||      
+                !suffix_test_source             ||      
+                !suffix_test_exec               ||      
+                !script_unit_tests              ||      
+                !script_acceptance_tests        ||      
+                !script_coverage_tests          ||      
+                !script_loc                     ||      
+                !script_gcov                    ||      
+                !script_gprof)
                 return NULL;
 
         char *target_all        = NULL;
@@ -2393,11 +2407,17 @@ char *testrun_generate_makefile(
         const char *project_url,
         const char *project_desc,
         const char *path_service,
-        const char *makefile_general
+        const char *makefile_common
         ){
 
-        if (    !project           || 
-                !file_name         )
+        if (    !project        ||
+                !file_name      ||
+                !version        ||
+                !cflags         ||
+                !project_url    ||
+                !project_desc   ||
+                !path_service   ||
+                !makefile_common)
                 return NULL;
 
         size_t size = 20000;
@@ -2485,9 +2505,31 @@ char *testrun_generate_makefile(
                 project_url,
                 project_desc,
                 path_service,
-                makefile_general
+                makefile_common
         ))
                 return NULL;
 
         return strdup(buffer);
+}
+
+/*----------------------------------------------------------------------------*/
+
+testrun_tools testrun_tools_default(){
+
+        struct testrun_tools tools = {
+
+                .testrun_header          = testrun_generate_header,
+                .testrun_header_openmp   = testrun_generate_header_openmp,
+
+                .testrun_simple_tests    = testrun_generate_script_simple_tests,
+                .testrun_runner          = testrun_generate_script_runner,
+                .testrun_loc             = testrun_generate_script_loc,
+                .testrun_simple_coverage = testrun_generate_script_coverage,
+                .testrun_gcov            = testrun_generate_script_gcov,
+                .testrun_gprof           = testrun_generate_script_gprof,
+                .makefile_configurable   = testrun_generate_makefile,
+                .makefile_common        = testrun_generate_makefile_common
+        };
+
+        return tools;
 }
