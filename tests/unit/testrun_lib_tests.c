@@ -71,6 +71,7 @@ int test_case(){
 int all_tests() {
 
         testrun_init();
+        testrun_test(test_case);
 
         return testrun_counter;
 }

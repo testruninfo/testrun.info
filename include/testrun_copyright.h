@@ -15,6 +15,8 @@
         See the License for the specific language governing permissions and
         limitations under the License.
 
+        This file is part of the testrun project. http://testrun.info
+
         ------------------------------------------------------------------------
 *//**
         @file           testrun_copyright.h

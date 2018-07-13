@@ -100,7 +100,7 @@ SOCKDIR			:= $(PREFIX)/etc/systemd/system
 
 INSTALL			:= install
 
-EXECUTABLE			= bin/$(DIRNAME)
+EXECUTABLE		= bin/$(DIRNAME)
 
 STATIC			= build/lib$(DIRNAME).a
 SHARED			= $(patsubst %.a,%.so,$(STATIC))

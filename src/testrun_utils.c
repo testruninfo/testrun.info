@@ -252,14 +252,13 @@ static bool testrun_utils_create_path(const char *path){
 
         char *slash   = NULL;
         char *pointer = NULL;
-        char *element = NULL;
         size_t open   = PATH_MAX;
 
         char new_path[open];
         bzero(new_path, open);
 
-        pointer = path;
-        while(size < (pointer - path)) {
+        pointer = (char*) path;
+        while(size < (size_t) (pointer - path)) {
 
                 slash = memchr(pointer, '/', size - (pointer - path)); 
 

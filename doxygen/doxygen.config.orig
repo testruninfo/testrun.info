@@ -1,0 +1,32 @@
+DOXYFILE_ENCODING       = UTF-8
+PROJECT_NAME            = testrun_lib
+<<<<<<< HEAD
+PROJECT_NUMBER          = 1.0.0
+=======
+PROJECT_NUMBER          = 0.0.1
+>>>>>>> c687c5792602371416e80307fb2990a7cfd34fe3
+PROJECT_LOGO            = doxygen/logo_doxygen.png
+
+PROJECT_BRIEF           = "testrun_lib library"
+
+USE_MDFILE_AS_MAINPAGE  = README.MD
+
+OUTPUT_DIRECTORY        = doxygen/documentation
+
+CREATE_SUBDIRS          = NO
+ALLOW_UNICODE_NAMES     = NO
+OUTPUT_LANGUAGE         = English
+
+MARKDOWN_SUPPORT        = YES
+AUTOLINK_SUPPORT        = YES
+
+<<<<<<< HEAD
+USE_MDFILE_AS_MAINPAGE  = README.MD
+=======
+>>>>>>> c687c5792602371416e80307fb2990a7cfd34fe3
+INPUT                   = README.MD include/ src/ tests/
+INPUT_ENCODING          = UTF-8
+FILE_PATTERNS           = *.h *.c *.js *.py *.sh
+
+RECURSIVE               = YES
+EXCLUDE_SYMLINKS        = YES
