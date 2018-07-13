@@ -312,6 +312,174 @@ int test_testrun_utils_search_project_path() {
 
 /*----------------------------------------------------------------------------*/
 
+int test_testrun_utils_create_path() {
+
+        char path[PATH_MAX];
+        bzero(path, PATH_MAX);
+
+        strcat(path, "build/tests/");
+
+        DIR *dp;
+
+        testrun(testrun_utils_create_path(path), "path existing");
+        dp = opendir(path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        path[8] = '\0';
+        //                1234567890
+        testrun(!opendir("build/te"));
+        testrun(testrun_utils_create_path(path), "path not existing");
+        dp = opendir("build/te");
+        testrun(dp);
+        (void) closedir (dp);
+        testrun(rmdir("build/te") == 0);
+
+        // TESTS_TMP_FILES = $(wildcard /tmp/test_*) (defined in makefile)
+
+        snprintf(path, PATH_MAX, "/tmp/test_folder/1/2/3/4/.././5/");
+
+        testrun(testrun_utils_create_path(path), "path not existing");
+        dp = opendir("/tmp/test_folder/1/2/3/5/");
+        testrun(dp);
+        (void) closedir (dp);
+
+        snprintf(path, PATH_MAX, "/tmp/test_folder/1/2/6");
+        testrun(testrun_utils_create_path(path), "path not existing");
+        dp = opendir("/tmp/test_folder/1/2/6/");
+        testrun(dp);
+        (void) closedir (dp);
+
+        // check no access
+        testrun(0 == chmod("/tmp/test_folder/", 000));
+        snprintf(path, PATH_MAX, "/tmp/test_folder/1/2/7");
+        testrun(!testrun_utils_create_path(path),
+                "no access to path component");
+        testrun(0 == chmod("/tmp/test_folder/",
+                        S_IRUSR | S_IWUSR | S_IXUSR |
+                        S_IRGRP | S_IXGRP |
+                        S_IROTH | S_IXOTH));
+        testrun(testrun_utils_create_path(path),
+                "access to all path components");
+        dp = opendir("/tmp/test_folder/1/2/7/");
+        testrun(dp);
+        (void) closedir (dp);
+
+        // use of shell to delete the folder here (way easier to implement)
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+
+
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_utils_create_relative_path() {
+
+
+        char *root     = "build";
+        char *relative = "tests";
+
+        DIR *dp;
+
+        testrun(testrun_utils_create_relative_path(root, relative), "path existing");
+        dp = opendir("build/tests");
+        testrun(dp);
+        (void) closedir (dp);
+
+        root     = "/tmp/test_folder/";
+        relative = "abc";
+
+        dp = opendir("/tmp/test_folder/abc");
+        testrun(!dp);
+        testrun(testrun_utils_create_relative_path(root, relative), "path not existing");
+        dp = opendir("/tmp/test_folder/abc");
+        testrun(dp);
+        (void) closedir (dp);
+
+        root     = "/tmp/test_folder/abc";
+        relative = "sub";
+
+        // check no access
+        testrun(0 == chmod(root, 000));
+        testrun(!testrun_utils_create_relative_path(root, relative),
+                "no access to path component");
+        testrun(0 == chmod(root,
+                        S_IRUSR | S_IWUSR | S_IXUSR |
+                        S_IRGRP | S_IXGRP |
+                        S_IROTH | S_IXOTH));
+        testrun(testrun_utils_create_relative_path(root, relative),
+                "access to all path components");
+        dp = opendir("/tmp/test_folder/abc/sub");
+        testrun(dp);
+        (void) closedir (dp);
+
+        // use of shell to delete the folder here (way easier to implement)
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_utils_create_project_paths() {
+
+        struct testrun_config config = testrun_config_default();
+
+
+        // check invalid config
+        testrun(!testrun_config_validate(&config));
+        testrun(!testrun_utils_create_project_paths(NULL));
+        testrun(!testrun_utils_create_project_paths(&config));
+
+        config.project.name = "abcd";
+        config.project.path = "/tmp/test_folder";
+        testrun(testrun_config_validate(&config));
+
+        DIR *dp;
+
+        dp = opendir("/tmp/test_folder");
+        testrun(!dp);
+   
+        testrun(testrun_utils_create_project_paths(&config));
+        dp = opendir("/tmp/test_folder");
+        testrun(dp);
+        (void) closedir (dp);
+
+        // check root
+        dp = opendir("/tmp/test_folder/abcd");
+        testrun(dp);
+        (void) closedir (dp);
+
+        // check subfolders
+        dp = opendir("/tmp/test_folder/abcd/include");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("/tmp/test_folder/abcd/src");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("/tmp/test_folder/abcd/tests");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("/tmp/test_folder/abcd/tests/tools");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("/tmp/test_folder/abcd/config");
+        testrun(dp);
+        (void) closedir (dp);
+        dp = opendir("/tmp/test_folder/abcd/doxygen");
+        testrun(dp);
+        (void) closedir (dp);
+
+        // use of shell to delete the folder here (way easier to implement)
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
 /*
  *      ------------------------------------------------------------------------
  *
@@ -324,8 +492,12 @@ int all_tests() {
 
         testrun_init();
         testrun_test(test_testrun_utils_insert_at_each_line);
+
         testrun_test(test_testrun_utils_path_is_project_top_dir);
         testrun_test(test_testrun_utils_search_project_path);
+        testrun_test(test_testrun_utils_create_path);
+        testrun_test(test_testrun_utils_create_relative_path);
+        testrun_test(test_testrun_utils_create_project_paths);
 
         return testrun_counter;
 }

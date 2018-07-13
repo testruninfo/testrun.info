@@ -47,6 +47,10 @@
 #define TESTRUN_FOLDER_TOOLS            "tests/tools"
 #define TESTRUN_FOLDER_SERVICE          "config"
 #define TESTRUN_FOLDER_DOXYGEN          "doxygen"
+#define TESTRUN_FOLDER_RESOURCES        "resources"
+
+#define TESTRUN_FOLDER_UNIT_TESTS       "unit"
+#define TESTRUN_FOLDER_ACCEPTANCE_TESTS "acceptance"
 
 #define TESTRUN_SCRIPT_LOC              "testrun_simple_loc.sh"
 #define TESTRUN_SCRIPT_COVERAGE         "testrun_simple_coverage_tests.sh"      

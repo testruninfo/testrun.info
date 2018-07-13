@@ -41,7 +41,10 @@ typedef struct testrun_lib testrun_lib;
 
 struct testrun_lib {
 
-        struct testrun_config config;
+        struct testrun_config   config;
+        struct testrun_tools    testrun_tools;
+
+        bool (*generate_project)        (const testrun_lib *self);
 
         bool (*create_folders)          (const testrun_lib *self);
 

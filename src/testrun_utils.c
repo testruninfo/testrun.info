@@ -239,7 +239,7 @@ error:
 
 static bool testrun_utils_create_path(const char *path){
 
-        if (path)
+        if (!path)
                 return false;
 
         size_t size = strlen(path);
@@ -258,12 +258,29 @@ static bool testrun_utils_create_path(const char *path){
         bzero(new_path, open);
 
         pointer = (char*) path;
-        while(size < (size_t) (pointer - path)) {
+        while(size > (size_t) (pointer - path)) {
 
                 slash = memchr(pointer, '/', size - (pointer - path)); 
+                if (slash == path) {
+                        // creating absolute path
+                        pointer++;
+                        continue;
+                }
 
-                if (snprintf(new_path, slash - path, "%s", path) < 0)
-                        goto error;
+                if (slash >= path + size)
+                        break;
+
+                if (!slash) {
+
+                        if (0 > snprintf(new_path, size + 1, "%s", path))
+                                goto error;
+
+                } else {
+
+                        if (0 > snprintf(new_path, (slash - path) + 1, "%s", path))
+                                goto error;
+
+                }
 
                 dp = opendir(new_path);
                 if (dp){
@@ -275,14 +292,18 @@ static bool testrun_utils_create_path(const char *path){
                                 S_IRGRP | S_IXGRP |
                                 S_IROTH | S_IXOTH) != 0){
 
+                        log_error("NO ACCESS TO PATH %s", new_path);
                         goto error;
 
                 } else {
                         created = true;
                 }
 
-                if (slash)
+                if (slash) {
                         pointer = slash + 1;
+                } else {
+                        break;
+                }
         }
 
         log_debug("PATH OK %s (%s)", new_path, created ? "created" : "existing");
@@ -314,50 +335,99 @@ bool testrun_utils_create_relative_path(
 }
 /*----------------------------------------------------------------------------*/
 
-bool testrun_utils_create_paths(struct testrun_config *config){
+bool testrun_utils_create_project_paths(struct testrun_config *config){
 
         if (!config || !testrun_config_validate(config))
                 return false;
 
+        char path[PATH_MAX];
+        memset(path, 0, PATH_MAX);
+
+        char project_root[PATH_MAX];
+        memset(project_root, 0, PATH_MAX);
+
+        if (    (strlen(config->project.name) + 
+                 strlen(config->project.path) + 1) > PATH_MAX)
+                return false;
+
+        if (!snprintf(project_root, PATH_MAX, "%s/%s",
+                config->project.path,
+                config->project.name))
+                return false;
+
         // create project path
-        if (!testrun_utils_create_path(config->project.path))
+        if (!testrun_utils_create_path(project_root))
                 return false;
 
         // create relative pathes
         if (!testrun_utils_create_relative_path(
-                config->project.path,
-                config->path.bin))
-                return false;
-
-        if (!testrun_utils_create_relative_path(
-                config->project.path,
-                config->path.build))
-                return false;
-
-        if (!testrun_utils_create_relative_path(
-                config->project.path,
+                project_root,
                 config->path.include))
                 return false;
 
         if (!testrun_utils_create_relative_path(
-                config->project.path,
+                project_root,
                 config->path.source))
                 return false;
 
         if (!testrun_utils_create_relative_path(
-                config->project.path,
+                project_root,
                 config->path.tests))
                 return false;
 
         if (!testrun_utils_create_relative_path(
-                config->project.path,
+                project_root,
                 config->path.tools))
                 return false;
 
-        if (!testrun_utils_create_relative_path(
-                config->project.path,
-                config->path.service))
+        if (config->path.service){
+
+                if (!testrun_utils_create_relative_path(
+                        project_root,
+                        config->path.service))
+                        return false;
+
+                // create folder for default config
+                memset(path, 0, PATH_MAX);
+                if (!snprintf(path, PATH_MAX, "%s/%s/etc/%s",
+                        project_root,
+                        config->path.service,
+                        config->project.name))
+                        return false;
+
+                if (!testrun_utils_create_path(path))
+                        return false;
+
+        }
+
+        if (config->path.doxygen)
+                if (!testrun_utils_create_relative_path(
+                        project_root,
+                        config->path.doxygen))
+                        return false;
+
+        // create default test folders under config->path.tests
+        memset(path, 0, PATH_MAX);
+        if (!snprintf(path, PATH_MAX, "%s/%s",
+                project_root,
+                config->path.tests))
                 return false;
+
+        if (!testrun_utils_create_relative_path(
+                path,
+                TESTRUN_FOLDER_UNIT_TESTS))
+                return false;
+
+        if (!testrun_utils_create_relative_path(
+                path,
+                TESTRUN_FOLDER_ACCEPTANCE_TESTS))
+                return false;
+        
+        if (!testrun_utils_create_relative_path(
+                path,
+                TESTRUN_FOLDER_RESOURCES))
+                return false;
+
 
         return true;
 }

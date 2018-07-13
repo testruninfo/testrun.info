@@ -81,10 +81,9 @@ char* testrun_utils_search_project_path(const char *start_path);
 /*----------------------------------------------------------------------------*/
 
 /**
-        Default function to search a project top level path, 
-        using the default config. 
+        Default function to create all configured paths for the project.
 */
-bool testrun_utils_create_paths(struct testrun_config *config);
+bool testrun_utils_create_project_paths(struct testrun_config *config);
 
 
 
