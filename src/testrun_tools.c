@@ -1,7 +1,7 @@
 /***
         ------------------------------------------------------------------------
 
-        Copyright 2018 [COPYRIGHT_OWNER]
+        Copyright 2018 Markus Toepfer
 
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
         ------------------------------------------------------------------------
 *//**
         @file           testrun_tools.c
-        @author         [AUTHOR]
+        @author         Markus Toepfer
         @date           2018-07-10
 
         @ingroup        testrun_lib

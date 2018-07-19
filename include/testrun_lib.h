@@ -33,32 +33,62 @@
 #ifndef testrun_lib_h
 #define testrun_lib_h
 
-#include "testrun_copyright.h"
+#include "testrun_log.h"
+#include "testrun_time.h"
 #include "testrun_config.h"
 #include "testrun_tools.h"
+#include "testrun_utils.h"
 
 typedef struct testrun_lib testrun_lib;
 
 struct testrun_lib {
 
-        struct testrun_config   config;
-        struct testrun_tools    testrun_tools;
+        struct testrun_config           config;
+        struct testrun_tools            tools;
 
-        bool (*generate_project)        (const testrun_lib *self);
-
-        bool (*create_folders)          (const testrun_lib *self);
-
-        bool (*generate_makefiles)      (const testrun_lib *self);
-
-        bool (*generate_test_scripts)   (const testrun_lib *self);
-
-        bool (*generate_module_files)   (const testrun_lib *self,
-                                         const char *module_name);
-
+        bool (*create_project_paths)    (const testrun_lib *self);
+        bool (*create_project_files)    (const testrun_lib *self);
 
 };
 
 /*----------------------------------------------------------------------------*/
+
+/**
+        Create the default library including the default testrun tools. 
+        @returns the default testrun_lib implementation.
+*/
+struct testrun_lib testrun_lib_default();
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Validate that all function pointers, 
+        as well as all required config data
+        is set within any lib implementation.
+
+        @param lib     pointer to lib implementation
+*/
+bool testrun_lib_validate(const testrun_lib *lib);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Create a new project, 
+        using a provided testrun_lib implementation.
+
+        @param lib     pointer to lib implementation
+*/
+bool testrun_lib_create_project(const testrun_lib *lib);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Create a new module, 
+        using a provided testrun_lib implementation.
+
+        @param lib     pointer to lib implementation
+*/
+bool testrun_lib_create_module(const testrun_lib *lib);
 
 #endif /* testrun_lib_h */
 

@@ -1,7 +1,7 @@
 /***
         ------------------------------------------------------------------------
 
-        Copyright 2018 [COPYRIGHT_OWNER]
+        Copyright 2018 Markus Toepfer
 
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -20,20 +20,18 @@
         ------------------------------------------------------------------------
 *//**
         @file           testrun_config.h
-        @author         [AUTHOR]
+        @author         Markus Toepfer
         @date           2018-07-12
 
         @ingroup        testrun_lib
 
-        @brief
-
+        @brief          Definition of all configurable input items to the 
+                        testrun project creation. 
 
         ------------------------------------------------------------------------
 */
 #ifndef testrun_config_h
 #define testrun_config_h
-
-
 
 #define TEST_PREFIX                     "test_" 
 #define TEST_SUFFIX_SOURCE              "_test" 
@@ -63,15 +61,34 @@
 #define TESTRUN_MAKEFILE                "makefile"
 #define TESTRUN_MAKEFILE_COMMON         "makefile_common.mk" 
 
+#define TESTRUN_APP_DEFAULT             "testrun.info"
+#define TESTRUN_WWW_DEFAULT             "www.testrun.info"
+#define TESTRUN_NOTE_DEFAULT            "This file is part of the testrun project. http://testrun.info"
+
+#define TESTRUN_TAG_NAME                "[NAME]"
+#define TESTRUN_TAG_COPYRIGHT           "[COPYRIGHT]"
+#define TESTRUN_TAG_AUTHOR              "[AUTHOR]"
+#define TESTRUN_TAG_OWNER               "[OWNER]"
+
 typedef struct testrun_config testrun_config;
 
+#include "testrun_copyright.h"
 #include "testrun_utils.h"
 #include "testrun_tools.h"
+
+#include <getopt.h>
+#include <unistd.h>
+#include <libgen.h>
+
+#define TESTRUN_APP_VERSION "1.0.0"
+
+#define testrun_config_print_version() \
+        fprintf(stdout, "version: %s\n", TESTRUN_APP_VERSION);
 
 /*----------------------------------------------------------------------------*/
 
 /**
-        Project realted data.
+        Project realated data.
 */
 struct testrun_project_config {
 
@@ -135,6 +152,24 @@ struct testrun_makefile_config {
 
 };
 
+/*----------------------------------------------------------------------------*/
+
+/**
+        Copyright parameter configuration
+
+*/
+struct testrun_copyright_config {
+
+        char *author;   
+        char *owner;
+        char *note;
+
+        struct testrun_copyright copyright;
+        struct testrun_copyright_gpl_v3_parameter *gpl_parameter;
+
+};
+
+
 
 /*----------------------------------------------------------------------------*/
 
@@ -147,6 +182,7 @@ struct testrun_config {
         char *cflags;              // (optional standard cflags)
         char *version;             // (optional version to start)
 
+        struct testrun_copyright_config copyright;
         struct testrun_project_config   project;
         struct testrun_path_config      path;
         struct testrun_script_config    script;
@@ -159,7 +195,7 @@ struct testrun_config {
 /**
         Validate all required parameter of a config are set.
 */
-bool testrun_config_validate(struct testrun_config *config);
+bool testrun_config_validate(const struct testrun_config *config);
 
 /*----------------------------------------------------------------------------*/
 
@@ -167,6 +203,14 @@ bool testrun_config_validate(struct testrun_config *config);
         Create the default config of libtestrun.
 */
 struct testrun_config testrun_config_default();
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Default standard config reader for user based configuration input.
+*/
+struct testrun_config testrun_config_read_user_input(
+        const char *app_name, bool *success, bool *project, int argc, char *argv[]);
 
 
 #endif /* testrun_config_h */

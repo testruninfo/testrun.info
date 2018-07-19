@@ -1,7 +1,7 @@
 /***
         ------------------------------------------------------------------------
 
-        Copyright 2018 [COPYRIGHT_OWNER]
+        Copyright 2018 Markus Toepfer
 
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@
         ------------------------------------------------------------------------
 *//**
         @file           testrun_config_test.c
-        @author         [AUTHOR]
+        @author         Markus Toepfer
         @date           2018-07-12
 
         @ingroup        testrun_lib
 
-        @brief
+        @brief          Unit tests for testrun_config.
 
 
         ------------------------------------------------------------------------
@@ -31,16 +31,6 @@
 
 #include "../tools/testrun.h"
 #include "../../src/testrun_config.c"
-
-/*
- *      ------------------------------------------------------------------------
- *
- *      TEST HELPER                                                     #HELPER
- *
- *      ------------------------------------------------------------------------
- */
-
-/*----------------------------------------------------------------------------*/
 
 /*
  *      ------------------------------------------------------------------------
@@ -61,6 +51,12 @@ int test_testrun_config_validate(){
         testrun(!testrun_config_validate(&config));
 
         config.project.path = "something";
+        testrun(testrun_config_validate(&config));
+
+        config.copyright.copyright = testrun_copyright_gpl_version_3();
+        testrun(testrun_config_validate(&config));
+
+        config.copyright.copyright = testrun_copyright_reserved();
         testrun(testrun_config_validate(&config));
 
         config.project.name = NULL;

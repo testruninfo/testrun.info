@@ -1,7 +1,7 @@
 /***
         ------------------------------------------------------------------------
 
-        Copyright 2018 [COPYRIGHT_OWNER]
+        Copyright 2018 Markus Toepfer
 
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
         ------------------------------------------------------------------------
 *//**
         @file           testrun_utils.h
-        @author         [AUTHOR]
+        @author         Markus Toepfer
         @date           2018-07-09
 
         @ingroup        testrun_lib
@@ -83,9 +83,50 @@ char* testrun_utils_search_project_path(const char *start_path);
 /**
         Default function to create all configured paths for the project.
 */
-bool testrun_utils_create_project_paths(struct testrun_config *config);
+bool testrun_utils_create_project_paths(const struct testrun_config *config);
 
+/*----------------------------------------------------------------------------*/
 
+/**
+        Try to read the git author to buffer.
+        @param buffer   buffer to write the author name
+        @param size     size of the buffer.
+*/ 
+bool testrun_utils_get_git_author(
+        char *buffer, size_t size);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Write some content to a file. 
+        The file at the resulting path MUST not exist.
+
+        Will create "root_path/realtive_path/filename" with content as file content.
+
+        @param filename         name of the file to be created
+        @param content          content to be written to the file
+        @param root_path        (MANDATORY) root_path to write to 
+                                (may be relative to working path of executable)  
+        @param relative_path    (OPTIONAL) relative_path to root_path (e.g. subpath)
+*/
+bool testrun_utils_create_file(
+        const char *filename,
+        const char *content,
+        const char *root_path,
+        const char *relative_path);
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Chmod wrapper with same inputs as used for file creation.
+        @see testrun_utils_create_file
+
+*/
+bool testrun_utils_chmod(
+        const char *filename,
+        const char *absolute_path,
+        const char *relative_path,
+        uint16_t hex);
 
 #endif /* testrun_utils_h */
 

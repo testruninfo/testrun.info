@@ -1,7 +1,7 @@
 /***
         ------------------------------------------------------------------------
 
-        Copyright 2018 [COPYRIGHT_OWNER]
+        Copyright 2018 Markus Toepfer
 
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@
         ------------------------------------------------------------------------
 *//**
         @file           testrun_utils_test.c
-        @author         [AUTHOR]
+        @author         Markus Toepfer
         @date           2018-07-09
 
         @ingroup        testrun_lib
 
-        @brief
+        @brief          Unit tests for testrun_utils.
 
 
         ------------------------------------------------------------------------
@@ -31,16 +31,6 @@
 
 #include "../tools/testrun.h"
 #include "../../src/testrun_utils.c"
-
-/*
- *      ------------------------------------------------------------------------
- *
- *      TEST HELPER                                                     #HELPER
- *
- *      ------------------------------------------------------------------------
- */
-
-/*----------------------------------------------------------------------------*/
 
 /*
  *      ------------------------------------------------------------------------

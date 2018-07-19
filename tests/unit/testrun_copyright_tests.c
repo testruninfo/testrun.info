@@ -1,7 +1,7 @@
 /***
         ------------------------------------------------------------------------
 
-        Copyright 2018 [COPYRIGHT_OWNER]
+        Copyright 2018 Markus Toepfer
 
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@
         ------------------------------------------------------------------------
 *//**
         @file           testrun_copyright_test.c
-        @author         [AUTHOR]
+        @author         Markus Toepfer
         @date           2018-07-06
 
         @ingroup        testrun_lib
 
-        @brief
+        @brief          Unit tests for testrun_copyright.
 
 
         ------------------------------------------------------------------------
@@ -2616,11 +2616,11 @@ int test_testrun_copyright_generate_gpl_version_3(){
 
 /*----------------------------------------------------------------------------*/
 
-int test_testrun_copyright_functions_gpl_version_3(){
+int test_testrun_copyright_gpl_version_3(){
         
         struct testrun_copyright copyright = { 0 };
 
-        copyright = testrun_copyright_functions_gpl_version_3();
+        copyright = testrun_copyright_gpl_version_3();
         testrun(copyright.generate_header_string       == testrun_copyright_generate_gpl_version_3);
         testrun(copyright.generate_full_text_licence   == testrun_copyright_gpl_version_3_full_text);
 
@@ -2659,7 +2659,7 @@ int all_tests() {
         testrun_test(test_testrun_copyright_gpl_v3_general_licence);
         testrun_test(test_testrun_copyright_gpl_v3_lesser_licence);
         testrun_test(test_testrun_copyright_gpl_v3_affero_licence);
-        testrun_test(test_testrun_copyright_functions_gpl_version_3);
+        testrun_test(test_testrun_copyright_gpl_version_3);
         testrun_test(test_testrun_copyright_generate_gpl_version_3);
         testrun_test(test_testrun_copyright_gpl_version_3_full_text);
 

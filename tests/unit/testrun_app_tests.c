@@ -17,20 +17,20 @@
 
         ------------------------------------------------------------------------
 *//**
-        @file           testrun_lib_test.c
+        @file           testrun_app_test.c
         @author         [AUTHOR]
-        @date           2018-07-06
+        @date           2018-07-19
 
         @ingroup        testrun_lib
 
-        @brief          Unit tests for testrun_lib.
+        @brief
 
 
         ------------------------------------------------------------------------
 */
 
 #include "../tools/testrun.h"
-#include "../../src/testrun_lib.c"
+#include "../../src/testrun_app.c"
 
 /*
  *      ------------------------------------------------------------------------

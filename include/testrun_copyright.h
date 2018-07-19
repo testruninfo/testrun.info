@@ -29,22 +29,22 @@
                         statements, as well as a definition of some common
                         copyright statement functions. 
 
-        @NOTE           style pointer base functions
+        @NOTE           Implementation style: pointer base function, which may
+                        be overriden with custom implementations for additional 
+                        copyright implementations.
 
         ------------------------------------------------------------------------
 */
 #ifndef testrun_copyright_h
 #define testrun_copyright_h
 
+typedef struct testrun_copyright testrun_copyright;
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 #include <inttypes.h>
-
-#include "testrun_log.h"
-
-typedef struct testrun_copyright testrun_copyright;
 
 /*
  *      ------------------------------------------------------------------------

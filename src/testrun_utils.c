@@ -1,7 +1,7 @@
 /***
         ------------------------------------------------------------------------
 
-        Copyright 2018 [COPYRIGHT_OWNER]
+        Copyright 2018 Markus Toepfer
 
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@
         ------------------------------------------------------------------------
 *//**
         @file           testrun_utils.c
-        @author         [AUTHOR]
+        @author         Markus Toepfer
         @date           2018-07-09
 
         @ingroup        testrun_lib
 
-        @brief
+        @brief          Implementation of supporting utilities for development.
 
 
         ------------------------------------------------------------------------
@@ -335,7 +335,7 @@ bool testrun_utils_create_relative_path(
 }
 /*----------------------------------------------------------------------------*/
 
-bool testrun_utils_create_project_paths(struct testrun_config *config){
+bool testrun_utils_create_project_paths(const struct testrun_config *config){
 
         if (!config || !testrun_config_validate(config))
                 return false;
@@ -431,3 +431,129 @@ bool testrun_utils_create_project_paths(struct testrun_config *config){
 
         return true;
 }
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_utils_get_git_author(
+        char *buffer, size_t size){
+
+        if (!buffer || size < 1)
+                return false;
+
+        bool set = false;
+        FILE *in;
+        FILE *popen();
+
+        if((in = popen("git config user.name", "r")) != NULL){
+
+                if (fgets(buffer, size, in)!=NULL){
+
+                        fprintf(stdout, "... using git username %s as AUTHOR\n",
+                                buffer);
+                        set = true;
+
+                }
+                pclose(in);
+        }
+
+        if (!set) {
+
+                // FALLBACK default AUTHOR TAG
+                if (snprintf(buffer, size, "%s",
+                        TESTRUN_TAG_AUTHOR) < 0){
+                        goto error;
+                }
+        }
+
+        return true;
+error:
+        return false;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_utils_create_file(
+        const char *filename,
+        const char *content,
+        const char *root_path,
+        const char *relative_path){
+
+        if (!filename || !content || !root_path)
+                return false;
+
+        FILE *file;
+
+        int r;
+
+        char path[PATH_MAX];
+        bzero(path, PATH_MAX);
+
+        if (relative_path) {
+
+                if (snprintf(path, PATH_MAX, "%s/%s/%s",
+                        root_path, relative_path, filename) < 0)
+                        return false;
+        } else {
+
+                if (snprintf(path, PATH_MAX, "%s/%s",
+                        root_path, filename) < 0)
+                        return false;
+        }
+
+        if (access(path, F_OK) != -1){
+                log_error("File exists %s\n", path);
+                return false;
+        }
+
+        file = fopen(path, "w");
+        if (!file) {
+                log_error("Could not create/open file %s\n", path);
+                return false;
+        }
+
+        r = fputs(content, file);
+        if (r < 0)
+                return false;
+
+        fclose(file);
+
+        log_info("Wrote file %s\n", path);
+
+        return true;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_utils_chmod(
+        const char *filename,
+        const char *absolute_path,
+        const char *relative_path,
+        uint16_t hex){
+
+        if (!filename || !absolute_path)
+                return false;
+
+        char path[PATH_MAX];
+        bzero(path, PATH_MAX);
+
+        if (relative_path) {
+
+                if (snprintf(path, PATH_MAX, "%s/%s/%s",
+                        absolute_path, relative_path, filename) < 0)
+                        return false;
+        } else {
+
+                if (snprintf(path, PATH_MAX, "%s/%s",
+                        absolute_path, filename) < 0)
+                        return false;
+        }
+
+        if (access(path, F_OK) == -1)
+                return false;
+
+        if ( 0 != chmod(path, hex)) 
+                return false;
+
+        return true;
+}
+

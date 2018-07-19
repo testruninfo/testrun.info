@@ -1,7 +1,7 @@
 /***
         ------------------------------------------------------------------------
 
-        Copyright 2018 [COPYRIGHT_OWNER]
+        Copyright 2018 Markus Toepfer
 
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -18,12 +18,13 @@
         ------------------------------------------------------------------------
 *//**
         @file           testrun_copyright.c
-        @author         [AUTHOR]
+        @author         Markus Toepfer
         @date           2018-07-06
 
         @ingroup        testrun_lib
 
-        @brief
+        @brief          Implementation of the default copyrights included in 
+                        testrun_lib.
 
 
         ------------------------------------------------------------------------
@@ -2414,7 +2415,7 @@ error:
 
 /*----------------------------------------------------------------------------*/
 
-struct testrun_copyright testrun_copyright_functions_gpl_version_3(){
+struct testrun_copyright testrun_copyright_gpl_version_3(){
 
         testrun_copyright copyright = {
 

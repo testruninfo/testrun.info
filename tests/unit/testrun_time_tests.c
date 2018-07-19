@@ -26,7 +26,7 @@
 
         @ingroup        testrun_lib
 
-        @brief          Testing of testrun time.
+        @brief          Unit tests for testrun_time.
 
         ------------------------------------------------------------------------
 */
