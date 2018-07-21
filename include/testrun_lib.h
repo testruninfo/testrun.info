@@ -1,7 +1,7 @@
 /***
         ------------------------------------------------------------------------
 
-        Copyright 2018 [COPYRIGHT_OWNER]
+        Copyright 2018 Markus Toepfer
 
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -20,13 +20,14 @@
         -------------------------------------------------------------------------
 *//**
         @file           testrun_lib.h
-        @author         [AUTHOR]
+        @author         Markus Toepfer
         @date           2018-07-06
 
         @ingroup        testrun_lib
 
-        @brief
-
+        @brief          Definition of an abstract, configurable and modular library 
+                        for C projects with a shell script based, makefile integrated 
+                        testrunner infrastructure. 
 
         ------------------------------------------------------------------------
 */
@@ -48,6 +49,7 @@ struct testrun_lib {
 
         bool (*create_project_paths)    (const testrun_lib *self);
         bool (*create_project_files)    (const testrun_lib *self);
+        bool (*create_module_files)     (const testrun_lib *self);
 
 };
 

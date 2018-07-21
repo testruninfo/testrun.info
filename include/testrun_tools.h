@@ -1,7 +1,7 @@
 /***
         ------------------------------------------------------------------------
 
-        Copyright 2018 [COPYRIGHT_OWNER]
+        Copyright 2018 Markus Toepfer
 
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
         ------------------------------------------------------------------------
 *//**
         @file           testrun_tools.h
-        @author         [AUTHOR]
+        @author         Markus Toepfer
         @date           2018-07-10
 
         @ingroup        testrun_lib
@@ -35,6 +35,10 @@
                         All functions MUST return an allocated string, which
                         may be written "AS IS" to a file. 
 
+                        In addition to the basic tools, content of some general 
+                        files of a standard project MUST be generated using the 
+                        toolset. (e.g. README, gitignore, doxygen.conf)
+
         ------------------------------------------------------------------------
 */
 #ifndef testrun_tools_h
@@ -42,6 +46,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 typedef enum {LIB, EXEC, SERVICE} testrun_makefile_target;
 
@@ -116,6 +121,23 @@ struct testrun_tools {
                                                  const char *script_gprof,
                                                  testrun_makefile_target target);
 
+        /* General files used in testrun projects */
+
+        char *(*gitignore)                      ();
+        char *(*readme)                         (const char *project_name,
+                                                 const char *description,
+                                                 const char *copyright_string);
+
+        char *(*doxygen)                         (const char *project_name,
+                                                  const char *path_doxygen,
+                                                  const char *path_mainfile,
+                                                  const char *input);
+
+        char *(*service_file)                   (const char *service_name,
+                                                 const char *install_path);
+
+        char *(*socket_file)                    (const char *service_name);
+
 };
 
 /*
@@ -127,6 +149,16 @@ struct testrun_tools {
  */
 
 testrun_tools testrun_tools_default();
+
+/*----------------------------------------------------------------------------*/
+
+/**
+        Validate that all function pointers, 
+        are set.
+
+        @param lib     pointer to lib implementation
+*/
+bool testrun_tools_validate(const testrun_tools *self);
 
 #endif /* testrun_tools_h */
 

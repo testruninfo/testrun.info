@@ -23,8 +23,8 @@
 
         @ingroup        testrun_lib
 
-        @brief          Implementation of supporting utilities for development.
-
+        @brief          Implementation of supporting utilities for testrun_lib
+                        development.
 
         ------------------------------------------------------------------------
 */
@@ -125,6 +125,30 @@ error:
         if (result)
                 free(result);
         return NULL;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_utils_generate_project_root_path(
+        const struct testrun_config *config,
+        char *buffer,
+        size_t size){
+
+        if (!config || !buffer)
+                return false;
+
+        if (!config->project.path || !config->project.name)
+                return false;
+
+        if (strlen(config->project.path) + strlen(config->project.name) + 2 > size)
+                return false;
+
+        if (!snprintf(buffer, size, "%s/%s",
+                config->project.path,
+                config->project.name))
+                return false;
+
+        return true;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -350,9 +374,8 @@ bool testrun_utils_create_project_paths(const struct testrun_config *config){
                  strlen(config->project.path) + 1) > PATH_MAX)
                 return false;
 
-        if (!snprintf(project_root, PATH_MAX, "%s/%s",
-                config->project.path,
-                config->project.name))
+        if (!testrun_utils_generate_project_root_path(
+                config, project_root, PATH_MAX))
                 return false;
 
         // create project path
@@ -378,6 +401,16 @@ bool testrun_utils_create_project_paths(const struct testrun_config *config){
         if (!testrun_utils_create_relative_path(
                 project_root,
                 config->path.tools))
+                return false;
+
+        if (!testrun_utils_create_relative_path(
+                project_root,
+                config->path.docs))
+                return false;
+
+        if (!testrun_utils_create_relative_path(
+                project_root,
+                config->path.copyright))
                 return false;
 
         if (config->path.service){
@@ -490,6 +523,23 @@ bool testrun_utils_create_file(
 
         if (relative_path) {
 
+                if (snprintf(path, PATH_MAX, "%s/%s",
+                        root_path, relative_path) < 0)
+                        return false;
+        } else {
+
+                if (snprintf(path, PATH_MAX, "%s",
+                        root_path) < 0)
+                        return false;
+        }
+
+        // ensure create path
+        if (!testrun_utils_create_path(path))
+                return false;
+
+        // add file to path
+        if (relative_path) {
+
                 if (snprintf(path, PATH_MAX, "%s/%s/%s",
                         root_path, relative_path, filename) < 0)
                         return false;
@@ -501,7 +551,7 @@ bool testrun_utils_create_file(
         }
 
         if (access(path, F_OK) != -1){
-                log_error("File exists %s\n", path);
+                log_error("File exists %s", path);
                 return false;
         }
 
@@ -517,7 +567,7 @@ bool testrun_utils_create_file(
 
         fclose(file);
 
-        log_info("Wrote file %s\n", path);
+        log_info("Wrote file %s", path);
 
         return true;
 }
@@ -528,7 +578,7 @@ bool testrun_utils_chmod(
         const char *filename,
         const char *absolute_path,
         const char *relative_path,
-        uint16_t hex){
+        int flags){
 
         if (!filename || !absolute_path)
                 return false;
@@ -551,7 +601,7 @@ bool testrun_utils_chmod(
         if (access(path, F_OK) == -1)
                 return false;
 
-        if ( 0 != chmod(path, hex)) 
+        if ( 0 != chmod(path, flags)) 
                 return false;
 
         return true;

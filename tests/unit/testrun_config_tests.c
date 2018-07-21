@@ -188,8 +188,8 @@ int test_testrun_config_default(){
 
         testrun(NULL == config.project.path);
         testrun(NULL == config.project.name);
-        testrun(NULL == config.project.url);
-        testrun(NULL == config.project.description);
+        testrun(NULL != config.project.url);
+        testrun(NULL != config.project.description);
         testrun(config.project.search_project_path == 
                 testrun_utils_search_project_path);
 
@@ -234,6 +234,60 @@ int test_testrun_config_default(){
         return testrun_log_success();
 }
 
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_config_print_usage(){
+
+        testrun_log("TEST OUTPUT FOR PRINT USAGE FOLLOWS.");
+
+        // check stdout 
+        testrun_config_print_usage(NULL);
+
+        testrun_log("------------------------------------");
+
+        // check stdout 
+        testrun_config_print_usage("app_name");
+
+        testrun_log("TEST OUTPUT FOR PRINT USAGE DONE.");
+
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_config_read_user_input(){
+
+        testrun_config config = { 0 };
+
+        bool success = false;
+        bool project = false;
+
+        char *args[100] = { 0 };
+
+        args[0] = "program_name";
+        args[1] = "test";
+
+        config = testrun_config_read_user_input(NULL, &success, &project, 2, args);
+        testrun(success);
+        testrun(!project);
+        testrun( 0 == strncmp(config.project.name, "test", strlen("test")));
+
+        // not enough args 
+        config = testrun_config_read_user_input(NULL, &success, &project, 1, args);
+        testrun(!success);
+        testrun(!project);
+        testrun( 0 == config.project.name );
+
+        // TBD check argument inputs (Howto check for -d et all?)
+        // TBD How to test the input loop with getopt?
+        // TBD NOTE TEST INCOMPLETE
+
+        return testrun_log_success();
+}
+
+
+
 /*
  *      ------------------------------------------------------------------------
  *
@@ -247,6 +301,10 @@ int all_tests() {
         testrun_init();
         testrun_test(test_testrun_config_validate);
         testrun_test(test_testrun_config_default);
+
+        testrun_test(test_testrun_config_print_usage);
+        testrun_test(test_testrun_config_read_user_input);
+
 
         return testrun_counter;
 }

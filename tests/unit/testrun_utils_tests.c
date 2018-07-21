@@ -35,6 +35,37 @@
 /*
  *      ------------------------------------------------------------------------
  *
+ *      TEST HELPER                                                     #HELPER
+ *
+ *      ------------------------------------------------------------------------
+ */
+
+bool helper_read_git_user_name(char *buffer, size_t size){
+
+        bool set = false;
+
+        /*
+         *      Open a pipe and read the git username. This SHOULD work,
+         *      as this project is expected to be distibuted via git.
+         */
+
+        FILE *in;
+        FILE *popen();
+
+        if ((in = popen("git config user.name", "r")) != NULL){
+
+                if (fgets(buffer, size, in) != NULL){
+                        set = true;
+                }
+                pclose(in);
+        }
+
+        return set;
+}
+
+/*
+ *      ------------------------------------------------------------------------
+ *
  *      TEST CASES                                                      #CASES
  *
  *      ------------------------------------------------------------------------
@@ -470,6 +501,216 @@ int test_testrun_utils_create_project_paths() {
 
 /*----------------------------------------------------------------------------*/
 
+int test_testrun_utils_get_git_author() {
+
+        bool git_name = true;
+
+        size_t size = 2000;
+        char buffer[size];
+        char expect[size];
+
+        bzero(buffer, size);
+        bzero(expect, size);
+
+        git_name = helper_read_git_user_name(expect, size);
+
+        testrun(!testrun_utils_get_git_author(NULL, 0));
+        testrun(!testrun_utils_get_git_author(buffer, 0));
+        testrun(!testrun_utils_get_git_author(NULL, size));
+
+        testrun(testrun_utils_get_git_author(buffer, size));
+
+        if (git_name){
+                // GIT enabled
+                testrun(strlen(buffer) == strlen(expect));
+                testrun(strncmp(buffer, expect, strlen(expect)) == 0);
+
+        } else {
+                // GIT disabled
+                testrun(strlen(buffer) == strlen(TESTRUN_TAG_AUTHOR));
+                testrun(strncmp(buffer,
+                        TESTRUN_TAG_AUTHOR,
+                        strlen(TESTRUN_TAG_AUTHOR)) == 0);
+        }
+
+        // NOTE No username change testing done
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_utils_create_file() {
+
+        char path[PATH_MAX];
+        bzero(path, PATH_MAX);
+
+        char reread[1000];
+        bzero(reread, 1000);
+
+        char *content           = "TESTCONTENT";
+        char *name              = "filename";
+        char *project_path      = "./build/test";
+        char *relative_path     = "relative";
+
+        FILE *file;
+
+        testrun(snprintf(path, PATH_MAX, "%s/%s/%s", 
+                project_path, relative_path, name));
+
+        // ensure file is not set
+        unlink(path);
+        testrun( -1 == access(path, F_OK));
+
+        // check positive
+        testrun(testrun_utils_create_file(
+                name, content, project_path, relative_path));
+
+        testrun( -1 != access(path, F_OK), "failed to access tmp file");
+
+        // check if file exists
+        testrun(!testrun_utils_create_file(
+                name, content, project_path, relative_path), "file exists");
+
+        // reread the content
+        file = fopen(path, "r");
+        testrun(file);
+        testrun(fgets(reread, 1000, file));
+        fclose(file);
+
+        testrun(strncmp(reread, content, strlen(content)) == 0);
+        testrun(strlen(reread) == strlen(content));
+
+        testrun(0 == unlink(path), "failed to delete tmp file");
+
+        // check without relative path
+        bzero(path, PATH_MAX);
+
+        testrun(snprintf(path, PATH_MAX, "%s/%s", 
+                project_path, name));
+
+        testrun( -1 == access(path, F_OK));
+
+        // check positive
+        testrun(testrun_utils_create_file(
+                name, content, project_path, NULL));
+
+        testrun( -1 != access(path, F_OK), "failed to access tmp file");
+
+        // check if file exists
+        testrun(!testrun_utils_create_file(
+                name, content, project_path, NULL), "file exists");
+
+        testrun(0 == unlink(path), "failed to delete tmp file");
+
+        project_path      = "./build/test";
+        relative_path     = "x/y/z";
+
+        bzero(path, PATH_MAX);
+        testrun(snprintf(path, PATH_MAX, "%s/%s/%s", 
+                project_path, relative_path, name));
+
+        testrun(testrun_utils_create_file(
+                name, content, project_path, relative_path), "file exists");
+
+        testrun(0 == unlink(path), "failed to delete tmp file");
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_utils_chmod() {
+
+        char path[PATH_MAX];
+        bzero(path, PATH_MAX);
+
+        char *content           = "TESTCONTENT";
+        char *name              = "filename";
+        char *project_path      = "./build/test";
+        char *relative_path     = "relative";
+
+        struct stat stats;
+
+        testrun(snprintf(path, PATH_MAX, "%s/%s/%s", 
+                project_path, relative_path, name));
+
+        testrun( -1 == access(path, F_OK));
+
+        // check not existing
+        testrun(!testrun_utils_chmod(name, project_path, relative_path, 0555));
+
+        // check positive
+        testrun(testrun_utils_create_file(
+                name, content, project_path, relative_path));
+
+        testrun(0 == stat(path, &stats));
+        testrun(S_IRUSR & stats.st_mode);
+        testrun(S_IWUSR & stats.st_mode);
+        testrun(!(S_IXUSR & stats.st_mode));
+
+        testrun(S_IRGRP & stats.st_mode);
+        testrun(S_IWGRP & stats.st_mode);
+        testrun(!(S_IXGRP & stats.st_mode));
+
+        testrun(S_IROTH & stats.st_mode);
+        testrun(!(S_IWOTH & stats.st_mode));
+        testrun(!(S_IXOTH & stats.st_mode));
+
+        testrun(testrun_utils_chmod(name, project_path, relative_path, 0555));
+        testrun(0 == stat(path, &stats));
+
+        testrun((S_IRUSR & stats.st_mode));
+        testrun(!(S_IWUSR & stats.st_mode));
+        testrun((S_IXUSR & stats.st_mode));
+
+        testrun((S_IRGRP & stats.st_mode));
+        testrun(!(S_IWGRP & stats.st_mode));
+        testrun((S_IXGRP & stats.st_mode));
+
+        testrun((S_IROTH & stats.st_mode));
+        testrun(!(S_IWOTH & stats.st_mode));
+        testrun((S_IXOTH & stats.st_mode));
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_utils_generate_project_root_path() {
+
+        char buffer[PATH_MAX];
+        memset(buffer, 0, PATH_MAX);
+
+        struct testrun_config config = testrun_config_default();
+        config.project.name = "test";
+        config.project.path = ".";
+
+        char *expect = "./test";
+
+        testrun(!testrun_utils_generate_project_root_path(NULL,    NULL,   0));
+        testrun(!testrun_utils_generate_project_root_path(&config, buffer, 0));
+        testrun(!testrun_utils_generate_project_root_path(&config, NULL,   PATH_MAX));
+        testrun(!testrun_utils_generate_project_root_path(NULL,    buffer, PATH_MAX));
+
+        testrun( testrun_utils_generate_project_root_path(&config, buffer, PATH_MAX));
+        testrun(0 == strncmp(buffer, expect, strlen(expect)));
+
+        config.project.name = NULL;
+        testrun(!testrun_utils_generate_project_root_path(&config, buffer, PATH_MAX));
+
+        config.project.name = "NAME";
+        config.project.path = NULL;
+        testrun(!testrun_utils_generate_project_root_path(&config, buffer, PATH_MAX));
+
+        config.project.path = "PATH";
+        expect = "PATH/NAME";
+        testrun(testrun_utils_generate_project_root_path(&config, buffer, PATH_MAX));
+        testrun(0 == strncmp(buffer, expect, strlen(expect)));
+
+        return testrun_log_success();
+}
+
 /*
  *      ------------------------------------------------------------------------
  *
@@ -483,12 +724,18 @@ int all_tests() {
         testrun_init();
         testrun_test(test_testrun_utils_insert_at_each_line);
 
+        testrun_test(test_testrun_utils_generate_project_root_path);
+
         testrun_test(test_testrun_utils_path_is_project_top_dir);
         testrun_test(test_testrun_utils_search_project_path);
         testrun_test(test_testrun_utils_create_path);
         testrun_test(test_testrun_utils_create_relative_path);
         testrun_test(test_testrun_utils_create_project_paths);
 
+        testrun_test(test_testrun_utils_get_git_author);
+        testrun_test(test_testrun_utils_create_file);
+        testrun_test(test_testrun_utils_chmod);
+        
         return testrun_counter;
 }
 

@@ -1284,6 +1284,111 @@ static const char *testrun_header_openmp =
 "\n"
 "#endif /* testrun_openmp_h */\n";
 
+/*
+ *      ------------------------------------------------------------------------
+ *
+ *      Gitignore file                                            #GITRIGNORE
+ *
+ *      this constant string will be used to generate 
+ *      the default gitignore content.
+ *
+ *      ------------------------------------------------------------------------
+ */
+
+static const char *testrun_gitignore = 
+"# Prerequisites\n"
+"*.d\n"
+"\n"
+"# Object files\n"
+"*.o\n"
+"*.so\n"
+"*.ko\n"
+"*.obj\n"
+"*.elf\n"
+"\n"
+"# Linker output\n"
+"*.ilk\n"
+"*.map\n"
+"*.exp\n"
+"\n"
+"# Precompiled Headers\n"
+"*.gch\n"
+"*.pch\n"
+"\n"
+"# Libraries\n"
+"*.lib\n"
+"*.a\n"
+"*.la\n"
+"*.lo\n"
+"\n"
+"# Shared objects (inc. Windows DLLs)\n"
+"*.dll\n"
+"*.so\n"
+"*.so.*\n"
+"*.dylib\n"
+"\n"
+"# Executables\n"
+"*.exe\n"
+"*.out\n"
+"*.app\n"
+"*.i*86\n"
+"*.x86_64\n"
+"*.hex\n"
+"\n"
+"# Debug files\n"
+"*.dSYM/\n"
+"*.su\n"
+"*.idb\n"
+"*.pdb\n"
+"\n"
+"# Kernel Module Compile Results\n"
+"*.mod*\n"
+"*.cmd\n"
+".tmp_versions/\n"
+"modules.order\n"
+"Module.symvers\n"
+"Mkfile.old\n"
+"dkms.conf\n"
+"\n"
+"# Local files\n"
+"**/local\n"
+"**/bin/\n"
+"**/gen/\n"
+"**/build/\n"
+"**/docs/doxygen/\n"
+"**/doxygen/documentation/\n"
+"\n"
+"# vagrant (if used)\n"
+".vagrant\n"
+"\n"
+"# subprojects (if used)\n"
+"*.git\n"
+"\n"
+"# generated package config\n"
+"*.pc\n"
+"\n"
+"# ctags\n"
+".tags\n"
+"tags\n"
+"functions\n"
+"\n"
+"# IDE\n"
+"\n"
+"## IntelliJ\n"
+".idea\n"
+"\n"
+"## Sublime\n"
+"*.sublime-workspace\n"
+"*.sublime-project\n"
+"\n"
+"## VIM\n"
+"[._]*.s[a-w][a-z]\n"
+"[._]s[a-w][a-z]\n"
+"*.un~\n"
+"Session.vim\n"
+".netrwhist\n"
+"*~\n";
+
 /*----------------------------------------------------------------------------*/
 
 char *testrun_generate_header(){
@@ -1297,6 +1402,270 @@ char *testrun_generate_header_openmp(){
 
         return strdup(testrun_header_openmp);
 }
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_generate_gitignore(){
+
+        return strdup(testrun_gitignore);
+}
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_generate_readme(
+        const char *projectname,
+        const char *description,
+        const char *copyright_string){
+
+        size_t size = 5000;
+        char buffer[size];
+        memset(buffer, 0, size);
+
+        snprintf(buffer, size,
+        "# Project %s\n"
+        "\n"
+        "This module is self supported and may be build, tested, installed and\n"
+        "run independently.\n"
+        "\n"
+        "## Overview\n"
+        "\n"
+        "* [Description](#description)\n"
+        "* [Usage](#usage)\n"
+        "* [Installation](#installation)\n"
+        "* [Requirements](#requirements)\n"
+        "* [Structure](#structure)\n"
+        "* [Tests](#tests)\n"
+        "* [Tips](#tips)\n"
+        "* [Copyright](#copyright)\n"
+        "\n"
+        "## Description\n"
+        "\n"
+        "%s\n"
+        "\n"
+        "## Usage\n"
+        "\n"
+        "...\n"
+        "\n"
+        "## Installation\n"
+        "\n"
+        "...\n"
+        """\n"
+        "### build sources\n"
+        "\n"
+        "\\`\\`\\`bash\n"
+        "make\n"
+        "\\`\\`\\`\n"
+        "\n"
+        "### build documentation\n"
+        "\n"
+        "\\`\\`\\`bash\n"
+        "make documentation\n"
+        "\\`\\`\\`\n"
+        "\n"
+        "### test sources\n"
+        "\n"
+        "\\`\\`\\`bash\n"
+        "make tested\n"
+        "\\`\\`\\`\n"
+        "\n"
+        "### install binaries\n"
+        "\n"
+        "\\`\\`\\`bash\n"
+        "sudo make install\n"
+        "\\`\\`\\`\n"
+        "\n"
+        "### uninstall binaries\n"
+        "\n"
+        "\\`\\`\\`bash\n"
+        "sudo make uninstall\n"
+        "\\`\\`\\`\n"
+        "\n"
+        "## Requirements\n"
+        "\n"
+        "## Structure\n"
+        "\n"
+        "### Default structure of the folder:\n"
+        "\n"
+        "\\`\\`\\`\n"
+        "<pre>\n"
+        ".\n"
+        "├── README.MD\n"
+        "├── .gitignore\n"
+        "├── makefile\n"
+        "├── makefile_common.mk\n"
+        "│\n"
+        "├── copyright\n"
+        "│   └── ... \n"
+        "│\n"
+        "├── doxygen\n"
+        "│   ├── documentation\n"
+        "│   └── doxygen.config\n"
+        "│\n"
+        "├── docs\n"
+        "│   ├── CHANGELOG.MD\n"
+        "│   └── ...\n"
+        "│\n"
+        "├── include\n"
+        "│   ├── %s.h\n"
+        "│   └── ...\n"
+        "│\n"
+        "├── src\n"
+        "│   ├── %s.c\n"
+        "│   └── ...\n"
+        "│\n"
+        "└── tests\n"
+        "    ├── resources\n"
+        "    ├── tools\n"
+        "    │   ├── testrun.h\n"
+        "    │   ├── testrun_runner.sh\n"
+        "    │   ├── testrun_gcov.sh\n"
+        "    │   ├── testrun_gprof.sh\n"
+        "    │   ├── testrun_simple_coverage_tests.sh\n"
+        "    │   ├── testrun_simple_unit_tests.sh\n"
+        "    │   ├── testrun_simple_acceptance_tests.sh\n"
+        "    │   └── testrun_simple_loc.sh\n"
+        "    │\n"
+        "    ├── acceptance\n"
+        "    │   ├── ...\n"
+        "    │   └── ...\n"
+        "    │\n"
+        "    └── unit\n"
+        "        ├── %s_test.c\n"
+        "        └── ...\n"
+        "\n"
+        "</pre>\n"
+        "\\`\\`\\`\n"
+        "\n"
+        "## Tests\n"
+        "\n"
+        "All test sources will be recompiled on each make run. That means,\n"
+        "all module tests will be created new on any change in any source file.\n"
+        "\n"
+        "### Test a project (all files contained in tests/unit)\n"
+        "\n"
+        "Test compile and run\n"
+        "~~~\n"
+        "make tested\n"
+        "~~~\n"
+        "\n"
+        "## Tips\n"
+        "\n"
+        "## Copyright\n"
+        "\n"
+        "%s\n",
+        projectname,
+        description,
+        projectname,
+        projectname,
+        projectname,
+        copyright_string);
+
+        return strdup(buffer);
+}
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_generate_doxygen(
+        const char *project_name,
+        const char *path_doxygen,
+        const char *path_mainfile,
+        const char *input){
+
+        size_t size = 5000;
+        char buffer[size];
+        memset(buffer, 0, size);
+
+        if (snprintf(buffer, size,
+                "DOXYFILE_ENCODING       = UTF-8\n"
+                "PROJECT_NAME            = %s\n"
+                "PROJECT_NUMBER          = 0.0.1\n"
+                "PROJECT_LOGO            = %s/logo.png\n"
+                "PROJECT_BRIEF           = %s\n"
+                "OUTPUT_DIRECTORY        = %s/documentation\n"
+                "CREATE_SUBDIRS          = NO\n"
+                "ALLOW_UNICODE_NAMES     = NO\n"
+                "OUTPUT_LANGUAGE         = English\n"
+                "MARKDOWN_SUPPORT        = YES\n"
+                "AUTOLINK_SUPPORT        = YES\n"
+                "USE_MDFILE_AS_MAINPAGE  = %s\n"
+                "INPUT                   = %s\n"
+                "INPUT_ENCODING          = UTF-8\n"
+                "FILE_PATTERNS           = *.h *.c *.js *.py *.sh\n"
+                "RECURSIVE               = YES\n"
+                "EXCLUDE_SYMLINKS        = YES\n",
+                project_name, path_doxygen, project_name, path_doxygen, path_mainfile, input)< 0)
+                return NULL;
+
+        return strdup(buffer);
+}
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_generate_service_file(
+        const char *project_name,
+        const char *install_path){
+
+        size_t size = 5000;
+        char buffer[size];
+        memset(buffer, 0, size);
+
+        if (snprintf(buffer, size,
+                "[Unit]\n"
+                "Description= %s service\n"
+                "\n"
+                "[Service]\n"
+                "ExecStart=%s\n"
+                "NonBlocking=True\n"
+                "\n"
+                "[Install]\n"
+                "WantedBy=multi-user.target\n"
+                , project_name, install_path)< 0)
+                return NULL;
+
+        return strdup(buffer);
+}
+
+/*----------------------------------------------------------------------------*/
+
+char *testrun_generate_socket_file(
+        const char *project_name){
+
+        size_t size = 5000;
+        char buffer[size];
+        memset(buffer, 0, size);
+
+         if (snprintf(buffer, size,
+                "[Unit]\n"
+                "Description= %s socket\n"
+                "\n"
+                "[Socket]\n"
+                "\n"
+                "# example interface bound\n"
+                "# ListenStream=10.0.0.100:12345\n"
+                "\n"
+                "# example localhost\n"
+                "# ListenStream=127.0.0.1:12345\n"
+                "\n"
+                "# example listen on all\n"
+                "# ListenStream=0.0.0.0:12345\n"
+                "\n"
+                "# example listen on UDP\n"
+                "# ListenDatagram=0.0.0.0:12345\n"
+                "\n"
+                "# Maximum parallel connections for the socket\n"
+                "Backlog=2048\n"
+                "\n"
+                "# TCP Keepalive (1h)\n"
+                "KeepAlive=false\n"
+                "\n"
+                "[Install]\n"
+                "WantedBy=multi-user.target\n"
+                , project_name)< 0)
+                return NULL;
+
+        return strdup(buffer);
+}
+
 
 /*----------------------------------------------------------------------------*/
 
@@ -2055,7 +2424,7 @@ char *testrun_generate_makefile_common(
         "#\n"
         "#       Last changed    2018-07-12\n"
         "#       ------------------------------------------------------------------------\n"
-        "        \n"
+        "\n"
         "# Switch on colors\n"
         "GCC_COLORS ?= 'gcc colors available, use them!'\n"
         "export GCC_COLORS\n"
@@ -2413,9 +2782,6 @@ char *testrun_generate_makefile(
         if (    !project        ||
                 !file_name      ||
                 !version        ||
-                !cflags         ||
-                !project_url    ||
-                !project_desc   ||
                 !path_service   ||
                 !makefile_common)
                 return NULL;
@@ -2518,18 +2884,53 @@ testrun_tools testrun_tools_default(){
 
         struct testrun_tools tools = {
 
-                .testrun_header          = testrun_generate_header,
-                .testrun_header_openmp   = testrun_generate_header_openmp,
+                .testrun_header                 = testrun_generate_header,
+                .testrun_header_openmp          = testrun_generate_header_openmp,
 
-                .testrun_simple_tests    = testrun_generate_script_simple_tests,
-                .testrun_runner          = testrun_generate_script_runner,
-                .testrun_loc             = testrun_generate_script_loc,
-                .testrun_simple_coverage = testrun_generate_script_coverage,
-                .testrun_gcov            = testrun_generate_script_gcov,
-                .testrun_gprof           = testrun_generate_script_gprof,
-                .makefile_configurable   = testrun_generate_makefile,
-                .makefile_common        = testrun_generate_makefile_common
+                .testrun_simple_tests           = testrun_generate_script_simple_tests,
+                .testrun_runner                 = testrun_generate_script_runner,
+                .testrun_loc                    = testrun_generate_script_loc,
+                .testrun_simple_coverage        = testrun_generate_script_coverage,
+                .testrun_gcov                   = testrun_generate_script_gcov,
+                .testrun_gprof                  = testrun_generate_script_gprof,
+
+                .makefile_configurable          = testrun_generate_makefile,
+                .makefile_common                = testrun_generate_makefile_common,
+
+                .gitignore                      = testrun_generate_gitignore,
+                .readme                         = testrun_generate_readme,
+                .doxygen                        = testrun_generate_doxygen,
+                .service_file                   = testrun_generate_service_file,
+                .socket_file                    = testrun_generate_socket_file
         };
 
         return tools;
+}
+
+/*----------------------------------------------------------------------------*/
+
+bool testrun_tools_validate(const testrun_tools *self){
+
+        if (    !self || 
+                !self->testrun_header ||
+                !self->testrun_header_openmp ||
+
+                !self->testrun_simple_tests ||
+                !self->testrun_runner ||
+                !self->testrun_loc ||
+                !self->testrun_simple_coverage ||
+                !self->testrun_gcov ||
+                !self->testrun_gprof ||
+
+                !self->makefile_configurable ||
+                !self->makefile_common ||
+
+                !self->gitignore ||
+                !self->readme ||
+                !self->doxygen ||
+                !self->service_file || 
+                !self->socket_file)
+                return false;
+
+        return true;
 }

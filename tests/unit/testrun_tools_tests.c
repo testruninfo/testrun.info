@@ -1371,7 +1371,7 @@ int test_testrun_generate_makefile_common(){
         "#\n"
         "#       Last changed    2018-07-12\n"
         "#       ------------------------------------------------------------------------\n"
-        "        \n"
+        "\n"
         "# Switch on colors\n"
         "GCC_COLORS ?= 'gcc colors available, use them!'\n"
         "export GCC_COLORS\n"
@@ -1936,6 +1936,867 @@ int test_testrun_tools_default(){
         testrun(tools.testrun_gprof           == testrun_generate_script_gprof);
         testrun(tools.makefile_configurable   == testrun_generate_makefile);
         testrun(tools.makefile_common         == testrun_generate_makefile_common);
+        testrun(tools.gitignore               == testrun_generate_gitignore);
+        testrun(tools.readme                  == testrun_generate_readme);
+        testrun(tools.doxygen                 == testrun_generate_doxygen);
+        testrun(tools.service_file            == testrun_generate_service_file);
+        testrun(tools.socket_file             == testrun_generate_socket_file);
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_generate_doxygen(){
+
+        char *expect = NULL;
+        char *result = NULL;
+
+        result = testrun_generate_doxygen(NULL, NULL, NULL, NULL);
+        expect =        "DOXYFILE_ENCODING       = UTF-8\n"
+                        "PROJECT_NAME            = (null)\n"
+                        "PROJECT_NUMBER          = 0.0.1\n"
+                        "PROJECT_LOGO            = (null)/logo.png\n"
+                        "PROJECT_BRIEF           = (null)\n"
+                        "OUTPUT_DIRECTORY        = (null)/documentation\n"
+                        "CREATE_SUBDIRS          = NO\n"
+                        "ALLOW_UNICODE_NAMES     = NO\n"
+                        "OUTPUT_LANGUAGE         = English\n"
+                        "MARKDOWN_SUPPORT        = YES\n"
+                        "AUTOLINK_SUPPORT        = YES\n"
+                        "USE_MDFILE_AS_MAINPAGE  = (null)\n"
+                        "INPUT                   = (null)\n"
+                        "INPUT_ENCODING          = UTF-8\n"
+                        "FILE_PATTERNS           = *.h *.c *.js *.py *.sh\n"
+                        "RECURSIVE               = YES\n"
+                        "EXCLUDE_SYMLINKS        = YES\n";
+
+        testrun(result);
+        testrun(0 == strncmp(result, expect, strlen(expect)));
+        free(result);
+
+        result = testrun_generate_doxygen("name", NULL, NULL, NULL);
+        expect =        "DOXYFILE_ENCODING       = UTF-8\n"
+                        "PROJECT_NAME            = name\n"
+                        "PROJECT_NUMBER          = 0.0.1\n"
+                        "PROJECT_LOGO            = (null)/logo.png\n"
+                        "PROJECT_BRIEF           = name\n"
+                        "OUTPUT_DIRECTORY        = (null)/documentation\n"
+                        "CREATE_SUBDIRS          = NO\n"
+                        "ALLOW_UNICODE_NAMES     = NO\n"
+                        "OUTPUT_LANGUAGE         = English\n"
+                        "MARKDOWN_SUPPORT        = YES\n"
+                        "AUTOLINK_SUPPORT        = YES\n"
+                        "USE_MDFILE_AS_MAINPAGE  = (null)\n"
+                        "INPUT                   = (null)\n"
+                        "INPUT_ENCODING          = UTF-8\n"
+                        "FILE_PATTERNS           = *.h *.c *.js *.py *.sh\n"
+                        "RECURSIVE               = YES\n"
+                        "EXCLUDE_SYMLINKS        = YES\n";
+
+        testrun(result);
+        testrun(0 == strncmp(result, expect, strlen(expect)));
+        free(result);
+
+        result = testrun_generate_doxygen("name", "path", NULL, NULL);
+        expect =        "DOXYFILE_ENCODING       = UTF-8\n"
+                        "PROJECT_NAME            = name\n"
+                        "PROJECT_NUMBER          = 0.0.1\n"
+                        "PROJECT_LOGO            = path/logo.png\n"
+                        "PROJECT_BRIEF           = name\n"
+                        "OUTPUT_DIRECTORY        = path/documentation\n"
+                        "CREATE_SUBDIRS          = NO\n"
+                        "ALLOW_UNICODE_NAMES     = NO\n"
+                        "OUTPUT_LANGUAGE         = English\n"
+                        "MARKDOWN_SUPPORT        = YES\n"
+                        "AUTOLINK_SUPPORT        = YES\n"
+                        "USE_MDFILE_AS_MAINPAGE  = (null)\n"
+                        "INPUT                   = (null)\n"
+                        "INPUT_ENCODING          = UTF-8\n"
+                        "FILE_PATTERNS           = *.h *.c *.js *.py *.sh\n"
+                        "RECURSIVE               = YES\n"
+                        "EXCLUDE_SYMLINKS        = YES\n";
+
+        testrun(result);
+        testrun(0 == strncmp(result, expect, strlen(expect)));
+        free(result);
+
+        result = testrun_generate_doxygen("name", "path", "main", NULL);
+        expect =        "DOXYFILE_ENCODING       = UTF-8\n"
+                        "PROJECT_NAME            = name\n"
+                        "PROJECT_NUMBER          = 0.0.1\n"
+                        "PROJECT_LOGO            = path/logo.png\n"
+                        "PROJECT_BRIEF           = name\n"
+                        "OUTPUT_DIRECTORY        = path/documentation\n"
+                        "CREATE_SUBDIRS          = NO\n"
+                        "ALLOW_UNICODE_NAMES     = NO\n"
+                        "OUTPUT_LANGUAGE         = English\n"
+                        "MARKDOWN_SUPPORT        = YES\n"
+                        "AUTOLINK_SUPPORT        = YES\n"
+                        "USE_MDFILE_AS_MAINPAGE  = main\n"
+                        "INPUT                   = (null)\n"
+                        "INPUT_ENCODING          = UTF-8\n"
+                        "FILE_PATTERNS           = *.h *.c *.js *.py *.sh\n"
+                        "RECURSIVE               = YES\n"
+                        "EXCLUDE_SYMLINKS        = YES\n";
+
+        testrun(result);
+        testrun(0 == strncmp(result, expect, strlen(expect)));
+        free(result);
+
+        result = testrun_generate_doxygen("name", "path", "main", "input");
+        expect =        "DOXYFILE_ENCODING       = UTF-8\n"
+                        "PROJECT_NAME            = name\n"
+                        "PROJECT_NUMBER          = 0.0.1\n"
+                        "PROJECT_LOGO            = path/logo.png\n"
+                        "PROJECT_BRIEF           = name\n"
+                        "OUTPUT_DIRECTORY        = path/documentation\n"
+                        "CREATE_SUBDIRS          = NO\n"
+                        "ALLOW_UNICODE_NAMES     = NO\n"
+                        "OUTPUT_LANGUAGE         = English\n"
+                        "MARKDOWN_SUPPORT        = YES\n"
+                        "AUTOLINK_SUPPORT        = YES\n"
+                        "USE_MDFILE_AS_MAINPAGE  = main\n"
+                        "INPUT                   = input\n"
+                        "INPUT_ENCODING          = UTF-8\n"
+                        "FILE_PATTERNS           = *.h *.c *.js *.py *.sh\n"
+                        "RECURSIVE               = YES\n"
+                        "EXCLUDE_SYMLINKS        = YES\n";
+
+        testrun(result);
+        testrun(0 == strncmp(result, expect, strlen(expect)));
+        free(result);
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_generate_gitignore(){
+
+        char *expect = NULL;
+        char *result = NULL;
+
+        result = testrun_generate_gitignore();
+        expect = "# Prerequisites\n"
+                "*.d\n"
+                "\n"
+                "# Object files\n"
+                "*.o\n"
+                "*.so\n"
+                "*.ko\n"
+                "*.obj\n"
+                "*.elf\n"
+                "\n"
+                "# Linker output\n"
+                "*.ilk\n"
+                "*.map\n"
+                "*.exp\n"
+                "\n"
+                "# Precompiled Headers\n"
+                "*.gch\n"
+                "*.pch\n"
+                "\n"
+                "# Libraries\n"
+                "*.lib\n"
+                "*.a\n"
+                "*.la\n"
+                "*.lo\n"
+                "\n"
+                "# Shared objects (inc. Windows DLLs)\n"
+                "*.dll\n"
+                "*.so\n"
+                "*.so.*\n"
+                "*.dylib\n"
+                "\n"
+                "# Executables\n"
+                "*.exe\n"
+                "*.out\n"
+                "*.app\n"
+                "*.i*86\n"
+                "*.x86_64\n"
+                "*.hex\n"
+                "\n"
+                "# Debug files\n"
+                "*.dSYM/\n"
+                "*.su\n"
+                "*.idb\n"
+                "*.pdb\n"
+                "\n"
+                "# Kernel Module Compile Results\n"
+                "*.mod*\n"
+                "*.cmd\n"
+                ".tmp_versions/\n"
+                "modules.order\n"
+                "Module.symvers\n"
+                "Mkfile.old\n"
+                "dkms.conf\n"
+                "\n"
+                "# Local files\n"
+                "**/local\n"
+                "**/bin/\n"
+                "**/gen/\n"
+                "**/build/\n"
+                "**/docs/doxygen/\n"
+                "**/doxygen/documentation/\n"
+                "\n"
+                "# vagrant (if used)\n"
+                ".vagrant\n"
+                "\n"
+                "# subprojects (if used)\n"
+                "*.git\n"
+                "\n"
+                "# generated package config\n"
+                "*.pc\n"
+                "\n"
+                "# ctags\n"
+                ".tags\n"
+                "tags\n"
+                "functions\n"
+                "\n"
+                "# IDE\n"
+                "\n"
+                "## IntelliJ\n"
+                ".idea\n"
+                "\n"
+                "## Sublime\n"
+                "*.sublime-workspace\n"
+                "*.sublime-project\n"
+                "\n"
+                "## VIM\n"
+                "[._]*.s[a-w][a-z]\n"
+                "[._]s[a-w][a-z]\n"
+                "*.un~\n"
+                "Session.vim\n"
+                ".netrwhist\n"
+                "*~\n";
+
+        testrun(result);
+        testrun(0 == strncmp(result, expect, strlen(expect)));
+        free(result);
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_generate_readme(){
+
+        char *expect = NULL;
+        char *result = NULL;
+
+        result = testrun_generate_readme(NULL, NULL, NULL);
+        expect = "# Project (null)\n"
+                "\n"
+                "This module is self supported and may be build, tested, installed and\n"
+                "run independently.\n"
+                "\n"
+                "## Overview\n"
+                "\n"
+                "* [Description](#description)\n"
+                "* [Usage](#usage)\n"
+                "* [Installation](#installation)\n"
+                "* [Requirements](#requirements)\n"
+                "* [Structure](#structure)\n"
+                "* [Tests](#tests)\n"
+                "* [Tips](#tips)\n"
+                "* [Copyright](#copyright)\n"
+                "\n"
+                "## Description\n"
+                "\n"
+                "(null)\n"
+                "\n"
+                "## Usage\n"
+                "\n"
+                "...\n"
+                "\n"
+                "## Installation\n"
+                "\n"
+                "...\n"
+                """\n"
+                "### build sources\n"
+                "\n"
+                "\\`\\`\\`bash\n"
+                "make\n"
+                "\\`\\`\\`\n"
+                "\n"
+                "### build documentation\n"
+                "\n"
+                "\\`\\`\\`bash\n"
+                "make documentation\n"
+                "\\`\\`\\`\n"
+                "\n"
+                "### test sources\n"
+                "\n"
+                "\\`\\`\\`bash\n"
+                "make tested\n"
+                "\\`\\`\\`\n"
+                "\n"
+                "### install binaries\n"
+                "\n"
+                "\\`\\`\\`bash\n"
+                "sudo make install\n"
+                "\\`\\`\\`\n"
+                "\n"
+                "### uninstall binaries\n"
+                "\n"
+                "\\`\\`\\`bash\n"
+                "sudo make uninstall\n"
+                "\\`\\`\\`\n"
+                "\n"
+                "## Requirements\n"
+                "\n"
+                "## Structure\n"
+                "\n"
+                "### Default structure of the folder:\n"
+                "\n"
+                "\\`\\`\\`\n"
+                "<pre>\n"
+                ".\n"
+                "├── README.MD\n"
+                "├── .gitignore\n"
+                "├── makefile\n"
+                "├── makefile_common.mk\n"
+                "│\n"
+                "├── copyright\n"
+                "│   └── ... \n"
+                "│\n"
+                "├── doxygen\n"
+                "│   ├── documentation\n"
+                "│   └── doxygen.config\n"
+                "│\n"
+                "├── docs\n"
+                "│   ├── CHANGELOG.MD\n"
+                "│   └── ...\n"
+                "│\n"
+                "├── include\n"
+                "│   ├── (null).h\n"
+                "│   └── ...\n"
+                "│\n"
+                "├── src\n"
+                "│   ├── (null).c\n"
+                "│   └── ...\n"
+                "│\n"
+                "└── tests\n"
+                "    ├── resources\n"
+                "    ├── tools\n"
+                "    │   ├── testrun.h\n"
+                "    │   ├── testrun_runner.sh\n"
+                "    │   ├── testrun_gcov.sh\n"
+                "    │   ├── testrun_gprof.sh\n"
+                "    │   ├── testrun_simple_coverage_tests.sh\n"
+                "    │   ├── testrun_simple_unit_tests.sh\n"
+                "    │   ├── testrun_simple_acceptance_tests.sh\n"
+                "    │   └── testrun_simple_loc.sh\n"
+                "    │\n"
+                "    ├── acceptance\n"
+                "    │   ├── ...\n"
+                "    │   └── ...\n"
+                "    │\n"
+                "    └── unit\n"
+                "        ├── (null)_test.c\n"
+                "        └── ...\n"
+                "\n"
+                "</pre>\n"
+                "\\`\\`\\`\n"
+                "\n"
+                "## Tests\n"
+                "\n"
+                "All test sources will be recompiled on each make run. That means,\n"
+                "all module tests will be created new on any change in any source file.\n"
+                "\n"
+                "### Test a project (all files contained in tests/unit)\n"
+                "\n"
+                "Test compile and run\n"
+                "~~~\n"
+                "make tested\n"
+                "~~~\n"
+                "\n"
+                "## Tips\n"
+                "\n"
+                "## Copyright\n"
+                "\n"
+                "(null)\n";
+
+        testrun(result);
+        testrun(0 == strncmp(result, expect, strlen(expect)));
+        free(result);
+
+        result = testrun_generate_readme("(name)", NULL, NULL);
+        expect = "# Project (name)\n"
+                "\n"
+                "This module is self supported and may be build, tested, installed and\n"
+                "run independently.\n"
+                "\n"
+                "## Overview\n"
+                "\n"
+                "* [Description](#description)\n"
+                "* [Usage](#usage)\n"
+                "* [Installation](#installation)\n"
+                "* [Requirements](#requirements)\n"
+                "* [Structure](#structure)\n"
+                "* [Tests](#tests)\n"
+                "* [Tips](#tips)\n"
+                "* [Copyright](#copyright)\n"
+                "\n"
+                "## Description\n"
+                "\n"
+                "(null)\n"
+                "\n"
+                "## Usage\n"
+                "\n"
+                "...\n"
+                "\n"
+                "## Installation\n"
+                "\n"
+                "...\n"
+                """\n"
+                "### build sources\n"
+                "\n"
+                "\\`\\`\\`bash\n"
+                "make\n"
+                "\\`\\`\\`\n"
+                "\n"
+                "### build documentation\n"
+                "\n"
+                "\\`\\`\\`bash\n"
+                "make documentation\n"
+                "\\`\\`\\`\n"
+                "\n"
+                "### test sources\n"
+                "\n"
+                "\\`\\`\\`bash\n"
+                "make tested\n"
+                "\\`\\`\\`\n"
+                "\n"
+                "### install binaries\n"
+                "\n"
+                "\\`\\`\\`bash\n"
+                "sudo make install\n"
+                "\\`\\`\\`\n"
+                "\n"
+                "### uninstall binaries\n"
+                "\n"
+                "\\`\\`\\`bash\n"
+                "sudo make uninstall\n"
+                "\\`\\`\\`\n"
+                "\n"
+                "## Requirements\n"
+                "\n"
+                "## Structure\n"
+                "\n"
+                "### Default structure of the folder:\n"
+                "\n"
+                "\\`\\`\\`\n"
+                "<pre>\n"
+                ".\n"
+                "├── README.MD\n"
+                "├── .gitignore\n"
+                "├── makefile\n"
+                "├── makefile_common.mk\n"
+                "│\n"
+                "├── copyright\n"
+                "│   └── ... \n"
+                "│\n"
+                "├── doxygen\n"
+                "│   ├── documentation\n"
+                "│   └── doxygen.config\n"
+                "│\n"
+                "├── docs\n"
+                "│   ├── CHANGELOG.MD\n"
+                "│   └── ...\n"
+                "│\n"
+                "├── include\n"
+                "│   ├── (name).h\n"
+                "│   └── ...\n"
+                "│\n"
+                "├── src\n"
+                "│   ├── (name).c\n"
+                "│   └── ...\n"
+                "│\n"
+                "└── tests\n"
+                "    ├── resources\n"
+                "    ├── tools\n"
+                "    │   ├── testrun.h\n"
+                "    │   ├── testrun_runner.sh\n"
+                "    │   ├── testrun_gcov.sh\n"
+                "    │   ├── testrun_gprof.sh\n"
+                "    │   ├── testrun_simple_coverage_tests.sh\n"
+                "    │   ├── testrun_simple_unit_tests.sh\n"
+                "    │   ├── testrun_simple_acceptance_tests.sh\n"
+                "    │   └── testrun_simple_loc.sh\n"
+                "    │\n"
+                "    ├── acceptance\n"
+                "    │   ├── ...\n"
+                "    │   └── ...\n"
+                "    │\n"
+                "    └── unit\n"
+                "        ├── (name)_test.c\n"
+                "        └── ...\n"
+                "\n"
+                "</pre>\n"
+                "\\`\\`\\`\n"
+                "\n"
+                "## Tests\n"
+                "\n"
+                "All test sources will be recompiled on each make run. That means,\n"
+                "all module tests will be created new on any change in any source file.\n"
+                "\n"
+                "### Test a project (all files contained in tests/unit)\n"
+                "\n"
+                "Test compile and run\n"
+                "~~~\n"
+                "make tested\n"
+                "~~~\n"
+                "\n"
+                "## Tips\n"
+                "\n"
+                "## Copyright\n"
+                "\n"
+                "(null)\n";
+
+        testrun(result);
+        testrun(0 == strncmp(result, expect, strlen(expect)));
+        free(result);
+
+        result = testrun_generate_readme("(name)", "DESCRIPTION", "COPYRIGHT");
+        expect = "# Project (name)\n"
+                "\n"
+                "This module is self supported and may be build, tested, installed and\n"
+                "run independently.\n"
+                "\n"
+                "## Overview\n"
+                "\n"
+                "* [Description](#description)\n"
+                "* [Usage](#usage)\n"
+                "* [Installation](#installation)\n"
+                "* [Requirements](#requirements)\n"
+                "* [Structure](#structure)\n"
+                "* [Tests](#tests)\n"
+                "* [Tips](#tips)\n"
+                "* [Copyright](#copyright)\n"
+                "\n"
+                "## Description\n"
+                "\n"
+                "DESCRIPTION\n"
+                "\n"
+                "## Usage\n"
+                "\n"
+                "...\n"
+                "\n"
+                "## Installation\n"
+                "\n"
+                "...\n"
+                """\n"
+                "### build sources\n"
+                "\n"
+                "\\`\\`\\`bash\n"
+                "make\n"
+                "\\`\\`\\`\n"
+                "\n"
+                "### build documentation\n"
+                "\n"
+                "\\`\\`\\`bash\n"
+                "make documentation\n"
+                "\\`\\`\\`\n"
+                "\n"
+                "### test sources\n"
+                "\n"
+                "\\`\\`\\`bash\n"
+                "make tested\n"
+                "\\`\\`\\`\n"
+                "\n"
+                "### install binaries\n"
+                "\n"
+                "\\`\\`\\`bash\n"
+                "sudo make install\n"
+                "\\`\\`\\`\n"
+                "\n"
+                "### uninstall binaries\n"
+                "\n"
+                "\\`\\`\\`bash\n"
+                "sudo make uninstall\n"
+                "\\`\\`\\`\n"
+                "\n"
+                "## Requirements\n"
+                "\n"
+                "## Structure\n"
+                "\n"
+                "### Default structure of the folder:\n"
+                "\n"
+                "\\`\\`\\`\n"
+                "<pre>\n"
+                ".\n"
+                "├── README.MD\n"
+                "├── .gitignore\n"
+                "├── makefile\n"
+                "├── makefile_common.mk\n"
+                "│\n"
+                "├── copyright\n"
+                "│   └── ... \n"
+                "│\n"
+                "├── doxygen\n"
+                "│   ├── documentation\n"
+                "│   └── doxygen.config\n"
+                "│\n"
+                "├── docs\n"
+                "│   ├── CHANGELOG.MD\n"
+                "│   └── ...\n"
+                "│\n"
+                "├── include\n"
+                "│   ├── (name).h\n"
+                "│   └── ...\n"
+                "│\n"
+                "├── src\n"
+                "│   ├── (name).c\n"
+                "│   └── ...\n"
+                "│\n"
+                "└── tests\n"
+                "    ├── resources\n"
+                "    ├── tools\n"
+                "    │   ├── testrun.h\n"
+                "    │   ├── testrun_runner.sh\n"
+                "    │   ├── testrun_gcov.sh\n"
+                "    │   ├── testrun_gprof.sh\n"
+                "    │   ├── testrun_simple_coverage_tests.sh\n"
+                "    │   ├── testrun_simple_unit_tests.sh\n"
+                "    │   ├── testrun_simple_acceptance_tests.sh\n"
+                "    │   └── testrun_simple_loc.sh\n"
+                "    │\n"
+                "    ├── acceptance\n"
+                "    │   ├── ...\n"
+                "    │   └── ...\n"
+                "    │\n"
+                "    └── unit\n"
+                "        ├── (name)_test.c\n"
+                "        └── ...\n"
+                "\n"
+                "</pre>\n"
+                "\\`\\`\\`\n"
+                "\n"
+                "## Tests\n"
+                "\n"
+                "All test sources will be recompiled on each make run. That means,\n"
+                "all module tests will be created new on any change in any source file.\n"
+                "\n"
+                "### Test a project (all files contained in tests/unit)\n"
+                "\n"
+                "Test compile and run\n"
+                "~~~\n"
+                "make tested\n"
+                "~~~\n"
+                "\n"
+                "## Tips\n"
+                "\n"
+                "## Copyright\n"
+                "\n"
+                "COPYRIGHT\n";
+
+        testrun(result);
+        testrun(0 == strncmp(result, expect, strlen(expect)));
+        free(result);
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_generate_service_file(){
+
+        char *expect = NULL;
+        char *result = NULL;
+
+        result = testrun_generate_service_file(NULL, NULL);
+        expect = "[Unit]\n"
+                "Description= (null) service\n"
+                "\n"
+                "[Service]\n"
+                "ExecStart=(null)\n"
+                "NonBlocking=True\n"
+                "\n"
+                "[Install]\n"
+                "WantedBy=multi-user.target\n";
+
+        testrun(result);
+        testrun(0 == strncmp(result, expect, strlen(expect)));
+        free(result);
+
+        result = testrun_generate_service_file("name", "path");
+        expect = "[Unit]\n"
+                "Description= name service\n"
+                "\n"
+                "[Service]\n"
+                "ExecStart=path\n"
+                "NonBlocking=True\n"
+                "\n"
+                "[Install]\n"
+                "WantedBy=multi-user.target\n";
+
+        testrun(result);
+        testrun(0 == strncmp(result, expect, strlen(expect)));
+        free(result);
+
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_generate_socket_file(){
+
+        char *expect = NULL;
+        char *result = NULL;
+
+        result = testrun_generate_socket_file(NULL);
+        expect = "[Unit]\n"
+                "Description= (null) socket\n"
+                "\n"
+                "[Socket]\n"
+                "\n"
+                "# example interface bound\n"
+                "# ListenStream=10.0.0.100:12345\n"
+                "\n"
+                "# example localhost\n"
+                "# ListenStream=127.0.0.1:12345\n"
+                "\n"
+                "# example listen on all\n"
+                "# ListenStream=0.0.0.0:12345\n"
+                "\n"
+                "# example listen on UDP\n"
+                "# ListenDatagram=0.0.0.0:12345\n"
+                "\n"
+                "# Maximum parallel connections for the socket\n"
+                "Backlog=2048\n"
+                "\n"
+                "# TCP Keepalive (1h)\n"
+                "KeepAlive=false\n"
+                "\n"
+                "[Install]\n"
+                "WantedBy=multi-user.target\n";
+
+        testrun(result);
+        testrun(0 == strncmp(result, expect, strlen(expect)));
+        free(result);
+
+        result = testrun_generate_socket_file("name");
+        expect = "[Unit]\n"
+                "Description= name socket\n"
+                "\n"
+                "[Socket]\n"
+                "\n"
+                "# example interface bound\n"
+                "# ListenStream=10.0.0.100:12345\n"
+                "\n"
+                "# example localhost\n"
+                "# ListenStream=127.0.0.1:12345\n"
+                "\n"
+                "# example listen on all\n"
+                "# ListenStream=0.0.0.0:12345\n"
+                "\n"
+                "# example listen on UDP\n"
+                "# ListenDatagram=0.0.0.0:12345\n"
+                "\n"
+                "# Maximum parallel connections for the socket\n"
+                "Backlog=2048\n"
+                "\n"
+                "# TCP Keepalive (1h)\n"
+                "KeepAlive=false\n"
+                "\n"
+                "[Install]\n"
+                "WantedBy=multi-user.target\n";
+
+        testrun(result);
+        testrun(0 == strncmp(result, expect, strlen(expect)));
+        free(result);
+
+
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_tools_validate(){
+
+        testrun_tools tools = testrun_tools_default();
+
+        testrun(!testrun_tools_validate(NULL));
+
+        testrun(testrun_tools_validate(&tools));
+
+        tools.testrun_header = NULL;
+        testrun(!testrun_tools_validate(&tools));
+        tools.testrun_header = testrun_generate_header;
+        testrun(testrun_tools_validate(&tools));
+
+        tools.testrun_header_openmp = NULL;
+        testrun(!testrun_tools_validate(&tools));
+        tools.testrun_header_openmp = testrun_generate_header_openmp;
+        testrun(testrun_tools_validate(&tools));
+
+        tools.testrun_simple_tests = NULL;
+        testrun(!testrun_tools_validate(&tools));
+        tools.testrun_simple_tests = testrun_generate_script_simple_tests;
+        testrun(testrun_tools_validate(&tools));
+
+        tools.testrun_runner = NULL;
+        testrun(!testrun_tools_validate(&tools));
+        tools.testrun_runner = testrun_generate_script_runner;
+        testrun(testrun_tools_validate(&tools));
+
+        tools.testrun_loc = NULL;
+        testrun(!testrun_tools_validate(&tools));
+        tools.testrun_loc = testrun_generate_script_loc;
+        testrun(testrun_tools_validate(&tools));
+
+        tools.testrun_simple_coverage = NULL;
+        testrun(!testrun_tools_validate(&tools));
+        tools.testrun_simple_coverage = testrun_generate_script_coverage;
+        testrun(testrun_tools_validate(&tools));
+
+        tools.testrun_gcov = NULL;
+        testrun(!testrun_tools_validate(&tools));
+        tools.testrun_gcov = testrun_generate_script_gcov;
+        testrun(testrun_tools_validate(&tools));
+
+        tools.testrun_gprof = NULL;
+        testrun(!testrun_tools_validate(&tools));
+        tools.testrun_gprof = testrun_generate_script_gprof;
+        testrun(testrun_tools_validate(&tools));
+
+        tools.makefile_configurable = NULL;
+        testrun(!testrun_tools_validate(&tools));
+        tools.makefile_configurable = testrun_generate_makefile;
+        testrun(testrun_tools_validate(&tools));
+
+        tools.makefile_common = NULL;
+        testrun(!testrun_tools_validate(&tools));
+        tools.makefile_common = testrun_generate_makefile_common;
+        testrun(testrun_tools_validate(&tools));
+
+        tools.gitignore = NULL;
+        testrun(!testrun_tools_validate(&tools));
+        tools.gitignore = testrun_generate_gitignore;
+        testrun(testrun_tools_validate(&tools));
+
+        tools.readme = NULL;
+        testrun(!testrun_tools_validate(&tools));
+        tools.readme = testrun_generate_readme;
+        testrun(testrun_tools_validate(&tools));
+
+        tools.doxygen = NULL;
+        testrun(!testrun_tools_validate(&tools));
+        tools.doxygen = testrun_generate_doxygen;
+        testrun(testrun_tools_validate(&tools));
+
+        tools.service_file = NULL;
+        testrun(!testrun_tools_validate(&tools));
+        tools.service_file = testrun_generate_service_file;
+        testrun(testrun_tools_validate(&tools));
+
+        tools.socket_file = NULL;
+        testrun(!testrun_tools_validate(&tools));
+        tools.socket_file = testrun_generate_socket_file;
+        testrun(testrun_tools_validate(&tools));
 
         return testrun_log_success();
 }
@@ -1965,6 +2826,14 @@ int all_tests() {
         testrun_test(test_testrun_generate_makefile);
 
         testrun_test(test_testrun_tools_default);
+
+        testrun_test(test_testrun_generate_doxygen);
+        testrun_test(test_testrun_generate_gitignore);
+        testrun_test(test_testrun_generate_readme);
+        testrun_test(test_testrun_generate_service_file);
+        testrun_test(test_testrun_generate_socket_file);
+
+        testrun_test(test_testrun_tools_validate);
 
         return testrun_counter;
 }

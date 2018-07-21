@@ -36,10 +36,6 @@
 #define COPYRIGHT_TAG_OWNER     "[COPYRIGHT_OWNER]"
 #define COPYRIGHT_TAG_PROGRAM   "[PROGRAM_NAME]"
 
-#define COPYRIGHT_DEFAULT_INTRO "Copyright (c)"
-#define COPYRIGHT_DEFAULT_TEXT  "All rights reserved.\n"
-
-
 
 char *testrun_copyright_generate_header_string(
         const char* prefix,

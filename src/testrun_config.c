@@ -92,20 +92,33 @@ struct testrun_config testrun_config_default(){
                 .test_suffix_source     = TEST_SUFFIX_SOURCE,
                 .test_suffix_exec       = TEST_SUFFIX_EXEC,
 
+                .cflags                 = TESTRUN_CFLAGS,
+                .version                = TESTRUN_TAG_VERSION,
+
+                .indent.standard        = TESTRUN_DEFAULT_INDENT,
+                .indent.c               = TESTRUN_DEFAULT_C_INDENT,
+                .indent.script          = TESTRUN_DEFAULT_SHELL_INDENT,
+
                 .project.path           = NULL,
                 .project.name           = NULL,
-                .project.url            = NULL,
-                .project.description    = NULL,
+                .project.url            = TESTRUN_WWW_DEFAULT,
+                .project.description    = TESTRUN_APP_DEFAULT,
                 .project.search_project_path = testrun_utils_search_project_path,
 
                 .path.bin               = TESTRUN_FOLDER_BIN,
                 .path.build             = TESTRUN_FOLDER_BUILD,
+                .path.copyright         = TESTRUN_FOLDER_COPYRIGHT,
+                .path.docs              = TESTRUN_FOLDER_DOCS,
                 .path.include           = TESTRUN_FOLDER_INCLUDE,
                 .path.source            = TESTRUN_FOLDER_SOURCE,
                 .path.tests             = TESTRUN_FOLDER_TESTS,
                 .path.tools             = TESTRUN_FOLDER_TOOLS,
                 .path.service           = TESTRUN_FOLDER_SERVICE,
                 .path.doxygen           = TESTRUN_FOLDER_DOXYGEN,
+
+                .path.source_to_root    = TESTRUN_DEFAULT_TO_ROOT,
+                .path.include_to_root   = TESTRUN_DEFAULT_TO_ROOT,
+                .path.unit_tests_to_root= TESTRUN_DEFAULT_TESTS_TO_ROOT,
 
                 .script.lines_of_code   = TESTRUN_SCRIPT_LOC,
                 .script.test_coverage   = TESTRUN_SCRIPT_COVERAGE,
@@ -186,7 +199,7 @@ testrun_config testrun_config_read_user_input(
 
         testrun_config config = testrun_config_default();
 
-        if (!success || !project || !argv || (argc < 1))
+        if (!success || !project || !argv || (argc < 2))
                 goto error;
 
         if (!app_name)

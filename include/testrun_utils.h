@@ -23,8 +23,8 @@
 
         @ingroup        testrun_lib
 
-        @brief
-
+        @brief          Definition of supporting utilities for testrun_lib 
+                        development. 
 
         ------------------------------------------------------------------------
 */
@@ -73,6 +73,16 @@ char *testrun_utils_insert_at_each_line(
 /*----------------------------------------------------------------------------*/
 
 /**
+        Generate the project root path.
+*/
+bool testrun_utils_generate_project_root_path(
+        const struct testrun_config *config,
+        char *buffer,
+        size_t size);
+
+/*----------------------------------------------------------------------------*/
+
+/**
         Default function to search a project top level path, 
         using the default config. 
 */
@@ -84,6 +94,7 @@ char* testrun_utils_search_project_path(const char *start_path);
         Default function to create all configured paths for the project.
 */
 bool testrun_utils_create_project_paths(const struct testrun_config *config);
+
 
 /*----------------------------------------------------------------------------*/
 
@@ -126,7 +137,7 @@ bool testrun_utils_chmod(
         const char *filename,
         const char *absolute_path,
         const char *relative_path,
-        uint16_t hex);
+        int flags);
 
 #endif /* testrun_utils_h */
 

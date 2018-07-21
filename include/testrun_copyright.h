@@ -46,6 +46,10 @@ typedef struct testrun_copyright testrun_copyright;
 #include <string.h>
 #include <inttypes.h>
 
+#define COPYRIGHT_DEFAULT_INTRO "Copyright (c)"
+#define COPYRIGHT_DEFAULT_TEXT  "All rights reserved.\n"
+
+
 /*
  *      ------------------------------------------------------------------------
  *
@@ -107,7 +111,7 @@ struct testrun_copyright{
         @param suffix           suffix to be written as is at the end 
         @param indent           line indent to be set in front of each line, 
                                 except of prefix and suffix.
-        @param spaces           if true, spaces will be added, tabs in false
+        @param spaces           if true, spaces will be added, tabs on false
 
         @returns                allocated c string or NULL
 */
