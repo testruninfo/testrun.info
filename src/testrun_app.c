@@ -54,7 +54,7 @@ int testrun_app_run(int argc, char *argv[]){
                                 argv);
 
         if (!success)
-                goto done;
+                goto error;
 
         if (!lib.config.copyright.author){
 
@@ -64,12 +64,16 @@ int testrun_app_run(int argc, char *argv[]){
                 lib.config.copyright.author = buffer;
         }
 
-        if (project)
-                return testrun_lib_create_project(&lib);
-        else
-                return testrun_lib_create_module(&lib);
+        if (project) {
+                
+                if (!testrun_lib_create_project(&lib))
+                        goto error;
+        } else {
+                
+                if (!testrun_lib_create_module(&lib, lib.config.project.name))
+                        goto error;
+        }
 
-done:
         return 0;
 error:
         return -1;

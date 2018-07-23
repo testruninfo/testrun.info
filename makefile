@@ -61,10 +61,11 @@ export PKG_CONFIG_PATH = $(PREFIX)/usr/local/lib/pkgconfig
 #LIBS			+= `pkg-config --libs openssl`
 
 # MODULE BASED CFLAGS (example)
-MODCFLAGS		+= -std=c11 -D _DEFAULT_SOURCE -D _POSIX_C_SOURCE=200809
+MODCFLAGS		+= -std=c11 -D _DEFAULT_SOURCE -D _POSIX_C_SOURCE=200809 
 
 # EXTRA CFLAGS (example parallel or other GCC custom flags)
 MODCFLAGS		+= -fopenmp
+MODCFLAGS		+= -g
 #MODCFLAGS		+= -rdynamic
 
 # EXTRA LFLAGS (example)

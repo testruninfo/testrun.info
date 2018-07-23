@@ -48,6 +48,14 @@ bool helper_create(const testrun_lib *lib){
         return true;
 }
 
+bool helper_create_module(const testrun_lib *lib, const char *module_name){
+
+        if (lib || module_name)
+                return true;
+
+        return true;
+}
+
 /*----------------------------------------------------------------------------*/
 
 /*
@@ -116,7 +124,7 @@ int test_testrun_lib_validate(){
 
         lib.create_module_files = NULL;
         testrun(!testrun_lib_validate(&lib));
-        lib.create_module_files = helper_create;
+        lib.create_module_files = helper_create_module;
         testrun(testrun_lib_validate(&lib));
         lib.create_module_files = testrun_lib_create_module_files;
         testrun(testrun_lib_validate(&lib));
@@ -759,6 +767,1736 @@ int test_testrun_lib_create_makefiles(){
         testrun(0 == strncmp(content, expect, strlen(expect)));
         free(content);
 
+        // check name is configurable
+
+        lib.config.makefile.common = "abcd";
+        lib.config.makefile.configurable = "conf";
+
+        snprintf(filename, PATH_MAX, "%s/%s", root_path, lib.config.makefile.common);
+        file = fopen(filename, "r");
+        testrun(file == NULL);
+        snprintf(filename, PATH_MAX, "%s/%s", root_path, lib.config.makefile.configurable);
+        file = fopen(filename, "r");
+        testrun(file == NULL);
+
+        testrun(testrun_lib_create_makefiles(root_path, &lib));
+
+        file = fopen(filename, "r");
+        testrun(file);
+        fclose(file);
+
+        snprintf(filename, PATH_MAX, "%s/%s", root_path, lib.config.makefile.common);
+        file = fopen(filename, "r");
+        testrun(file);
+        fclose(file);
+
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_gitignore(){
+        
+        char *root_path = "/tmp/test_folder/not_existing";
+        struct testrun_lib lib = testrun_lib_default();
+
+        FILE *file = NULL;
+        char filename[PATH_MAX];
+        memset(filename, 0, PATH_MAX);
+
+        size_t size = 10000;
+        size_t csize = 0;
+        char expect[size];
+        memset(expect, 0, size);
+
+        char *content = NULL;
+
+        snprintf(filename, PATH_MAX, "%s/.gitignore", root_path);
+
+        file = fopen(filename, "r");
+        testrun(file == NULL);
+
+        testrun(!testrun_lib_create_gitignore(NULL,      NULL));
+        testrun(!testrun_lib_create_gitignore(root_path, NULL));
+        testrun(!testrun_lib_create_gitignore(NULL,      &lib));
+        testrun(testrun_lib_create_gitignore(root_path, &lib));
+
+        file = fopen(filename, "r");
+        testrun(file != NULL);
+        fseek(file, 0, SEEK_END);
+        csize = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        content = calloc(csize + 1, sizeof(char));
+        fread(content, csize, 1, file);
+        fclose(file);
+        content[csize] = 0;
+
+        testrun(snprintf(expect, size, 
+                "# Prerequisites\n"
+                "*.d\n"
+                "\n"
+                "# Object files\n"
+                "*.o\n"
+                "*.so\n"
+                "*.ko\n"
+                "*.obj\n"
+                "*.elf\n"
+                "\n"
+                "# Linker output\n"
+                "*.ilk\n"
+                "*.map\n"
+                "*.exp\n"
+                "\n"
+                "# Precompiled Headers\n"
+                "*.gch\n"
+                "*.pch\n"
+                "\n"
+                "# Libraries\n"
+                "*.lib\n"
+                "*.a\n"
+                "*.la\n"
+                "*.lo\n"
+                "\n"
+                "# Shared objects (inc. Windows DLLs)\n"
+                "*.dll\n"
+                "*.so\n"
+                "*.so.*\n"
+                "*.dylib\n"
+                "\n"
+                "# Executables\n"
+                "*.exe\n"
+                "*.out\n"
+                "*.app\n"
+                "*.i*86\n"
+                "*.x86_64\n"
+                "*.hex\n"
+                "\n"
+                "# Debug files\n"
+                "*.dSYM/\n"
+                "*.su\n"
+                "*.idb\n"
+                "*.pdb\n"
+                "\n"
+                "# Kernel Module Compile Results\n"
+                "*.mod*\n"
+                "*.cmd\n"
+                ".tmp_versions/\n"
+                "modules.order\n"
+                "Module.symvers\n"
+                "Mkfile.old\n"
+                "dkms.conf\n"
+                "\n"
+                "# Local files\n"
+                "**/local\n"
+                "**/bin/\n"
+                "**/gen/\n"
+                "**/build/\n"
+                "**/docs/doxygen/\n"
+                "**/doxygen/documentation/\n"
+                "\n"
+                "# vagrant (if used)\n"
+                ".vagrant\n"
+                "\n"
+                "# subprojects (if used)\n"
+                "*.git\n"
+                "\n"
+                "# generated package config\n"
+                "*.pc\n"
+                "\n"
+                "# ctags\n"
+                ".tags\n"
+                "tags\n"
+                "functions\n"
+                "\n"
+                "# IDE\n"
+                "\n"
+                "## IntelliJ\n"
+                ".idea\n"
+                "\n"
+                "## Sublime\n"
+                "*.sublime-workspace\n"
+                "*.sublime-project\n"
+                "\n"
+                "## VIM\n"
+                "[._]*.s[a-w][a-z]\n"
+                "[._]s[a-w][a-z]\n"
+                "*.un~\n"
+                "Session.vim\n"
+                ".netrwhist\n"
+                "*~\n"));
+
+        testrun(0 == strncmp(content, expect, strlen(expect)));
+        free(content);
+        
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_readme(){
+        
+        char *root_path = "/tmp/test_folder/not_existing";
+        struct testrun_lib lib = testrun_lib_default();
+
+        FILE *file = NULL;
+        char filename[PATH_MAX];
+        memset(filename, 0, PATH_MAX);
+
+        size_t size = 10000;
+        size_t csize = 0;
+        char expect[size];
+        memset(expect, 0, size);
+
+        char *content = NULL;
+        char *time_string = testrun_time_string(TESTRUN_SCOPE_YEAR);
+
+        snprintf(filename, PATH_MAX, "%s/%s", root_path, TESTRUN_FILE_README);
+
+        file = fopen(filename, "r");
+        testrun(file == NULL);
+
+        testrun(!testrun_lib_create_readme(NULL,      NULL));
+        testrun(!testrun_lib_create_readme(root_path, NULL));
+        testrun(!testrun_lib_create_readme(NULL,      &lib));
+        testrun(testrun_lib_create_readme(root_path, &lib));
+
+        file = fopen(filename, "r");
+        testrun(file != NULL);
+        fseek(file, 0, SEEK_END);
+        csize = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        content = calloc(csize + 1, sizeof(char));
+        fread(content, csize, 1, file);
+        fclose(file);
+        content[csize] = 0;
+
+        char *copyright = lib.config.copyright.copyright.generate_header_string(
+                                NULL,
+                                COPYRIGHT_DEFAULT_INTRO,
+                                time_string,
+                                lib.config.copyright.owner,
+                                lib.config.copyright.note,
+                                NULL,
+                                lib.config.indent.standard,
+                                false,
+                                lib.config.copyright.gpl_parameter);
+
+        testrun(snprintf(expect, size, 
+        "# Project %s\n"
+        "\n"
+        "This module is self supported and may be build, tested, installed and\n"
+        "run independently.\n"
+        "\n"
+        "## Overview\n"
+        "\n"
+        "* [Description](#description)\n"
+        "* [Usage](#usage)\n"
+        "* [Installation](#installation)\n"
+        "* [Requirements](#requirements)\n"
+        "* [Structure](#structure)\n"
+        "* [Tests](#tests)\n"
+        "* [Tips](#tips)\n"
+        "* [Copyright](#copyright)\n"
+        "\n"
+        "## Description\n"
+        "\n"
+        "%s\n"
+        "\n"
+        "## Usage\n"
+        "\n"
+        "...\n"
+        "\n"
+        "## Installation\n"
+        "\n"
+        "...\n"
+        """\n"
+        "### build sources\n"
+        "\n"
+        "\\`\\`\\`bash\n"
+        "make\n"
+        "\\`\\`\\`\n"
+        "\n"
+        "### build documentation\n"
+        "\n"
+        "\\`\\`\\`bash\n"
+        "make documentation\n"
+        "\\`\\`\\`\n"
+        "\n"
+        "### test sources\n"
+        "\n"
+        "\\`\\`\\`bash\n"
+        "make tested\n"
+        "\\`\\`\\`\n"
+        "\n"
+        "### install binaries\n"
+        "\n"
+        "\\`\\`\\`bash\n"
+        "sudo make install\n"
+        "\\`\\`\\`\n"
+        "\n"
+        "### uninstall binaries\n"
+        "\n"
+        "\\`\\`\\`bash\n"
+        "sudo make uninstall\n"
+        "\\`\\`\\`\n"
+        "\n"
+        "## Requirements\n"
+        "\n"
+        "## Structure\n"
+        "\n"
+        "### Default structure of the folder:\n"
+        "\n"
+        "\\`\\`\\`\n"
+        "<pre>\n"
+        ".\n"
+        "├── README.MD\n"
+        "├── .gitignore\n"
+        "├── makefile\n"
+        "├── makefile_common.mk\n"
+        "│\n"
+        "├── copyright\n"
+        "│   └── ... \n"
+        "│\n"
+        "├── doxygen\n"
+        "│   ├── documentation\n"
+        "│   └── doxygen.config\n"
+        "│\n"
+        "├── docs\n"
+        "│   ├── CHANGELOG.MD\n"
+        "│   └── ...\n"
+        "│\n"
+        "├── include\n"
+        "│   ├── %s.h\n"
+        "│   └── ...\n"
+        "│\n"
+        "├── src\n"
+        "│   ├── %s.c\n"
+        "│   └── ...\n"
+        "│\n"
+        "└── tests\n"
+        "    ├── resources\n"
+        "    ├── tools\n"
+        "    │   ├── testrun.h\n"
+        "    │   ├── testrun_runner.sh\n"
+        "    │   ├── testrun_gcov.sh\n"
+        "    │   ├── testrun_gprof.sh\n"
+        "    │   ├── testrun_simple_coverage_tests.sh\n"
+        "    │   ├── testrun_simple_unit_tests.sh\n"
+        "    │   ├── testrun_simple_acceptance_tests.sh\n"
+        "    │   └── testrun_simple_loc.sh\n"
+        "    │\n"
+        "    ├── acceptance\n"
+        "    │   ├── ...\n"
+        "    │   └── ...\n"
+        "    │\n"
+        "    └── unit\n"
+        "        ├── %s_test.c\n"
+        "        └── ...\n"
+        "\n"
+        "</pre>\n"
+        "\\`\\`\\`\n"
+        "\n"
+        "## Tests\n"
+        "\n"
+        "All test sources will be recompiled on each make run. That means,\n"
+        "all module tests will be created new on any change in any source file.\n"
+        "\n"
+        "### Test a project (all files contained in tests/unit)\n"
+        "\n"
+        "Test compile and run\n"
+        "~~~\n"
+        "make tested\n"
+        "~~~\n"
+        "\n"
+        "## Tips\n"
+        "\n"
+        "## Copyright\n"
+        "\n"
+        "%s\n",
+        lib.config.project.name,
+        lib.config.project.description,
+        lib.config.project.name,
+        lib.config.project.name,
+        lib.config.project.name,
+        copyright));
+
+        testrun(0 == strncmp(content, expect, strlen(expect)));
+        free(content);
+        free(copyright);
+        free(time_string);
+        
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_changelog(){
+        
+        char *root_path = "/tmp/test_folder/not_existing";
+        struct testrun_lib lib = testrun_lib_default();
+
+        FILE *file = NULL;
+        char filename[PATH_MAX];
+        memset(filename, 0, PATH_MAX);
+
+        size_t csize = 0;
+        char *content = NULL;
+
+        snprintf(filename, PATH_MAX, "%s/%s/%s", 
+                root_path, lib.config.path.docs, TESTRUN_FILE_CHANGELOG);
+
+        file = fopen(filename, "r");
+        testrun(file == NULL);
+
+        testrun(!testrun_lib_create_changelog(NULL,      NULL));
+        testrun(!testrun_lib_create_changelog(root_path, NULL));
+        testrun(!testrun_lib_create_changelog(NULL,      &lib));
+        testrun(testrun_lib_create_changelog(root_path,  &lib));
+
+        file = fopen(filename, "r");
+        testrun(file != NULL);
+        fseek(file, 0, SEEK_END);
+        csize = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        content = calloc(csize + 1, sizeof(char));
+        fread(content, csize, 1, file);
+        fclose(file);
+        content[csize] = 0;
+
+        char *expect = "Project created at ";
+        testrun(0 == strncmp(content, expect, strlen(expect)));
+        free(content);
+        
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_doxygen(){
+        
+        char *root_path = "/tmp/test_folder/not_existing";
+        struct testrun_lib lib = testrun_lib_default();
+
+        FILE *file = NULL;
+        char filename[PATH_MAX];
+        memset(filename, 0, PATH_MAX);
+
+        size_t size = 10000;
+        size_t csize = 0;
+        char expect[size];
+        memset(expect, 0, size);
+
+        char *content = NULL;
+
+        snprintf(filename, PATH_MAX, "%s/%s/%s", 
+                root_path, lib.config.path.doxygen, TESTRUN_FILE_DOXYGEN);
+
+        file = fopen(filename, "r");
+        testrun(file == NULL);
+
+        testrun(!testrun_lib_create_doxygen(NULL,      NULL));
+        testrun(!testrun_lib_create_doxygen(root_path, NULL));
+        testrun(!testrun_lib_create_doxygen(NULL,      &lib));
+        testrun(testrun_lib_create_doxygen(root_path, &lib));
+
+        file = fopen(filename, "r");
+        testrun(file != NULL);
+        fseek(file, 0, SEEK_END);
+        csize = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        content = calloc(csize + 1, sizeof(char));
+        fread(content, csize, 1, file);
+        fclose(file);
+        content[csize] = 0;
+
+        char input[1000];
+        memset(input, 0, 1000);
+
+        testrun(snprintf(input, 1000, "%s %s %s %s",
+                TESTRUN_FILE_README, 
+                lib.config.path.include, 
+                lib.config.path.source,
+                lib.config.path.tests));
+
+        testrun(snprintf(expect, size, 
+                "DOXYFILE_ENCODING       = UTF-8\n"
+                "PROJECT_NAME            = %s\n"
+                "PROJECT_NUMBER          = 0.0.1\n"
+                "PROJECT_LOGO            = %s/logo.png\n"
+                "PROJECT_BRIEF           = %s\n"
+                "OUTPUT_DIRECTORY        = %s/documentation\n"
+                "CREATE_SUBDIRS          = NO\n"
+                "ALLOW_UNICODE_NAMES     = NO\n"
+                "OUTPUT_LANGUAGE         = English\n"
+                "MARKDOWN_SUPPORT        = YES\n"
+                "AUTOLINK_SUPPORT        = YES\n"
+                "USE_MDFILE_AS_MAINPAGE  = %s\n"
+                "INPUT                   = %s\n"
+                "INPUT_ENCODING          = UTF-8\n"
+                "FILE_PATTERNS           = *.h *.c *.js *.py *.sh\n"
+                "RECURSIVE               = YES\n"
+                "EXCLUDE_SYMLINKS        = YES\n",
+                lib.config.project.name, 
+                lib.config.path.doxygen, 
+                lib.config.project.name, 
+                lib.config.path.doxygen, 
+                TESTRUN_FILE_README, 
+                input));
+
+        testrun(0 == strncmp(content, expect, strlen(expect)));
+        free(content);
+        
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_copyright(){
+        
+        char *root_path = "/tmp/test_folder/not_existing";
+        struct testrun_lib lib = testrun_lib_default();
+
+        FILE *file = NULL;
+        char filename[PATH_MAX];
+        memset(filename, 0, PATH_MAX);
+
+        size_t size = 10000;
+        size_t csize = 0;
+        char expect[size];
+        memset(expect, 0, size);
+
+        char *content = NULL;
+
+        snprintf(filename, PATH_MAX, "%s/%s/%s", 
+                root_path, lib.config.path.copyright, TESTRUN_FILE_COPYRIGHT);
+
+        file = fopen(filename, "r");
+        testrun(file == NULL);
+
+        testrun(!testrun_lib_create_copyright(NULL,      NULL));
+        testrun(!testrun_lib_create_copyright(root_path, NULL));
+        testrun(!testrun_lib_create_copyright(NULL,      &lib));
+        testrun(testrun_lib_create_copyright(root_path, &lib));
+
+        file = fopen(filename, "r");
+        testrun(file != NULL);
+        fseek(file, 0, SEEK_END);
+        csize = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        content = calloc(csize + 1, sizeof(char));
+        fread(content, csize, 1, file);
+        fclose(file);
+        content[csize] = 0;
+
+        char *time_string = testrun_time_string(TESTRUN_SCOPE_YEAR); 
+        char *copyright   = lib.config.copyright.copyright.generate_header_string(
+                                NULL,
+                                COPYRIGHT_DEFAULT_INTRO,
+                                time_string,
+                                lib.config.copyright.owner,
+                                lib.config.copyright.note,
+                                NULL,
+                                lib.config.indent.standard,
+                                false,
+                                lib.config.copyright.gpl_parameter);
+
+        testrun(0 == strncmp(content, copyright, strlen(copyright)));
+        free(content);
+        free(copyright);
+        free(time_string);
+
+        // check full text license is written too if configured.
+        snprintf(filename, PATH_MAX, "%s/%s/%s", 
+                root_path, lib.config.path.copyright, TESTRUN_FILE_COPYRIGHT_FULL);
+
+        file = fopen(filename, "r");
+        testrun(file == NULL);
+
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+
+        lib.config.copyright.copyright = testrun_copyright_apache_version_2();
+        testrun(testrun_lib_create_copyright(root_path, &lib));
+
+        snprintf(filename, PATH_MAX, "%s/%s/%s", 
+                root_path, lib.config.path.copyright, TESTRUN_FILE_COPYRIGHT_FULL);
+
+        file = fopen(filename, "r");
+        testrun(file != NULL);
+        fclose(file);
+        
+         snprintf(filename, PATH_MAX, "%s/%s/%s", 
+                root_path, lib.config.path.copyright, TESTRUN_FILE_COPYRIGHT);
+
+        file = fopen(filename, "r");
+        testrun(file != NULL);
+        fclose(file);
+
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+
+int test_testrun_lib_create_service(){
+        
+        char *root_path = "/tmp/test_folder/not_existing";
+        struct testrun_lib lib = testrun_lib_default();
+
+        FILE *file = NULL;
+        char filename[PATH_MAX];
+        memset(filename, 0, PATH_MAX);
+
+        size_t size = 10000;
+        size_t csize = 0;
+        char expect[size];
+        memset(expect, 0, size);
+
+        char *content = NULL;
+
+        lib.config.project.name = "test";
+
+        snprintf(filename, PATH_MAX, "%s/%s/%s.service", 
+                root_path, lib.config.path.service, lib.config.project.name);
+
+        file = fopen(filename, "r");
+        testrun(file == NULL);
+
+        testrun(!testrun_lib_create_service(NULL,      NULL));
+        testrun(!testrun_lib_create_service(root_path, NULL));
+        testrun(!testrun_lib_create_service(NULL,      &lib));
+        testrun(testrun_lib_create_service(root_path, &lib));
+
+        file = fopen(filename, "r");
+        testrun(file != NULL);
+        fseek(file, 0, SEEK_END);
+        csize = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        content = calloc(csize + 1, sizeof(char));
+        fread(content, csize, 1, file);
+        fclose(file);
+        content[csize] = 0;
+        testrun(snprintf(expect, size, 
+                "[Unit]\n"
+                "Description= %s service\n"
+                "\n"
+                "[Service]\n"
+                "ExecStart=%s/%s\n"
+                "NonBlocking=True\n"
+                "\n"
+                "[Install]\n"
+                "WantedBy=multi-user.target\n"
+                , lib.config.project.name, TESTRUN_DEFAULT_INSTALL_PATH, lib.config.project.name));
+
+        testrun(0 == strncmp(content, expect, strlen(expect)));
+        free(content);
+
+        snprintf(filename, PATH_MAX, "%s/%s/%s.socket", 
+                root_path, lib.config.path.service, lib.config.project.name);
+
+        file = fopen(filename, "r");
+        testrun(file != NULL);
+        fseek(file, 0, SEEK_END);
+        csize = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        content = calloc(csize + 1, sizeof(char));
+        fread(content, csize, 1, file);
+        fclose(file);
+        content[csize] = 0;
+
+        testrun(snprintf(expect, size, 
+                "[Unit]\n"
+                "Description= %s socket\n"
+                "\n"
+                "[Socket]\n"
+                "\n"
+                "# example interface bound\n"
+                "# ListenStream=10.0.0.100:12345\n"
+                "\n"
+                "# example localhost\n"
+                "# ListenStream=127.0.0.1:12345\n"
+                "\n"
+                "# example listen on all\n"
+                "# ListenStream=0.0.0.0:12345\n"
+                "\n"
+                "# example listen on UDP\n"
+                "# ListenDatagram=0.0.0.0:12345\n"
+                "\n"
+                "# Maximum parallel connections for the socket\n"
+                "Backlog=2048\n"
+                "\n"
+                "# TCP Keepalive (1h)\n"
+                "KeepAlive=false\n"
+                "\n"
+                "[Install]\n"
+                "WantedBy=multi-user.target\n"
+                , lib.config.project.name));
+
+
+        testrun(0 == strncmp(content, expect, strlen(expect)));
+        free(content);
+
+
+        snprintf(filename, PATH_MAX, "%s/%s/%s", 
+                root_path, lib.config.path.service, TESTRUN_FILE_README);
+
+        file = fopen(filename, "r");
+        testrun(file != NULL);
+        fseek(file, 0, SEEK_END);
+        csize = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        content = calloc(csize + 1, sizeof(char));
+        fread(content, csize, 1, file);
+        fclose(file);
+        content[csize] = 0;
+        testrun(csize > 0);
+        free(content);
+
+        
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_c_documentation_header(){
+
+        size_t size = 1000;
+        char buffer[size];
+        char expect[size];
+
+        memset(buffer, 0, size);
+        memset(expect, 0, size);
+
+        char *date = testrun_time_string(TESTRUN_SCOPE_DAY);
+
+        testrun(!testrun_lib_create_c_documentation_header(NULL,   size, NULL, NULL, NULL, NULL));
+        testrun(!testrun_lib_create_c_documentation_header(buffer, size, NULL, NULL, NULL, NULL));
+        testrun(!testrun_lib_create_c_documentation_header(NULL,   size, "ab", NULL, NULL, NULL));
+
+        testrun(testrun_lib_create_c_documentation_header(buffer,  size, "ab", NULL, NULL, NULL));
+
+        testrun(snprintf(expect, size, 
+                "%s"
+                "        @file           %s\n"
+                "        @author         %s\n"
+                "        @date           %s\n"
+                "\n"
+                "        @ingroup        %s\n"
+                "\n"
+                "        @brief          %s\n"
+                "\n"
+                "%s\n",
+                TESTRUN_DOCUMENTATION_PREFIX,
+                "ab",
+                TESTRUN_TAG_AUTHOR,
+                date,
+                TESTRUN_TAG_GROUP,
+                "...",
+                TESTRUN_DOCUMENTATION_SUFFIX));
+
+        testrun( 0 == strncmp(buffer, expect, strlen(expect)));
+
+        memset(buffer, 0, size);
+        memset(expect, 0, size);
+
+        testrun(testrun_lib_create_c_documentation_header(buffer,  size, "ab", "xy", "z", "1"));
+
+        testrun(snprintf(expect, size, 
+                "%s"
+                "        @file           %s\n"
+                "        @author         %s\n"
+                "        @date           %s\n"
+                "\n"
+                "        @ingroup        %s\n"
+                "\n"
+                "        @brief          %s\n"
+                "\n"
+                "%s\n",
+                TESTRUN_DOCUMENTATION_PREFIX,
+                "ab",
+                "xy",
+                date,
+                "z",
+                "1",
+                TESTRUN_DOCUMENTATION_SUFFIX));
+
+        testrun( 0 == strncmp(buffer, expect, strlen(expect)));
+
+        free(date);
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_c_header(){
+
+        char *root_path = "/tmp/test_folder/not_existing";
+        struct testrun_lib lib = testrun_lib_default();
+
+        char *date = testrun_time_string(TESTRUN_SCOPE_DAY);
+
+        char *copyright = lib.config.copyright.copyright.generate_header_string(
+                                NULL,
+                                COPYRIGHT_DEFAULT_INTRO,
+                                date,
+                                lib.config.copyright.owner,
+                                lib.config.copyright.note,
+                                NULL,
+                                lib.config.indent.standard,
+                                false,
+                                lib.config.copyright.gpl_parameter);
+
+
+        FILE *file = NULL;
+        char filename[PATH_MAX];
+        memset(filename, 0, PATH_MAX);
+
+        size_t size = 10000;
+        size_t csize = 0;
+        char expect[size];
+        memset(expect, 0, size);
+
+        char *content = NULL;
+        char *name    = "name";
+
+        lib.config.project.name = "test";
+
+        snprintf(filename, PATH_MAX, "%s/%s/%s.h", 
+                root_path, lib.config.path.include, name);
+
+        file = fopen(filename, "r");
+        testrun(file == NULL);
+
+        char documentation[1000];
+        memset(documentation, 0, 1000);
+
+        free(date);
+        date = testrun_time_string(TESTRUN_SCOPE_DAY);
+
+        testrun(snprintf(documentation, 1000, 
+                "%s"
+                "        @file           %s.h\n"
+                "        @author         %s\n"
+                "        @date           %s\n"
+                "\n"
+                "        @ingroup        %s\n"
+                "\n"
+                "        @brief          %s\n"
+                "\n"
+                "%s\n",
+                TESTRUN_DOCUMENTATION_PREFIX,
+                name,
+                TESTRUN_TAG_AUTHOR,
+                date,
+                TESTRUN_TAG_GROUP,
+                "Definition of ",
+                TESTRUN_DOCUMENTATION_SUFFIX));
+
+        free(date);
+
+
+        testrun(!testrun_lib_create_c_header(NULL,      NULL, NULL,     NULL));
+        testrun(!testrun_lib_create_c_header(NULL,      &lib, copyright, name));
+        testrun(!testrun_lib_create_c_header(root_path, &lib, copyright, NULL));
+        testrun(!testrun_lib_create_c_header(root_path, NULL, copyright, name));
+        testrun(!testrun_lib_create_c_header(root_path, &lib, NULL,      name));
+
+        testrun(testrun_lib_create_c_header(root_path, &lib, copyright, name));
+
+        file = fopen(filename, "r");
+        testrun(file != NULL);
+        fseek(file, 0, SEEK_END);
+        csize = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        content = calloc(csize + 1, sizeof(char));
+        fread(content, csize, 1, file);
+        fclose(file);
+        content[csize] = 0;
+
+        testrun(snprintf(expect, size, 
+                "%s%s"
+                "#ifndef %s_h\n"
+                "#define %s_h\n"
+                "\n"
+                "\n"
+                "/*\n"
+                " *      ------------------------------------------------------------------------\n"
+                " *\n"
+                " *      GENERIC FUNCTIONS\n"
+                " *\n"
+                " *      ------------------------------------------------------------------------\n"
+                " */\n"
+                "\n"
+                "\n"
+                "#endif /* %s_h */\n",
+                copyright,
+                documentation,
+                name,
+                name,
+                name));
+
+        testrun( 0 == strncmp(content, expect, strlen(expect)));
+
+        free(copyright);
+        free(content);
+
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_c_source(){
+
+        char *root_path = "/tmp/test_folder/not_existing";
+        struct testrun_lib lib = testrun_lib_default();
+
+        char *date = testrun_time_string(TESTRUN_SCOPE_DAY);
+
+        char *copyright = lib.config.copyright.copyright.generate_header_string(
+                                NULL,
+                                COPYRIGHT_DEFAULT_INTRO,
+                                date,
+                                lib.config.copyright.owner,
+                                lib.config.copyright.note,
+                                NULL,
+                                lib.config.indent.standard,
+                                false,
+                                lib.config.copyright.gpl_parameter);
+
+
+        FILE *file = NULL;
+        char filename[PATH_MAX];
+        memset(filename, 0, PATH_MAX);
+
+        size_t size = 10000;
+        size_t csize = 0;
+        char expect[size];
+        memset(expect, 0, size);
+
+        char *content = NULL;
+        char *name    = "name";
+
+        lib.config.project.name = "test";
+
+        snprintf(filename, PATH_MAX, "%s/%s/%s.c", 
+                root_path, lib.config.path.source, name);
+
+        file = fopen(filename, "r");
+        testrun(file == NULL);
+
+        char documentation[1000];
+        memset(documentation, 0, 1000);
+
+        free(date);
+        date = testrun_time_string(TESTRUN_SCOPE_DAY);
+
+        testrun(snprintf(documentation, 1000, 
+                "%s"
+                "        @file           %s.c\n"
+                "        @author         %s\n"
+                "        @date           %s\n"
+                "\n"
+                "        @ingroup        %s\n"
+                "\n"
+                "        @brief          %s\n"
+                "\n"
+                "%s\n",
+                TESTRUN_DOCUMENTATION_PREFIX,
+                name,
+                TESTRUN_TAG_AUTHOR,
+                date,
+                TESTRUN_TAG_GROUP,
+                "Implementation of ",
+                TESTRUN_DOCUMENTATION_SUFFIX));
+
+        free(date);
+
+
+        testrun(!testrun_lib_create_c_source(NULL,      NULL, NULL,     NULL));
+        testrun(!testrun_lib_create_c_source(NULL,      &lib, copyright, name));
+        testrun(!testrun_lib_create_c_source(root_path, &lib, copyright, NULL));
+        testrun(!testrun_lib_create_c_source(root_path, NULL, copyright, name));
+        testrun(!testrun_lib_create_c_source(root_path, &lib, NULL,      name));
+
+        testrun(testrun_lib_create_c_source(root_path, &lib, copyright, name));
+
+        file = fopen(filename, "r");
+        testrun(file != NULL);
+        fseek(file, 0, SEEK_END);
+        csize = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        content = calloc(csize + 1, sizeof(char));
+        fread(content, csize, 1, file);
+        fclose(file);
+        content[csize] = 0;
+
+        testrun(snprintf(expect, size, 
+                "%s%s"
+                "#include \"../include/%s.h\"\n",
+                copyright,
+                documentation,
+                name));
+
+        //log("\n\nCONTENT\n%s\nEXPECT\n%s\n\n", content, expect);
+
+        testrun( 0 == strncmp(content, expect, strlen(expect)));
+
+        free(copyright);
+        free(content);
+
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_c_unit_test(){
+
+        char *root_path = "/tmp/test_folder/not_existing";
+        struct testrun_lib lib = testrun_lib_default();
+
+        char *date = testrun_time_string(TESTRUN_SCOPE_DAY);
+
+        char *copyright = lib.config.copyright.copyright.generate_header_string(
+                                NULL,
+                                COPYRIGHT_DEFAULT_INTRO,
+                                date,
+                                lib.config.copyright.owner,
+                                lib.config.copyright.note,
+                                NULL,
+                                lib.config.indent.standard,
+                                false,
+                                lib.config.copyright.gpl_parameter);
+
+
+        FILE *file = NULL;
+        char filename[PATH_MAX];
+        memset(filename, 0, PATH_MAX);
+
+        size_t size = 10000;
+        size_t csize = 0;
+        char expect[size];
+        memset(expect, 0, size);
+
+        char *content = NULL;
+        char *name    = "name";
+
+        lib.config.project.name = "test";
+
+        snprintf(filename, PATH_MAX, "%s/%s/%s/%s%s.c", 
+                root_path, lib.config.path.tests, TESTRUN_FOLDER_UNIT_TESTS, name, lib.config.test_suffix_source);
+
+        file = fopen(filename, "r");
+        testrun(file == NULL);
+
+        char documentation[1000];
+        memset(documentation, 0, 1000);
+
+        free(date);
+        date = testrun_time_string(TESTRUN_SCOPE_DAY);
+
+        testrun(snprintf(documentation, 1000, 
+                "%s"
+                "        @file           %s%s.c\n"
+                "        @author         %s\n"
+                "        @date           %s\n"
+                "\n"
+                "        @ingroup        %s\n"
+                "\n"
+                "        @brief          %s\n"
+                "\n"
+                "%s\n",
+                TESTRUN_DOCUMENTATION_PREFIX,
+                name,
+                lib.config.test_suffix_source,
+                TESTRUN_TAG_AUTHOR,
+                date,
+                TESTRUN_TAG_GROUP,
+                "Unit tests of ",
+                TESTRUN_DOCUMENTATION_SUFFIX));
+
+        free(date);
+
+
+        testrun(!testrun_lib_create_c_unit_test(NULL,      NULL, NULL,     NULL));
+        testrun(!testrun_lib_create_c_unit_test(NULL,      &lib, copyright, name));
+        testrun(!testrun_lib_create_c_unit_test(root_path, &lib, copyright, NULL));
+        testrun(!testrun_lib_create_c_unit_test(root_path, NULL, copyright, name));
+        testrun(!testrun_lib_create_c_unit_test(root_path, &lib, NULL,      name));
+
+        testrun(testrun_lib_create_c_unit_test(root_path, &lib, copyright, name));
+
+        file = fopen(filename, "r");
+        testrun(file != NULL);
+        fseek(file, 0, SEEK_END);
+        csize = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        content = calloc(csize + 1, sizeof(char));
+        fread(content, csize, 1, file);
+        fclose(file);
+        content[csize] = 0;
+
+        testrun(snprintf(expect, size, 
+                "%s%s"
+                "#include \"../../tests/tools/testrun.h\"\n"
+                "#include \"../../src/%s.c\"\n"
+                "\n"
+                "/*\n"
+                " *      ------------------------------------------------------------------------\n"
+                " *\n"
+                " *      TEST CASES                                                      #CASES\n"
+                " *\n"
+                " *      ------------------------------------------------------------------------\n"
+                " */\n"
+                "\n"
+                "int test_case(){\n"
+                "        testrun(1 == 1);\n"
+                "\n"
+                "        return testrun_log_success();\n"
+                "}\n"
+                "\n"
+                "/*----------------------------------------------------------------------------*/\n"
+                "\n"
+                "/*\n"
+                " *      ------------------------------------------------------------------------\n"
+                " *\n"
+                " *      TEST CLUSTER                                                    #CLUSTER\n"
+                " *\n"
+                " *      ------------------------------------------------------------------------\n"
+                " */\n"
+                "\n"
+                "int all_tests() {\n"
+                "\n"
+                "        testrun_init();\n"
+                "        testrun_test(test_case);\n"
+                "\n"
+                "        return testrun_counter;\n"
+                "}\n"
+                "\n"
+                "/*\n"
+                " *      ------------------------------------------------------------------------\n"
+                " *\n"
+                " *      TEST EXECUTION                                                  #EXEC\n"
+                " *\n"
+                " *      ------------------------------------------------------------------------\n"
+                " */\n"
+                "\n"
+                "testrun_run(all_tests);\n",
+                copyright,
+                documentation,
+                name));
+
+        //log("\n\nCONTENT\n%s\nEXPECT\n%s\n\n", content, expect);
+
+        testrun( 0 == strncmp(content, expect, strlen(expect)));
+
+        free(copyright);
+        free(content);
+
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_project_files(){
+
+        char *root_path = "/tmp/test_folder/not_existing";
+        struct testrun_lib lib = testrun_lib_default();
+
+        char project_root[PATH_MAX];
+        memset(project_root, 0, PATH_MAX);
+
+        DIR *dp;
+        FILE *file = NULL;
+
+        size_t size = 0;
+
+        char path[PATH_MAX];
+        memset(path, 0, PATH_MAX);
+
+        testrun(!testrun_lib_create_project_files(NULL));
+
+        // check root not existing
+        dp = opendir(root_path);
+        testrun(!dp);
+
+        // no name, no path
+        testrun(!testrun_lib_create_project_files(&lib));
+
+        lib.config.project.name = "test";
+        lib.config.project.path = root_path;
+
+        testrun(testrun_utils_generate_project_root_path(&lib.config, project_root, PATH_MAX));
+
+        testrun(testrun_lib_create_project_files(&lib));
+
+        // check folders
+
+        dp = opendir(root_path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s", project_root, lib.config.path.copyright);
+        dp = opendir(root_path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s", project_root, lib.config.path.docs);
+        dp = opendir(root_path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s", project_root, lib.config.path.include);
+        dp = opendir(root_path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s", project_root, lib.config.path.source);
+        dp = opendir(root_path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s", project_root, lib.config.path.tests);
+        dp = opendir(root_path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s", project_root, lib.config.path.tests, TESTRUN_FOLDER_UNIT_TESTS);
+        dp = opendir(root_path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s", project_root, lib.config.path.tests, TESTRUN_FOLDER_ACCEPTANCE_TESTS);
+        dp = opendir(root_path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s", project_root, lib.config.path.tests, TESTRUN_FOLDER_RESOURCES);
+        dp = opendir(root_path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s", project_root, lib.config.path.tools);
+        dp = opendir(root_path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s", project_root, lib.config.path.service);
+        dp = opendir(root_path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s", project_root, lib.config.path.doxygen);
+        dp = opendir(root_path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        // check top level files
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s", project_root, lib.config.makefile.configurable);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s", project_root, lib.config.makefile.common);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s", project_root, TESTRUN_FILE_GIT_IGNORE);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s", project_root, TESTRUN_FILE_README);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        // check copyright 
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s", project_root, lib.config.path.copyright, TESTRUN_FILE_COPYRIGHT);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        // check doxygen 
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s", project_root, lib.config.path.doxygen, TESTRUN_FILE_DOXYGEN);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        // check changelog 
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s", project_root, lib.config.path.docs, TESTRUN_FILE_CHANGELOG);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        // check c files 
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s.h", project_root, lib.config.path.include, lib.config.project.name);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s.c", project_root, lib.config.path.source, lib.config.project.name);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s/%s%s.c", project_root, lib.config.path.tests, TESTRUN_FOLDER_UNIT_TESTS , lib.config.project.name, lib.config.test_suffix_source);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        // check service files
+        
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s.service", project_root, lib.config.path.service, lib.config.project.name);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s.socket", project_root, lib.config.path.service, lib.config.project.name);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s", project_root, lib.config.path.service, TESTRUN_FILE_README);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_module_files(){
+
+        char *root_path = "/tmp/test_folder/not_existing";
+        struct testrun_lib lib = testrun_lib_default();
+
+        char project_root[PATH_MAX];
+        memset(project_root, 0, PATH_MAX);
+
+        DIR *dp;
+        FILE *file = NULL;
+
+        size_t size = 0;
+
+        char path[PATH_MAX];
+        memset(path, 0, PATH_MAX);
+
+        char *name = "testname";
+
+        testrun(!testrun_lib_create_module_files(NULL, NULL));
+        testrun(!testrun_lib_create_module_files(&lib, NULL));
+        testrun(!testrun_lib_create_module_files(NULL, name));
+
+        // check root not existing
+        dp = opendir(root_path);
+        testrun(!dp);
+
+        // no name, no path
+        testrun(!testrun_lib_create_module_files(&lib, name));
+
+        lib.config.project.name = "test";
+        lib.config.project.path = root_path;
+
+        testrun(testrun_lib_create_module_files(&lib, name));
+        testrun(testrun_utils_generate_project_root_path(&lib.config, project_root, PATH_MAX));
+
+        // check folders
+
+        dp = opendir(root_path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s", project_root, lib.config.path.include);
+        dp = opendir(root_path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s", project_root, lib.config.path.source);
+        dp = opendir(root_path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s", project_root, lib.config.path.tests);
+        dp = opendir(root_path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s", project_root, lib.config.path.tests, TESTRUN_FOLDER_UNIT_TESTS);
+        dp = opendir(root_path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        // check c files 
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s.h", project_root, lib.config.path.include, name);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s.c", project_root, lib.config.path.source, name);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s/%s%s.c", project_root, lib.config.path.tests, TESTRUN_FOLDER_UNIT_TESTS , name, lib.config.test_suffix_source);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_project(){
+
+        char *root_path = "/tmp/test_folder/not_existing";
+        struct testrun_lib lib = testrun_lib_default();
+
+        char project_root[PATH_MAX];
+        memset(project_root, 0, PATH_MAX);
+
+        DIR *dp;
+        FILE *file = NULL;
+
+        size_t size = 0;
+
+        char path[PATH_MAX];
+        memset(path, 0, PATH_MAX);
+
+        testrun(!testrun_lib_validate(&lib));
+
+        testrun(!testrun_lib_create_project(NULL));
+        testrun(!testrun_lib_create_project(&lib));
+
+        lib.config.project.path = root_path;
+        lib.config.project.name = "a";
+
+        // check root not existing
+        dp = opendir(root_path);
+        testrun(!dp);
+
+        testrun(testrun_utils_generate_project_root_path(&lib.config, project_root, PATH_MAX));
+
+        // check project root not existing
+        dp = opendir(project_root);
+        testrun(!dp);
+
+        testrun(testrun_lib_create_project(&lib));
+
+        dp = opendir(project_root);
+        testrun(dp);
+        (void) closedir (dp);
+
+        // try to create at existing project_root
+        testrun(!testrun_lib_create_project(&lib));
+
+        // check with different name
+        lib.config.project.name = "b";
+
+        testrun(testrun_utils_generate_project_root_path(&lib.config, project_root, PATH_MAX));
+        dp = opendir(project_root);
+        testrun(!dp);
+
+        testrun(testrun_lib_create_project(&lib));
+
+        dp = opendir(project_root);
+        testrun(dp);
+        (void) closedir (dp);
+
+        // check files are created too (random file checl)
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s.h", project_root, lib.config.path.include, lib.config.project.name);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_module(){
+
+        char *root_path = "/tmp/test_folder/not_existing";
+        struct testrun_lib lib = testrun_lib_default();
+
+        char project_root[PATH_MAX];
+        memset(project_root, 0, PATH_MAX);
+        
+        FILE *file = NULL;
+
+        size_t size = 0;
+
+        char path[PATH_MAX];
+        memset(path, 0, PATH_MAX);
+
+        char *name = "module_a";
+
+        lib.config.project.path = root_path;
+        lib.config.project.name = "a";
+        testrun(testrun_lib_create_project(&lib));
+
+        testrun(testrun_utils_generate_project_root_path(&lib.config, project_root, PATH_MAX));
+
+        testrun(!testrun_lib_create_module(NULL, NULL));
+        testrun(!testrun_lib_create_module(&lib, NULL));
+        testrun(!testrun_lib_create_module(NULL, name));
+
+        // create from path out of project
+        lib.config.project.path = root_path;
+        testrun(!testrun_lib_create_module(&lib, name));
+
+        // create from project top path
+        lib.config.project.path = project_root;
+        testrun(testrun_lib_create_module(&lib, name));
+
+        // check c files 
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s.h", project_root, lib.config.path.include, name);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s.c", project_root, lib.config.path.source, name);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s/%s%s.c", project_root, lib.config.path.tests, TESTRUN_FOLDER_UNIT_TESTS , name, lib.config.test_suffix_source);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        // try to create existing module
+        testrun(!testrun_lib_create_module(&lib, name));
+
+        name = "module_b";
+        // try to create new module
+        testrun(testrun_lib_create_module(&lib, name));
+
+        // check c files 
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s.h", project_root, lib.config.path.include, name);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s.c", project_root, lib.config.path.source, name);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s/%s%s.c", project_root, lib.config.path.tests, TESTRUN_FOLDER_UNIT_TESTS , name, lib.config.test_suffix_source);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        // create from path within project
+        name = "module_c";
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s", project_root, lib.config.path.include);
+
+        testrun(testrun_lib_create_module(&lib, name));
+
+        // check c files 
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s.h", project_root, lib.config.path.include, name);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s.c", project_root, lib.config.path.source, name);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s/%s%s.c", project_root, lib.config.path.tests, TESTRUN_FOLDER_UNIT_TESTS , name, lib.config.test_suffix_source);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+         // create from other path within project
+        name = "module_d";
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s", project_root, lib.config.path.tests, TESTRUN_FOLDER_UNIT_TESTS);
+
+        testrun(testrun_lib_create_module(&lib, name));
+
+        // check c files 
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s.h", project_root, lib.config.path.include, name);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s.c", project_root, lib.config.path.source, name);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s/%s%s.c", project_root, lib.config.path.tests, TESTRUN_FOLDER_UNIT_TESTS , name, lib.config.test_suffix_source);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
         testrun(system("rm -rf /tmp/test_folder") == 0);
         return testrun_log_success();
 }
@@ -779,26 +2517,23 @@ int all_tests() {
         testrun_test(test_testrun_lib_validate);
         testrun_test(test_testrun_lib_create_project_paths);
         testrun_test(test_testrun_lib_create_makefiles);
+        testrun_test(test_testrun_lib_create_gitignore);
+        testrun_test(test_testrun_lib_create_readme);
+        testrun_test(test_testrun_lib_create_changelog);
+        testrun_test(test_testrun_lib_create_doxygen);
+        testrun_test(test_testrun_lib_create_copyright);
+        testrun_test(test_testrun_lib_create_service);
  
-        //testrun_test(test_testrun_lib_create_c_documentation_header);
-        //testrun_test(test_testrun_lib_create_c_header);
-        //testrun_test(test_testrun_lib_create_c_source);
-        //testrun_test(test_testrun_lib_create_c_unit_test);
-        //testrun_test(test_testrun_lib_create_changelog);
-        //testrun_test(test_testrun_lib_create_copyright);
-        //testrun_test(test_testrun_lib_create_doxygen);
-        //testrun_test(test_testrun_lib_create_gitignore);
-        //
-        //testrun_test(test_testrun_lib_create_module);
-        //testrun_test(test_testrun_lib_create_module_files);
-        //testrun_test(test_testrun_lib_create_project);
-        //testrun_test(test_testrun_lib_create_project_files);
-        //
-        //testrun_test(test_testrun_lib_create_readme);
-        //testrun_test(test_testrun_lib_create_service);
-        //
-        //
+        testrun_test(test_testrun_lib_create_c_documentation_header);
+        testrun_test(test_testrun_lib_create_c_header);
+        testrun_test(test_testrun_lib_create_c_source);
+        testrun_test(test_testrun_lib_create_c_unit_test);
 
+        testrun_test(test_testrun_lib_create_project_files);
+        testrun_test(test_testrun_lib_create_module_files);
+
+        testrun_test(test_testrun_lib_create_project);
+        testrun_test(test_testrun_lib_create_module);
 
         return testrun_counter;
 }

@@ -33,7 +33,7 @@
 
 bool testrun_lib_create_project_paths(const testrun_lib *lib);
 bool testrun_lib_create_project_files(const testrun_lib *lib);
-bool testrun_lib_create_module_files(const testrun_lib *lib);
+bool testrun_lib_create_module_files(const testrun_lib *lib, const char *module_name);
 
 struct testrun_lib testrun_lib_default(){
 
@@ -44,6 +44,7 @@ struct testrun_lib testrun_lib_default(){
 
                 .create_project_paths   = testrun_lib_create_project_paths,
                 .create_project_files   = testrun_lib_create_project_files,
+                .search_project_path    = testrun_utils_search_project_path,
                 .create_module_files    = testrun_lib_create_module_files
 
         };
@@ -69,6 +70,7 @@ bool testrun_lib_validate(const testrun_lib *self){
         // check required functions
         if (    !self->create_project_paths ||
                 !self->create_project_files ||
+                !self->search_project_path  ||
                 !self->create_module_files)
                 return false;
 
@@ -194,16 +196,21 @@ static bool testrun_lib_create_readme(
         if (!project_root_path || !lib)
                 return false;
 
+        char *time_string = testrun_time_string(TESTRUN_SCOPE_YEAR);
+
         char *copyright = lib->config.copyright.copyright.generate_header_string(
                                 NULL,
                                 COPYRIGHT_DEFAULT_INTRO,
-                                testrun_time_string(TESTRUN_SCOPE_YEAR),
+                                time_string,
                                 lib->config.copyright.owner,
                                 lib->config.copyright.note,
                                 NULL,
                                 lib->config.indent.standard,
                                 false,
                                 lib->config.copyright.gpl_parameter);
+
+        free(time_string);
+        time_string = NULL;
 
         if (!copyright)
                 goto error;
@@ -245,13 +252,14 @@ static bool testrun_lib_create_changelog(
         if (!project_root_path || !lib)
                 return false;
 
-
         char content[1000];
         memset(content, 0, 1000);
 
-        if (!snprintf(content, 1000, "Project created at %s",
-                testrun_time_string(TESTRUN_SCOPE_MINUTE)))
-                return false;
+        char *time_string =  testrun_time_string(TESTRUN_SCOPE_MINUTE);
+
+        if (!snprintf(content, 1000, "Project created at %s", time_string))
+                goto error;
+
 
         if (!testrun_utils_create_file(
                        TESTRUN_FILE_CHANGELOG,
@@ -260,9 +268,13 @@ static bool testrun_lib_create_changelog(
                        lib->config.path.docs))
                 goto error;
 
+        free(time_string);
         return true;
 
 error:
+        if (time_string)
+                free(time_string);
+
         return false;
 }
 
@@ -322,16 +334,21 @@ static bool testrun_lib_create_copyright(
         if (!project_root_path || !lib)
                 return false;
 
+        char *time_string = testrun_time_string(TESTRUN_SCOPE_YEAR);
+
         char *content = lib->config.copyright.copyright.generate_header_string(
                                 NULL,
                                 COPYRIGHT_DEFAULT_INTRO,
-                                testrun_time_string(TESTRUN_SCOPE_YEAR),
+                                time_string,
                                 lib->config.copyright.owner,
                                 lib->config.copyright.note,
                                 NULL,
                                 lib->config.indent.standard,
                                 false,
                                 lib->config.copyright.gpl_parameter);
+
+        free(time_string);
+        time_string = NULL;
 
         if (!content)
                 goto error;
@@ -346,12 +363,14 @@ static bool testrun_lib_create_copyright(
         free(content);
         content = NULL;
 
+        if (!lib->config.copyright.copyright.generate_full_text_licence)
+                return true;
+
         content = lib->config.copyright.copyright.generate_full_text_licence(
                         lib->config.copyright.gpl_parameter);
 
         if (!content)
                 return true;
-
 
         if (!testrun_utils_create_file(
                        TESTRUN_FILE_COPYRIGHT_FULL,
@@ -366,6 +385,8 @@ static bool testrun_lib_create_copyright(
         return true;
 
 error:
+        if (time_string)
+                free(time_string);
         if (content)
                 free(content);
         return false;
@@ -507,6 +528,8 @@ static bool testrun_lib_create_c_documentation_header(
         if (result >= size)
                 return false;
 
+        free(date);
+
         return true;
 }
 
@@ -515,9 +538,10 @@ static bool testrun_lib_create_c_documentation_header(
 static bool testrun_lib_create_c_header(
         const char* project_root_path, 
         const testrun_lib *lib, 
-        const char *copyright_header){
+        const char *copyright_header,
+        const char *name){
 
-        if (!project_root_path || !lib)
+        if (!project_root_path || !lib || !copyright_header || !name)
                 return false;
 
         char content[5000];
@@ -530,7 +554,7 @@ static bool testrun_lib_create_c_header(
         memset(filename, 0, 5000);
 
         if (!snprintf(filename, 5000, "%s%s",
-                lib->config.project.name,
+                name,
                 TESTRUN_SUFFIX_C_HEADER))
                 goto error;
 
@@ -559,9 +583,9 @@ static bool testrun_lib_create_c_header(
                 "#endif /* %s_h */\n",
                 copyright_header,
                 documentation_header,
-                lib->config.project.name,
-                lib->config.project.name,
-                lib->config.project.name))
+                name,
+                name,
+                name))
                 goto error;
 
         
@@ -583,9 +607,10 @@ error:
 static bool testrun_lib_create_c_source(
         const char* project_root_path, 
         const testrun_lib *lib, 
-        const char *copyright_header){
+        const char *copyright_header,
+        const char *name){
 
-        if (!project_root_path || !lib)
+        if (!project_root_path || !lib || !copyright_header || !name)
                 return false;
 
         char content[5000];
@@ -598,7 +623,7 @@ static bool testrun_lib_create_c_source(
         memset(filename, 0, 5000);
 
         if (!snprintf(filename, 5000, "%s%s",
-                lib->config.project.name,
+                name,
                 TESTRUN_SUFFIX_C_SOURCE))
                 goto error;
         if (!testrun_lib_create_c_documentation_header(documentation_header, 5000,
@@ -614,7 +639,7 @@ static bool testrun_lib_create_c_source(
                 documentation_header,
                 lib->config.path.source_to_root,
                 lib->config.path.include,
-                lib->config.project.name,
+                name,
                 TESTRUN_SUFFIX_C_HEADER))
                 goto error;
 
@@ -635,9 +660,10 @@ error:
 static bool testrun_lib_create_c_unit_test(
         const char* project_root_path, 
         const testrun_lib *lib, 
-        const char *copyright_header){
+        const char *copyright_header, 
+        const char *name){
 
-        if (!project_root_path || !lib)
+        if (!project_root_path || !lib || !copyright_header || !name)
                 return false;
 
         char content[5000];
@@ -658,7 +684,7 @@ static bool testrun_lib_create_c_unit_test(
                 goto error;
 
         if (!snprintf(filename, 5000, "%s%s%s",
-                lib->config.project.name,
+                name,
                 lib->config.test_suffix_source,
                 TESTRUN_SUFFIX_C_SOURCE))
                 goto error;
@@ -667,7 +693,7 @@ static bool testrun_lib_create_c_unit_test(
                 filename,
                 lib->config.copyright.author,
                 NULL, 
-                "Implementation of "))
+                "Unit tests of "))
                 goto error;
 
         if (!snprintf(content, 5000, "%s%s"
@@ -721,7 +747,7 @@ static bool testrun_lib_create_c_unit_test(
                 lib->config.path.tools,
                 lib->config.path.unit_tests_to_root,
                 lib->config.path.source, 
-                lib->config.project.name,
+                name,
                 TESTRUN_SUFFIX_C_SOURCE
                 ))
                 goto error;
@@ -776,15 +802,17 @@ bool testrun_lib_create_project_files(const testrun_lib *lib){
                 if (!testrun_lib_create_service(path, lib))
                         return false;
 
-        return lib->create_module_files(lib);
+        return lib->create_module_files((testrun_lib*) lib, lib->config.project.name);
 
 }
 
 /*----------------------------------------------------------------------------*/
 
-bool testrun_lib_create_module_files(const testrun_lib *lib){
+bool testrun_lib_create_module_files(
+        const testrun_lib *lib,
+        const char *module_name){
 
-        if (!lib)
+        if (!lib || !module_name)
                 return false;
 
         char path[PATH_MAX];
@@ -794,10 +822,12 @@ bool testrun_lib_create_module_files(const testrun_lib *lib){
                 &lib->config, path, PATH_MAX))
                 return false;
 
+        char *time_string = testrun_time_string(TESTRUN_SCOPE_YEAR);
+
         char *copyright_string = lib->config.copyright.copyright.generate_header_string(
                                 TESTRUN_COPYRIGHT_PREFIX,
                                 COPYRIGHT_DEFAULT_INTRO,
-                                testrun_time_string(TESTRUN_SCOPE_YEAR),
+                                time_string,
                                 lib->config.copyright.owner,
                                 lib->config.copyright.note,
                                 TESTRUN_COPYRIGHT_SUFFIX,
@@ -805,25 +835,30 @@ bool testrun_lib_create_module_files(const testrun_lib *lib){
                                 true,
                                 lib->config.copyright.gpl_parameter);
 
+        free(time_string);
+
         if (!copyright_string)
                 goto error;
 
         if (!testrun_lib_create_c_header(
                 path, 
                 lib, 
-                copyright_string))
+                copyright_string,
+                module_name))
                 goto error;
 
         if (!testrun_lib_create_c_source(
                 path, 
                 lib, 
-                copyright_string))
+                copyright_string,
+                module_name))
                 goto error;
 
         if (!testrun_lib_create_c_unit_test(
                 path, 
                 lib, 
-                copyright_string))
+                copyright_string,
+                module_name))
                 goto error;
 
         free(copyright_string);
@@ -858,10 +893,21 @@ error:
 
 /*----------------------------------------------------------------------------*/
 
-bool testrun_lib_create_module(const testrun_lib *lib){
+bool testrun_lib_create_module(const testrun_lib *lib, const char* module_name){
 
         if (!testrun_lib_validate(lib))
                 return false;
 
-        return lib->create_module_files(lib);
+        testrun_lib copy = *lib;
+        bool result = false;
+
+        char *project_path = lib->search_project_path(lib->config.project.path);
+        if (!project_path)
+                return false;
+
+        copy.config.project.path = dirname(project_path);
+        result = lib->create_module_files(&copy, module_name);
+        free(project_path);
+
+        return result;
 }

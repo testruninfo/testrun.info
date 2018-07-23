@@ -47,9 +47,10 @@ struct testrun_lib {
         struct testrun_config           config;
         struct testrun_tools            tools;
 
-        bool (*create_project_paths)    (const testrun_lib *self);
-        bool (*create_project_files)    (const testrun_lib *self);
-        bool (*create_module_files)     (const testrun_lib *self);
+        bool (*create_project_paths)    (const testrun_lib *self); // generate the folder structure of a project
+        bool (*create_project_files)    (const testrun_lib *self); // generate and write all files for a project
+        char *(*search_project_path)    (const char *start_path);  // search the top level project path from any given start path
+        bool (*create_module_files)     (const testrun_lib *self, const char *module_name);
 
 };
 
@@ -87,10 +88,12 @@ bool testrun_lib_create_project(const testrun_lib *lib);
 /**
         Create a new module, 
         using a provided testrun_lib implementation.
+        This function will set the project path based on the provided 
+        search function, starting with the project path set in lib.
 
         @param lib     pointer to lib implementation
 */
-bool testrun_lib_create_module(const testrun_lib *lib);
+bool testrun_lib_create_module(const testrun_lib *lib, const char *module_name);
 
 #endif /* testrun_lib_h */
 
