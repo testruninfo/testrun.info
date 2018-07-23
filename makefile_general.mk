@@ -149,9 +149,9 @@ TEST_SCRIPT_GPROF		= tests/tools/testrun_gprof.sh
 	@echo " (CC)    $@"
 	@$(CC) $(CFLAGS) -o $@ -c $< $(LIBS)
 
-all:			all_lib
-install:		install_lib
-uninstall:		uninstall_lib
+all:			all_exec pkgconfig
+install:		install_exec install_lib
+uninstall:		uninstall_exec uninstall_lib
 
 all_lib:		start lib tests pkgconfig done
 all_exec:		start lib tests $(EXECUTABLE) done

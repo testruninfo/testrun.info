@@ -128,6 +128,7 @@ static bool testrun_lib_create_makefiles(
                         lib->config.path.include,
                         lib->config.path.source,
                         lib->config.path.tests,
+                        lib->config.path.tools,
                         lib->config.path.doxygen,
                         lib->config.test_suffix_source,
                         lib->config.test_suffix_exec,
@@ -206,7 +207,7 @@ static bool testrun_lib_create_readme(
                                 lib->config.copyright.note,
                                 NULL,
                                 lib->config.indent.standard,
-                                false,
+                                true,
                                 lib->config.copyright.gpl_parameter);
 
         free(time_string);
@@ -344,7 +345,7 @@ static bool testrun_lib_create_copyright(
                                 lib->config.copyright.note,
                                 NULL,
                                 lib->config.indent.standard,
-                                false,
+                                true,
                                 lib->config.copyright.gpl_parameter);
 
         free(time_string);
@@ -764,6 +765,241 @@ error:
         return false;
 }
 
+/*----------------------------------------------------------------------------*/
+
+bool testrun_lib_create_testrun_scripts(const testrun_lib *lib){
+
+        if (!testrun_lib_validate(lib))
+                goto error;
+
+        char project_path[PATH_MAX];
+        memset(project_path, 0, PATH_MAX);
+
+        char path[PATH_MAX];
+        memset(path, 0, PATH_MAX);
+
+        char path2[PATH_MAX];
+        memset(path2, 0, PATH_MAX);
+
+        if (!testrun_utils_generate_project_root_path(
+                &lib->config, project_path, PATH_MAX))
+                return false;
+
+        char *content = NULL;
+
+        content = lib->tools.testrun_header();
+        if (!content)
+                return false;
+
+        if (!testrun_utils_create_file(
+                       TESTRUN_TESTRUN_HEADER,
+                       content,
+                       project_path,
+                       lib->config.path.tools))
+                goto error;
+
+
+        free(content);
+        content = lib->tools.testrun_header_openmp();
+        if (!content)
+                return false;
+
+        if (!testrun_utils_create_file(
+                       TESTRUN_TESTRUN_HEADER_OPENMP,
+                       content,
+                       project_path,
+                       lib->config.path.tools))
+                goto error;
+
+        free(content);
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s", lib->config.path.tests, TESTRUN_FOLDER_UNIT_TESTS);
+        content = lib->tools.testrun_simple_tests(
+                TESTRUN_FOLDER_UNIT_TESTS,
+                lib->config.project.name,
+                lib->config.script.test_unit,
+                lib->config.script.test_runner,
+                lib->config.path.logfile,
+                path,
+                lib->config.path.tools);
+        if (!content)
+                return false;
+
+        if (!testrun_utils_create_file(
+                       lib->config.script.test_unit,
+                       content,
+                       project_path,
+                       lib->config.path.tools))
+                goto error;
+
+        if (!testrun_utils_chmod(
+                        lib->config.script.test_unit,
+                        project_path,
+                        lib->config.path.tools,
+                        0751))
+                goto error;
+
+        free(content);
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s", lib->config.path.tests, TESTRUN_FOLDER_ACCEPTANCE_TESTS);
+        content = lib->tools.testrun_simple_tests(
+                TESTRUN_FOLDER_ACCEPTANCE_TESTS,
+                lib->config.project.name,
+                lib->config.script.test_unit,
+                lib->config.script.test_runner,
+                lib->config.path.logfile,
+                path,
+                lib->config.path.tools);
+        if (!content)
+                return false;
+
+        if (!testrun_utils_create_file(
+                       lib->config.script.test_acceptance,
+                       content,
+                       project_path,
+                       lib->config.path.tools))
+                goto error;
+
+        if (!testrun_utils_chmod(
+                        lib->config.script.test_acceptance,
+                        project_path,
+                        lib->config.path.tools,
+                        0751))
+                goto error;
+
+        free(content);
+        content = lib->tools.testrun_runner(
+                lib->config.project.name,
+                lib->config.script.test_runner);
+        if (!content)
+                return false;
+
+        if (!testrun_utils_create_file(
+                       lib->config.script.test_runner,
+                       content,
+                       project_path,
+                       lib->config.path.tools))
+                goto error;
+
+        if (!testrun_utils_chmod(
+                        lib->config.script.test_runner,
+                        project_path,
+                        lib->config.path.tools,
+                        0751))
+                goto error;
+
+        free(content);
+        content = lib->tools.testrun_loc(
+                lib->config.project.name,
+                lib->config.script.lines_of_code,
+                lib->config.path.include,
+                lib->config.path.source,
+                lib->config.path.tests);
+        if (!content)
+                return false;
+
+        if (!testrun_utils_create_file(
+                       lib->config.script.lines_of_code,
+                       content,
+                       project_path,
+                       lib->config.path.tools))
+                goto error;
+
+        if (!testrun_utils_chmod(
+                        lib->config.script.lines_of_code,
+                        project_path,
+                        lib->config.path.tools,
+                        0751))
+                goto error;
+
+        free(content);
+        content = lib->tools.testrun_simple_coverage(
+                lib->config.project.name,
+                lib->config.script.test_coverage,
+                lib->config.test_prefix,
+                lib->config.path.logfile,
+                lib->config.path.source,
+                lib->config.path.tests);
+        if (!content)
+                return false;
+
+        if (!testrun_utils_create_file(
+                       lib->config.script.test_coverage,
+                       content,
+                       project_path,
+                       lib->config.path.tools))
+                goto error;
+
+        if (!testrun_utils_chmod(
+                        lib->config.script.test_coverage,
+                        project_path,
+                        lib->config.path.tools,
+                        0751))
+                goto error;
+
+        free(content);
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/tests/%s", lib->config.path.build, TESTRUN_FOLDER_UNIT_TESTS);
+        memset(path2, 0, PATH_MAX);
+        snprintf(path2, PATH_MAX, "%s/%s", lib->config.path.tests, TESTRUN_FOLDER_UNIT_TESTS);
+        content = lib->tools.testrun_gcov(
+                lib->config.project.name,
+                lib->config.script.test_gcov,
+                lib->config.path.logfile,
+                path,
+                path2,
+                lib->config.test_suffix_exec,
+                lib->config.test_suffix_source);
+        if (!content)
+                return false;
+
+        if (!testrun_utils_create_file(
+                       lib->config.script.test_gcov,
+                       content,
+                       project_path,
+                       lib->config.path.tools))
+                goto error;
+
+        if (!testrun_utils_chmod(
+                        lib->config.script.test_gcov,
+                        project_path,
+                        lib->config.path.tools,
+                        0751))
+                goto error;
+
+        free(content);
+        content = lib->tools.testrun_gprof(
+                lib->config.project.name,
+                lib->config.script.test_gprof,
+                lib->config.path.logfile,
+                path,
+                lib->config.test_suffix_exec);
+        if (!content)
+                return false;
+
+        if (!testrun_utils_create_file(
+                       lib->config.script.test_gprof,
+                       content,
+                       project_path,
+                       lib->config.path.tools))
+                goto error;
+        free(content);
+
+        if (!testrun_utils_chmod(
+                        lib->config.script.test_gprof,
+                        project_path,
+                        lib->config.path.tools,
+                        0751))
+                goto error;
+
+        return true;
+
+error:
+        if (content)
+                free(content);
+        return false;
+
+}
 
 /*----------------------------------------------------------------------------*/
 
@@ -792,6 +1028,9 @@ bool testrun_lib_create_project_files(const testrun_lib *lib){
                 return false;
 
         if (!testrun_lib_create_copyright(path, lib))
+                return false;
+
+        if (!testrun_lib_create_testrun_scripts(lib))
                 return false;
 
         if (lib->config.path.doxygen)
@@ -831,7 +1070,7 @@ bool testrun_lib_create_module_files(
                                 lib->config.copyright.owner,
                                 lib->config.copyright.note,
                                 TESTRUN_COPYRIGHT_SUFFIX,
-                                lib->config.indent.standard,
+                                lib->config.indent.c,
                                 true,
                                 lib->config.copyright.gpl_parameter);
 

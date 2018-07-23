@@ -36,7 +36,10 @@ int testrun_app_run(int argc, char *argv[]){
 
         size_t size = 1000;
         char buffer[size];
-        bzero(buffer, size);
+        memset(buffer, 0, size);
+
+        char path[PATH_MAX];
+        memset(path, 0, PATH_MAX);
 
         if (argc < 2)
                 goto error;
@@ -55,6 +58,16 @@ int testrun_app_run(int argc, char *argv[]){
 
         if (!success)
                 goto error;
+
+        // adapt parameter of "NON CONFIGURED" items
+
+        if (!lib.config.project.path) {
+
+                if (!getcwd(path, PATH_MAX))
+                        goto error;
+
+                lib.config.project.path = path;
+        }
 
         if (!lib.config.copyright.author){
 

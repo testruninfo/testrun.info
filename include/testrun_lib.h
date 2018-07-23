@@ -95,5 +95,14 @@ bool testrun_lib_create_project(const testrun_lib *lib);
 */
 bool testrun_lib_create_module(const testrun_lib *lib, const char *module_name);
 
+/*----------------------------------------------------------------------------*/
+
+/**
+        Create all tool scripts and testrun.h under the path configured for tools.
+
+        @param lib     pointer to lib implementation
+*/
+bool testrun_lib_create_testrun_scripts(const testrun_lib *lib);
+
 #endif /* testrun_lib_h */
 

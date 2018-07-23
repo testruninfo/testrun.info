@@ -62,7 +62,8 @@ struct testrun_tools {
                                                  const char *file_name,
                                                  const char *runner_script,
                                                  const char *path_logfile, 
-                                                 const char *path_tests);
+                                                 const char *path_tests,
+                                                 const char *path_tools);
 
         char *(*testrun_runner)                 (const char *project,
                                                  const char *file_name);
@@ -110,6 +111,7 @@ struct testrun_tools {
                                                  const char *path_include,
                                                  const char *path_source,
                                                  const char *path_tests,
+                                                 const char *path_tools,
                                                  const char *path_doxygen,
                                                  const char *suffix_test_source,
                                                  const char *suffix_test_exec,

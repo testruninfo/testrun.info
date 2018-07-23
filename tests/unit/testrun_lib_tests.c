@@ -491,12 +491,13 @@ int test_testrun_lib_create_makefiles(){
         "\n"
         "# ----- TEST_SCRIPTS -------------------------------------------------------\n"
         "\n"
-        "TEST_SCRIPT_UNIT\t\t= %s\n"
-        "TEST_SCRIPT_ACCEPTANCE\t= %s\n"
-        "TEST_SCRIPT_COVERAGE\t= %s\n"
-        "TEST_SCRIPT_LOC\t\t\t= %s\n"
-        "TEST_SCRIPT_GCOV\t\t= %s\n"
-        "TEST_SCRIPT_GPROF\t\t= %s\n"
+        "TEST_TOOLS_FOLDER\t\t=%s\n"
+        "TEST_SCRIPT_UNIT\t\t= $(TEST_TOOLS_FOLDER)/%s\n"
+        "TEST_SCRIPT_ACCEPTANCE\t= $(TEST_TOOLS_FOLDER)/%s\n"
+        "TEST_SCRIPT_COVERAGE\t=$(TEST_TOOLS_FOLDER)/%s\n"
+        "TEST_SCRIPT_LOC\t\t\t= $(TEST_TOOLS_FOLDER)/%s\n"
+        "TEST_SCRIPT_GCOV\t\t= $(TEST_TOOLS_FOLDER)/%s\n"
+        "TEST_SCRIPT_GPROF\t\t= $(TEST_TOOLS_FOLDER)/%s\n"
         "\n"
         "# ----- DEFAULT MAKE RULES -------------------------------------------------\n"
         "\n"
@@ -730,6 +731,7 @@ int test_testrun_lib_create_makefiles(){
                 lib.config.path.tests,
                 lib.config.path.build,
                 lib.config.test_suffix_exec,
+                lib.config.path.tools,
                 lib.config.script.test_unit,
                 lib.config.script.test_acceptance,
                 lib.config.script.test_coverage,
@@ -1334,12 +1336,40 @@ int test_testrun_lib_create_copyright(){
         testrun(file != NULL);
         fclose(file);
         
-         snprintf(filename, PATH_MAX, "%s/%s/%s", 
+        snprintf(filename, PATH_MAX, "%s/%s/%s", 
                 root_path, lib.config.path.copyright, TESTRUN_FILE_COPYRIGHT);
 
         file = fopen(filename, "r");
         testrun(file != NULL);
         fclose(file);
+
+        struct testrun_copyright_gpl_v3_parameter parameter = { 
+                .type = GENERAL,
+                .program_name = lib.config.project.name
+        };
+
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+
+        // check with GPL
+        lib.config.copyright.copyright     = testrun_copyright_gpl_version_3();
+        lib.config.copyright.gpl_parameter = &parameter;
+
+        testrun(testrun_lib_create_copyright(root_path, &lib));
+
+        snprintf(filename, PATH_MAX, "%s/%s/%s", 
+                root_path, lib.config.path.copyright, TESTRUN_FILE_COPYRIGHT_FULL);
+
+        file = fopen(filename, "r");
+        testrun(file != NULL);
+        fclose(file);
+        
+        snprintf(filename, PATH_MAX, "%s/%s/%s", 
+                root_path, lib.config.path.copyright, TESTRUN_FILE_COPYRIGHT);
+
+        file = fopen(filename, "r");
+        testrun(file != NULL);
+        fclose(file);
+
 
         testrun(system("rm -rf /tmp/test_folder") == 0);
         return testrun_log_success();
@@ -1911,6 +1941,129 @@ int test_testrun_lib_create_c_unit_test(){
 
         free(copyright);
         free(content);
+
+        testrun(system("rm -rf /tmp/test_folder") == 0);
+        return testrun_log_success();
+}
+
+/*----------------------------------------------------------------------------*/
+
+int test_testrun_lib_create_testrun_scripts(){
+
+        char *root_path = "/tmp/test_folder/not_existing";
+        struct testrun_lib lib = testrun_lib_default();
+
+        char project_root[PATH_MAX];
+        memset(project_root, 0, PATH_MAX);
+
+        DIR *dp;
+        FILE *file = NULL;
+
+        size_t size = 0;
+
+        char path[PATH_MAX];
+        memset(path, 0, PATH_MAX);
+
+        testrun(!testrun_lib_create_testrun_scripts(NULL));
+
+        // check root not existing
+        dp = opendir(root_path);
+        testrun(!dp);
+
+        // no name, no path
+        testrun(!testrun_lib_create_testrun_scripts(&lib));
+
+        lib.config.project.name = "xyz";
+        lib.config.project.path = root_path;
+        testrun(testrun_utils_generate_project_root_path(&lib.config, project_root, PATH_MAX));
+
+        testrun(testrun_lib_create_testrun_scripts(&lib));
+
+        dp = opendir(root_path);
+        testrun(dp);
+        (void) closedir (dp);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s", project_root, lib.config.path.tools, TESTRUN_TESTRUN_HEADER);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s", project_root, lib.config.path.tools, TESTRUN_TESTRUN_HEADER_OPENMP);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s", project_root, lib.config.path.tools, lib.config.script.test_unit);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s", project_root, lib.config.path.tools, lib.config.script.test_acceptance);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s", project_root, lib.config.path.tools, lib.config.script.test_runner);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s", project_root, lib.config.path.tools, lib.config.script.lines_of_code);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s", project_root, lib.config.path.tools, lib.config.script.test_coverage);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s", project_root, lib.config.path.tools, lib.config.script.test_gcov);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
+        memset(path, 0, PATH_MAX);
+        snprintf(path, PATH_MAX, "%s/%s/%s", project_root, lib.config.path.tools, lib.config.script.test_gprof);
+        file = fopen(path, "r");
+        testrun(file);
+        fseek(file, 0, SEEK_END);
+        size = ftell(file);
+        testrun(size > 0);
+        fclose(file);
+
 
         testrun(system("rm -rf /tmp/test_folder") == 0);
         return testrun_log_success();
@@ -2528,6 +2681,8 @@ int all_tests() {
         testrun_test(test_testrun_lib_create_c_header);
         testrun_test(test_testrun_lib_create_c_source);
         testrun_test(test_testrun_lib_create_c_unit_test);
+
+        testrun_test(test_testrun_lib_create_testrun_scripts);
 
         testrun_test(test_testrun_lib_create_project_files);
         testrun_test(test_testrun_lib_create_module_files);

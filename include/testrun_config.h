@@ -50,6 +50,7 @@
 #define TESTRUN_FOLDER_SERVICE          "config"
 #define TESTRUN_FOLDER_DOXYGEN          "doxygen"
 #define TESTRUN_FOLDER_RESOURCES        "resources"
+#define TESTRUN_FOLDER_LOGFILES         "build/tests/log"
 
 #define TESTRUN_FOLDER_UNIT_TESTS       "unit"
 #define TESTRUN_FOLDER_ACCEPTANCE_TESTS "acceptance"
@@ -89,6 +90,9 @@
 #define TESTRUN_DEFAULT_INSTALL_PATH    "/usr/local/bin"
 #define TESTRUN_DEFAULT_TESTS_TO_ROOT   "../../"
 #define TESTRUN_DEFAULT_TO_ROOT         "../"
+
+#define TESTRUN_TESTRUN_HEADER         "testrun.h"
+#define TESTRUN_TESTRUN_HEADER_OPENMP  "testrun_openmp.h"
 
 #define TESTRUN_DEFAULT_INDENT          4
 #define TESTRUN_DEFAULT_C_INDENT        8
@@ -173,6 +177,7 @@ struct testrun_path_config {
         char *tools;            // relative path project to test tool scripts
         char *service;          // relative path project to service files
         char *doxygen;          // relative path project to doxygen files
+        char *logfile;          // relative path project to test logfiles files
 
         char *source_to_root;           // relative up source to root
         char *include_to_root;          // relative up include to root

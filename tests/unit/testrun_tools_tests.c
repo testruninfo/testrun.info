@@ -91,6 +91,7 @@ int test_testrun_generate_script_simple_tests(){
         char *runner       = "runner.sh";
         char *path_logfile = "some/path";
         char *path_tests   = "tests/path";
+        char *path_tools   = "tests/tools";
         
         char *result       = NULL;
 
@@ -103,6 +104,7 @@ int test_testrun_generate_script_simple_tests(){
                 NULL,
                 NULL, 
                 NULL, 
+                NULL,
                 NULL));
 
         testrun(!testrun_generate_script_simple_tests(
@@ -111,7 +113,8 @@ int test_testrun_generate_script_simple_tests(){
                 file_name,
                 runner, 
                 path_logfile, 
-                path_tests));
+                path_tests,
+                path_tools));
 
         testrun(!testrun_generate_script_simple_tests(
                 NULL, 
@@ -119,7 +122,8 @@ int test_testrun_generate_script_simple_tests(){
                 file_name,
                 runner, 
                 path_logfile, 
-                path_tests));
+                path_tests,
+                path_tools));
 
 
         testrun(!testrun_generate_script_simple_tests(
@@ -128,7 +132,8 @@ int test_testrun_generate_script_simple_tests(){
                 NULL,
                 runner, 
                 path_logfile, 
-                path_tests));
+                path_tests,
+                path_tools));
 
         testrun(!testrun_generate_script_simple_tests(
                 type, 
@@ -136,7 +141,8 @@ int test_testrun_generate_script_simple_tests(){
                 file_name,
                 NULL, 
                 path_logfile, 
-                path_tests));
+                path_tests,
+                path_tools));
 
         testrun(!testrun_generate_script_simple_tests(
                 type, 
@@ -144,7 +150,8 @@ int test_testrun_generate_script_simple_tests(){
                 file_name,
                 runner, 
                 NULL, 
-                path_tests));
+                path_tests,
+                path_tools));
 
         testrun(!testrun_generate_script_simple_tests(
                 type, 
@@ -152,6 +159,16 @@ int test_testrun_generate_script_simple_tests(){
                 file_name,
                 runner, 
                 path_logfile, 
+                NULL,
+                path_tools));
+
+        testrun(!testrun_generate_script_simple_tests(
+                type, 
+                project,
+                file_name,
+                runner, 
+                path_logfile, 
+                path_tests,
                 NULL));
 
         result = testrun_generate_script_simple_tests(
@@ -160,7 +177,8 @@ int test_testrun_generate_script_simple_tests(){
                 file_name,
                 runner, 
                 path_logfile, 
-                path_tests);
+                path_tests,
+                path_tools);
         
         testrun(result);
 
@@ -192,7 +210,7 @@ int test_testrun_generate_script_simple_tests(){
         "TEST_TYPE=\"%s\"\n"
         "FOLDER_LOGFILE=\"%s\"\n"
         "FOLDER_TESTS=\"%s\"\n"
-        "RUNNER_SCRIPT=\"%s\"\n"
+        "RUNNER_SCRIPT=\"./%s/%s\"\n"
         "\n"
         "echo \"-------------------------------------------------------\"\n"
         "echo \"               SIMPLE $TEST_TYPE TESTING\"\n"
@@ -246,6 +264,7 @@ int test_testrun_generate_script_simple_tests(){
                 type,
                 path_logfile,
                 path_tests,
+                path_tools,
                 runner
                 ));
 
@@ -257,9 +276,10 @@ int test_testrun_generate_script_simple_tests(){
         type         = "UNIT";
         project      = "testrun_simple_unit_tests.sh";
         file_name    = "testrun_simple_unit_tests.sh";
-        runner       = "./tests/tools/testrun_runner.sh";
+        runner       = "testrun_runner.sh";
         path_logfile = "build/tests/log/";
         path_tests   = "build/tests/unit";
+        path_tools   = "tests/tools";
 
         result = testrun_generate_script_simple_tests(
                 type, 
@@ -267,7 +287,8 @@ int test_testrun_generate_script_simple_tests(){
                 file_name,
                 runner, 
                 path_logfile, 
-                path_tests);
+                path_tests,
+                path_tools);
         
         testrun(result);
 
@@ -386,7 +407,8 @@ int test_testrun_generate_script_simple_tests(){
                 file_name,
                 runner, 
                 path_logfile, 
-                path_tests);
+                path_tests,
+                path_tools);
         
         testrun(result);
         //testrun_log("%s", result);
@@ -405,7 +427,8 @@ int test_testrun_generate_script_simple_tests(){
                 file_name,
                 runner, 
                 path_logfile, 
-                path_tests);
+                path_tests,
+                path_tools);
         
         testrun(result);
         //testrun_log("%s", result);
@@ -1281,6 +1304,7 @@ int test_testrun_generate_makefile_common(){
         char *path_include       = "path_include";
         char *path_source        = "path_source";
         char *path_tests         = "path_tests";
+        char *path_tools         = "path_tools";
         char *path_doxygen       = "doxygen_docu";
         char *suffix_test_source = "suffix_test_source";
         char *suffix_test_exec   = "suffix_test_exec";
@@ -1302,6 +1326,7 @@ int test_testrun_generate_makefile_common(){
                 path_include,
                 path_source,
                 path_tests,
+                path_tools,
                 path_doxygen,
                 suffix_test_source,
                 suffix_test_exec,
@@ -1435,12 +1460,13 @@ int test_testrun_generate_makefile_common(){
         "\n"
         "# ----- TEST_SCRIPTS -------------------------------------------------------\n"
         "\n"
-        "TEST_SCRIPT_UNIT\t\t= %s\n"
-        "TEST_SCRIPT_ACCEPTANCE\t= %s\n"
-        "TEST_SCRIPT_COVERAGE\t= %s\n"
-        "TEST_SCRIPT_LOC\t\t\t= %s\n"
-        "TEST_SCRIPT_GCOV\t\t= %s\n"
-        "TEST_SCRIPT_GPROF\t\t= %s\n"
+        "TEST_TOOLS_FOLDER\t\t=%s\n"
+        "TEST_SCRIPT_UNIT\t\t= $(TEST_TOOLS_FOLDER)/%s\n"
+        "TEST_SCRIPT_ACCEPTANCE\t= $(TEST_TOOLS_FOLDER)/%s\n"
+        "TEST_SCRIPT_COVERAGE\t=$(TEST_TOOLS_FOLDER)/%s\n"
+        "TEST_SCRIPT_LOC\t\t\t= $(TEST_TOOLS_FOLDER)/%s\n"
+        "TEST_SCRIPT_GCOV\t\t= $(TEST_TOOLS_FOLDER)/%s\n"
+        "TEST_SCRIPT_GPROF\t\t= $(TEST_TOOLS_FOLDER)/%s\n"
         "\n"
         "# ----- DEFAULT MAKE RULES -------------------------------------------------\n"
         "\n"
@@ -1675,6 +1701,7 @@ int test_testrun_generate_makefile_common(){
                 path_tests,
                 path_build,
                 suffix_test_exec,
+                path_tools,
                 script_unit,
                 script_acceptance,
                 script_coverage,
@@ -1729,6 +1756,7 @@ int test_testrun_generate_makefile_common(){
         path_include       = "include";
         path_source        = "src";
         path_tests         = "tests";
+        path_tools         = "tests/tools";
         path_doxygen       = "doxygen";
         suffix_test_source = "_tests";
         suffix_test_exec   = ".test";
@@ -1747,6 +1775,7 @@ int test_testrun_generate_makefile_common(){
                 path_include,
                 path_source,
                 path_tests,
+                path_tools,
                 path_doxygen,
                 suffix_test_source,
                 suffix_test_exec,

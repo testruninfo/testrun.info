@@ -115,6 +115,7 @@ struct testrun_config testrun_config_default(){
                 .path.tools             = TESTRUN_FOLDER_TOOLS,
                 .path.service           = TESTRUN_FOLDER_SERVICE,
                 .path.doxygen           = TESTRUN_FOLDER_DOXYGEN,
+                .path.logfile           = TESTRUN_FOLDER_LOGFILES,
 
                 .path.source_to_root    = TESTRUN_DEFAULT_TO_ROOT,
                 .path.include_to_root   = TESTRUN_DEFAULT_TO_ROOT,
@@ -421,17 +422,14 @@ testrun_config testrun_config_read_user_input(
 
         if (flag_gpl != 0) {
 
-                char *program_name = config.project.name;
-                if (!program_name)
-                        program_name = TESTRUN_TAG_NAME;
 
-                struct testrun_copyright_gpl_v3_parameter parameter = {
-                        .type = GENERAL,
-                        .program_name = program_name
-                };
 
+                struct testrun_copyright_gpl_v3_parameter *parameter = calloc(1, sizeof(struct testrun_copyright_gpl_v3_parameter));
+
+                parameter->type                 = GENERAL;
+                parameter->program_name         = config.project.name;
                 config.copyright.copyright      = testrun_copyright_gpl_version_3();
-                config.copyright.gpl_parameter  = &parameter;
+                config.copyright.gpl_parameter  = parameter;
 
         }  else if (flag_bsd3 != 0) {
 

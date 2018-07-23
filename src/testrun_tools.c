@@ -1675,7 +1675,8 @@ char *testrun_generate_script_simple_tests(
         const char *file_name,
         const char *runner_script,
         const char *path_logfile,
-        const char *path_tests
+        const char *path_tests,
+        const char *path_tools
         ){
 
         if (    !type           ||
@@ -1683,7 +1684,8 @@ char *testrun_generate_script_simple_tests(
                 !file_name      || 
                 !runner_script  || 
                 !path_logfile   || 
-                !path_tests)
+                !path_tests     ||
+                !path_tools)
                 return NULL;
 
         size_t size = 5000;
@@ -1717,7 +1719,7 @@ char *testrun_generate_script_simple_tests(
         "TEST_TYPE=\"%s\"\n"
         "FOLDER_LOGFILE=\"%s\"\n"
         "FOLDER_TESTS=\"%s\"\n"
-        "RUNNER_SCRIPT=\"%s\"\n"
+        "RUNNER_SCRIPT=\"./%s/%s\"\n"
         "\n"
         "echo \"-------------------------------------------------------\"\n"
         "echo \"               SIMPLE $TEST_TYPE TESTING\"\n"
@@ -1771,6 +1773,7 @@ char *testrun_generate_script_simple_tests(
                 type,
                 path_logfile,
                 path_tests,
+                path_tools,
                 runner_script
                 ))
                 return NULL;
@@ -2307,6 +2310,7 @@ char *testrun_generate_makefile_common(
         const char *path_include,
         const char *path_source,
         const char *path_tests,
+        const char *path_tools,
         const char *path_doxygen,
         const char *suffix_test_source,
         const char *suffix_test_exec,
@@ -2488,12 +2492,13 @@ char *testrun_generate_makefile_common(
         "\n"
         "# ----- TEST_SCRIPTS -------------------------------------------------------\n"
         "\n"
-        "TEST_SCRIPT_UNIT\t\t= %s\n"
-        "TEST_SCRIPT_ACCEPTANCE\t= %s\n"
-        "TEST_SCRIPT_COVERAGE\t= %s\n"
-        "TEST_SCRIPT_LOC\t\t\t= %s\n"
-        "TEST_SCRIPT_GCOV\t\t= %s\n"
-        "TEST_SCRIPT_GPROF\t\t= %s\n"
+        "TEST_TOOLS_FOLDER\t\t=%s\n"
+        "TEST_SCRIPT_UNIT\t\t= $(TEST_TOOLS_FOLDER)/%s\n"
+        "TEST_SCRIPT_ACCEPTANCE\t= $(TEST_TOOLS_FOLDER)/%s\n"
+        "TEST_SCRIPT_COVERAGE\t=$(TEST_TOOLS_FOLDER)/%s\n"
+        "TEST_SCRIPT_LOC\t\t\t= $(TEST_TOOLS_FOLDER)/%s\n"
+        "TEST_SCRIPT_GCOV\t\t= $(TEST_TOOLS_FOLDER)/%s\n"
+        "TEST_SCRIPT_GPROF\t\t= $(TEST_TOOLS_FOLDER)/%s\n"
         "\n"
         "# ----- DEFAULT MAKE RULES -------------------------------------------------\n"
         "\n"
@@ -2728,6 +2733,7 @@ char *testrun_generate_makefile_common(
                 path_tests,
                 path_build,
                 suffix_test_exec,
+                path_tools,
                 script_unit_tests,
                 script_acceptance_tests,
                 script_coverage_tests,
