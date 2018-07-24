@@ -984,7 +984,7 @@ int test_testrun_lib_create_readme(){
                                 lib.config.copyright.note,
                                 NULL,
                                 lib.config.indent.standard,
-                                false,
+                                true,
                                 lib.config.copyright.gpl_parameter);
 
         testrun(snprintf(expect, size, 
@@ -1126,6 +1126,7 @@ int test_testrun_lib_create_readme(){
         lib.config.project.name,
         copyright));
 
+        //log("\n\n%s\n|\n%s\n\n", content, expect);
         testrun(0 == strncmp(content, expect, strlen(expect)));
         free(content);
         free(copyright);
@@ -1309,7 +1310,7 @@ int test_testrun_lib_create_copyright(){
                                 lib.config.copyright.note,
                                 NULL,
                                 lib.config.indent.standard,
-                                false,
+                                true,
                                 lib.config.copyright.gpl_parameter);
 
         testrun(0 == strncmp(content, copyright, strlen(copyright)));

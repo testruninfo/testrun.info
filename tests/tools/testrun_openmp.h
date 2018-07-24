@@ -946,4 +946,4 @@ static inline int64_t testrun_run_tests(
 
 **/
 
-#endif /* testrun2_h */
+#endif /* testrun_openmp_h */

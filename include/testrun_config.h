@@ -126,7 +126,7 @@ typedef struct testrun_config testrun_config;
 #include <unistd.h>
 #include <libgen.h>
 
-#define TESTRUN_APP_VERSION "1.0.0"
+#define TESTRUN_APP_VERSION "1.1.0"
 
 #define testrun_config_print_version() \
         fprintf(stdout, "version: %s\n", TESTRUN_APP_VERSION);

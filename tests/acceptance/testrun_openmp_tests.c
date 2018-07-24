@@ -20,19 +20,19 @@
         ------------------------------------------------------------------------
 *//**
 
-        @file           testrun2_tests.c
+        @file           testrun_openmp_tests.c
         @author         Markus Toepfer
         @date           2017-11-21
 
         @ingroup        testrun_lib
 
-        @brief          Testing of the testrun2.h header
+        @brief          Testing of the testrun_openmp.h header
 
         ------------------------------------------------------------------------
 */
 
 
-#include "../tools/testrun2.h"
+#include "../tools/testrun_openmp.h"
 #include "../../include/testrun_log.h"
 
 /*
