@@ -1061,6 +1061,8 @@ bool testrun_lib_create_module_files(
                 &lib->config, path, PATH_MAX))
                 return false;
 
+        fprintf(stdout, "\n\nPATH %s\n", path);
+
         char *time_string = testrun_time_string(TESTRUN_SCOPE_YEAR);
 
         char *copyright_string = lib->config.copyright.copyright.generate_header_string(
@@ -1119,10 +1121,10 @@ bool testrun_lib_create_project(const testrun_lib *lib){
                 lib->config.project.name);
 
         if (!lib->create_project_paths(lib))
-                return false;
+                goto error;
 
         if (!lib->create_project_files(lib))
-                return false;
+                goto error;
 
         return true;
 error:
@@ -1135,18 +1137,26 @@ error:
 bool testrun_lib_create_module(const testrun_lib *lib, const char* module_name){
 
         if (!testrun_lib_validate(lib))
-                return false;
+                goto error;
 
         testrun_lib copy = *lib;
         bool result = false;
 
         char *project_path = lib->search_project_path(lib->config.project.path);
-        if (!project_path)
-                return false;
+        if (!project_path){
+                log_error("Failed to identify a project root path from starting PATH %s", lib->config.project.path);
+                goto error;
+        }
 
+        copy.config.project.name = basename(project_path);
         copy.config.project.path = dirname(project_path);
+
         result = lib->create_module_files(&copy, module_name);
         free(project_path);
 
         return result;
+
+error:
+        log_error("Failed to create a new module.");
+        return false;
 }

@@ -41,6 +41,9 @@ int testrun_app_run(int argc, char *argv[]){
         char path[PATH_MAX];
         memset(path, 0, PATH_MAX);
 
+        if (argc == 1)
+                testrun_config_print_usage(TESTRUN_DEFAULT_NAME);
+
         if (argc < 2)
                 goto error;
 

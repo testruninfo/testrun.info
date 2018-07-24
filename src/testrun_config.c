@@ -142,7 +142,7 @@ struct testrun_config testrun_config_default(){
 
 /*----------------------------------------------------------------------------*/
 
-static void testrun_config_print_usage(const char *app_name){
+void testrun_config_print_usage(const char *app_name){
 
         fprintf(stdout, "\n");
         fprintf(stdout, "USAGE          %s [OPTIONS]... [TARGET_NAME]\n", app_name);

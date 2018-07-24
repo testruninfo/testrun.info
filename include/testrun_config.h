@@ -94,6 +94,7 @@
 #define TESTRUN_TESTRUN_HEADER         "testrun.h"
 #define TESTRUN_TESTRUN_HEADER_OPENMP  "testrun_openmp.h"
 
+#define TESTRUN_DEFAULT_NAME            "testrun.info"
 #define TESTRUN_DEFAULT_INDENT          4
 #define TESTRUN_DEFAULT_C_INDENT        8
 #define TESTRUN_DEFAULT_SHELL_INDENT    8
@@ -278,6 +279,13 @@ struct testrun_config testrun_config_default();
 struct testrun_config testrun_config_read_user_input(
         const char *app_name, bool *success, bool *project, int argc, char *argv[]);
 
+/*----------------------------------------------------------------------------*/
+
+/**
+        Print default usage, 
+        aligned to testrun_config_read_user_input.
+*/
+void testrun_config_print_usage(const char *app_name);
 
 #endif /* testrun_config_h */
 
