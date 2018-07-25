@@ -217,8 +217,8 @@ static bool testrun_lib_create_readme(
                 goto error;
 
         char *content = lib->tools.readme(
-                lib->config.project.name, 
-                lib->config.project.description, 
+                lib->config.project.name,
+                lib->config.project.description,
                 copyright);
 
         free(copyright);
@@ -294,8 +294,8 @@ static bool testrun_lib_create_doxygen(
         memset(input, 0, 1000);
 
         if (!snprintf(input, 1000, "%s %s %s %s",
-                TESTRUN_FILE_README, 
-                lib->config.path.include, 
+                TESTRUN_FILE_README,
+                lib->config.path.include,
                 lib->config.path.source,
                 lib->config.path.tests))
                 return false;
@@ -407,7 +407,7 @@ static bool testrun_lib_create_service(
         // create service file
 
         if (!snprintf(path, PATH_MAX, "%s/%s",
-                TESTRUN_DEFAULT_INSTALL_PATH, 
+                TESTRUN_DEFAULT_INSTALL_PATH,
                 lib->config.project.name))
                 return false;
 
@@ -458,7 +458,7 @@ static bool testrun_lib_create_service(
 
         // create service readme
 
-        content = 
+        content =
         "In case of service configuration the following files will be copied to the system:"
         "(1) Everything under ./etc will be copied as is to /etc/ during installation."
         "(2) *.service and *.socket will be copied to /etc/systemd/system during installation.";
@@ -537,8 +537,8 @@ static bool testrun_lib_create_c_documentation_header(
 /*----------------------------------------------------------------------------*/
 
 static bool testrun_lib_create_c_header(
-        const char* project_root_path, 
-        const testrun_lib *lib, 
+        const char* project_root_path,
+        const testrun_lib *lib,
         const char *copyright_header,
         const char *name){
 
@@ -562,7 +562,7 @@ static bool testrun_lib_create_c_header(
         if (!testrun_lib_create_c_documentation_header(documentation_header, 5000,
                 filename,
                 lib->config.copyright.author,
-                NULL, 
+                lib->config.project.name,
                 "Definition of "))
                 goto error;
 
@@ -589,7 +589,7 @@ static bool testrun_lib_create_c_header(
                 name))
                 goto error;
 
-        
+
 
         if (!testrun_utils_create_file(
                        filename,
@@ -606,8 +606,8 @@ error:
 /*----------------------------------------------------------------------------*/
 
 static bool testrun_lib_create_c_source(
-        const char* project_root_path, 
-        const testrun_lib *lib, 
+        const char* project_root_path,
+        const testrun_lib *lib,
         const char *copyright_header,
         const char *name){
 
@@ -630,7 +630,7 @@ static bool testrun_lib_create_c_source(
         if (!testrun_lib_create_c_documentation_header(documentation_header, 5000,
                 filename,
                 lib->config.copyright.author,
-                NULL, 
+                lib->config.project.name,
                 "Implementation of "))
                 goto error;
 
@@ -659,9 +659,9 @@ error:
 /*----------------------------------------------------------------------------*/
 
 static bool testrun_lib_create_c_unit_test(
-        const char* project_root_path, 
-        const testrun_lib *lib, 
-        const char *copyright_header, 
+        const char* project_root_path,
+        const testrun_lib *lib,
+        const char *copyright_header,
         const char *name){
 
         if (!project_root_path || !lib || !copyright_header || !name)
@@ -693,7 +693,7 @@ static bool testrun_lib_create_c_unit_test(
         if (!testrun_lib_create_c_documentation_header(documentation_header, 5000,
                 filename,
                 lib->config.copyright.author,
-                NULL, 
+                lib->config.project.name,
                 "Unit tests of "))
                 goto error;
 
@@ -747,7 +747,7 @@ static bool testrun_lib_create_c_unit_test(
                 lib->config.path.unit_tests_to_root,
                 lib->config.path.tools,
                 lib->config.path.unit_tests_to_root,
-                lib->config.path.source, 
+                lib->config.path.source,
                 name,
                 TESTRUN_SUFFIX_C_SOURCE
                 ))
@@ -1082,22 +1082,22 @@ bool testrun_lib_create_module_files(
                 goto error;
 
         if (!testrun_lib_create_c_header(
-                path, 
-                lib, 
+                path,
+                lib,
                 copyright_string,
                 module_name))
                 goto error;
 
         if (!testrun_lib_create_c_source(
-                path, 
-                lib, 
+                path,
+                lib,
                 copyright_string,
                 module_name))
                 goto error;
 
         if (!testrun_lib_create_c_unit_test(
-                path, 
-                lib, 
+                path,
+                lib,
                 copyright_string,
                 module_name))
                 goto error;

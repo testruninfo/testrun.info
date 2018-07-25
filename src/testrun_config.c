@@ -80,7 +80,7 @@ bool testrun_config_validate(const struct testrun_config *config){
                 return false;
 
         return true;
-}       
+}
 
 /*----------------------------------------------------------------------------*/
 
@@ -132,7 +132,7 @@ struct testrun_config testrun_config_default(){
                 .makefile.configurable  = TESTRUN_MAKEFILE,
                 .makefile.common        = TESTRUN_MAKEFILE_COMMON,
                 .makefile.target        = LIB
-        
+
         };
 
         config.copyright.copyright = testrun_copyright_reserved();
@@ -192,10 +192,10 @@ testrun_config testrun_config_read_user_input(
         const char *app_name, bool *success, bool *project, int argc, char *argv[]){
 
         /*
-         *      NOTE This user input reader is limited and will use the 
-         *      default config and add some configurable items. 
+         *      NOTE This user input reader is limited and will use the
+         *      default config and add some configurable items.
          *
-         *      It is a base implementation example. 
+         *      It is a base implementation example.
          */
 
         testrun_config config = testrun_config_default();
@@ -273,7 +273,7 @@ testrun_config testrun_config_read_user_input(
 
                 /* getopt_long stores the option index here. */
 
-                c = getopt_long (argc, argv, "?hvpnouxw:d:abgmr",
+                c = getopt_long (argc, argv, "n:o:u:x:w:n:d:?hpabgmr",
                                  long_options, &option_index);
 
                 /* Detect the end of the options. */
@@ -292,14 +292,18 @@ testrun_config testrun_config_read_user_input(
                                 printf ("\n");
                                 break;
 
-                        case 'p':
-                                flag_project = 1;
+                        case 'h':
+                                testrun_config_print_usage(app_name);
+                                goto error;
                                 break;
 
-                        case 'h':
                         case '?':
                                 testrun_config_print_usage(app_name);
                                 goto error;
+                                break;
+
+                        case 'p':
+                                flag_project = 1;
                                 break;
 
                         case 'n':
@@ -446,7 +450,7 @@ testrun_config testrun_config_read_user_input(
         } else {
 
                 config.copyright.copyright = testrun_copyright_apache_version_2();
-               
+
         }
 
         if (flag_project == 1)
