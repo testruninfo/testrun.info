@@ -77,8 +77,6 @@ PROJECT_DESC	= "A small library to build testrunner frameworks."
 
 # SERVICE_CONFIG_DATA (used during SERVICE install)
 SERVICE_DATA	= "config/install"
-SERVICE_START	= "$(SERVICE_DATA)/start.sh"
-SERVICE_STOP	= "$(SERVICE_DATA)/stop.sh"
 
 # TMP FILE DEFINITION
 TESTS_TMP_FILES	= $(wildcard /tmp/test_*)

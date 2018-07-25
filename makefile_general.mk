@@ -332,22 +332,49 @@ uninstall_exec:
 
 # Installation as a service ------------------------------------------------
 .PHONY: install_service
-install_service: $(EXECUTABLE)
+install_service: copy_service_files enable_service
 	@echo " (OK)    installed $(DIRNAME) to $(EXECDIR)"
+
+.PHONY: copy_service_files
+copy_service_files: $(EXECUTABLE) 
+	@echo " (OK)    copied service files"
 	@mkdir -p $(SOCKDIR)
 	@$(INSTALL) -m 0755 bin/$(DIRNAME)  $(EXECDIR)
 	@$(INSTALL) -m 0755 -d $(SERVICE_DATA)/etc   $(CONFDIR)
-	@$(INSTALL) -m 0755 $(SERVICE_DATA)/*.service $(SOCKDIR)
-	@$(INSTALL) -m 0755 $(SERVICE_DATA)/*.socket $(SOCKDIR)
+	@$(INSTALL) -m 0644 $(SERVICE_DATA)/*.service $(SOCKDIR)
+	@$(INSTALL) -m 0644 $(SERVICE_DATA)/*.socket $(SOCKDIR)
+
+.PHONY: enable_service
+enable_service:
 	@# IF INSTALLATION IS DONE UNPREFIXED TO /etc, the service will be enabled 
-	$(shell if [ -z "$(PREFIX)" ]; then $(SERVICE_START); fi)
+	@ifndef ($(PREFIX)) \
+		@echo " (OK)    enable service" \
+		$(shell systemctl enable $(DIRNAME).socket) \
+		$(shell systemctl start $(DIRNAME).socket) \
+		$(shell systemctl enable $(DIRNAME).service) \
+		$(shell systemctl start $(DIRNAME).service) \
+		$(shell systemctl daemon-reload) \
+	@endif
 
-
-.PHONY: uninstall_service
-uninstall_service:
-	@echo " (OK)    uninstalled $(DIRNAME) from $(EXECDIR)"
+.PHONY: delete_service_files
+delete_service_files: 
+	@echo " (OK)    delete service files"
 	@rm -rf $(EXECDIR)/$(DIRNAME)
 	@rm -rf $(CONFDIR)
 	@rm -rf $(SOCKDIR)/$(DIRNAME)*
+
+.PHONY: disable_service
+disable_service:
 	@# IF INSTALLATION WAS DONE UNPREFIXED TO /etc, the service will be disabled 
-	$(shell if [ -z "$(PREFIX)" ]; then $(SERVICE_STOP); fi)
+	@ifndef ($(PREFIX)) \
+		@echo " (OK)    disable service" \
+		$(shell systemctl stop  $(DIRNAME).service) \
+		$(shell systemctl disable $(DIRNAME).service) \
+		$(shell systemctl stop $(DIRNAME).socket) \
+		$(shell systemctl disable $(DIRNAME).socket) \
+		$(shell systemctl daemon-reload) \
+	@endif
+
+.PHONY: uninstall_service
+uninstall_service: disable_service delete_service_files
+	@echo " (OK)    uninstalled $(DIRNAME) from $(EXECDIR)"
