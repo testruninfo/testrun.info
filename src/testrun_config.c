@@ -426,8 +426,6 @@ testrun_config testrun_config_read_user_input(
 
         if (flag_gpl != 0) {
 
-
-
                 struct testrun_copyright_gpl_v3_parameter *parameter = calloc(1, sizeof(struct testrun_copyright_gpl_v3_parameter));
 
                 parameter->type                 = GENERAL;

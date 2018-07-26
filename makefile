@@ -73,10 +73,10 @@ MODCFLAGS		+= -g
 
 # PKG_CONFIG_DATA (used during LIBRARY install)
 PROJECT_URL		= "http://testrun.info"
-PROJECT_DESC	= "A small library to build testrunner frameworks."
+PROJECT_DESC		= "A small library to build testrunner frameworks."
 
-# SERVICE_CONFIG_DATA (used during SERVICE install)
-SERVICE_DATA	= "config/install"
+# SERVICE_CONFIG_DATA
+SERVICE_DATA		= "config"
 
 # TMP FILE DEFINITION
 TESTS_TMP_FILES	= $(wildcard /tmp/test_*)

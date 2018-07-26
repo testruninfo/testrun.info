@@ -74,7 +74,7 @@ bool helper_read_git_user_name(char *buffer, size_t size){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_utils_insert_at_each_line(){
-        
+
         char *result = NULL;
         char *expect = NULL;
         char *text   = NULL;
@@ -462,7 +462,7 @@ int test_testrun_utils_create_project_paths() {
 
         dp = opendir("/tmp/test_folder");
         testrun(!dp);
-   
+
         testrun(testrun_utils_create_project_paths(&config));
         dp = opendir("/tmp/test_folder");
         testrun(dp);
@@ -555,7 +555,7 @@ int test_testrun_utils_create_file() {
 
         FILE *file;
 
-        testrun(snprintf(path, PATH_MAX, "%s/%s/%s", 
+        testrun(snprintf(path, PATH_MAX, "%s/%s/%s",
                 project_path, relative_path, name));
 
         // ensure file is not set
@@ -586,7 +586,7 @@ int test_testrun_utils_create_file() {
         // check without relative path
         bzero(path, PATH_MAX);
 
-        testrun(snprintf(path, PATH_MAX, "%s/%s", 
+        testrun(snprintf(path, PATH_MAX, "%s/%s",
                 project_path, name));
 
         testrun( -1 == access(path, F_OK));
@@ -607,7 +607,7 @@ int test_testrun_utils_create_file() {
         relative_path     = "x/y/z";
 
         bzero(path, PATH_MAX);
-        testrun(snprintf(path, PATH_MAX, "%s/%s/%s", 
+        testrun(snprintf(path, PATH_MAX, "%s/%s/%s",
                 project_path, relative_path, name));
 
         testrun(testrun_utils_create_file(
@@ -632,7 +632,7 @@ int test_testrun_utils_chmod() {
 
         struct stat stats;
 
-        testrun(snprintf(path, PATH_MAX, "%s/%s/%s", 
+        testrun(snprintf(path, PATH_MAX, "%s/%s/%s",
                 project_path, relative_path, name));
 
         testrun( -1 == access(path, F_OK));
@@ -735,7 +735,7 @@ int all_tests() {
         testrun_test(test_testrun_utils_get_git_author);
         testrun_test(test_testrun_utils_create_file);
         testrun_test(test_testrun_utils_chmod);
-        
+
         return testrun_counter;
 }
 

@@ -23,20 +23,20 @@
 
         @ingroup        testrun_lib
 
-        @brief          Definition of the testrun tools enabled within the 
+        @brief          Definition of the testrun tools enabled within the
                         library.
 
                         which are:
 
                                 (1) testrun.h     C HEADER FILE
                                 (2) testrun*.sh   BASH based FILE RUNNER
-                                (3) makefile*     testrun standard makefiles 
+                                (3) makefile*     testrun standard makefiles
 
                         All functions MUST return an allocated string, which
-                        may be written "AS IS" to a file. 
+                        may be written "AS IS" to a file.
 
-                        In addition to the basic tools, content of some general 
-                        files of a standard project MUST be generated using the 
+                        In addition to the basic tools, content of some general
+                        files of a standard project MUST be generated using the
                         toolset. (e.g. README, gitignore, doxygen.conf)
 
         ------------------------------------------------------------------------
@@ -61,7 +61,7 @@ struct testrun_tools {
                                                  const char *project,
                                                  const char *file_name,
                                                  const char *runner_script,
-                                                 const char *path_logfile, 
+                                                 const char *path_logfile,
                                                  const char *path_tests,
                                                  const char *path_tools);
 
@@ -155,7 +155,7 @@ testrun_tools testrun_tools_default();
 /*----------------------------------------------------------------------------*/
 
 /**
-        Validate that all function pointers, 
+        Validate that all function pointers,
         are set.
 
         @param lib     pointer to lib implementation

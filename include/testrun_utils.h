@@ -23,8 +23,8 @@
 
         @ingroup        testrun_lib
 
-        @brief          Definition of supporting utilities for testrun_lib 
-                        development. 
+        @brief          Definition of supporting utilities for testrun_lib
+                        development.
 
         ------------------------------------------------------------------------
 */
@@ -51,14 +51,14 @@
 #include "testrun_log.h"
 
 /**
-        Create an allocated string with the content of text, 
+        Create an allocated string with the content of text,
         where each line of text is prefixed and suffixed with
         optional strings e.g. indentitation.
 
-        @NOTE   if the content of the line is 0, 
+        @NOTE   if the content of the line is 0,
                 prefix and suffix will not be added.
                 e.g. \n\n will become \n\n
-        
+
         @param text     source text
         @param intro    (optional) intro to be added
         @param outro    (optional) outro to be added
@@ -83,8 +83,8 @@ bool testrun_utils_generate_project_root_path(
 /*----------------------------------------------------------------------------*/
 
 /**
-        Default function to search a project top level path, 
-        using the default config. 
+        Default function to search a project top level path,
+        using the default config.
 */
 char* testrun_utils_search_project_path(const char *start_path);
 
@@ -102,22 +102,22 @@ bool testrun_utils_create_project_paths(const struct testrun_config *config);
         Try to read the git author to buffer.
         @param buffer   buffer to write the author name
         @param size     size of the buffer.
-*/ 
+*/
 bool testrun_utils_get_git_author(
         char *buffer, size_t size);
 
 /*----------------------------------------------------------------------------*/
 
 /**
-        Write some content to a file. 
+        Write some content to a file.
         The file at the resulting path MUST not exist.
 
         Will create "root_path/realtive_path/filename" with content as file content.
 
         @param filename         name of the file to be created
         @param content          content to be written to the file
-        @param root_path        (MANDATORY) root_path to write to 
-                                (may be relative to working path of executable)  
+        @param root_path        (MANDATORY) root_path to write to
+                                (may be relative to working path of executable)
         @param relative_path    (OPTIONAL) relative_path to root_path (e.g. subpath)
 */
 bool testrun_utils_create_file(

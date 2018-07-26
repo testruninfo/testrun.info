@@ -25,12 +25,12 @@
 
         @ingroup        testrun_lib
 
-        @brief          Definition of a generic function set for copyright 
+        @brief          Definition of a generic function set for copyright
                         statements, as well as a definition of some common
-                        copyright statement functions. 
+                        copyright statement functions.
 
         @NOTE           Implementation style: pointer base function, which may
-                        be overriden with custom implementations for additional 
+                        be overriden with custom implementations for additional
                         copyright implementations.
 
         ------------------------------------------------------------------------
@@ -63,8 +63,8 @@ typedef enum {GENERAL, LESSER, AFFERO} testrun_gpl_v3_types;
 struct testrun_copyright_gpl_v3_parameter {
 
         testrun_gpl_v3_types type;
-        char *program_name; 
-        
+        char *program_name;
+
 };
 
 /*
@@ -73,23 +73,23 @@ struct testrun_copyright_gpl_v3_parameter {
  *      GENERIC FUNCTION STRUCTURE DEFINITION
  *
  *
- *      Simple convention: Function of the testrun copyright structure MUST 
+ *      Simple convention: Function of the testrun copyright structure MUST
  *      return an allocated zero terminated string, or NULL.
  *
  *      A backpointer to self is used to check for additional data, stored
- *      at the data pointer. 
+ *      at the data pointer.
  *
  *      ------------------------------------------------------------------------
  */
 
 struct testrun_copyright{
 
-        char *(*generate_header_string)         (const char *prefix,   
-                                                 const char *intro,    
-                                                 const char *year,     
-                                                 const char *owner,    
-                                                 const char *end_note, 
-                                                 const char *suffix,   
+        char *(*generate_header_string)         (const char *prefix,
+                                                 const char *intro,
+                                                 const char *year,
+                                                 const char *owner,
+                                                 const char *end_note,
+                                                 const char *suffix,
                                                  uint16_t line_indent,
                                                  bool indent_using_spaces,
                                                  void *custom_data);
@@ -108,8 +108,8 @@ struct testrun_copyright{
         @param owner            e.g. "DLR e.V.", "Markus Toepfer"
         @param text             Copyright statement e.g. "All rights reserved."
         @param end_note         optional end note e.g. link to project homepage
-        @param suffix           suffix to be written as is at the end 
-        @param indent           line indent to be set in front of each line, 
+        @param suffix           suffix to be written as is at the end
+        @param indent           line indent to be set in front of each line,
                                 except of prefix and suffix.
         @param spaces           if true, spaces will be added, tabs on false
 
@@ -124,7 +124,7 @@ char *testrun_copyright_generate_header_string(
         const char* end_note,
         const char* suffix,
         uint16_t indent,
-        bool spaces); 
+        bool spaces);
 
 /*      ------------------------------------------------------------------------
  *
@@ -142,7 +142,7 @@ char *testrun_copyright_generate_header_string(
 
         ------------------------------------------------------------------------
 
-        Copyright (c) YEAR NAME" 
+        Copyright (c) YEAR NAME"
         All rights reserved.
 
         NOTE
@@ -158,8 +158,8 @@ struct testrun_copyright testrun_copyright_reserved();
 
         ------------------------------------------------------------------------
 
-        Copyright (c) YEAR NAME" 
-        
+        Copyright (c) YEAR NAME"
+
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
         You may obtain a copy of the License at
@@ -291,12 +291,12 @@ struct testrun_copyright testrun_copyright_mit();
         ------------------------------------------------------------------------
 
         This file is part of [NAME]
-        
+
         [NAME] is free software: you can redistribute it and/or modify
         it under the terms of the GNU [TYPE] Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version.
-        
+
         [NAME] is distributed in the hope that it will be useful,
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the

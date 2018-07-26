@@ -25,9 +25,9 @@
 
         @ingroup        testrun_lib
 
-        @brief          Definition of an abstract, configurable and modular library 
-                        for C projects with a shell script based, makefile integrated 
-                        testrunner infrastructure. 
+        @brief          Definition of an abstract, configurable and modular library
+                        for C projects with a shell script based, makefile integrated
+                        testrunner infrastructure.
 
         ------------------------------------------------------------------------
 */
@@ -47,17 +47,23 @@ struct testrun_lib {
         struct testrun_config           config;
         struct testrun_tools            tools;
 
-        bool (*create_project_paths)    (const testrun_lib *self); // generate the folder structure of a project
-        bool (*create_project_files)    (const testrun_lib *self); // generate and write all files for a project
-        char *(*search_project_path)    (const char *start_path);  // search the top level project path from any given start path
-        bool (*create_module_files)     (const testrun_lib *self, const char *module_name);
+	// generate the folder structure of a project
+        bool (*create_project_paths)    (const testrun_lib *self);
+
+	// generate and write all files for a project
+	bool (*create_project_files)    (const testrun_lib *self);
+
+	// search the top level project path from any given start path
+	char *(*search_project_path)    (const char *start_path);
+        bool (*create_module_files)     (const testrun_lib *self,
+					 const char *module_name);
 
 };
 
 /*----------------------------------------------------------------------------*/
 
 /**
-        Create the default library including the default testrun tools. 
+        Create the default library including the default testrun tools.
         @returns the default testrun_lib implementation.
 */
 struct testrun_lib testrun_lib_default();
@@ -65,7 +71,7 @@ struct testrun_lib testrun_lib_default();
 /*----------------------------------------------------------------------------*/
 
 /**
-        Validate that all function pointers, 
+        Validate that all function pointers,
         as well as all required config data
         is set within any lib implementation.
 
@@ -76,7 +82,7 @@ bool testrun_lib_validate(const testrun_lib *lib);
 /*----------------------------------------------------------------------------*/
 
 /**
-        Create a new project, 
+        Create a new project,
         using a provided testrun_lib implementation.
 
         @param lib     pointer to lib implementation
@@ -86,9 +92,9 @@ bool testrun_lib_create_project(const testrun_lib *lib);
 /*----------------------------------------------------------------------------*/
 
 /**
-        Create a new module, 
+        Create a new module,
         using a provided testrun_lib implementation.
-        This function will set the project path based on the provided 
+        This function will set the project path based on the provided
         search function, starting with the project path set in lib.
 
         @param lib     pointer to lib implementation

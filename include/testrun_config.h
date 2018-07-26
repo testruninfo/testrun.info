@@ -25,19 +25,19 @@
 
         @ingroup        testrun_lib
 
-        @brief          Definition of all configurable input items to the 
-                        testrun project creation. 
+        @brief          Definition of all configurable input items to the
+                        testrun project creation.
 
         ------------------------------------------------------------------------
 */
 #ifndef testrun_config_h
 #define testrun_config_h
 
-#define TEST_PREFIX                     "test_" 
-#define TEST_SUFFIX_SOURCE              "_test" 
-#define TEST_SUFFIX_EXEC                ".test" 
-#define TESTRUN_SUFFIX_C_HEADER         ".h" 
-#define TESTRUN_SUFFIX_C_SOURCE         ".c" 
+#define TEST_PREFIX                     "test_"
+#define TEST_SUFFIX_SOURCE              "_test"
+#define TEST_SUFFIX_EXEC                ".test"
+#define TESTRUN_SUFFIX_C_HEADER         ".h"
+#define TESTRUN_SUFFIX_C_SOURCE         ".c"
 
 #define TESTRUN_FOLDER_BIN              "bin"
 #define TESTRUN_FOLDER_BUILD            "build"
@@ -56,15 +56,15 @@
 #define TESTRUN_FOLDER_ACCEPTANCE_TESTS "acceptance"
 
 #define TESTRUN_SCRIPT_LOC              "testrun_simple_loc.sh"
-#define TESTRUN_SCRIPT_COVERAGE         "testrun_simple_coverage_tests.sh"      
-#define TESTRUN_SCRIPT_UNIT             "testrun_simple_unit_tests.sh"      
-#define TESTRUN_SCRIPT_ACCEPTANCE       "testrun_simple_acceptance_tests.sh"     
-#define TESTRUN_SCRIPT_RUNNER           "testrun_runner.sh"   
+#define TESTRUN_SCRIPT_COVERAGE         "testrun_simple_coverage_tests.sh"
+#define TESTRUN_SCRIPT_UNIT             "testrun_simple_unit_tests.sh"
+#define TESTRUN_SCRIPT_ACCEPTANCE       "testrun_simple_acceptance_tests.sh"
+#define TESTRUN_SCRIPT_RUNNER           "testrun_runner.sh"
 #define TESTRUN_SCRIPT_GCOV             "testrun_gcov.sh"
-#define TESTRUN_SCRIPT_GPORF            "testrun_gprof.sh" 
+#define TESTRUN_SCRIPT_GPORF            "testrun_gprof.sh"
 
 #define TESTRUN_MAKEFILE                "makefile"
-#define TESTRUN_MAKEFILE_COMMON         "makefile_common.mk" 
+#define TESTRUN_MAKEFILE_COMMON         "makefile_common.mk"
 
 #define TESTRUN_APP_DEFAULT             "testrun.info"
 #define TESTRUN_WWW_DEFAULT             "www.testrun.info"
@@ -151,7 +151,7 @@ struct testrun_indent_config {
 */
 struct testrun_project_config {
 
-        char *name;             // name of the project     
+        char *name;             // name of the project
         char *path;             // path to the project
         char *url;              // project url
         char *description;      // short project description for pkgconfig
@@ -172,7 +172,7 @@ struct testrun_path_config {
         char *build;            // relative path project to build files
         char *copyright;        // relative path project to copyright files
         char *docs;             // relative path project to doc files
-        char *include;          // relative path project to header files 
+        char *include;          // relative path project to header files
         char *source;           // relative path project to source files
         char *tests;            // relative path project to test files
         char *tools;            // relative path project to test tool scripts
@@ -194,7 +194,7 @@ struct testrun_path_config {
 */
 struct testrun_script_config {
 
-        char *lines_of_code;   
+        char *lines_of_code;
         char *test_coverage;
         char *test_unit;
         char *test_acceptance;
@@ -212,7 +212,7 @@ struct testrun_script_config {
 */
 struct testrun_makefile_config {
 
-        char *configurable;   
+        char *configurable;
         char *common;
         testrun_makefile_target target;
 
@@ -226,7 +226,7 @@ struct testrun_makefile_config {
 */
 struct testrun_copyright_config {
 
-        char *author;   
+        char *author;
         char *owner;
         char *note;
 
@@ -244,7 +244,7 @@ struct testrun_config {
         char *test_prefix;         // prefix function      <-> test_function
         char *test_suffix_source;  // suffix file.c        <-> file_tests.c
         char *test_suffix_exec;    // suffix file_tests.c  <-> file_tests.exec
-        
+
         char *cflags;              // (optional standard cflags)
         char *version;             // (optional version to start)
 
@@ -282,7 +282,7 @@ struct testrun_config testrun_config_read_user_input(
 /*----------------------------------------------------------------------------*/
 
 /**
-        Print default usage, 
+        Print default usage,
         aligned to testrun_config_read_user_input.
 */
 void testrun_config_print_usage(const char *app_name);

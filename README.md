@@ -2,7 +2,7 @@
 
 [![LOGO](resources/images/logo_color_big.png)](https://twitter.com/testruninfo/status/927230629414043648)
 
-Testrun_lib is a toolset to create lightweight, customizable, but common makefile based C (unit) testing frameworks. 
+Testrun_lib is a toolset to create lightweight, customizable, but common makefile based C (unit) testing frameworks.
 
 All Lib functionality is related to the central header **testrun.h** and makefile integrated testrunner scripts.
 
@@ -17,8 +17,8 @@ This lib MAY be used for own project initialization executables, OR as standalon
 * [Structure](#structure)
 * [Tests](#tests)
 * [Tips](#tips)
-* [Śupport](#support)   
-* [Copyright](#copyright)   
+* [Support](#support)
+* [Copyright](#copyright)
 
 ## Description
 
@@ -32,12 +32,12 @@ Installation will create an executable copied to /usr/local/bin, as well as libr
 
 ### Command line version
 
-#### HELP 
+#### HELP
 ```bash
 testrun_lib -h
 ```
 
-#### Example 
+#### Example
 
 Create a project /tmp/project/name
 ```bash
@@ -53,13 +53,13 @@ pkg-config --libs libtestrun_lib
 
 ## Installation
 
-Package installation will be done by default as static library 
+Package installation will be done by default as static library
 **/usr/local/lib/testrun_lib.a** as well as shared library
-**/usr/local/lib/testrun_lib.so**. 
+**/usr/local/lib/testrun_lib.so**.
 In addition the executable will be placed at:
-**/usr/local/bin/testrun_lib**. 
+**/usr/local/bin/testrun_lib**.
 
-A package config file will be written to 
+A package config file will be written to
 **/usr/local/lib/pkgconfig/testrun_lib.pc**
 
 In addition to the installation all header files of the module will be provided
@@ -97,9 +97,9 @@ sudo make uninstall
 
 ## Requirements
 
-This library requires the C99 ISO-C standard and is implemented using some POSIX headers (e.g. <sys/stat.h> or <sys/time.h>). 
+This library requires the C99 ISO-C standard and is implemented using some POSIX headers (e.g. <sys/stat.h> or <sys/time.h>).
 
-It compiles using GCC (5.4.0 Ubuntu) or CLANG (3.8.0-2ubuntu) on LINUX (Ubuntu 16.04) without any dependencies. 
+It compiles using GCC (5.4.0 Ubuntu) or CLANG (3.8.0-2ubuntu) on LINUX (Ubuntu 16.04) without any dependencies.
 
 ## Structure
 
@@ -131,7 +131,7 @@ It compiles using GCC (5.4.0 Ubuntu) or CLANG (3.8.0-2ubuntu) on LINUX (Ubuntu 1
 │
 └── tests
     ├── resources
-    ├── tools 
+    ├── tools
     │   ├── testrun_runner.h
     │   ├── testrun_gcov.sh
     │   ├── testrun_gprof.sh
@@ -154,25 +154,25 @@ It compiles using GCC (5.4.0 Ubuntu) or CLANG (3.8.0-2ubuntu) on LINUX (Ubuntu 1
 
 ### Test a project (all files contained in tests/unit)
 
-Test compile and run 
+Test compile and run
 ~~~
 make tested
 ~~~
 
 ### Test a dedicated source file (single file of tests/unit)
 
-To develop a test for a specific source file, 
-it may be helpful to use a separated test run. 
+To develop a test for a specific source file,
+it may be helpful to use a separated test run.
 This may be done via an integrated make functionality.
 
 Test compile example
 ~~~
-make test testname=tests/unit/filename_tests.c 
+make test testname=tests/unit/filename_tests.c
 ~~~
 
 Test compile and run in valgrind
 ~~~
-make test testname=tests/unit/filename_tests.c && valgrind ./build/test/unit/filename_tests.test 
+make test testname=tests/unit/filename_tests.c && valgrind ./build/test/unit/filename_tests.test
 ~~~
 
 ## Tips
@@ -188,7 +188,7 @@ This lib provides the following copyright statements
 * All rights reserved
 
 ### Configuration
-Any configuration option is shown in **testrun_config_default()** Default definitions for folder names are done in testrun_config. 
+Any configuration option is shown in **testrun_config_default()** Default definitions for folder names are done in testrun_config.
 
 testrun_config testrun_config_default(){
 ~~~
@@ -230,7 +230,7 @@ testrun_config testrun_config_default(){
 
 ## Support
 
-If the tools are helpful for you and you may support the development with a donation or by spreading the word. Thanks a lot for both. 
+If the tools are helpful for you and you may support the development with a donation or by spreading the word. Thanks a lot for both.
 
 [![twitter](resources/images/Twitter_Logo_Blue.png)](https://twitter.com/testruninfo/status/927230629414043648)
 
@@ -250,6 +250,6 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License. 
+limitations under the License.
 
 This file is part of the testrun project. http://testrun.info

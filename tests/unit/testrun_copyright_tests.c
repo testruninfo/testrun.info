@@ -40,7 +40,7 @@
  *      ------------------------------------------------------------------------
  */
 
-const char *apache2_full_text =        
+const char *apache2_full_text =
         "                              Apache License\n"
         "                        Version 2.0, January 2004\n"
         "                     http://www.apache.org/licenses/\n"
@@ -244,7 +244,7 @@ const char *apache2_full_text =
         "limitations under the License.\n";
 
 
-const char *gpl_v3_general_full_text = 
+const char *gpl_v3_general_full_text =
         "            GNU GENERAL PUBLIC LICENSE\n"
         "               Version 3, 29 June 2007\n"
         "\n"
@@ -920,7 +920,7 @@ const char *gpl_v3_general_full_text =
         "Public License instead of this License.  But first, please read\n"
         "<https://www.gnu.org/licenses/why-not-lgpl.html>.\n";
 
-const char *gpl_v3_lesser_full_text = 
+const char *gpl_v3_lesser_full_text =
         "                   GNU LESSER GENERAL PUBLIC LICENSE\n"
         "                       Version 3, 29 June 2007\n"
         "\n"
@@ -1087,7 +1087,7 @@ const char *gpl_v3_lesser_full_text =
         "permanent authorization for you to choose that version for the\n"
         "Library.\n";
 
-const char *gpl_v3_affero_full_text = 
+const char *gpl_v3_affero_full_text =
         "                    GNU AFFERO GENERAL PUBLIC LICENSE\n"
         "                       Version 3, 19 November 2007\n"
         "\n"
@@ -1764,7 +1764,7 @@ const char *gpl_v3_affero_full_text =
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_copyright_generate_header_string(){
-        
+
         char *result = NULL;
         char *expect = NULL;
 
@@ -1913,7 +1913,7 @@ int test_testrun_copyright_generate_header_string(){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_copyright_generate_reserved(){
-        
+
         char *result = NULL;
         char *expect = NULL;
 
@@ -1954,7 +1954,7 @@ int test_testrun_copyright_generate_reserved(){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_copyright_reserved(){
-        
+
         struct testrun_copyright copyright = { 0 };
 
         copyright = testrun_copyright_reserved();
@@ -1967,7 +1967,7 @@ int test_testrun_copyright_reserved(){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_copyright_apache_version_2(){
-        
+
         struct testrun_copyright copyright = { 0 };
 
         copyright = testrun_copyright_apache_version_2();
@@ -1980,7 +1980,7 @@ int test_testrun_copyright_apache_version_2(){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_copyright_generate_apache_version_2(){
-        
+
         char *result = NULL;
         char *expect = NULL;
 
@@ -2053,7 +2053,7 @@ int test_testrun_copyright_generate_apache_version_2(){
 int test_testrun_copyright_apache_version_2_full_text(){
 
         char *result = testrun_copyright_apache_version_2_full_text(NULL);
-        
+
         testrun(0 == strncmp(result, apache2_full_text, strlen(apache2_full_text)));
         free(result);
 
@@ -2063,12 +2063,12 @@ int test_testrun_copyright_apache_version_2_full_text(){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_copyright_generate_mit(){
-        
+
         char *result = NULL;
         char *expect = NULL;
 
         result = testrun_copyright_generate_mit(NULL, NULL, NULL, NULL, NULL, NULL, 0, true, NULL);
-        expect = 
+        expect =
         "Copyright (c) [COPYRIGHT_YEAR] [COPYRIGHT_OWNER]\n"
         "\n"
         "Permission is hereby granted, free of charge, to any person obtaining a copy\n"
@@ -2093,7 +2093,7 @@ int test_testrun_copyright_generate_mit(){
         free(result);
 
         result = testrun_copyright_generate_mit(NULL, NULL, "2018", "owner", "note", NULL, 0, true, NULL);
-        expect = 
+        expect =
         "Copyright (c) 2018 owner\n"
         "\n"
         "Permission is hereby granted, free of charge, to any person obtaining a copy\n"
@@ -2122,7 +2122,7 @@ int test_testrun_copyright_generate_mit(){
 
         // all set
         result = testrun_copyright_generate_mit("/**", "INTRO", "YEAR", "OWNER", "NOTE", "*/", 4, true, NULL);
-        expect = 
+        expect =
         "/**    INTRO YEAR OWNER\n"
         "\n"
         "    Permission is hereby granted, free of charge, to any person obtaining a copy\n"
@@ -2155,7 +2155,7 @@ int test_testrun_copyright_generate_mit(){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_copyright_mit(){
-        
+
         struct testrun_copyright copyright = { 0 };
 
         copyright = testrun_copyright_mit();
@@ -2168,12 +2168,12 @@ int test_testrun_copyright_mit(){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_copyright_generate_bsd_2clause(){
-        
+
         char *result = NULL;
         char *expect = NULL;
 
         result = testrun_copyright_generate_bsd_2clause(NULL, NULL, NULL, NULL, NULL, NULL, 0, true, NULL);
-        expect = 
+        expect =
         "Copyright (c) [COPYRIGHT_YEAR] [COPYRIGHT_OWNER]\n"
         "\n"
         "Redistribution and use in source and binary forms, with or without\n"
@@ -2200,7 +2200,7 @@ int test_testrun_copyright_generate_bsd_2clause(){
         free(result);
 
         result = testrun_copyright_generate_bsd_2clause(NULL, NULL, "2018", "owner", "note", NULL, 0, true, NULL);
-        expect = 
+        expect =
         "Copyright (c) 2018 owner\n"
         "\n"
         "Redistribution and use in source and binary forms, with or without\n"
@@ -2231,7 +2231,7 @@ int test_testrun_copyright_generate_bsd_2clause(){
 
         // all set
         result = testrun_copyright_generate_bsd_2clause("/**", "INTRO", "YEAR", "OWNER", "NOTE", "*/", 4, true, NULL);
-        expect = 
+        expect =
         "/**    INTRO YEAR OWNER\n"
         "\n"
         "    Redistribution and use in source and binary forms, with or without\n"
@@ -2266,7 +2266,7 @@ int test_testrun_copyright_generate_bsd_2clause(){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_copyright_bsd_2clause(){
-        
+
         struct testrun_copyright copyright = { 0 };
 
         copyright = testrun_copyright_bsd_2clause();
@@ -2279,63 +2279,63 @@ int test_testrun_copyright_bsd_2clause(){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_copyright_generate_bsd_3clause(){
-        
+
         char *result = NULL;
         char *expect = NULL;
 
         result = testrun_copyright_generate_bsd_3clause(NULL, NULL, NULL, NULL, NULL, NULL, 0, true, NULL);
-        expect = 
+        expect =
         "Copyright (c) [COPYRIGHT_YEAR] [COPYRIGHT_OWNER]\n"
         "\n"
-        "Redistribution and use in source and binary forms, with or without\n"  
-        "modification, are permitted provided that the following conditions are met:\n" 
-        "    * Redistributions of source code must retain the above copyright\n"        
-        "      notice, this list of conditions and the following disclaimer.\n" 
-        "    * Redistributions in binary form must reproduce the above copyright\n"     
-        "      notice, this list of conditions and the following disclaimer in the\n"   
-        "      documentation and/or other materials provided with the distribution.\n"  
-        "    * Neither the name of the copyright holder nor the\n"      
-        "      names of its contributors may be used to endorse or promote products\n"  
-        "      derived from this software without specific prior written permission.\n" 
-        "\n"    
-        "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\n"     
-        "ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\n"       
-        "WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\n"      
-        "DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY\n"        
-        "DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\n"  
-        "(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\n"        
-        "LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND\n" 
-        "ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n"  
-        "(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n"       
+        "Redistribution and use in source and binary forms, with or without\n"
+        "modification, are permitted provided that the following conditions are met:\n"
+        "    * Redistributions of source code must retain the above copyright\n"
+        "      notice, this list of conditions and the following disclaimer.\n"
+        "    * Redistributions in binary form must reproduce the above copyright\n"
+        "      notice, this list of conditions and the following disclaimer in the\n"
+        "      documentation and/or other materials provided with the distribution.\n"
+        "    * Neither the name of the copyright holder nor the\n"
+        "      names of its contributors may be used to endorse or promote products\n"
+        "      derived from this software without specific prior written permission.\n"
+        "\n"
+        "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\n"
+        "ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\n"
+        "WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\n"
+        "DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY\n"
+        "DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\n"
+        "(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\n"
+        "LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND\n"
+        "ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n"
+        "(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n"
         "SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n";
         testrun(result);
         testrun(0 == strncmp(result, expect, strlen(expect)));
         free(result);
 
         result = testrun_copyright_generate_bsd_3clause(NULL, NULL, "2018", "owner", "note", NULL, 0, true, NULL);
-        expect = 
+        expect =
         "Copyright (c) 2018 owner\n"
         "\n"
-        "Redistribution and use in source and binary forms, with or without\n"  
-        "modification, are permitted provided that the following conditions are met:\n" 
-        "    * Redistributions of source code must retain the above copyright\n"        
-        "      notice, this list of conditions and the following disclaimer.\n" 
-        "    * Redistributions in binary form must reproduce the above copyright\n"     
-        "      notice, this list of conditions and the following disclaimer in the\n"   
-        "      documentation and/or other materials provided with the distribution.\n"  
-        "    * Neither the name of the copyright holder nor the\n"      
-        "      names of its contributors may be used to endorse or promote products\n"  
-        "      derived from this software without specific prior written permission.\n" 
-        "\n"    
-        "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\n"     
-        "ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\n"       
-        "WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\n"      
-        "DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY\n"        
-        "DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\n"  
-        "(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\n"        
-        "LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND\n" 
-        "ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n"  
-        "(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n"       
+        "Redistribution and use in source and binary forms, with or without\n"
+        "modification, are permitted provided that the following conditions are met:\n"
+        "    * Redistributions of source code must retain the above copyright\n"
+        "      notice, this list of conditions and the following disclaimer.\n"
+        "    * Redistributions in binary form must reproduce the above copyright\n"
+        "      notice, this list of conditions and the following disclaimer in the\n"
+        "      documentation and/or other materials provided with the distribution.\n"
+        "    * Neither the name of the copyright holder nor the\n"
+        "      names of its contributors may be used to endorse or promote products\n"
+        "      derived from this software without specific prior written permission.\n"
+        "\n"
+        "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\n"
+        "ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\n"
+        "WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\n"
+        "DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY\n"
+        "DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\n"
+        "(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\n"
+        "LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND\n"
+        "ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n"
+        "(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n"
         "SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n"
         "\n"
         "note\n";
@@ -2346,29 +2346,29 @@ int test_testrun_copyright_generate_bsd_3clause(){
 
         // all set
         result = testrun_copyright_generate_bsd_3clause("/**", "INTRO", "YEAR", "OWNER", "NOTE", "*/", 4, true, NULL);
-        expect = 
+        expect =
         "/**    INTRO YEAR OWNER\n"
         "\n"
-        "    Redistribution and use in source and binary forms, with or without\n"  
-        "    modification, are permitted provided that the following conditions are met:\n" 
-        "        * Redistributions of source code must retain the above copyright\n"        
-        "          notice, this list of conditions and the following disclaimer.\n" 
-        "        * Redistributions in binary form must reproduce the above copyright\n"     
-        "          notice, this list of conditions and the following disclaimer in the\n"   
-        "          documentation and/or other materials provided with the distribution.\n"  
-        "        * Neither the name of the copyright holder nor the\n"      
-        "          names of its contributors may be used to endorse or promote products\n"  
-        "          derived from this software without specific prior written permission.\n" 
-        "\n"    
-        "    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\n"     
-        "    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\n"       
-        "    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\n"      
-        "    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY\n"        
-        "    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\n"  
-        "    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\n"        
-        "    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND\n" 
-        "    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n"  
-        "    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n"       
+        "    Redistribution and use in source and binary forms, with or without\n"
+        "    modification, are permitted provided that the following conditions are met:\n"
+        "        * Redistributions of source code must retain the above copyright\n"
+        "          notice, this list of conditions and the following disclaimer.\n"
+        "        * Redistributions in binary form must reproduce the above copyright\n"
+        "          notice, this list of conditions and the following disclaimer in the\n"
+        "          documentation and/or other materials provided with the distribution.\n"
+        "        * Neither the name of the copyright holder nor the\n"
+        "          names of its contributors may be used to endorse or promote products\n"
+        "          derived from this software without specific prior written permission.\n"
+        "\n"
+        "    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\n"
+        "    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\n"
+        "    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\n"
+        "    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY\n"
+        "    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\n"
+        "    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\n"
+        "    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND\n"
+        "    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n"
+        "    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n"
         "    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n"
         "\n"
         "    NOTE\n"
@@ -2383,7 +2383,7 @@ int test_testrun_copyright_generate_bsd_3clause(){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_copyright_bsd_3clause(){
-        
+
         struct testrun_copyright copyright = { 0 };
 
         copyright = testrun_copyright_bsd_3clause();
@@ -2396,7 +2396,7 @@ int test_testrun_copyright_bsd_3clause(){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_copyright_gpl_v3_general_licence(){
-        
+
         char *result = testrun_copyright_gpl_v3_general_licence();
 
         testrun(0 == strncmp(result, gpl_v3_general_full_text, strlen(gpl_v3_general_full_text)));
@@ -2408,7 +2408,7 @@ int test_testrun_copyright_gpl_v3_general_licence(){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_copyright_gpl_v3_lesser_licence(){
-        
+
         char *result = testrun_copyright_gpl_v3_lesser_licence();
 
         testrun(0 == strncmp(result, gpl_v3_lesser_full_text, strlen(gpl_v3_lesser_full_text)));
@@ -2420,7 +2420,7 @@ int test_testrun_copyright_gpl_v3_lesser_licence(){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_copyright_gpl_v3_affero_licence(){
-        
+
         char *result = testrun_copyright_gpl_v3_affero_licence();
 
         testrun(0 == strncmp(result, gpl_v3_affero_full_text, strlen(gpl_v3_affero_full_text)));
@@ -2432,7 +2432,7 @@ int test_testrun_copyright_gpl_v3_affero_licence(){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_copyright_gpl_version_3_full_text(){
-        
+
         char *result = NULL;
         struct testrun_copyright_gpl_v3_parameter config = { 0 };
 
@@ -2467,7 +2467,7 @@ int test_testrun_copyright_gpl_version_3_full_text(){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_copyright_generate_gpl_version_3(){
-        
+
         struct testrun_copyright_gpl_v3_parameter parameter = { 0 };
 
         char *result = NULL;
@@ -2476,7 +2476,7 @@ int test_testrun_copyright_generate_gpl_version_3(){
         testrun(!testrun_copyright_generate_gpl_version_3(NULL, NULL, NULL, NULL, NULL, NULL, 0, true, NULL));
 
         result = testrun_copyright_generate_gpl_version_3(NULL, NULL, NULL, NULL, NULL, NULL, 0, true, &parameter);
-        expect = 
+        expect =
         "Copyright (c) [COPYRIGHT_YEAR] [COPYRIGHT_OWNER]\n"
         "\n"
         "This file is part of " COPYRIGHT_TAG_PROGRAM "\n"
@@ -2501,7 +2501,7 @@ int test_testrun_copyright_generate_gpl_version_3(){
         parameter.type = GENERAL;
 
         result = testrun_copyright_generate_gpl_version_3(NULL, NULL, "2018", "owner", "note", NULL, 0, true, &parameter);
-        expect = 
+        expect =
         "Copyright (c) 2018 owner\n"
         "\n"
         "This file is part of ABCD\n"
@@ -2528,7 +2528,7 @@ int test_testrun_copyright_generate_gpl_version_3(){
         parameter.type = LESSER;
 
         result = testrun_copyright_generate_gpl_version_3(NULL, NULL, "2018", "owner", "note", NULL, 0, true, &parameter);
-        expect = 
+        expect =
         "Copyright (c) 2018 owner\n"
         "\n"
         "This file is part of ABCD\n"
@@ -2556,7 +2556,7 @@ int test_testrun_copyright_generate_gpl_version_3(){
         parameter.type = AFFERO;
 
         result = testrun_copyright_generate_gpl_version_3(NULL, NULL, "2018", "owner", "note", NULL, 0, true, &parameter);
-        expect = 
+        expect =
         "Copyright (c) 2018 owner\n"
         "\n"
         "This file is part of ABCD\n"
@@ -2584,7 +2584,7 @@ int test_testrun_copyright_generate_gpl_version_3(){
 
         // all set
         result = testrun_copyright_generate_gpl_version_3("/**", "INTRO", "YEAR", "OWNER", "NOTE", "*/", 4, true, &parameter);
-        expect = 
+        expect =
         "/**    INTRO YEAR OWNER\n"
         "\n"
         "    This file is part of ABCD\n"
@@ -2617,7 +2617,7 @@ int test_testrun_copyright_generate_gpl_version_3(){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_copyright_gpl_version_3(){
-        
+
         struct testrun_copyright copyright = { 0 };
 
         copyright = testrun_copyright_gpl_version_3();

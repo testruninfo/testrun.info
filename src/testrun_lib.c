@@ -813,7 +813,7 @@ bool testrun_lib_create_testrun_scripts(const testrun_lib *lib){
 
         free(content);
         memset(path, 0, PATH_MAX);
-        snprintf(path, PATH_MAX, "%s/%s", lib->config.path.tests, TESTRUN_FOLDER_UNIT_TESTS);
+        snprintf(path, PATH_MAX, "%s/%s/%s", lib->config.path.build, lib->config.path.tests, TESTRUN_FOLDER_UNIT_TESTS);
         content = lib->tools.testrun_simple_tests(
                 TESTRUN_FOLDER_UNIT_TESTS,
                 lib->config.project.name,
@@ -841,7 +841,7 @@ bool testrun_lib_create_testrun_scripts(const testrun_lib *lib){
 
         free(content);
         memset(path, 0, PATH_MAX);
-        snprintf(path, PATH_MAX, "%s/%s", lib->config.path.tests, TESTRUN_FOLDER_ACCEPTANCE_TESTS);
+        snprintf(path, PATH_MAX, "%s/%s/%s", lib->config.path.build, lib->config.path.tests, TESTRUN_FOLDER_ACCEPTANCE_TESTS);
         content = lib->tools.testrun_simple_tests(
                 TESTRUN_FOLDER_ACCEPTANCE_TESTS,
                 lib->config.project.name,
