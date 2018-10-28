@@ -32,15 +32,15 @@
 /*
  *      ------------------------------------------------------------------------
  *
- *      SHELL header 
+ *      SHELL header
  *
  *      this constant string will be used to generate the default SHELL header
- *      of the testrun scripts. 
+ *      of the testrun scripts.
  *
  *      ------------------------------------------------------------------------
  */
 
-static const char *bash_header = 
+static const char *bash_header =
 "#!/usr/bin/env bash\n"
 "#\n"
 "#       Copyright 2017 Markus Toepfer\n"
@@ -64,13 +64,13 @@ static const char *bash_header =
  *
  *      C header file                                             #TESRUN_HEADER
  *
- *      this constant string will be used to generate 
- *      testrun.h 
+ *      this constant string will be used to generate
+ *      testrun.h
  *
  *      ------------------------------------------------------------------------
  */
 
-static const char *testrun_header = 
+static const char *testrun_header =
 "/***\n"
 "        ------------------------------------------------------------------------\n"
 "\n"
@@ -327,13 +327,13 @@ static const char *testrun_header =
  *
  *      C header file                                             #OPENMP_HEADER
  *
- *      this constant string will be used to generate 
- *      the testrun_openmp.h 
+ *      this constant string will be used to generate
+ *      the testrun_openmp.h
  *
  *      ------------------------------------------------------------------------
  */
 
-static const char *testrun_header_openmp = 
+static const char *testrun_header_openmp =
 "/***\n"
 "        ------------------------------------------------------------------------\n"
 "\n"
@@ -1289,13 +1289,13 @@ static const char *testrun_header_openmp =
  *
  *      Gitignore file                                            #GITRIGNORE
  *
- *      this constant string will be used to generate 
+ *      this constant string will be used to generate
  *      the default gitignore content.
  *
  *      ------------------------------------------------------------------------
  */
 
-static const char *testrun_gitignore = 
+static const char *testrun_gitignore =
 "# Prerequisites\n"
 "*.d\n"
 "\n"
@@ -1680,10 +1680,10 @@ char *testrun_generate_script_simple_tests(
         ){
 
         if (    !type           ||
-                !project        || 
-                !file_name      || 
-                !runner_script  || 
-                !path_logfile   || 
+                !project        ||
+                !file_name      ||
+                !runner_script  ||
+                !path_logfile   ||
                 !path_tests     ||
                 !path_tools)
                 return NULL;
@@ -1692,7 +1692,7 @@ char *testrun_generate_script_simple_tests(
         char buffer[size];
         memset(buffer, 0, size);
 
-        if (0 > snprintf(buffer, size, 
+        if (0 > snprintf(buffer, size,
         "%s"
         "#\n"
         "#       File            %s\n"
@@ -1787,7 +1787,7 @@ char *testrun_generate_script_runner(
         const char *project,
         const char *file_name){
 
-        if (    !project        || 
+        if (    !project        ||
                 !file_name)
                 return NULL;
 
@@ -1795,7 +1795,7 @@ char *testrun_generate_script_runner(
         char buffer[size];
         memset(buffer, 0, size);
 
-        if (0 > snprintf(buffer, size, 
+        if (0 > snprintf(buffer, size,
         "%s"
         "#\n"
         "#       File            %s\n"
@@ -1915,7 +1915,7 @@ char *testrun_generate_script_loc(
         const char *path_source,
         const char *path_tests){
 
-        if (    !project        || 
+        if (    !project        ||
                 !file_name      ||
                 !path_header    ||
                 !path_source    ||
@@ -1926,7 +1926,7 @@ char *testrun_generate_script_loc(
         char buffer[size];
         memset(buffer, 0, size);
 
-        if (0 > snprintf(buffer, size, 
+        if (0 > snprintf(buffer, size,
         "%s"
         "#\n"
         "#       File            %s\n"
@@ -1945,9 +1945,9 @@ char *testrun_generate_script_loc(
         "#       Last changed    2018-07-11\n"
         "#       ------------------------------------------------------------------------\n"
         "\n"
-        "FOLDER_INC=\"%s\"\n" 
-        "FOLDER_SRC=\"%s\"\n" 
-        "FOLDER_TST=\"%s\"\n" 
+        "FOLDER_INC=\"%s\"\n"
+        "FOLDER_SRC=\"%s\"\n"
+        "FOLDER_TST=\"%s\"\n"
         "echo \"-------------------------------------------------------\"\n"
         "echo \"               SIMPLE LOC COUNTER\"\n"
         "echo \"-------------------------------------------------------\"\n"
@@ -1981,14 +1981,15 @@ char *testrun_generate_script_loc(
 char *testrun_generate_script_coverage(
         const char *project,
         const char *file_name,
-        const char *prefix,
+        const char *src_prefix,
+        const char *test_prefix,
         const char *path_logfile,
         const char *path_source,
         const char *path_tests){
 
-        if (    !project        || 
+        if (    !project        ||
                 !file_name      ||
-                !prefix         ||
+                !test_prefix    ||
                 !path_logfile   ||
                 !path_source    ||
                 !path_tests)
@@ -1998,7 +1999,10 @@ char *testrun_generate_script_coverage(
         char buffer[size];
         memset(buffer, 0, size);
 
-        if (0 > snprintf(buffer, size, 
+        if (!src_prefix)
+                src_prefix = "src_";
+
+        if (0 > snprintf(buffer, size,
         "%s"
         "#\n"
         "#       File            %s\n"
@@ -2033,7 +2037,8 @@ char *testrun_generate_script_coverage(
         "#       ------------------------------------------------------------------------\n"
         "\n"
         "start_time=$(date \"+%%Y.%%m.%%d-%%H.%%M.%%S.%%N\")\n"
-        "PREFIX=\"%s\"\n"
+        "SRC_PREFIX=\"%s\"\n"
+        "TEST_PREFIX=\"%s\"\n"
         "\n"
         "SRCDIR=\"$1/%s\"\n"
         "TESTDIR=\"$1/%s\"\n"
@@ -2074,16 +2079,22 @@ char *testrun_generate_script_coverage(
         "# remove the ctags stuff, to leave just the function lines\n"
         "sed -e '/[ ]*m$/d' -e '/TAG/d' <tags>functions\n"
         "# remove anything but the function names\n"
-        "awk '{print $1 }' $TESTDIR/functions > $TESTDIR/functionNames\n"
+        "awk '{print $1 }' $TESTDIR/functions > $TESTDIR/functionNamesAll\n"
+        "\n"
+        "# CUSTOMIZATION delete everything, which is not prefixed with custom src prefixes\n"
+        "#cat $SRCDIR/functionNamesAll | sed -ne '/^$SRC_PREFIX_.*/p'   > $SRCDIR/functionNames\n"
+        "#cat $SRCDIR/functionNamesAll | sed -ne '/^impl_.*/p' >> $SRCDIR/functionNames\n"
+        "cat $SRCDIR/functionNamesAll >> $SRCDIR/functionNames\n"
+        "\n"
         "# count the lines\n"
-        "testFkt=\"$(cat functions | grep -i ^$PREFIX | wc -l)\"\n"
+        "testFkt=\"$(cat functions | grep -i ^$TEST_PREFIX | wc -l)\"\n"
         "echo \"   count tests\\t\" $testFkt >> $LOGFILE\n"
         "\n"
         "echo \"\nUNTESTED: \" >> $LOGFILE\n"
         "# Found functions:\n"
         "while read line;\n"
         "do\n"
-        "        grep -n '^'$PREFIX$line'$' $TESTDIR/functionNames > \\\n"
+        "        grep -n '^'$TEST_PREFIX$line'$' $TESTDIR/functionNames > \\\n"
         "        /dev/null || echo $line >> $LOGFILE\n"
         "done < $SRCDIR/functionNames\n"
         "\n"
@@ -2109,9 +2120,10 @@ char *testrun_generate_script_coverage(
                 project,
                 path_source,
                 path_tests,
-                prefix,
+                test_prefix,
                 file_name,
-                prefix,
+                src_prefix,
+                test_prefix,
                 path_source,
                 path_tests,
                 path_logfile
@@ -2133,7 +2145,7 @@ char *testrun_generate_script_gcov(
         const char *src_suffix
         ){
 
-        if (    !project           || 
+        if (    !project           ||
                 !file_name         ||
                 !path_logfile      ||
                 !path_tests_exec   ||
@@ -2144,7 +2156,7 @@ char *testrun_generate_script_gcov(
         char buffer[size];
         memset(buffer, 0, size);
 
-        if (0 > snprintf(buffer, size, 
+        if (0 > snprintf(buffer, size,
         "%s"
         "#\n"
         "#       File            %s\n"
@@ -2231,7 +2243,7 @@ char *testrun_generate_script_gprof(
         const char *exec_suffix
         ){
 
-        if (    !project           || 
+        if (    !project           ||
                 !file_name         ||
                 !path_logfile      ||
                 !path_tests_exec)
@@ -2241,7 +2253,7 @@ char *testrun_generate_script_gprof(
         char buffer[size];
         memset(buffer, 0, size);
 
-        if (0 > snprintf(buffer, size, 
+        if (0 > snprintf(buffer, size,
         "%s"
         "#\n"
         "#       File            %s\n"
@@ -2323,21 +2335,21 @@ char *testrun_generate_makefile_common(
         testrun_makefile_target target
         ){
 
-        if (    !project                        ||      
-                !file_name                      ||      
-                !path_bin                       ||      
-                !path_build                     ||      
-                !path_include                   ||      
-                !path_source                    ||      
-                !path_tests                     ||      
-                !path_doxygen                   ||      
-                !suffix_test_source             ||      
-                !suffix_test_exec               ||      
-                !script_unit_tests              ||      
-                !script_acceptance_tests        ||      
-                !script_coverage_tests          ||      
-                !script_loc                     ||      
-                !script_gcov                    ||      
+        if (    !project                        ||
+                !file_name                      ||
+                !path_bin                       ||
+                !path_build                     ||
+                !path_include                   ||
+                !path_source                    ||
+                !path_tests                     ||
+                !path_doxygen                   ||
+                !suffix_test_source             ||
+                !suffix_test_exec               ||
+                !script_unit_tests              ||
+                !script_acceptance_tests        ||
+                !script_coverage_tests          ||
+                !script_loc                     ||
+                !script_gcov                    ||
                 !script_gprof)
                 return NULL;
 
@@ -2352,7 +2364,7 @@ char *testrun_generate_makefile_common(
                         target_install   = "install_lib";
                         target_uninstall = "uninstall_lib";
                         break;
-                
+
                 case EXEC:
                         target_all       = "all_exec";
                         target_install   = "install_exec";
@@ -2373,7 +2385,7 @@ char *testrun_generate_makefile_common(
         char buffer[size];
         memset(buffer, 0, size);
 
-        if (0 > snprintf(buffer, size, 
+        if (0 > snprintf(buffer, size,
         "%s"
         "#\n"
         "#       File            %s\n"
@@ -2823,7 +2835,7 @@ char *testrun_generate_makefile(
         char buffer[size];
         memset(buffer, 0, size);
 
-        if (0 > snprintf(buffer, size, 
+        if (0 > snprintf(buffer, size,
         "%s"
         "#\n"
         "#       File            %s\n"
@@ -2942,7 +2954,7 @@ testrun_tools testrun_tools_default(){
 
 bool testrun_tools_validate(const testrun_tools *self){
 
-        if (    !self || 
+        if (    !self ||
                 !self->testrun_header ||
                 !self->testrun_header_openmp ||
 
@@ -2959,7 +2971,7 @@ bool testrun_tools_validate(const testrun_tools *self){
                 !self->gitignore ||
                 !self->readme ||
                 !self->doxygen ||
-                !self->service_file || 
+                !self->service_file ||
                 !self->socket_file)
                 return false;
 

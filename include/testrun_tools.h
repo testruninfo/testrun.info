@@ -76,6 +76,7 @@ struct testrun_tools {
 
         char *(*testrun_simple_coverage)        (const char *project,
                                                  const char *file_name,
+                                                 const char *src_prefix,
                                                  const char *test_prefix,
                                                  const char *path_logfile,
                                                  const char *path_source,

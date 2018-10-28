@@ -34,6 +34,7 @@
 #define testrun_config_h
 
 #define TEST_PREFIX                     "test_"
+#define SRC_PREFIX                      "src_"
 #define TEST_SUFFIX_SOURCE              "_test"
 #define TEST_SUFFIX_EXEC                ".test"
 #define TESTRUN_SUFFIX_C_HEADER         ".h"
@@ -242,6 +243,7 @@ struct testrun_copyright_config {
 struct testrun_config {
 
         char *test_prefix;         // prefix function      <-> test_function
+        char *src_prefix;          // prefix of public sources
         char *test_suffix_source;  // suffix file.c        <-> file_tests.c
         char *test_suffix_exec;    // suffix file_tests.c  <-> file_tests.exec
 

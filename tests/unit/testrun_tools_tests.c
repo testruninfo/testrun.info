@@ -56,11 +56,11 @@
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_generate_header(){
-        
+
         char *result = testrun_generate_header();
         testrun(result);
-        testrun(0 == strncmp(result, 
-                helper_testrun_header, 
+        testrun(0 == strncmp(result,
+                helper_testrun_header,
                 strlen(helper_testrun_header)));
         free(result);
 
@@ -70,11 +70,11 @@ int test_testrun_generate_header(){
 /*----------------------------------------------------------------------------*/
 
 int test_testrun_generate_header_openmp(){
-        
+
         char *result = testrun_generate_header_openmp();
         testrun(result);
-        testrun(0 == strncmp(result, 
-                helper_testrun_header_openmp, 
+        testrun(0 == strncmp(result,
+                helper_testrun_header_openmp,
                 strlen(helper_testrun_header_openmp)));
         free(result);
 
@@ -92,94 +92,94 @@ int test_testrun_generate_script_simple_tests(){
         char *path_logfile = "some/path";
         char *path_tests   = "tests/path";
         char *path_tools   = "tests/tools";
-        
+
         char *result       = NULL;
 
         size_t size = 5000;
         char buffer[size];
 
         testrun(!testrun_generate_script_simple_tests(
-                NULL, 
                 NULL,
                 NULL,
-                NULL, 
-                NULL, 
+                NULL,
+                NULL,
+                NULL,
                 NULL,
                 NULL));
 
         testrun(!testrun_generate_script_simple_tests(
-                type, 
+                type,
                 NULL,
                 file_name,
-                runner, 
-                path_logfile, 
+                runner,
+                path_logfile,
                 path_tests,
                 path_tools));
 
         testrun(!testrun_generate_script_simple_tests(
-                NULL, 
+                NULL,
                 project,
                 file_name,
-                runner, 
-                path_logfile, 
+                runner,
+                path_logfile,
                 path_tests,
                 path_tools));
 
 
         testrun(!testrun_generate_script_simple_tests(
-                type, 
+                type,
                 project,
                 NULL,
-                runner, 
-                path_logfile, 
+                runner,
+                path_logfile,
                 path_tests,
                 path_tools));
 
         testrun(!testrun_generate_script_simple_tests(
-                type, 
+                type,
                 project,
                 file_name,
-                NULL, 
-                path_logfile, 
+                NULL,
+                path_logfile,
                 path_tests,
                 path_tools));
 
         testrun(!testrun_generate_script_simple_tests(
-                type, 
+                type,
                 project,
                 file_name,
-                runner, 
-                NULL, 
+                runner,
+                NULL,
                 path_tests,
                 path_tools));
 
         testrun(!testrun_generate_script_simple_tests(
-                type, 
+                type,
                 project,
                 file_name,
-                runner, 
-                path_logfile, 
+                runner,
+                path_logfile,
                 NULL,
                 path_tools));
 
         testrun(!testrun_generate_script_simple_tests(
-                type, 
+                type,
                 project,
                 file_name,
-                runner, 
-                path_logfile, 
+                runner,
+                path_logfile,
                 path_tests,
                 NULL));
 
         result = testrun_generate_script_simple_tests(
-                type, 
+                type,
                 project,
                 file_name,
-                runner, 
-                path_logfile, 
+                runner,
+                path_logfile,
                 path_tests,
                 path_tools);
-        
+
         testrun(result);
 
         memset(buffer, 0, size);
@@ -282,14 +282,14 @@ int test_testrun_generate_script_simple_tests(){
         path_tools   = "tests/tools";
 
         result = testrun_generate_script_simple_tests(
-                type, 
+                type,
                 project,
                 file_name,
-                runner, 
-                path_logfile, 
+                runner,
+                path_logfile,
                 path_tests,
                 path_tools);
-        
+
         testrun(result);
 
         memset(buffer, 0, size);
@@ -402,14 +402,14 @@ int test_testrun_generate_script_simple_tests(){
         path_tests   = "build/tests/acceptance";
 
         result = testrun_generate_script_simple_tests(
-                type, 
+                type,
                 project,
                 file_name,
-                runner, 
-                path_logfile, 
+                runner,
+                path_logfile,
                 path_tests,
                 path_tools);
-        
+
         testrun(result);
         //testrun_log("%s", result);
         free(result);
@@ -422,14 +422,14 @@ int test_testrun_generate_script_simple_tests(){
         path_tests   = "build/tests/unit";
 
         result = testrun_generate_script_simple_tests(
-                type, 
+                type,
                 project,
                 file_name,
-                runner, 
-                path_logfile, 
+                runner,
+                path_logfile,
                 path_tests,
                 path_tools);
-        
+
         testrun(result);
         //testrun_log("%s", result);
         free(result);
@@ -601,58 +601,58 @@ int test_testrun_generate_script_loc(){
         char buffer[size];
 
         testrun(!testrun_generate_script_loc(
-                NULL,    
-                NULL, 
-                NULL, 
+                NULL,
+                NULL,
+                NULL,
                 NULL,
                 NULL));
 
         testrun(!testrun_generate_script_loc(
-                NULL,    
-                file_name, 
+                NULL,
+                file_name,
                 path_header,
-                path_source, 
-                path_tests));
-
-        testrun(!testrun_generate_script_loc(
-                project,    
-                NULL, 
-                path_header,
-                path_source, 
-                path_tests));
-
-        testrun(!testrun_generate_script_loc(
-                project,    
-                file_name, 
-                NULL, 
                 path_source,
                 path_tests));
 
         testrun(!testrun_generate_script_loc(
-                project,    
-                file_name, 
+                project,
+                NULL,
                 path_header,
-                NULL, 
+                path_source,
                 path_tests));
 
         testrun(!testrun_generate_script_loc(
-                project,    
-                file_name, 
+                project,
+                file_name,
+                NULL,
+                path_source,
+                path_tests));
+
+        testrun(!testrun_generate_script_loc(
+                project,
+                file_name,
                 path_header,
-                path_source, 
+                NULL,
+                path_tests));
+
+        testrun(!testrun_generate_script_loc(
+                project,
+                file_name,
+                path_header,
+                path_source,
                 NULL));
 
         result = testrun_generate_script_loc(
-                project,    
-                file_name, 
+                project,
+                file_name,
                 path_header,
-                path_source, 
+                path_source,
                 path_tests);
-        
+
         testrun(result);
 
         memset(buffer, 0, size);
-        testrun(0 < snprintf(buffer, size, 
+        testrun(0 < snprintf(buffer, size,
         "%s"
         "#\n"
         "#       File            %s\n"
@@ -671,9 +671,9 @@ int test_testrun_generate_script_loc(){
         "#       Last changed    2018-07-11\n"
         "#       ------------------------------------------------------------------------\n"
         "\n"
-        "FOLDER_INC=\"%s\"\n" 
-        "FOLDER_SRC=\"%s\"\n" 
-        "FOLDER_TST=\"%s\"\n" 
+        "FOLDER_INC=\"%s\"\n"
+        "FOLDER_SRC=\"%s\"\n"
+        "FOLDER_TST=\"%s\"\n"
         "echo \"-------------------------------------------------------\"\n"
         "echo \"               SIMPLE LOC COUNTER\"\n"
         "echo \"-------------------------------------------------------\"\n"
@@ -716,12 +716,12 @@ int test_testrun_generate_script_loc(){
         path_tests  = "tests/unit";
 
         result = testrun_generate_script_loc(
-                project,    
-                file_name, 
+                project,
+                file_name,
                 path_header,
-                path_source, 
+                path_source,
                 path_tests);
-        
+
         testrun(result);
         //testrun_log("%s", result);
         free(result);
@@ -735,7 +735,8 @@ int test_testrun_generate_script_coverage(){
 
         char *project      = "project";
         char *file_name    = "runner.sh";
-        char *prefix       = "test_";
+        char *src_prefix   = "src_";
+        char *test_prefix  = "test_";
         char *path_logfile = "project/build/tests/log";
         char *path_source  = "project/src";
         char *path_tests   = "project/tests/unit";
@@ -745,65 +746,73 @@ int test_testrun_generate_script_coverage(){
         char buffer[size];
 
         testrun(!testrun_generate_script_coverage(
-                NULL,    
-                NULL, 
-                NULL, 
+                NULL,
+                NULL,
+                NULL,
+                NULL,
                 NULL,
                 NULL,
                 NULL));
 
         testrun(!testrun_generate_script_coverage(
-                NULL,    
-                file_name, 
-                prefix, 
+                NULL,
+                file_name,
+                src_prefix,
+                test_prefix,
                 path_logfile,
                 path_source,
                 path_tests));
 
         testrun(!testrun_generate_script_coverage(
-                project,    
-                NULL, 
-                prefix, 
+                project,
+                NULL,
+                src_prefix,
+                test_prefix,
                 path_logfile,
                 path_source,
                 path_tests));
 
         testrun(!testrun_generate_script_coverage(
-                project,    
-                file_name, 
-                NULL, 
+                project,
+                file_name,
+                src_prefix,
+                NULL,
                 path_logfile,
                 path_source,
                 path_tests));
 
         testrun(!testrun_generate_script_coverage(
-                project,    
-                file_name, 
-                prefix, 
+                project,
+                file_name,
+                src_prefix,
+                test_prefix,
                 NULL,
                 path_source,
                 path_tests));
 
         testrun(!testrun_generate_script_coverage(
-                project,    
-                file_name, 
-                prefix, 
+                project,
+                file_name,
+                src_prefix,
+                test_prefix,
                 path_logfile,
                 NULL,
                 path_tests));
 
         testrun(!testrun_generate_script_coverage(
-                project,    
-                file_name, 
-                prefix, 
+                project,
+                file_name,
+                src_prefix,
+                test_prefix,
                 path_logfile,
                 path_source,
                 NULL));
 
         result = testrun_generate_script_coverage(
-                project,    
-                file_name, 
-                prefix, 
+                project,
+                file_name,
+                NULL,
+                test_prefix,
                 path_logfile,
                 path_source,
                 path_tests);
@@ -811,8 +820,8 @@ int test_testrun_generate_script_coverage(){
         testrun(result);
 
         memset(buffer, 0, size);
-        testrun(0 < snprintf(buffer, size, 
-         "%s"
+        testrun(0 < snprintf(buffer, size,
+        "%s"
         "#\n"
         "#       File            %s\n"
         "#       Authors         Markus Toepfer\n"
@@ -846,7 +855,8 @@ int test_testrun_generate_script_coverage(){
         "#       ------------------------------------------------------------------------\n"
         "\n"
         "start_time=$(date \"+%%Y.%%m.%%d-%%H.%%M.%%S.%%N\")\n"
-        "PREFIX=\"%s\"\n"
+        "SRC_PREFIX=\"%s\"\n"
+        "TEST_PREFIX=\"%s\"\n"
         "\n"
         "SRCDIR=\"$1/%s\"\n"
         "TESTDIR=\"$1/%s\"\n"
@@ -887,16 +897,22 @@ int test_testrun_generate_script_coverage(){
         "# remove the ctags stuff, to leave just the function lines\n"
         "sed -e '/[ ]*m$/d' -e '/TAG/d' <tags>functions\n"
         "# remove anything but the function names\n"
-        "awk '{print $1 }' $TESTDIR/functions > $TESTDIR/functionNames\n"
+        "awk '{print $1 }' $TESTDIR/functions > $TESTDIR/functionNamesAll\n"
+        "\n"
+        "# CUSTOMIZATION delete everything, which is not prefixed with custom src prefixes\n"
+        "#cat $SRCDIR/functionNamesAll | sed -ne '/^$SRC_PREFIX_.*/p'   > $SRCDIR/functionNames\n"
+        "#cat $SRCDIR/functionNamesAll | sed -ne '/^impl_.*/p' >> $SRCDIR/functionNames\n"
+        "cat $SRCDIR/functionNamesAll >> $SRCDIR/functionNames\n"
+        "\n"
         "# count the lines\n"
-        "testFkt=\"$(cat functions | grep -i ^$PREFIX | wc -l)\"\n"
+        "testFkt=\"$(cat functions | grep -i ^$TEST_PREFIX | wc -l)\"\n"
         "echo \"   count tests\\t\" $testFkt >> $LOGFILE\n"
         "\n"
         "echo \"\nUNTESTED: \" >> $LOGFILE\n"
         "# Found functions:\n"
         "while read line;\n"
         "do\n"
-        "        grep -n '^'$PREFIX$line'$' $TESTDIR/functionNames > \\\n"
+        "        grep -n '^'$TEST_PREFIX$line'$' $TESTDIR/functionNames > \\\n"
         "        /dev/null || echo $line >> $LOGFILE\n"
         "done < $SRCDIR/functionNames\n"
         "\n"
@@ -922,16 +938,18 @@ int test_testrun_generate_script_coverage(){
                 project,
                 path_source,
                 path_tests,
-                prefix,
+                test_prefix,
                 file_name,
-                prefix,
+                src_prefix,
+                test_prefix,
                 path_source,
                 path_tests,
                 path_logfile
                 ));
 
-        testrun(0 == strncmp(result, buffer, strlen(buffer)));
         //testrun_log("%s", result);
+        testrun(0 == strncmp(result, buffer, strlen(buffer)));
+
         free(result);
 
 
@@ -948,16 +966,18 @@ int test_testrun_generate_script_coverage(){
         path_logfile = "build/tests/log";
         path_source  = "src";
         path_tests   = "tests/unit";
-        prefix       = "test_";
+        test_prefix  = "test_";
+        src_prefix   = NULL;
 
         result = testrun_generate_script_coverage(
-                project,    
-                file_name, 
-                prefix, 
+                project,
+                file_name,
+                src_prefix,
+                test_prefix,
                 path_logfile,
                 path_source,
                 path_tests);
-        
+
         testrun(result);
         //testrun_log("%s", result);
         free(result);
@@ -982,8 +1002,8 @@ int test_testrun_generate_script_gcov(){
         char buffer[size];
 
         testrun(!testrun_generate_script_gcov(
-                NULL,    
-                file_name,  
+                NULL,
+                file_name,
                 path_logfile,
                 path_exec,
                 path_source,
@@ -991,8 +1011,8 @@ int test_testrun_generate_script_gcov(){
                 NULL));
 
         testrun(!testrun_generate_script_gcov(
-                project,    
-                NULL,  
+                project,
+                NULL,
                 path_logfile,
                 path_exec,
                 path_source,
@@ -1000,8 +1020,8 @@ int test_testrun_generate_script_gcov(){
                 NULL));
 
         testrun(!testrun_generate_script_gcov(
-                project,    
-                file_name,  
+                project,
+                file_name,
                 NULL,
                 path_exec,
                 path_source,
@@ -1009,8 +1029,8 @@ int test_testrun_generate_script_gcov(){
                 NULL));
 
         testrun(!testrun_generate_script_gcov(
-                project,    
-                file_name,  
+                project,
+                file_name,
                 path_logfile,
                 NULL,
                 path_source,
@@ -1018,8 +1038,8 @@ int test_testrun_generate_script_gcov(){
                 NULL));
 
         testrun(!testrun_generate_script_gcov(
-                project,    
-                file_name,  
+                project,
+                file_name,
                 path_logfile,
                 path_exec,
                 NULL,
@@ -1027,8 +1047,8 @@ int test_testrun_generate_script_gcov(){
                 NULL));
 
         result = testrun_generate_script_gcov(
-                project,    
-                file_name,  
+                project,
+                file_name,
                 path_logfile,
                 path_exec,
                 path_source,
@@ -1038,7 +1058,7 @@ int test_testrun_generate_script_gcov(){
         testrun(result);
 
         memset(buffer, 0, size);
-        testrun(0 < snprintf(buffer, size, 
+        testrun(0 < snprintf(buffer, size,
         "%s"
         "#\n"
         "#       File            %s\n"
@@ -1123,7 +1143,7 @@ int test_testrun_generate_script_gcov(){
          *      -----------------------------------------------------------------
          */
 
-        
+
 
         project      = "testrun.info";
         file_name    = "testrun_gcov.sh";
@@ -1135,14 +1155,14 @@ int test_testrun_generate_script_gcov(){
         result       = NULL;
 
         result = testrun_generate_script_gcov(
-                project,    
-                file_name,  
+                project,
+                file_name,
                 path_logfile,
                 path_exec,
                 path_source,
                 exec_suffix,
                 src_suffix);
-        
+
         testrun(result);
         //testrun_log("%s", result);
         free(result);
@@ -1165,36 +1185,36 @@ int test_testrun_generate_script_gprof(){
         char buffer[size];
 
         testrun(!testrun_generate_script_gprof(
-                NULL,    
-                file_name,  
+                NULL,
+                file_name,
                 path_logfile,
                 path_exec,
                 NULL));
 
         testrun(!testrun_generate_script_gprof(
-                project,    
-                NULL,  
+                project,
+                NULL,
                 path_logfile,
                 path_exec,
                 NULL));
 
         testrun(!testrun_generate_script_gprof(
-                project,    
-                file_name,  
+                project,
+                file_name,
                 NULL,
                 path_exec,
                 NULL));
 
         testrun(!testrun_generate_script_gprof(
-                project,    
-                file_name,  
+                project,
+                file_name,
                 path_logfile,
                 NULL,
                 NULL));
 
         result = testrun_generate_script_gprof(
-                project,    
-                file_name,  
+                project,
+                file_name,
                 path_logfile,
                 path_exec,
                 NULL);
@@ -1269,7 +1289,7 @@ int test_testrun_generate_script_gprof(){
          *      -----------------------------------------------------------------
          */
 
-        
+
 
         project      = "testrun.info";
         file_name    = "testrun_gcov.sh";
@@ -1279,12 +1299,12 @@ int test_testrun_generate_script_gprof(){
         result       = NULL;
 
         result = testrun_generate_script_gprof(
-                project,    
-                file_name,  
+                project,
+                file_name,
                 path_logfile,
                 path_exec,
                 exec_suffix);
-        
+
         testrun(result);
         //testrun_log("%s", result);
         free(result);
@@ -1319,7 +1339,7 @@ int test_testrun_generate_makefile_common(){
         char buffer[size];
 
         result = testrun_generate_makefile_common(
-                project,    
+                project,
                 file_name,
                 path_bin,
                 path_build,
@@ -1330,7 +1350,7 @@ int test_testrun_generate_makefile_common(){
                 path_doxygen,
                 suffix_test_source,
                 suffix_test_exec,
-                script_unit,     
+                script_unit,
                 script_acceptance,
                 script_coverage,
                 script_loc,
@@ -1795,7 +1815,7 @@ int test_testrun_generate_makefile_common(){
         script_gprof       = "tests/tools/testrun_gprof.sh";
 
         result = testrun_generate_makefile_common(
-                project,    
+                project,
                 file_name,
                 path_bin,
                 path_build,
@@ -1806,7 +1826,7 @@ int test_testrun_generate_makefile_common(){
                 path_doxygen,
                 suffix_test_source,
                 suffix_test_exec,
-                script_unit,     
+                script_unit,
                 script_acceptance,
                 script_coverage,
                 script_loc,
@@ -1840,7 +1860,7 @@ int test_testrun_generate_makefile(){
         char buffer[size];
 
         result = testrun_generate_makefile(
-                project,    
+                project,
                 file_name,
                 version,
                 cflags,
@@ -1958,7 +1978,7 @@ int test_testrun_generate_makefile(){
         makefile_common  = "makefile_common.mk";
 
         result = testrun_generate_makefile(
-                project,    
+                project,
                 file_name,
                 version,
                 cflags,

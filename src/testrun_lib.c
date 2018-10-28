@@ -916,6 +916,7 @@ bool testrun_lib_create_testrun_scripts(const testrun_lib *lib){
         content = lib->tools.testrun_simple_coverage(
                 lib->config.project.name,
                 lib->config.script.test_coverage,
+                lib->config.src_prefix,
                 lib->config.test_prefix,
                 lib->config.path.logfile,
                 lib->config.path.source,
